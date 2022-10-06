@@ -504,6 +504,15 @@ static const struct intel_device_info intel_pontevecchio_info = {
 	.cmds_info = &gen12_pvc_cmds_info,
 };
 
+static const struct intel_device_info intel_lunarlake_info = {
+	.graphics_ver = 20,
+	.graphics_rel = 4,
+	.display_ver = 20,
+	.has_4tile = true,
+	.is_lunarlake = true,
+	.codename = "lunarlake"
+};
+
 static const struct pci_id_match intel_device_match[] = {
 	INTEL_I810_IDS(&intel_i810_info),
 	INTEL_I815_IDS(&intel_i815_info),
@@ -606,6 +615,8 @@ static const struct pci_id_match intel_device_match[] = {
 	INTEL_MTL_IDS(&intel_meteorlake_info),
 
 	INTEL_PVC_IDS(&intel_pontevecchio_info),
+
+	XE_LNL_IDS(INTEL_VGA_DEVICE, &intel_lunarlake_info),
 
 	INTEL_VGA_DEVICE(PCI_MATCH_ANY, &intel_generic_info),
 };

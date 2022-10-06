@@ -90,6 +90,7 @@ struct intel_device_info {
 	bool is_alderlake_n : 1;
 	bool is_meteorlake : 1;
 	bool is_pontevecchio : 1;
+	bool is_lunarlake : 1;
 	const struct intel_cmds_info *cmds_info;
 	const char *codename;
 };
@@ -203,6 +204,7 @@ void intel_check_pch(void);
 #define IS_ALDERLAKE_N(devid)	(intel_get_device_info(devid)->is_alderlake_n)
 #define IS_METEORLAKE(devid)	(intel_get_device_info(devid)->is_meteorlake)
 #define IS_PONTEVECCHIO(devid)	(intel_get_device_info(devid)->is_pontevecchio)
+#define IS_LUNARLAKE(devid)	(intel_get_device_info(devid)->is_lunarlake)
 
 #define IS_GEN(devid, x)	(intel_get_device_info(devid)->graphics_ver == x)
 #define AT_LEAST_GEN(devid, x)	(intel_get_device_info(devid)->graphics_ver >= x)
