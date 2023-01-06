@@ -140,6 +140,17 @@ static uint64_t gt_vram_size(const struct drm_xe_query_mem_usage *mem_usage,
 	return 0;
 }
 
+static uint64_t gt_visible_vram_size(const struct drm_xe_query_mem_usage *mem_usage,
+				     const struct drm_xe_query_gts *gts, int gt)
+{
+	int region_idx = ffs(native_region_for_gt(gts, gt)) - 1;
+
+	if (XE_IS_CLASS_VRAM(&mem_usage->regions[region_idx]))
+		return mem_usage->regions[region_idx].cpu_visible_size;
+
+	return 0;
+}
+
 static bool __mem_has_vram(struct drm_xe_query_mem_usage *mem_usage)
 {
 	for (int i = 0; i < mem_usage->num_regions; i++)
@@ -246,9 +257,14 @@ struct xe_device *xe_device_get(int fd)
 	xe_dev->hw_engines = xe_query_engines_new(fd, &xe_dev->number_hw_engines);
 	xe_dev->mem_usage = xe_query_mem_usage_new(fd);
 	xe_dev->vram_size = calloc(xe_dev->number_gt, sizeof(*xe_dev->vram_size));
-	for (int gt = 0; gt < xe_dev->number_gt; gt++)
+	xe_dev->visible_vram_size = calloc(xe_dev->number_gt, sizeof(*xe_dev->visible_vram_size));
+	for (int gt = 0; gt < xe_dev->number_gt; gt++) {
 		xe_dev->vram_size[gt] = gt_vram_size(xe_dev->mem_usage,
 						     xe_dev->gts, gt);
+		xe_dev->visible_vram_size[gt] =
+			gt_visible_vram_size(xe_dev->mem_usage,
+					     xe_dev->gts, gt);
+	}
 	xe_dev->default_alignment = __mem_default_alignment(xe_dev->mem_usage);
 	xe_dev->has_vram = __mem_has_vram(xe_dev->mem_usage);
 
@@ -383,6 +399,37 @@ uint64_t vram_memory(int fd, int gt)
 	return xe_has_vram(fd) ? native_region_for_gt(xe_dev->gts, gt) : 0;
 }
 
+static uint64_t __xe_visible_vram_size(int fd, int gt)
+{
+	struct xe_device *xe_dev;
+
+	xe_dev = find_in_cache(fd);
+	igt_assert(xe_dev);
+
+	return xe_dev->visible_vram_size[gt];
+}
+
+/**
+ * visible_vram_memory:
+ * @fd: xe device fd
+ * @gt: gt id
+ *
+ * Returns vram memory bitmask for xe device @fd and @gt id, with
+ * XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM also set, to ensure that CPU access is
+ * possible.
+ */
+uint64_t visible_vram_memory(int fd, int gt)
+{
+	/*
+	 * TODO: Keep it backwards compat for now. Fixup once the kernel side
+	 * has landed.
+	 */
+	if (__xe_visible_vram_size(fd, gt))
+		return vram_memory(fd, gt) | XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
+	else
+		return vram_memory(fd, gt); /* older kernel */
+}
+
 /**
  * vram_if_possible:
  * @fd: xe device fd
@@ -394,6 +441,32 @@ uint64_t vram_memory(int fd, int gt)
 uint64_t vram_if_possible(int fd, int gt)
 {
 	return vram_memory(fd, gt) ?: system_memory(fd);
+}
+
+/**
+ * visible_vram_if_possible:
+ * @fd: xe device fd
+ * @gt: gt id
+ *
+ * Returns vram memory bitmask for xe device @fd and @gt id or system memory if
+ * there's no vram memory available for @gt. Also attaches the
+ * XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM to ensure that CPU access is possible
+ * when using vram.
+ */
+uint64_t visible_vram_if_possible(int fd, int gt)
+{
+	uint64_t regions = all_memory_regions(fd);
+	uint64_t system_memory = regions & 0x1;
+	uint64_t vram = regions & (0x2 << gt);
+
+	/*
+	 * TODO: Keep it backwards compat for now. Fixup once the kernel side
+	 * has landed.
+	 */
+	if (__xe_visible_vram_size(fd, gt))
+		return vram ? vram | XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM : system_memory;
+	else
+		return vram ? vram : system_memory; /* older kernel */
 }
 
 /**
@@ -537,6 +610,28 @@ uint64_t xe_vram_size(int fd, int gt)
 }
 
 /**
+ * xe_visible_vram_size:
+ * @fd: xe device fd
+ * @gt: gt
+ *
+ * Returns size of visible vram of xe device @fd.
+ */
+uint64_t xe_visible_vram_size(int fd, int gt)
+{
+	uint64_t visible_size;
+
+	/*
+	 * TODO: Keep it backwards compat for now. Fixup once the kernel side
+	 * has landed.
+	 */
+	visible_size = __xe_visible_vram_size(fd, gt);
+	if (!visible_size) /* older kernel */
+		visible_size = xe_vram_size(fd, gt);
+
+	return visible_size;
+}
+
+/**
  * xe_get_default_alignment:
  * @fd: xe device fd
  *
@@ -551,6 +646,7 @@ xe_dev_FN(xe_get_default_alignment, default_alignment, uint32_t);
  * Returns number of virtual address bits used in xe device @fd.
  */
 xe_dev_FN(xe_va_bits, va_bits, uint32_t);
+
 
 /**
  * xe_dev_id:

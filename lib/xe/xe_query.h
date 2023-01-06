@@ -47,6 +47,9 @@ struct xe_device {
 	/** @vram_size: array of vram sizes for all gts */
 	uint64_t *vram_size;
 
+	/** @visible_vram_size: array of visible vram sizes for all gts */
+	uint64_t *visible_vram_size;
+
 	/** @default_alignment: safe alignment regardless region location */
 	uint32_t default_alignment;
 
@@ -80,7 +83,9 @@ unsigned int xe_number_gt(int fd);
 uint64_t all_memory_regions(int fd);
 uint64_t system_memory(int fd);
 uint64_t vram_memory(int fd, int gt);
+uint64_t visible_vram_memory(int fd, int gt);
 uint64_t vram_if_possible(int fd, int gt);
+uint64_t visible_vram_if_possible(int fd, int gt);
 struct drm_xe_engine_class_instance *xe_hw_engines(int fd);
 struct drm_xe_engine_class_instance *xe_hw_engine(int fd, int idx);
 struct drm_xe_query_mem_region *xe_mem_region(int fd, uint64_t region);
@@ -91,6 +96,7 @@ struct drm_xe_query_config *xe_config(int fd);
 unsigned int xe_number_hw_engines(int fd);
 bool xe_has_vram(int fd);
 uint64_t xe_vram_size(int fd, int gt);
+uint64_t xe_visible_vram_size(int fd, int gt);
 uint32_t xe_get_default_alignment(int fd);
 uint32_t xe_va_bits(int fd);
 uint16_t xe_dev_id(int fd);
