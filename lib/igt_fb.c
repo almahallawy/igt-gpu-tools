@@ -2842,9 +2842,12 @@ static void blitcopy(const struct igt_fb *dst_fb,
 	struct blt_block_copy_data_ext ext = {}, *pext = NULL;
 	uint32_t mem_region = HAS_FLATCCS(intel_get_drm_devid(src_fb->fd))
 			   ? REGION_LMEM(0) : REGION_SMEM;
+	/* To ignore CC plane */
+	uint32_t src_cc = src_fb->modifier == I915_FORMAT_MOD_4_TILED_DG2_RC_CCS_CC ? 1 : 0;
+	uint32_t dst_cc = dst_fb->modifier == I915_FORMAT_MOD_4_TILED_DG2_RC_CCS_CC ? 1 : 0;
 
 	igt_assert_eq(dst_fb->fd, src_fb->fd);
-	igt_assert_eq(dst_fb->num_planes, src_fb->num_planes);
+	igt_assert_eq(dst_fb->num_planes - dst_cc, src_fb->num_planes - src_cc);
 
 	src_tiling = igt_fb_mod_to_tiling(src_fb->modifier);
 	dst_tiling = igt_fb_mod_to_tiling(dst_fb->modifier);
@@ -2861,7 +2864,7 @@ static void blitcopy(const struct igt_fb *dst_fb,
 							  mem_region) == 0);
 	}
 
-	for (int i = 0; i < dst_fb->num_planes; i++) {
+	for (int i = 0; i < dst_fb->num_planes - dst_cc; i++) {
 		igt_assert_eq(dst_fb->plane_bpp[i], src_fb->plane_bpp[i]);
 		igt_assert_eq(dst_fb->plane_width[i], src_fb->plane_width[i]);
 		igt_assert_eq(dst_fb->plane_height[i], src_fb->plane_height[i]);
