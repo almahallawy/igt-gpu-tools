@@ -88,6 +88,9 @@ struct blt_copy_object {
 
 	/* mapping or null */
 	uint32_t *ptr;
+
+	/* enable to use multiplane framebuffers */
+	uint32_t plane_offset;
 };
 
 struct blt_copy_batch {

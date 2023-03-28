@@ -708,8 +708,10 @@ uint64_t emit_blt_block_copy(int fd,
 	igt_assert_f(blt, "block-copy requires data to do blit\n");
 
 	alignment = gem_detect_safe_alignment(fd);
-	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment);
-	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment);
+	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment)
+		     + blt->src.plane_offset;
+	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment)
+		     + blt->dst.plane_offset;
 	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
 
 	fill_data(&data, blt, src_offset, dst_offset, ext);
@@ -1179,8 +1181,10 @@ uint64_t emit_blt_fast_copy(int fd,
 	data.dw03.dst_x2 = blt->dst.x2;
 	data.dw03.dst_y2 = blt->dst.y2;
 
-	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment);
-	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment);
+	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment)
+		     + blt->src.plane_offset;
+	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment)
+		     + blt->dst.plane_offset;
 	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
 
 	data.dw04.dst_address_lo = dst_offset;
