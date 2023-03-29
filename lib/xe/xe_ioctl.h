@@ -64,6 +64,8 @@ void xe_vm_unbind_all_async(int fd, uint32_t vm, uint32_t engine,
 			    uint32_t bo, struct drm_xe_sync *sync,
 			    uint32_t num_syncs);
 void xe_vm_destroy(int fd, uint32_t vm);
+uint32_t __xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags,
+			      uint32_t *handle);
 uint32_t xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags);
 uint32_t xe_bo_create(int fd, int gt, uint32_t vm, uint64_t size);
 uint32_t xe_engine_create(int fd, uint32_t vm,

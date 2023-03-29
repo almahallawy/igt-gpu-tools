@@ -233,17 +233,31 @@ void xe_vm_destroy(int fd, uint32_t vm)
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_VM_DESTROY, &destroy), 0);
 }
 
-uint32_t xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags)
+uint32_t __xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags,
+			      uint32_t *handle)
 {
 	struct drm_xe_gem_create create = {
 		.vm_id = vm,
 		.size = size,
 		.flags = flags,
 	};
+	int err;
 
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_GEM_CREATE, &create), 0);
+	err = igt_ioctl(fd, DRM_IOCTL_XE_GEM_CREATE, &create);
+	if (err)
+		return err;
 
-	return create.handle;
+	*handle = create.handle;
+	return 0;
+}
+
+uint32_t xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags)
+{
+	uint32_t handle;
+
+	igt_assert_eq(__xe_bo_create_flags(fd, vm, size, flags, &handle), 0);
+
+	return handle;
 }
 
 uint32_t xe_bo_create(int fd, int gt, uint32_t vm, uint64_t size)
