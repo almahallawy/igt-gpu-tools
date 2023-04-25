@@ -159,6 +159,21 @@ static void run_link_training_config(data_t *data, igt_output_t *output)
 	}
 }
 
+static const drmModeModeInfo dp_safe_mode_640_480 = {
+	.name		= "640x480",
+	.vrefresh	= 60,
+	.clock		= 25200,
+	.hdisplay	= 640,
+	.hsync_start	= 656,
+	.hsync_end	= 752,
+	.htotal		= 800,
+	.vdisplay	= 480,
+	.vsync_start	= 490,
+	.vsync_end	= 492,
+	.vtotal		= 525,
+	.flags		= DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
+};
+
 static void test_link_training_configs(data_t *data)
 {
 	const drmModeModeInfo *orig_mode;
@@ -177,7 +192,12 @@ static void test_link_training_configs(data_t *data)
 		/* Init only if display supports link_settings */
 		test_init(data, output);
 
-		orig_mode = igt_output_get_mode(output);
+		/* run_link_training_config run test from <1, 1.62>
+		 * to highest link configuration. to make sure mode timing
+		 * be fitted into <1, 1.62> and higher configuration, use
+		 * dp safe mode 640x480@60hz
+		 */
+		orig_mode = &dp_safe_mode_640_480;
 		igt_assert(orig_mode);
 		igt_output_override_mode(output, orig_mode);
 
