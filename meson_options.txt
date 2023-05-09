@@ -44,6 +44,7 @@ option('tests',
 # drivers get upstreamed.
 option('xe_driver',
        type : 'feature',
+       value : 'disabled',
        description : 'Build tests for Xe driver (experimental)')
 
 option('libdrm_drivers',
