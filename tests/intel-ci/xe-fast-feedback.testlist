@@ -276,6 +276,11 @@ igt@kms_psr@primary_page_flip
 igt@kms_psr@cursor_plane_move
 igt@kms_psr@sprite_plane_onoff
 
+# All tests that do module unloading and reloading are executed last.
+# They will sometimes reveal issues of earlier tests leaving the
+# driver in a broken state that is not otherwise noticed in that test.
+igt@core_hotunplug@unbind-rebind
+
 # Run KUnit tests at the end
 igt@xe_live_ktest@bo
 igt@xe_live_ktest@dmabuf
