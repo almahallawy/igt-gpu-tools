@@ -53,7 +53,7 @@ void kms_dsc_exit_handler(int sig)
 	restore_force_dsc_en();
 }
 
-bool check_dsc_on_connector(int drmfd, igt_output_t *output)
+bool is_dsc_supported_by_sink(int drmfd, igt_output_t *output)
 {
 	if (!igt_is_dsc_supported_by_sink(drmfd, output->name)) {
 		igt_debug("DSC not supported on connector %s\n",

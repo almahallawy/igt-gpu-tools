@@ -228,7 +228,7 @@ static void test_dsc(data_t *data, enum dsc_test_type test_type, int bpc,
 		data->output = output;
 		data->pipe = pipe;
 
-		if (!check_dsc_on_connector(data->drm_fd, data->output))
+		if (!is_dsc_supported_by_sink(data->drm_fd, data->output))
 			continue;
 
 		if (!is_dsc_output_format_supported(data->drm_fd, data->disp_ver,

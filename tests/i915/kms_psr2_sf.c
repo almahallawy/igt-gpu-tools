@@ -934,7 +934,7 @@ igt_main
 				pipes[n_pipes] = data.pipe;
 				outputs[n_pipes] = data.output;
 
-				if (check_dsc_on_connector(data.drm_fd, data.output))
+				if (is_dsc_supported_by_sink(data.drm_fd, data.output))
 					coexist_features[n_pipes] |= FEATURE_DSC;
 
 				n_pipes++;
