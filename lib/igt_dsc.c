@@ -42,13 +42,13 @@ static int write_dsc_debugfs(int drmfd, char *connector_name, const char *file_n
 }
 
 /*
- * igt_is_dsc_supported:
+ * igt_is_dsc_supported_by_sink:
  * @drmfd: A drm file descriptor
  * @connector_name: Name of the libdrm connector we're going to use
  *
- * Returns: True if DSC is supported for the given connector, false otherwise.
+ * Returns: True if DSC is supported for the given connector/sink, false otherwise.
  */
-bool igt_is_dsc_supported(int drmfd, char *connector_name)
+bool igt_is_dsc_supported_by_sink(int drmfd, char *connector_name)
 {
 	return check_dsc_debugfs(drmfd, connector_name, "DSC_Sink_Support: yes");
 }
