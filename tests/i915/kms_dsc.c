@@ -287,7 +287,7 @@ igt_main_args("l", NULL, help_str, opt_handler, &data)
 		igt_install_exit_handler(kms_dsc_exit_handler);
 		igt_display_require(&data.display, data.drm_fd);
 		igt_display_require_output(&data.display);
-		igt_require(data.disp_ver >= 11);
+		igt_require(is_dsc_supported_by_source(data.drm_fd));
 	}
 
 	igt_describe("Tests basic display stream compression functionality if supported "

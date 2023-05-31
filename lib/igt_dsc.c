@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
+#include "igt_core.h"
 #include "igt_dsc.h"
 #include "igt_sysfs.h"
 
@@ -39,6 +40,27 @@ static int write_dsc_debugfs(int drmfd, char *connector_name, const char *file_n
 		return 0;
 
 	return ret;
+}
+
+/*
+ * igt_is_dsc_supported_by_source:
+ * @drmfd: A drm file descriptor
+ *
+ * Returns: True if DSC is supported by source, false otherwise.
+ */
+bool igt_is_dsc_supported_by_source(int drmfd)
+{
+	char buf[4096];
+	int dir, res;
+
+	dir = igt_debugfs_dir(drmfd);
+	igt_assert(dir >= 0);
+
+	res = igt_debugfs_simple_read(dir, "i915_capabilities",
+				      buf, sizeof(buf));
+	close(dir);
+
+	return res > 0 ? strstr(buf, "has_dsc: yes") : 0;
 }
 
 /*

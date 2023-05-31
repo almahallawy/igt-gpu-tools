@@ -53,6 +53,16 @@ void kms_dsc_exit_handler(int sig)
 	restore_force_dsc_en();
 }
 
+bool is_dsc_supported_by_source(int drmfd)
+{
+	if (!igt_is_dsc_supported_by_source(drmfd)) {
+		igt_debug("DSC not supported by source\n");
+		return false;
+	}
+
+	return true;
+}
+
 bool is_dsc_supported_by_sink(int drmfd, igt_output_t *output)
 {
 	if (!igt_is_dsc_supported_by_sink(drmfd, output->name)) {
