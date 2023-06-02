@@ -896,6 +896,40 @@ struct format_mod {
 	uint32_t format;
 };
 
+/*
+ * See if test can go use 64x64 plane size for testing. If driver is not
+ * reporting to be atomic, will not try to use 64x64 plane size.
+*/
+static void check_allowed_plane_size_64x64(data_t *data, igt_plane_t *plane,
+					   uint64_t *width, uint64_t *height,
+					   uint32_t format)
+{
+	struct igt_fb test_fb;
+	int ret;
+
+	if (!data->display.is_atomic) {
+		igt_debug("Not using 64x64 plane size on non-atomic platform\n");
+		return;
+	}
+
+	igt_create_fb(data->drm_fd, 64, 64, format, DRM_FORMAT_MOD_LINEAR, &test_fb);
+	igt_plane_set_fb(plane, &test_fb);
+
+	ret = igt_display_try_commit_atomic(&data->display,
+					    DRM_MODE_ATOMIC_TEST_ONLY |
+					    DRM_MODE_ATOMIC_ALLOW_MODESET,
+					    NULL);
+	if (!ret) {
+		*width = test_fb.width;
+		*height = test_fb.height;
+	} else {
+		igt_debug("Not using 64x64 plane size, atomic commit did not "
+			  "accept 64x64 plane size\n");
+	}
+
+	igt_remove_fb(data->drm_fd, &test_fb);
+}
+
 static bool test_format_plane(data_t *data, enum pipe pipe,
 			      igt_output_t *output, igt_plane_t *plane, igt_fb_t *primary_fb)
 {
@@ -944,28 +978,7 @@ static bool test_format_plane(data_t *data, enum pipe pipe,
 		 IGT_FORMAT_ARGS(ref.format), IGT_MODIFIER_ARGS(ref.modifier),
 		 kmstest_pipe_name(pipe), plane->index);
 
-	if (data->display.is_atomic) {
-		struct igt_fb test_fb;
-		int ret;
-
-		igt_create_fb(data->drm_fd, 64, 64, ref.format,
-			      DRM_FORMAT_MOD_LINEAR, &test_fb);
-
-		igt_plane_set_fb(plane, &test_fb);
-
-		ret = igt_display_try_commit_atomic(&data->display,
-						    DRM_MODE_ATOMIC_TEST_ONLY |
-						    DRM_MODE_ATOMIC_ALLOW_MODESET,
-						    NULL);
-		if (!ret) {
-			width = test_fb.width;
-			height = test_fb.height;
-		}
-
-		igt_plane_set_fb(plane, clear_fb);
-
-		igt_remove_fb(data->drm_fd, &test_fb);
-	}
+	check_allowed_plane_size_64x64(data, plane, &width, &height, ref.format);
 
 	capture_format_crcs_single(data, pipe, plane, ref.format, ref.modifier,
 				   width, height, IGT_COLOR_YCBCR_BT709,
