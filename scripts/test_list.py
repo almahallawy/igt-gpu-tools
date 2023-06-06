@@ -412,7 +412,7 @@ class TestList:
         # None of the filtering rules were applied
         return False
 
-    def expand_subtest(self, fname, test_name, test, allow_inherit):
+    def expand_subtest(self, fname, test_name, test, allow_inherit, with_lines = False, with_subtest_nr = False):
 
         """Expand subtest wildcards providing an array with subtests"""
 
@@ -426,6 +426,7 @@ class TestList:
                 continue
 
             num_vars = summary.count('%')
+            file_ln = self.doc[test]["subtest_line"][subtest]
 
             # Handle trivial case: no wildcards
             if num_vars == 0:
@@ -434,9 +435,7 @@ class TestList:
                 subtest_dict["Summary"] = summary
 
                 for k in sorted(self.doc[test]["subtest"][subtest].keys()):
-                    if k == 'Summary':
-                        continue
-                    if k == 'arg':
+                    if k in [ 'Summary', 'arg', 'subtest_line' ]:
                         continue
 
                     if not allow_inherit:
@@ -444,6 +443,12 @@ class TestList:
                             continue
 
                     subtest_dict[k] = self.doc[test]["subtest"][subtest][k]
+
+                if with_lines:
+                    subtest_dict["line"] = file_ln
+
+                if with_subtest_nr:
+                    subtest_dict["subtest_nr"] = subtest
 
                 subtest_array.append(subtest_dict)
 
@@ -499,9 +504,7 @@ class TestList:
                 subtest_dict["Summary"] = arg_summary
 
                 for field in sorted(self.doc[test]["subtest"][subtest].keys()):
-                    if field == 'Summary':
-                        continue
-                    if field == 'arg':
+                    if field in [ 'Summary', 'arg', 'subtest_line' ]:
                         continue
 
                     sub_field = self.doc[test]["subtest"][subtest][field]
@@ -513,6 +516,12 @@ class TestList:
                                 continue
 
                     subtest_dict[field] = sub_field
+
+                if with_lines:
+                    subtest_dict["line"] = file_ln
+
+                if with_subtest_nr:
+                    subtest_dict["subtest_nr"] = subtest
 
                 subtest_array.append(subtest_dict)
 
@@ -567,9 +576,7 @@ class TestList:
 
                 dic[summary] = {}
                 for field in sorted(subtest.keys()):
-                    if field == 'Summary':
-                        continue
-                    if field == 'arg':
+                    if field in [ 'Summary', 'arg', 'subtest_line' ]:
                         continue
                     dic[summary][field] = subtest[field]
 
@@ -635,9 +642,7 @@ class TestList:
                 print("")
 
                 for field in sorted(subtest.keys()):
-                    if field == 'Summary':
-                        continue
-                    if field == 'arg':
+                    if field in [ 'Summary', 'arg', 'subtest_line' ]:
                         continue
 
                     print(f":{field}:", subtest[field])
@@ -979,7 +984,7 @@ class TestList:
             current_test = ''
             subtest_number = 0
 
-            for file_ln,file_line in enumerate(handle):
+            for file_ln, file_line in enumerate(handle):
                 file_line = file_line.rstrip()
 
                 if re.match(r'^\s*\*$', file_line):
@@ -1021,6 +1026,7 @@ class TestList:
                         self.doc[current_test]["Summary"] = match.group(1)
                         self.doc[current_test]["File"] = fname
                         self.doc[current_test]["subtest"] = {}
+                        self.doc[current_test]["subtest_line"] = {}
 
                         if implemented_class:
                             self.doc[current_test]["Class"] = implemented_class
@@ -1057,6 +1063,7 @@ class TestList:
 
                     self.doc[current_test]["subtest"][current_subtest]["Summary"] = match.group(1)
                     self.doc[current_test]["subtest"][current_subtest]["Description"] = ''
+                    self.doc[current_test]["subtest_line"][current_subtest] = file_ln
 
                     if not arg_ref:
                         arg_ref = arg_number
