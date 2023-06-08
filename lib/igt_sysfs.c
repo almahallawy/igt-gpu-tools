@@ -115,10 +115,8 @@ const char *igt_sysfs_dir_id_to_name(int dir, enum i915_attr_id id)
 
 	if (igt_sysfs_has_attr(dir, i915_attr_name[RPS][id]))
 		return i915_attr_name[RPS][id];
-	if (igt_sysfs_has_attr(dir, i915_attr_name[GT][id]))
-		return i915_attr_name[GT][id];
 
-	igt_assert_f(0, "attr_id not found %d\n", id);
+	return i915_attr_name[GT][id];
 }
 
 /**
