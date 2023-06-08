@@ -147,9 +147,11 @@ static void sysfs_range(int dirfd, int gt)
 	 * The sysfs interface sets the global limits and overrides the
 	 * user's request. So we can to check that if the user requests
 	 * a range outside of the sysfs, the requests are only run at the
-	 * constriained sysfs range.
+	 * constrained sysfs range. With GuC SLPC this requires disabling
+	 * efficient freq.
 	 */
 
+	igt_pm_ignore_slpc_efficient_freq(i915, dirfd, true);
 	igt_require(get_sysfs_freq(dirfd, &sys_min, &sys_max));
 	igt_info("System min freq: %dMHz; max freq: %dMHz\n", sys_min, sys_max);
 
@@ -198,6 +200,8 @@ static void sysfs_range(int dirfd, int gt)
 static void __restore_sysfs_freq(int dirfd)
 {
 	char buf[256];
+
+	igt_pm_ignore_slpc_efficient_freq(i915, dirfd, false);
 
 	if (igt_sysfs_read(sysfs, "gt_RPn_freq_mhz", buf, sizeof(buf)) > 0)
 		igt_sysfs_rps_set(dirfd, RPS_MIN_FREQ_MHZ, buf);

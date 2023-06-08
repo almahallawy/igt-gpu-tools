@@ -88,5 +88,6 @@ bool i915_is_slpc_enabled_gt(int drm_fd, int gt);
 bool i915_is_slpc_enabled(int drm_fd);
 int igt_pm_get_runtime_suspended_time(struct pci_device *pci_dev);
 int igt_pm_get_runtime_usage(struct pci_device *pci_dev);
+void igt_pm_ignore_slpc_efficient_freq(int i915, int gtfd, bool val);
 
 #endif /* IGT_PM_H */

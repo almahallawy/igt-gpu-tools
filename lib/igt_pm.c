@@ -1400,3 +1400,20 @@ int igt_pm_get_runtime_usage(struct pci_device *pci_dev)
 
 	return usage;
 }
+
+/**
+ * igt_pm_ignore_slpc_efficient_freq
+ * @i915: open i915 drm file descriptor
+ * @gtfd: open gt sysfs fd
+ * @val: value to set
+ *
+ * Ignores/un-ignores SLPC efficient frequency
+ */
+void igt_pm_ignore_slpc_efficient_freq(int i915, int gtfd, bool val)
+{
+	if (!(gem_using_guc_submission(i915) && i915_is_slpc_enabled(i915)))
+		return;
+
+	igt_require(igt_sysfs_has_attr(gtfd, "slpc_ignore_eff_freq"));
+	igt_assert(igt_sysfs_set_u32(gtfd, "slpc_ignore_eff_freq", val));
+}
