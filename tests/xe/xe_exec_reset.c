@@ -50,7 +50,8 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
 
-	bo = xe_bo_create(fd, eci->gt_id, vm, bo_size);
+	bo = xe_bo_create_flags(fd, vm, bo_size,
+				visible_vram_if_possible(fd, eci->gt_id));
 	spin = xe_bo_map(fd, bo, bo_size);
 
 	engine = xe_engine_create(fd, vm, eci, 0);
@@ -187,7 +188,7 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
 
-	bo = xe_bo_create(fd, gt, vm, bo_size);
+	bo = xe_bo_create_flags(fd, vm, bo_size, visible_vram_if_possible(fd, gt));
 	data = xe_bo_map(fd, bo, bo_size);
 
 	for (i = 0; i < n_engines; i++) {
@@ -379,7 +380,8 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
 
-	bo = xe_bo_create(fd, eci->gt_id, vm, bo_size);
+	bo = xe_bo_create_flags(fd, vm, bo_size,
+				visible_vram_if_possible(fd, eci->gt_id));
 	data = xe_bo_map(fd, bo, bo_size);
 
 	for (i = 0; i < n_engines; i++) {
@@ -550,7 +552,8 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
 
-	bo = xe_bo_create(fd, eci->gt_id, vm, bo_size);
+	bo = xe_bo_create_flags(fd, vm, bo_size,
+				visible_vram_if_possible(fd, eci->gt_id));
 	data = xe_bo_map(fd, bo, bo_size);
 	memset(data, 0, bo_size);
 
@@ -682,7 +685,7 @@ static void submit_jobs(struct gt_thread_data *t)
 	uint32_t bo;
 	uint32_t *data;
 
-	bo = xe_bo_create(fd, 0, vm, bo_size);
+	bo = xe_bo_create_flags(fd, vm, bo_size, visible_vram_if_possible(fd, 0));
 	data = xe_bo_map(fd, bo, bo_size);
 	data[0] = MI_BATCH_BUFFER_END;
 

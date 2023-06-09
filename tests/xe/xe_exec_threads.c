@@ -106,7 +106,8 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 			igt_assert(data);
 		}
 	} else {
-		bo = xe_bo_create(fd, gt, vm, bo_size);
+		bo = xe_bo_create_flags(fd, vm, bo_size,
+					visible_vram_if_possible(fd, gt));
 		data = xe_bo_map(fd, bo, bo_size);
 	}
 	memset(data, 0, bo_size);
@@ -306,7 +307,8 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 			igt_assert(data);
 		}
 	} else {
-		bo = xe_bo_create(fd, eci->gt_id, 0, bo_size);
+		bo = xe_bo_create_flags(fd, 0, bo_size,
+					visible_vram_if_possible(fd, eci->gt_id));
 		data = xe_bo_map(fd, bo, bo_size);
 	}
 	memset(data, 0, bo_size);
@@ -516,7 +518,8 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 			igt_assert(data);
 		}
 	} else {
-		bo = xe_bo_create(fd, eci->gt_id, vm, bo_size);
+		bo = xe_bo_create_flags(fd, vm, bo_size,
+					visible_vram_if_possible(fd, eci->gt_id));
 		data = xe_bo_map(fd, bo, bo_size);
 	}
 	memset(data, 0, bo_size);

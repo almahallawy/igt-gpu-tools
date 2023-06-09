@@ -107,7 +107,7 @@ static void test_with_fd_dup(void)
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
 
-	handle = xe_bo_create(fd1, 0, 0, BO_SIZE);
+	handle = xe_bo_create_flags(fd1, 0, BO_SIZE, visible_vram_if_possible(fd1, 0));
 
 	dma_buf_fd1 = prime_handle_to_fd(fd1, handle);
 	gem_close(fd1, handle);
@@ -141,8 +141,8 @@ static void test_with_two_bos(void)
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
 
-	handle1 = xe_bo_create(fd1, 0, 0, BO_SIZE);
-	handle2 = xe_bo_create(fd1, 0, 0, BO_SIZE);
+	handle1 = xe_bo_create_flags(fd1, 0, BO_SIZE, visible_vram_if_possible(fd1, 0));
+	handle2 = xe_bo_create_flags(fd1, 0, BO_SIZE, visible_vram_if_possible(fd1, 0));
 
 	dma_buf_fd = prime_handle_to_fd(fd1, handle1);
 	handle_import = prime_fd_to_handle(fd2, dma_buf_fd);
@@ -178,7 +178,8 @@ static void test_with_one_bo_two_files(void)
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
 
-	handle_orig = xe_bo_create(fd1, 0, 0, BO_SIZE);
+	handle_orig = xe_bo_create_flags(fd1, 0, BO_SIZE,
+					 visible_vram_if_possible(fd1, 0));
 	dma_buf_fd1 = prime_handle_to_fd(fd1, handle_orig);
 
 	flink_name = gem_flink(fd1, handle_orig);
@@ -211,7 +212,7 @@ static void test_with_one_bo(void)
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
 
-	handle = xe_bo_create(fd1, 0, 0, BO_SIZE);
+	handle = xe_bo_create_flags(fd1, 0, BO_SIZE, visible_vram_if_possible(fd1, 0));
 
 	dma_buf_fd = prime_handle_to_fd(fd1, handle);
 	handle_import1 = prime_fd_to_handle(fd2, dma_buf_fd);
@@ -298,7 +299,8 @@ static void *thread_fn_reimport_vs_close(void *p)
 
 	fds[0] = drm_open_driver(DRIVER_XE);
 
-	handle = xe_bo_create(fds[0], 0, 0, BO_SIZE);
+	handle = xe_bo_create_flags(fds[0], 0, BO_SIZE,
+				    visible_vram_if_possible(fds[0], 0));
 
 	fds[1] = prime_handle_to_fd(fds[0], handle);
 	pthread_barrier_init(&g_barrier, NULL, num_threads);
@@ -340,7 +342,8 @@ static void *thread_fn_export_vs_close(void *p)
 
 	igt_until_timeout(g_time_out) {
 		/* We want to race gem close against prime export on handle one.*/
-		handle = xe_bo_create(fd, 0, 0, 4096);
+		handle = xe_bo_create_flags(fd, 0, 4096,
+					    visible_vram_if_possible(fd, 0));
 		if (handle != 1)
 			gem_close(fd, handle);
 
@@ -438,7 +441,8 @@ static void test_llseek_size(void)
 	for (i = 0; i < 10; i++) {
 		int bufsz = xe_get_default_alignment(fd) << i;
 
-		handle = xe_bo_create(fd, 0, 0, bufsz);
+		handle = xe_bo_create_flags(fd, 0, bufsz,
+					    visible_vram_if_possible(fd, 0));
 		dma_buf_fd = prime_handle_to_fd(fd, handle);
 
 		gem_close(fd, handle);
@@ -467,7 +471,8 @@ static void test_llseek_bad(void)
 
 	fd = drm_open_driver(DRIVER_XE);
 
-	handle = xe_bo_create(fd, 0, 0, BO_SIZE);
+	handle = xe_bo_create_flags(fd, 0, BO_SIZE,
+				    visible_vram_if_possible(fd, 0));
 	dma_buf_fd = prime_handle_to_fd(fd, handle);
 
 	gem_close(fd, handle);

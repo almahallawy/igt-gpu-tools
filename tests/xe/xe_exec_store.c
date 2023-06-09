@@ -82,7 +82,8 @@ static void store(int fd)
 			xe_get_default_alignment(fd));
 
 	hw_engine = xe_hw_engine(fd, 1);
-	bo = xe_bo_create(fd, hw_engine->gt_id, vm, bo_size);
+	bo = xe_bo_create_flags(fd, vm, bo_size,
+				visible_vram_if_possible(fd, hw_engine->gt_id));
 
 	xe_vm_bind_async(fd, vm, hw_engine->gt_id, bo, 0, addr, bo_size, &sync, 1);
 	data = xe_bo_map(fd, bo, bo_size);
@@ -138,7 +139,8 @@ static void store_all(int fd, int gt, int class)
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
 
-	bo = xe_bo_create(fd, 0, vm, bo_size);
+	bo = xe_bo_create_flags(fd, vm, bo_size,
+				visible_vram_if_possible(fd, 0));
 	data = xe_bo_map(fd, bo, bo_size);
 
 	xe_for_each_hw_engine(fd, hwe) {

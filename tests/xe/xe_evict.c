@@ -97,15 +97,17 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
                                 i < n_execs / 8 ? 0 : vm;
 
 			if (flags & MULTI_VM) {
-				__bo = bo[i] = xe_bo_create(fd, eci->gt_id, 0,
-							    bo_size);
+				__bo = bo[i] = xe_bo_create_flags(fd, 0,
+								  bo_size,
+								  visible_vram_memory(fd, eci->gt_id));
 			} else if (flags & THREADED) {
-				__bo = bo[i] = xe_bo_create(fd, eci->gt_id, vm,
-							    bo_size);
+				__bo = bo[i] = xe_bo_create_flags(fd, vm,
+								  bo_size,
+								  visible_vram_memory(fd, eci->gt_id));
 			} else {
 				__bo = bo[i] = xe_bo_create_flags(fd, _vm,
 								  bo_size,
-								  vram_memory(fd, eci->gt_id) |
+								  visible_vram_memory(fd, eci->gt_id) |
 								  system_memory(fd));
 			}
 		} else {
@@ -278,15 +280,17 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
                                 i < n_execs / 8 ? 0 : vm;
 
 			if (flags & MULTI_VM) {
-				__bo = bo[i] = xe_bo_create(fd, eci->gt_id,
-							    0, bo_size);
+				__bo = bo[i] = xe_bo_create_flags(fd, 0,
+								  bo_size,
+								  visible_vram_memory(fd, eci->gt_id));
 			} else if (flags & THREADED) {
-				__bo = bo[i] = xe_bo_create(fd, eci->gt_id,
-							    vm, bo_size);
+				__bo = bo[i] = xe_bo_create_flags(fd, vm,
+								  bo_size,
+								  visible_vram_memory(fd, eci->gt_id));
 			} else {
 				__bo = bo[i] = xe_bo_create_flags(fd, _vm,
 								  bo_size,
-								  vram_memory(fd, eci->gt_id) |
+								  visible_vram_memory(fd, eci->gt_id) |
 								  system_memory(fd));
 			}
 		} else {
@@ -449,9 +453,15 @@ threads(int fd, struct drm_xe_engine_class_instance *eci,
 		pthread_join(threads_data[i].thread, NULL);
 }
 
+#define SZ_256M 0x10000000
+#define SZ_1G   0x40000000
+
 static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
 {
-	return (ALIGN(vram_size, 0x40000000)  * mul) / div;
+	if (vram_size >= SZ_1G)
+		return (ALIGN(vram_size, SZ_1G)  * mul) / div;
+	else
+		return (ALIGN(vram_size, SZ_256M)  * mul) / div; /* small-bar */
 }
 
 /**
@@ -664,7 +674,7 @@ igt_main
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
 		igt_require(xe_has_vram(fd));
-		vram_size = xe_vram_size(fd, 0);
+		vram_size = xe_visible_vram_size(fd, 0);
 		igt_assert(vram_size);
 
 		xe_for_each_hw_engine(fd, hwe)

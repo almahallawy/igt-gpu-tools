@@ -135,15 +135,14 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		}
 		memset(data, 0, bo_size);
 	} else {
-		if (flags & DEFER_ALLOC) {
-			bo = xe_bo_create_flags(fd, n_vm == 1 ? vm[0] : 0,
-						bo_size,
-						vram_if_possible(fd, eci->gt_id) |
-						XE_GEM_CREATE_FLAG_DEFER_BACKING);
-		} else {
-			bo = xe_bo_create(fd, eci->gt_id, n_vm == 1 ? vm[0] : 0,
-					  bo_size);
-		}
+		uint32_t bo_flags;
+
+		bo_flags = visible_vram_if_possible(fd, eci->gt_id);
+		if (flags & DEFER_ALLOC)
+			bo_flags |= XE_GEM_CREATE_FLAG_DEFER_BACKING;
+
+		bo = xe_bo_create_flags(fd, n_vm == 1 ? vm[0] : 0,
+					bo_size, bo_flags);
 		if (!(flags & DEFER_BIND))
 			data = xe_bo_map(fd, bo, bo_size);
 	}

@@ -65,7 +65,8 @@ static void exec_basic(int fd, struct drm_xe_engine_class_instance *eci,
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
 
-	bo = xe_bo_create(fd, eci->gt_id, vm, bo_size);
+	bo = xe_bo_create_flags(fd, vm, bo_size,
+				visible_vram_if_possible(fd, eci->gt_id));
 	data = xe_bo_map(fd, bo, bo_size);
 
 	for (i = 0; i < n_engines; i++) {

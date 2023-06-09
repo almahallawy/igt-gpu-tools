@@ -63,7 +63,8 @@ static void test_bad_flags(int fd)
 {
 	uint64_t size = xe_get_default_alignment(fd);
 	struct drm_xe_gem_mmap_offset mmo = {
-		.handle = xe_bo_create(fd, 0, 0, size),
+		.handle = xe_bo_create_flags(fd, 0, size,
+					     visible_vram_if_possible(fd, 0)),
 		.flags = -1u,
 	};
 
@@ -81,7 +82,8 @@ static void test_bad_extensions(int fd)
 	uint64_t size = xe_get_default_alignment(fd);
 	struct xe_user_extension ext;
 	struct drm_xe_gem_mmap_offset mmo = {
-		.handle = xe_bo_create(fd, 0, 0, size),
+		.handle = xe_bo_create_flags(fd, 0, size,
+					     visible_vram_if_possible(fd, 0)),
 	};
 
 	mmo.extensions = to_user_pointer(&ext);
@@ -100,7 +102,8 @@ static void test_bad_object(int fd)
 {
 	uint64_t size = xe_get_default_alignment(fd);
 	struct drm_xe_gem_mmap_offset mmo = {
-		.handle = xe_bo_create(fd, 0, 0, size),
+		.handle = xe_bo_create_flags(fd, 0, size,
+					     visible_vram_if_possible(fd, 0)),
 	};
 
 	mmo.handle = 0xdeadbeef;
@@ -118,10 +121,10 @@ igt_main
 		test_mmap(fd, system_memory(fd));
 
 	igt_subtest("vram")
-		test_mmap(fd, vram_memory(fd, 0));
+		test_mmap(fd, visible_vram_memory(fd, 0));
 
 	igt_subtest("vram-system")
-		test_mmap(fd, vram_memory(fd, 0) | system_memory(fd));
+		test_mmap(fd, visible_vram_memory(fd, 0) | system_memory(fd));
 
 	igt_subtest("bad-flags")
 		test_bad_flags(fd);
