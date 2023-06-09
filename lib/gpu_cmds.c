@@ -972,7 +972,7 @@ xehp_emit_compute_walk(struct intel_bb *ibb,
 		       struct xehp_interface_descriptor_data *pidd,
 		       uint8_t color)
 {
-	uint32_t x_dim, y_dim;
+	uint32_t x_dim, y_dim, mask;
 
 	/*
 	 * Simply do SIMD16 based dispatch, so every thread uses
@@ -988,6 +988,12 @@ xehp_emit_compute_walk(struct intel_bb *ibb,
 	x_dim = (x + width + 15) / 16;
 	y_dim = y + height;
 
+	mask = (x + width) & 15;
+	if (mask == 0)
+		mask = (1 << 16) - 1;
+	else
+		mask = (1 << mask) - 1;
+
 	intel_bb_out(ibb, XEHP_COMPUTE_WALKER | 0x25);
 
 	intel_bb_out(ibb, 0); /* debug object */		//dw1
@@ -999,7 +1005,7 @@ xehp_emit_compute_walk(struct intel_bb *ibb,
 	intel_bb_out(ibb, 1 << 30 | 1 << 25 | 1 << 17);		//dw4
 
 	/* Execution mask */
-	intel_bb_out(ibb, 0xffffffff);				//dw5
+	intel_bb_out(ibb, mask);				//dw5
 
 	/* x/y/z max */
 	intel_bb_out(ibb, (x_dim << 20) | (y_dim << 10) | 1);	//dw6
