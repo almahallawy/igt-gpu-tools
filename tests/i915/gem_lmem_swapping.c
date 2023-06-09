@@ -23,7 +23,7 @@
 #include <sys/wait.h>
 #include "drm.h"
 #include "i915/i915_blt.h"
-#include "i915/intel_mocs.h"
+#include "intel_mocs.h"
 /**
  * TEST: gem lmem swapping
  * Description: Exercise local memory swapping.

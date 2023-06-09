@@ -4,7 +4,6 @@
  */
 
 #include "igt.h"
-#include "i915/gem.h"
 #include "intel_mocs.h"
 
 #define DG1_MOCS_UC_IDX				1
@@ -18,12 +17,12 @@
 #define XY_BLOCK_COPY_BLT_MOCS_SHIFT		21
 #define XY_CTRL_SURF_COPY_BLT_MOCS_SHIFT	25
 
-struct drm_i915_mocs_index {
+struct drm_intel_mocs_index {
 	uint8_t uc_index;
 	uint8_t wb_index;
 };
 
-static void get_mocs_index(int fd, struct drm_i915_mocs_index *mocs)
+static void get_mocs_index(int fd, struct drm_intel_mocs_index *mocs)
 {
 	uint16_t devid = intel_get_drm_devid(fd);
 
@@ -58,7 +57,7 @@ static void get_mocs_index(int fd, struct drm_i915_mocs_index *mocs)
 
 uint8_t intel_get_wb_mocs(int fd)
 {
-	struct drm_i915_mocs_index mocs;
+	struct drm_intel_mocs_index mocs;
 
 	get_mocs_index(fd, &mocs);
 	return mocs.wb_index << 1;
@@ -66,7 +65,7 @@ uint8_t intel_get_wb_mocs(int fd)
 
 uint8_t intel_get_uc_mocs(int fd)
 {
-	struct drm_i915_mocs_index mocs;
+	struct drm_intel_mocs_index mocs;
 
 	get_mocs_index(fd, &mocs);
 	return mocs.uc_index << 1;
