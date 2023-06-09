@@ -138,6 +138,7 @@ xehp_emit_state_base_address(struct intel_bb *ibb);
 
 void
 xehp_emit_compute_walk(struct intel_bb *ibb,
+		       unsigned int x, unsigned int y,
 		       unsigned int width, unsigned int height,
 		       struct xehp_interface_descriptor_data *pidd,
 		       uint8_t color);

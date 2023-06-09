@@ -649,10 +649,10 @@ gen7_emit_gpgpu_walk(struct intel_bb *ibb,
 	 * Then thread group X = width / 16 (aligned to 16)
 	 * thread group Y = height;
 	 */
-	x_dim = (width + 15) / 16;
-	y_dim = height;
+	x_dim = (x + width + 15) / 16;
+	y_dim = y + height;
 
-	tmp = width & 15;
+	tmp = (x + width) & 15;
 	if (tmp == 0)
 		right_mask = (1 << 16) - 1;
 	else
@@ -670,11 +670,11 @@ gen7_emit_gpgpu_walk(struct intel_bb *ibb,
 		  0); /* width:1 */
 
 	/* thread group X */
-	intel_bb_out(ibb, 0);
+	intel_bb_out(ibb, x / 16);
 	intel_bb_out(ibb, x_dim);
 
 	/* thread group Y */
-	intel_bb_out(ibb, 0);
+	intel_bb_out(ibb, y);
 	intel_bb_out(ibb, y_dim);
 
 	/* thread group Z */
@@ -706,10 +706,10 @@ gen8_emit_gpgpu_walk(struct intel_bb *ibb,
 	 * Then thread group X = width / 16 (aligned to 16)
 	 * thread group Y = height;
 	 */
-	x_dim = (width + 15) / 16;
-	y_dim = height;
+	x_dim = (x + width + 15) / 16;
+	y_dim = y + height;
 
-	tmp = width & 15;
+	tmp = (x + width) & 15;
 	if (tmp == 0)
 		right_mask = (1 << 16) - 1;
 	else
@@ -728,12 +728,12 @@ gen8_emit_gpgpu_walk(struct intel_bb *ibb,
 		     0); /* width:1 */
 
 	/* thread group X */
-	intel_bb_out(ibb, 0);
+	intel_bb_out(ibb, x / 16);
 	intel_bb_out(ibb, 0);
 	intel_bb_out(ibb, x_dim);
 
 	/* thread group Y */
-	intel_bb_out(ibb, 0);
+	intel_bb_out(ibb, y);
 	intel_bb_out(ibb, 0);
 	intel_bb_out(ibb, y_dim);
 
@@ -967,6 +967,7 @@ xehp_emit_state_base_address(struct intel_bb *ibb)
 
 void
 xehp_emit_compute_walk(struct intel_bb *ibb,
+		       unsigned int x, unsigned int y,
 		       unsigned int width, unsigned int height,
 		       struct xehp_interface_descriptor_data *pidd,
 		       uint8_t color)
@@ -984,8 +985,8 @@ xehp_emit_compute_walk(struct intel_bb *ibb,
 	 * Then thread group X = width / 16 (aligned to 16)
 	 * thread group Y = height;
 	 */
-	x_dim = (width + 15) / 16;
-	y_dim = height;
+	x_dim = (x + width + 15) / 16;
+	y_dim = y + height;
 
 	intel_bb_out(ibb, XEHP_COMPUTE_WALKER | 0x25);
 
@@ -1013,8 +1014,8 @@ xehp_emit_compute_walk(struct intel_bb *ibb,
 	intel_bb_out(ibb, 1);					//dw9
 
 	/* group id x/y/z */
-	intel_bb_out(ibb, 0);					//dw10
-	intel_bb_out(ibb, 0);					//dw11
+	intel_bb_out(ibb, x / 16);				//dw10
+	intel_bb_out(ibb, y);					//dw11
 	intel_bb_out(ibb, 0);					//dw12
 
 	/* partition id / partition size */

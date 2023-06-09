@@ -315,8 +315,6 @@ __xehp_gpgpu_fillfunc(int i915,
 {
 	struct intel_bb *ibb;
 	struct xehp_interface_descriptor_data idd;
-	(void) x;
-	(void) y;
 
 	ibb = intel_bb_create(i915, PAGE_SIZE);
 	intel_bb_add_intel_buf(ibb, buf, true);
@@ -335,7 +333,7 @@ __xehp_gpgpu_fillfunc(int i915,
 	xehp_emit_state_compute_mode(ibb);
 	xehp_emit_state_binding_table_pool_alloc(ibb);
 	xehp_emit_cfe_state(ibb, THREADS);
-	xehp_emit_compute_walk(ibb, width, height, &idd, color);
+	xehp_emit_compute_walk(ibb, x, y, width, height, &idd, color);
 
 	intel_bb_out(ibb, MI_BATCH_BUFFER_END);
 	intel_bb_ptr_align(ibb, 32);
