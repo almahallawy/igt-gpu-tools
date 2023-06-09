@@ -837,6 +837,7 @@ static void __intel_buf_init(struct buf_ops *bops,
 	buf->bops = bops;
 	buf->addr.offset = INTEL_BUF_INVALID_ADDRESS;
 	IGT_INIT_LIST_HEAD(&buf->link);
+	buf->mocs = INTEL_BUF_MOCS_DEFAULT;
 
 	if (compression) {
 		igt_require(bops->intel_gen >= 9);

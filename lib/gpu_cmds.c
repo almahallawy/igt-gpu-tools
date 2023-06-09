@@ -23,6 +23,7 @@
  */
 
 #include "gpu_cmds.h"
+#include "intel_mocs.h"
 
 uint32_t
 gen7_fill_curbe_buffer_data(struct intel_bb *ibb, uint8_t color)
@@ -135,6 +136,7 @@ gen8_fill_surface_state(struct intel_bb *ibb,
 	struct gen8_surface_state *ss;
 	uint32_t write_domain, read_domain, offset;
 	uint64_t address;
+	enum intel_buf_mocs mocs = intel_buf_get_mocs(buf);
 
 	if (is_dst) {
 		write_domain = read_domain = I915_GEM_DOMAIN_RENDER;
@@ -153,6 +155,11 @@ gen8_fill_surface_state(struct intel_bb *ibb,
 	ss->ss0.render_cache_read_write = 1;
 	ss->ss0.vertical_alignment = 1; /* align 4 */
 	ss->ss0.horizontal_alignment = 1; /* align 4 */
+
+	if (mocs == INTEL_BUF_MOCS_UC)
+		ss->ss1.memory_object_control = intel_get_uc_mocs(ibb->fd);
+	else if (mocs == INTEL_BUF_MOCS_WB)
+		ss->ss1.memory_object_control = intel_get_wb_mocs(ibb->fd);
 
 	if (buf->tiling == I915_TILING_X)
 		ss->ss0.tiled_mode = 2;
@@ -190,6 +197,7 @@ gen11_fill_surface_state(struct intel_bb *ibb,
 	struct gen8_surface_state *ss;
 	uint32_t write_domain, read_domain, offset;
 	uint64_t address;
+	enum intel_buf_mocs mocs = intel_buf_get_mocs(buf);
 
 	if (is_dst) {
 		write_domain = read_domain = I915_GEM_DOMAIN_RENDER;
@@ -208,6 +216,11 @@ gen11_fill_surface_state(struct intel_bb *ibb,
 	ss->ss0.render_cache_read_write = 1;
 	ss->ss0.vertical_alignment = vertical_alignment; /* align 4 */
 	ss->ss0.horizontal_alignment = horizontal_alignment; /* align 4 */
+
+	if (mocs == INTEL_BUF_MOCS_UC)
+		ss->ss1.memory_object_control = intel_get_uc_mocs(ibb->fd);
+	else if (mocs == INTEL_BUF_MOCS_WB)
+		ss->ss1.memory_object_control = intel_get_wb_mocs(ibb->fd);
 
 	if (buf->tiling == I915_TILING_X)
 		ss->ss0.tiled_mode = 2;
@@ -817,6 +830,7 @@ xehp_fill_surface_state(struct intel_bb *ibb,
 	struct xehp_surface_state *ss;
 	uint32_t write_domain, read_domain, offset;
 	uint64_t address;
+	enum intel_buf_mocs mocs = intel_buf_get_mocs(buf);
 
 	if (is_dst) {
 		write_domain = read_domain = I915_GEM_DOMAIN_RENDER;
@@ -835,6 +849,11 @@ xehp_fill_surface_state(struct intel_bb *ibb,
 	ss->ss0.render_cache_read_write = 1;
 	ss->ss0.vertical_alignment = 1; /* align 4 */
 	ss->ss0.horizontal_alignment = 1; /* align 4 */
+
+	if (mocs == INTEL_BUF_MOCS_UC)
+		ss->ss1.memory_object_control = intel_get_uc_mocs(ibb->fd);
+	else if (mocs == INTEL_BUF_MOCS_WB)
+		ss->ss1.memory_object_control = intel_get_wb_mocs(ibb->fd);
 
 	if (buf->tiling == I915_TILING_X)
 		ss->ss0.tiled_mode = 2;

@@ -12,6 +12,12 @@ struct buf_ops;
 #define INTEL_BUF_NAME_MAXSIZE 32
 #define INVALID_ADDR(x) ((x) == INTEL_BUF_INVALID_ADDRESS)
 
+enum intel_buf_mocs {
+	INTEL_BUF_MOCS_DEFAULT,
+	INTEL_BUF_MOCS_UC,
+	INTEL_BUF_MOCS_WB,
+};
+
 struct intel_buf {
 	struct buf_ops *bops;
 
@@ -23,6 +29,7 @@ struct intel_buf {
 	uint32_t compression;
 	uint32_t swizzle_mode;
 	uint32_t yuv_semiplanar_bpp;
+	enum intel_buf_mocs mocs;
 	bool format_is_yuv;
 	bool format_is_yuv_semiplanar;
 	struct {
@@ -211,5 +218,18 @@ const char *intel_buf_set_name(struct intel_buf *buf, const char *name);
 
 void intel_buf_write_to_png(struct intel_buf *buf, const char *filename);
 void intel_buf_write_aux_to_png(struct intel_buf *buf, const char *filename);
+
+static inline enum intel_buf_mocs intel_buf_get_mocs(const struct intel_buf *buf)
+{
+	igt_assert(buf);
+	return buf->mocs;
+}
+
+static inline void intel_buf_set_mocs(struct intel_buf *buf,
+				      enum intel_buf_mocs mocs)
+{
+	igt_assert(buf);
+	buf->mocs = mocs;
+}
 
 #endif
