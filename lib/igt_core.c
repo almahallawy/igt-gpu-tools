@@ -2205,6 +2205,9 @@ void __igt_abort(const char *domain, const char *file, const int line,
 
 	igt_is_aborting = true;
 
+	igt_kmsg(KMSG_ERR "%s[%d]: Abort in function %s, file %s:%i, %s\n",
+		 command_str, getpid(), func, file, line, expression);
+
 	igt_log(domain, IGT_LOG_CRITICAL,
 		"Test abort in function %s, file %s:%i:\n", func, file,
 		line);
