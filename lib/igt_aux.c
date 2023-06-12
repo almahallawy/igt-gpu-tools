@@ -93,7 +93,7 @@
  * fit into any other topic.
  */
 
-static struct __igt_sigiter_global {
+static __thread struct __igt_sigiter_global {
 	pid_t tid;
 	timer_t timer;
 	struct timespec offset;

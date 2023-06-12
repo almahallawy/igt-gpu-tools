@@ -48,7 +48,7 @@
  * This is a wrapper around drmIoctl(), which can be augmented with special code
  * blocks like #igt_while_interruptible.
  */
-extern int (*igt_ioctl)(int fd, unsigned long request, void *arg);
+extern __thread int (*igt_ioctl)(int fd, unsigned long request, void *arg);
 
 /* ioctl_wrappers.c:
  *

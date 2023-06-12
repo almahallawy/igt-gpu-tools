@@ -89,7 +89,7 @@
  * distinguish them.
  */
 
-int (*igt_ioctl)(int fd, unsigned long request, void *arg) = drmIoctl;
+__thread int (*igt_ioctl)(int fd, unsigned long request, void *arg) = drmIoctl;
 
 
 static int
