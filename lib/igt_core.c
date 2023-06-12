@@ -1585,6 +1585,11 @@ __noreturn static void exit_subtest(const char *result)
 	struct timespec *thentime = in_dynamic_subtest ? &dynamic_subtest_time : &subtest_time;
 	jmp_buf *jmptarget = in_dynamic_subtest ? &igt_dynamic_jmpbuf : &igt_subtest_jmpbuf;
 
+	if (!igt_thread_is_main()) {
+		igt_thread_fail();
+		pthread_exit(NULL);
+	}
+
 	igt_gettime(&now);
 
 	if (test_multi_fork_child)
