@@ -1594,6 +1594,9 @@ __noreturn static void exit_subtest(const char *result)
 				*subtest_name,
 				result,
 				igt_time_elapsed(thentime, &now));
+	igt_kmsg(KMSG_INFO "%s: finished subtest %s, %s\n",
+		 command_str, *subtest_name, result);
+
 	igt_terminate_spins();
 
 	/* If the subtest aborted, it may have left children behind */
