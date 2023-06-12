@@ -88,6 +88,103 @@ static void create_invalid_size(int fd)
 	xe_vm_destroy(fd, vm);
 }
 
+enum engine_destroy {
+	NOLEAK,
+	LEAK
+};
+
+static uint32_t __xe_engine_create(int fd, uint32_t vm,
+				   struct drm_xe_engine_class_instance *instance,
+				   uint64_t ext,
+				   uint32_t *enginep)
+{
+	struct drm_xe_engine_create create = {
+		.extensions = ext,
+		.vm_id = vm,
+		.width = 1,
+		.num_placements = 1,
+		.instances = to_user_pointer(instance),
+	};
+	int err = 0;
+
+	if (igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE, &create) == 0) {
+		*enginep = create.engine_id;
+	} else {
+		igt_warn("Can't create engine, errno: %d\n", errno);
+		err = -errno;
+		igt_assume(err);
+	}
+	errno = 0;
+
+	return err;
+}
+
+#define MAXENGINES 2048
+#define MAXTIME 2
+
+/**
+ * SUBTEST: create-engines-%s
+ * Description: Check process ability of multiple engines creation
+ * Run type: FULL
+ *
+ * arg[1]:
+ *
+ * @noleak:				destroy engines in the code
+ * @leak:				destroy engines in close() path
+ */
+static void create_engines(int fd, enum engine_destroy ed)
+{
+	struct timespec tv = { };
+	uint32_t num_engines, engines_per_process, vm;
+	int nproc = sysconf(_SC_NPROCESSORS_ONLN), seconds;
+
+	fd = drm_reopen_driver(fd);
+	num_engines = xe_number_hw_engines(fd);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+
+	engines_per_process = max_t(uint32_t, 1, MAXENGINES / nproc);
+	igt_debug("nproc: %u, engines per process: %u\n", nproc, engines_per_process);
+
+	igt_nsec_elapsed(&tv);
+
+	igt_fork(n, nproc) {
+		struct drm_xe_engine_class_instance *hwe;
+		uint32_t engine, engines[engines_per_process];
+		int idx, err, i;
+
+		srandom(n);
+
+		for (i = 0; i < engines_per_process; i++) {
+			idx = rand() % num_engines;
+			hwe = xe_hw_engine(fd, idx);
+			err = __xe_engine_create(fd, vm, hwe, 0, &engine);
+			igt_debug("[%2d] Create engine: err=%d, engine=%u [idx = %d]\n",
+				  n, err, engine, i);
+			if (err)
+				break;
+
+			if (ed == NOLEAK)
+				engines[i] = engine;
+		}
+
+		if (ed == NOLEAK) {
+			while (--i >= 0) {
+				igt_debug("[%2d] Destroy engine: %u\n", n, engines[i]);
+				xe_engine_destroy(fd, engines[i]);
+			}
+		}
+	}
+	igt_waitchildren();
+
+	xe_vm_destroy(fd, vm);
+	close(fd);
+
+	seconds = igt_seconds_elapsed(&tv);
+	igt_assert_f(seconds < MAXTIME,
+		     "Creating %d engines tooks too long: %d [limit: %d]\n",
+		     MAXENGINES, seconds, MAXTIME);
+}
+
 /**
  * SUBTEST: create-massive-size
  * Description: Verifies xe bo create returns expected error code on massive
@@ -120,6 +217,12 @@ igt_main
 	igt_subtest("create-invalid-size") {
 		create_invalid_size(xe);
 	}
+
+	igt_subtest("create-engines-noleak")
+		create_engines(xe, NOLEAK);
+
+	igt_subtest("create-engines-leak")
+		create_engines(xe, LEAK);
 
 	igt_subtest("create-massive-size") {
 		create_massive_size(xe);
