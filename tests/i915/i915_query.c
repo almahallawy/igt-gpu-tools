@@ -1249,6 +1249,10 @@ static void test_query_geometry_subslices(int fd)
 		item.flags =  e->class | (e->instance << 16);
 		i915_query_items(fd, &item, 1);
 
+		igt_debug("%s is render engine: %s\n",
+			  e->name,
+			  e->class == I915_ENGINE_CLASS_RENDER ? "yes" : "no");
+
 		/* Non-render engines should return -EINVAL */
 		if (e->class != I915_ENGINE_CLASS_RENDER) {
 			igt_assert_eq(item.length, -EINVAL);
@@ -1261,6 +1265,14 @@ static void test_query_geometry_subslices(int fd)
 		igt_assert(topo_info);
 		item.data_ptr = to_user_pointer(topo_info);
 		i915_query_items(fd, &item, 1);
+
+		igt_debug("  max_slices=%hu max_subslices=%hu max_eus_per_subslice=%hu\n",
+			  topo_info->max_slices, topo_info->max_subslices,
+			  topo_info->max_eus_per_subslice);
+		igt_debug("  subslice_offset=%hu subslice_stride=%hu\n",
+			  topo_info->subslice_offset, topo_info->subslice_stride);
+		igt_debug("  eu_offset=%hu eu_stride=%hu\n",
+			  topo_info->eu_offset, topo_info->eu_stride);
 
 		igt_assert(topo_info->max_subslices > 0);
 		igt_assert(topo_info->max_eus_per_subslice > 0);
