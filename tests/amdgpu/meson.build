@@ -37,6 +37,11 @@ if libdrm_amdgpu.found()
 			  'amd_mall',
 			  'amd_odm',
 			]
+	if libdrm_amdgpu.version().version_compare('> 2.4.97')
+		amdgpu_progs +=[ 'amd_syncobj', ]
+	else
+		warning('libdrm <= 2.4.97 found, amd_syncobj test not applicable')
+	endif
 	amdgpu_deps += libdrm_amdgpu
 endif
 
