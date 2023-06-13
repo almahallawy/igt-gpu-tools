@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "surfaceformat.h"
+#include "gen4_render.h"
 
 #define GEN7_FLOATING_POINT_IEEE_754		0
 #define GEN7_FLOATING_POINT_NON_IEEE_754	1
@@ -13,7 +14,6 @@
 						((Subopcode) << 16))
 
 #define GEN7_PIPELINE_SELECT			GFXPIPE(1, 1, 4)
-# define PIPELINE_SELECT_3D			(0 << 0)
 # define PIPELINE_SELECT_GPGPU			(2 << 0)
 
 #define GEN7_STATE_BASE_ADDRESS			GFXPIPE(0, 1, 1)
