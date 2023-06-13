@@ -258,18 +258,14 @@ static void test_freesync_parsing_base(data_t *data, uint32_t test_flags)
 	const struct edid *edid;
 	range_t range, expected_range;
 	igt_output_t *output;
-	int i, j, test_conn_cnt = 0;
+	int j, test_conn_cnt = 0;
+	igt_display_t *display = &data->display;
 
 	test_init(data);
 
 	igt_amd_require_hpd(&data->display, data->fd);
 
-	for_each_pipe(&data->display, i) {
-		/* setup the output */
-		output = data->output[i];
-		if (!output || !igt_output_is_connected(output))
-			continue;
-
+	for_each_connected_output(display, output) {
 		/* find a test EDID */
 		j = find_test_edid_index(output->config.connector->connector_type);
 
@@ -335,18 +331,14 @@ static void test_freesync_range_base(data_t *data, uint32_t test_flags)
 {
 	range_t range;
 	igt_output_t *output;
-	int i, test_conn_cnt = 0;
+	int test_conn_cnt = 0;
+	igt_display_t *display = &data->display;
 
 	test_init(data);
 
 	igt_amd_require_hpd(&data->display, data->fd);
 
-	for_each_pipe(&data->display, i) {
-		/* setup the output */
-		output = data->output[i];
-		if (!output || !igt_output_is_connected(output))
-			continue;
-
+	for_each_connected_output(display, output) {
 		igt_debug_on_f(!has_vrr(output), "Requires output supports VRR\n");
 
 		if (!has_vrr(output)) {
