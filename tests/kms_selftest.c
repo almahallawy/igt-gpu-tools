@@ -28,5 +28,13 @@ IGT_TEST_DESCRIPTION("Basic sanity check of KMS selftests.");
 
 igt_main
 {
+	static const char *kunit_subtests[] = { "drm_cmdline_parser_test", "drm_damage_helper_test",
+						"drm_dp_mst_helper_test", "drm_format_helper_test",
+						"drm_format_test", "drm_framebuffer_test",
+						"drm_plane_helper_test", NULL };
+
+	for (int i = 0; kunit_subtests[i] != NULL; i++)
+		igt_kunit(kunit_subtests[i], NULL);
+
 	igt_kselftests("test-drm_modeset", NULL, NULL, NULL);
 }
