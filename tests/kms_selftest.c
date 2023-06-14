@@ -26,15 +26,26 @@
 
 IGT_TEST_DESCRIPTION("Basic sanity check of KMS selftests.");
 
+struct kms_kunittests {
+	const char *kunit;
+	const char *name;
+};
+
 igt_main
 {
-	static const char *kunit_subtests[] = { "drm_cmdline_parser_test", "drm_damage_helper_test",
-						"drm_dp_mst_helper_test", "drm_format_helper_test",
-						"drm_format_test", "drm_framebuffer_test",
-						"drm_plane_helper_test", NULL };
+	static const struct kms_kunittests kunit_subtests[] = {
+		{ "drm_cmdline_parser_test",	"drm_cmdline" },
+		{ "drm_damage_helper_test",	"drm_damage" },
+		{ "drm_dp_mst_helper_test",	"drm_dp_mst" },
+		{ "drm_format_helper_test",	"drm_format_helper" },
+		{ "drm_format_test",		"drm_format" },
+		{ "drm_framebuffer_test",	"framebuffer" },
+		{ "drm_plane_helper_test",	"drm_plane" },
+		{ NULL, NULL}
+	};
 
-	for (int i = 0; kunit_subtests[i] != NULL; i++)
-		igt_kunit(kunit_subtests[i], NULL);
+	for (int i = 0; kunit_subtests[i].kunit != NULL; i++)
+		igt_kunit(kunit_subtests[i].kunit, kunit_subtests[i].name, NULL);
 
 	igt_kselftests("test-drm_modeset", NULL, NULL, NULL);
 }

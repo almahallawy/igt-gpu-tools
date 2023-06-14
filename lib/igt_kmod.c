@@ -848,7 +848,7 @@ unload:
 	return ret;
 }
 
-int igt_kunit(const char *module_name, const char *opts)
+int igt_kunit(const char *module_name, const char *name, const char *opts)
 {
 	/*
 	 * We need to use igt_subtest here, as otherwise it may crash with:
@@ -857,7 +857,10 @@ int igt_kunit(const char *module_name, const char *opts)
 	 * proper namespace for dynamic subtests, with is required for CI
 	 * and for documentation.
 	 */
-	igt_subtest_with_dynamic("all-tests")
+	if (name == NULL)
+		name = "all-tests";
+
+	igt_subtest_with_dynamic(name)
 		return __igt_kunit(module_name, opts);
 	return 0;
 }

@@ -10,7 +10,7 @@ IGT_TEST_DESCRIPTION("Basic sanity check of DRM's buddy allocator (struct drm_bu
 
 igt_main
 {
-	int ret = igt_kunit("drm_buddy_test", NULL);
+	int ret = igt_kunit("drm_buddy_test", NULL, NULL);
 	if (ret != 0 && ret != IGT_EXIT_ABORT)
 		igt_kselftests("test-drm_buddy", NULL, NULL, NULL);
 }
