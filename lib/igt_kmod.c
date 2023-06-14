@@ -855,7 +855,7 @@ void igt_kunit(const char *module_name, const char *name, const char *opts)
 	 * and for documentation.
 	 */
 	if (name == NULL)
-		name = "all-tests";
+		name = module_name;
 
 	igt_subtest_with_dynamic(name)
 		__igt_kunit(module_name, opts);
