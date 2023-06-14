@@ -29,6 +29,7 @@
 #include "igt_aux.h"
 #include "igt_core.h"
 #include "igt_kmod.h"
+#include "igt_ktap.h"
 #include "igt_sysfs.h"
 #include "igt_taints.h"
 
@@ -742,6 +743,84 @@ void igt_kselftest_get_tests(struct kmod_module *kmod,
 		tests_add(tl, tests);
 	}
 	kmod_module_info_free_list(pre);
+}
+
+/**
+ * igt_kunit:
+ * @module_name: the name of the module
+ * @opts: options to load the module
+ *
+ * Loads the test module, parses its (k)tap dmesg output, then unloads it
+ *
+ * Returns: IGT default codes
+ */
+int igt_kunit(const char *module_name, const char *opts)
+{
+	struct igt_ktest tst;
+	struct kmod_module *kunit_kmod;
+	char record[BUF_LEN + 1];
+	FILE *f;
+	bool is_builtin;
+	int ret;
+
+	ret = IGT_EXIT_INVALID;
+
+	/* get normalized module name */
+	if (igt_ktest_init(&tst, module_name) != 0) {
+		igt_warn("Unable to initialize ktest for %s\n", module_name);
+		return ret;
+	}
+
+	if (igt_ktest_begin(&tst) != 0) {
+		igt_warn("Unable to begin ktest for %s\n", module_name);
+
+		igt_ktest_fini(&tst);
+		return ret;
+	}
+
+	if (tst.kmsg < 0) {
+		igt_warn("Could not open /dev/kmsg\n");
+		goto unload;
+	}
+
+	if (lseek(tst.kmsg, 0, SEEK_END)) {
+		igt_warn("Could not seek the end of /dev/kmsg\n");
+		goto unload;
+	}
+
+	f = fdopen(tst.kmsg, "r");
+
+	if (f == NULL) {
+		igt_warn("Could not turn /dev/kmsg file descriptor into a FILE pointer\n");
+		goto unload;
+	}
+
+	/* The KUnit module is required for running any KUnit tests */
+	if (igt_kmod_load("kunit", NULL) != 0 ||
+	    kmod_module_new_from_name(kmod_ctx(), "kunit", &kunit_kmod) != 0) {
+		igt_warn("Unable to load KUnit\n");
+		igt_fail(IGT_EXIT_FAILURE);
+	}
+
+	is_builtin = kmod_module_get_initstate(kunit_kmod) == KMOD_MODULE_BUILTIN;
+
+	if (igt_kmod_load(module_name, opts) != 0) {
+		igt_warn("Unable to load %s module\n", module_name);
+		igt_fail(IGT_EXIT_FAILURE);
+	}
+
+	ret = igt_ktap_parser(f, record, is_builtin);
+	if (ret != 0)
+		ret = IGT_EXIT_ABORT;
+unload:
+	igt_ktest_end(&tst);
+
+	igt_ktest_fini(&tst);
+
+	if (ret == 0)
+		igt_success();
+
+	return ret;
 }
 
 static int open_parameters(const char *module_name)

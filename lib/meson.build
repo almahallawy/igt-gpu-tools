@@ -88,6 +88,7 @@ lib_sources = [
 	'igt_store.c',
 	'uwildmat/uwildmat.c',
 	'igt_kmod.c',
+	'igt_ktap.c',
 	'igt_panfrost.c',
 	'igt_v3d.c',
 	'igt_vc4.c',

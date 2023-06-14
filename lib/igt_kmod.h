@@ -71,6 +71,8 @@ static inline int igt_xe_driver_unload(void)
 int igt_amdgpu_driver_load(const char *opts);
 int igt_amdgpu_driver_unload(void);
 
+int igt_kunit(const char *module_name, const char *opts);
+
 void igt_kselftests(const char *module_name,
 		    const char *module_options,
 		    const char *result_option,
