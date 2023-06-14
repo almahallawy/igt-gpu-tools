@@ -26,6 +26,25 @@
 
 #define BUF_LEN 4096
 
-int igt_ktap_parser(FILE *fp, char *record, bool is_builtin);
+#include <pthread.h>
+
+void *igt_ktap_parser(void *unused);
+
+typedef struct ktap_test_results_element {
+	char test_name[BUF_LEN + 1];
+	bool passed;
+	struct ktap_test_results_element *next;
+} ktap_test_results_element;
+
+struct ktap_test_results {
+	ktap_test_results_element *head;
+	pthread_mutex_t mutex;
+	bool still_running;
+};
+
+
+
+struct ktap_test_results *ktap_parser_start(FILE *fp, bool is_builtin);
+int ktap_parser_stop(void);
 
 #endif /* IGT_KTAP_H */

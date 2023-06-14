@@ -754,14 +754,15 @@ void igt_kselftest_get_tests(struct kmod_module *kmod,
  *
  * Returns: IGT default codes
  */
-int igt_kunit(const char *module_name, const char *opts)
+static int __igt_kunit(const char *module_name, const char *opts)
 {
 	struct igt_ktest tst;
 	struct kmod_module *kunit_kmod;
-	char record[BUF_LEN + 1];
 	FILE *f;
 	bool is_builtin;
 	int ret;
+	struct ktap_test_results *results;
+	struct ktap_test_results_element *temp;
 
 	ret = IGT_EXIT_INVALID;
 
@@ -804,23 +805,61 @@ int igt_kunit(const char *module_name, const char *opts)
 
 	is_builtin = kmod_module_get_initstate(kunit_kmod) == KMOD_MODULE_BUILTIN;
 
+	results = ktap_parser_start(f, is_builtin);
+
 	if (igt_kmod_load(module_name, opts) != 0) {
 		igt_warn("Unable to load %s module\n", module_name);
+		ret = ktap_parser_stop();
 		igt_fail(IGT_EXIT_FAILURE);
 	}
 
-	ret = igt_ktap_parser(f, record, is_builtin);
-	if (ret != 0)
-		ret = IGT_EXIT_ABORT;
+	while (READ_ONCE(results->still_running) || READ_ONCE(results->head) != NULL)
+	{
+		if (READ_ONCE(results->head) != NULL) {
+			pthread_mutex_lock(&results->mutex);
+
+			igt_dynamic(results->head->test_name) {
+				if (READ_ONCE(results->head->passed))
+					igt_success();
+				else
+					igt_fail(IGT_EXIT_FAILURE);
+			}
+
+			temp = results->head;
+			results->head = results->head->next;
+			free(temp);
+
+			pthread_mutex_unlock(&results->mutex);
+		}
+	}
+
 unload:
 	igt_ktest_end(&tst);
 
 	igt_ktest_fini(&tst);
 
+	ret = ktap_parser_stop();
+
+	if (ret != 0)
+		ret = IGT_EXIT_ABORT;
+
 	if (ret == 0)
 		igt_success();
-
 	return ret;
+}
+
+int igt_kunit(const char *module_name, const char *opts)
+{
+	/*
+	 * We need to use igt_subtest here, as otherwise it may crash with:
+	 *  skipping is allowed only in fixtures, subtests or igt_simple_main
+	 * if used on igt_main. This is also needed in order to provide
+	 * proper namespace for dynamic subtests, with is required for CI
+	 * and for documentation.
+	 */
+	igt_subtest_with_dynamic("all-tests")
+		return __igt_kunit(module_name, opts);
+	return 0;
 }
 
 static int open_parameters(const char *module_name)
