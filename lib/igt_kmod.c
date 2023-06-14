@@ -763,27 +763,31 @@ static void __igt_kunit(const char *module_name, const char *opts)
 	int ret;
 	struct ktap_test_results *results;
 	struct ktap_test_results_element *temp;
+	bool skip = false;
+	bool fail = false;
 
 	/* get normalized module name */
 	if (igt_ktest_init(&tst, module_name) != 0) {
 		igt_warn("Unable to initialize ktest for %s\n", module_name);
-		igt_fail(IGT_EXIT_SKIP);
+		igt_fail(IGT_EXIT_ABORT);
 	}
 
 	if (igt_ktest_begin(&tst) != 0) {
 		igt_warn("Unable to begin ktest for %s\n", module_name);
 
 		igt_ktest_fini(&tst);
-		igt_fail(IGT_EXIT_SKIP);
+		igt_fail(IGT_EXIT_ABORT);
 	}
 
 	if (tst.kmsg < 0) {
 		igt_warn("Could not open /dev/kmsg\n");
+		fail = true;
 		goto unload;
 	}
 
 	if (lseek(tst.kmsg, 0, SEEK_END)) {
 		igt_warn("Could not seek the end of /dev/kmsg\n");
+		fail = true;
 		goto unload;
 	}
 
@@ -791,6 +795,7 @@ static void __igt_kunit(const char *module_name, const char *opts)
 
 	if (f == NULL) {
 		igt_warn("Could not turn /dev/kmsg file descriptor into a FILE pointer\n");
+		fail = true;
 		goto unload;
 	}
 
@@ -798,7 +803,8 @@ static void __igt_kunit(const char *module_name, const char *opts)
 	if (igt_kmod_load("kunit", NULL) != 0 ||
 	    kmod_module_new_from_name(kmod_ctx(), "kunit", &kunit_kmod) != 0) {
 		igt_warn("Unable to load KUnit\n");
-		igt_fail(IGT_EXIT_FAILURE);
+		skip = true;
+		goto unload;
 	}
 
 	is_builtin = kmod_module_get_initstate(kunit_kmod) == KMOD_MODULE_BUILTIN;
@@ -808,7 +814,8 @@ static void __igt_kunit(const char *module_name, const char *opts)
 	if (igt_kmod_load(module_name, opts) != 0) {
 		igt_warn("Unable to load %s module\n", module_name);
 		ret = ktap_parser_stop();
-		igt_fail(IGT_EXIT_FAILURE);
+		skip = true;
+		goto unload;
 	}
 
 	while (READ_ONCE(results->still_running) || READ_ONCE(results->head) != NULL)
@@ -835,6 +842,12 @@ unload:
 	igt_ktest_end(&tst);
 
 	igt_ktest_fini(&tst);
+
+	if (skip)
+		igt_skip("");
+
+	if (fail)
+		igt_fail(IGT_EXIT_ABORT);
 
 	ret = ktap_parser_stop();
 
