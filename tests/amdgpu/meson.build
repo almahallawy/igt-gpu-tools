@@ -5,6 +5,7 @@ if libdrm_amdgpu.found()
 	amdgpu_progs += [ 'amd_abm',
 			  'amd_assr',
 			  'amd_basic',
+			  'amd_bo',
 			  'amd_bypass',
 			  'amd_color',
 			  'amd_cp_dma_misc',
