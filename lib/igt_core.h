@@ -136,8 +136,8 @@ struct _GKeyFile *igt_load_igtrc(void);
 /**
  * IGT_EXIT_ABORT
  *
- * Exit status indicating a severe test/enviroment failure, any continued
- * testing past this point can yeild unexpected reasults and is not recommended
+ * Exit status indicating a severe test/environment failure, any continued
+ * testing past this point can yield unexpected results and is not recommended
  */
 #define IGT_EXIT_ABORT 112
 
