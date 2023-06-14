@@ -46,6 +46,4 @@ igt_main
 
 	for (int i = 0; kunit_subtests[i].kunit != NULL; i++)
 		igt_kunit(kunit_subtests[i].kunit, kunit_subtests[i].name, NULL);
-
-	igt_kselftests("test-drm_modeset", NULL, NULL, NULL);
 }

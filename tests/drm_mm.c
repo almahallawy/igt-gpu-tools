@@ -156,8 +156,5 @@ IGT_TEST_DESCRIPTION("Basic sanity check of DRM's range manager (struct drm_mm)"
 
 igt_main
 {
-	int ret = igt_kunit("drm_mm_test", NULL, NULL);
-
-	if (ret != 0 && ret != IGT_EXIT_ABORT)
-		igt_kselftests("test-drm_mm", NULL, NULL, NULL);
+	igt_kunit("drm_mm_test", NULL, NULL);
 }

@@ -754,7 +754,7 @@ void igt_kselftest_get_tests(struct kmod_module *kmod,
  *
  * Returns: IGT default codes
  */
-static int __igt_kunit(const char *module_name, const char *opts)
+static void __igt_kunit(const char *module_name, const char *opts)
 {
 	struct igt_ktest tst;
 	struct kmod_module *kunit_kmod;
@@ -764,19 +764,17 @@ static int __igt_kunit(const char *module_name, const char *opts)
 	struct ktap_test_results *results;
 	struct ktap_test_results_element *temp;
 
-	ret = IGT_EXIT_INVALID;
-
 	/* get normalized module name */
 	if (igt_ktest_init(&tst, module_name) != 0) {
 		igt_warn("Unable to initialize ktest for %s\n", module_name);
-		return ret;
+		igt_fail(IGT_EXIT_SKIP);
 	}
 
 	if (igt_ktest_begin(&tst) != 0) {
 		igt_warn("Unable to begin ktest for %s\n", module_name);
 
 		igt_ktest_fini(&tst);
-		return ret;
+		igt_fail(IGT_EXIT_SKIP);
 	}
 
 	if (tst.kmsg < 0) {
@@ -841,14 +839,13 @@ unload:
 	ret = ktap_parser_stop();
 
 	if (ret != 0)
-		ret = IGT_EXIT_ABORT;
+		igt_fail(IGT_EXIT_ABORT);
 
 	if (ret == 0)
 		igt_success();
-	return ret;
 }
 
-int igt_kunit(const char *module_name, const char *name, const char *opts)
+void igt_kunit(const char *module_name, const char *name, const char *opts)
 {
 	/*
 	 * We need to use igt_subtest here, as otherwise it may crash with:
@@ -861,8 +858,7 @@ int igt_kunit(const char *module_name, const char *name, const char *opts)
 		name = "all-tests";
 
 	igt_subtest_with_dynamic(name)
-		return __igt_kunit(module_name, opts);
-	return 0;
+		__igt_kunit(module_name, opts);
 }
 
 static int open_parameters(const char *module_name)
