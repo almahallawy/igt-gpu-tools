@@ -749,8 +749,8 @@ static int open_parameters(const char *module_name)
 	return open(path, O_RDONLY);
 }
 
-int igt_kselftest_init(struct igt_kselftest *tst,
-		       const char *module_name)
+int igt_ktest_init(struct igt_ktest *tst,
+		   const char *module_name)
 {
 	int err;
 
@@ -769,7 +769,7 @@ int igt_kselftest_init(struct igt_kselftest *tst,
 	return 0;
 }
 
-int igt_kselftest_begin(struct igt_kselftest *tst)
+int igt_ktest_begin(struct igt_ktest *tst)
 {
 	int err;
 
@@ -784,7 +784,7 @@ int igt_kselftest_begin(struct igt_kselftest *tst)
 	return 0;
 }
 
-int igt_kselftest_execute(struct igt_kselftest *tst,
+int igt_kselftest_execute(struct igt_ktest *tst,
 			  struct igt_kselftest_list *tl,
 			  const char *options,
 			  const char *result)
@@ -822,13 +822,13 @@ int igt_kselftest_execute(struct igt_kselftest *tst,
 	return err;
 }
 
-void igt_kselftest_end(struct igt_kselftest *tst)
+void igt_ktest_end(struct igt_ktest *tst)
 {
 	kmod_module_remove_module(tst->kmod, KMOD_REMOVE_FORCE);
 	close(tst->kmsg);
 }
 
-void igt_kselftest_fini(struct igt_kselftest *tst)
+void igt_ktest_fini(struct igt_ktest *tst)
 {
 	free(tst->module_name);
 	kmod_module_unref(tst->kmod);
@@ -851,15 +851,15 @@ void igt_kselftests(const char *module_name,
 		    const char *result,
 		    const char *filter)
 {
-	struct igt_kselftest tst;
+	struct igt_ktest tst;
 	IGT_LIST_HEAD(tests);
 	struct igt_kselftest_list *tl, *tn;
 
-	if (igt_kselftest_init(&tst, module_name) != 0)
+	if (igt_ktest_init(&tst, module_name) != 0)
 		return;
 
 	igt_fixture
-		igt_require(igt_kselftest_begin(&tst) == 0);
+		igt_require(igt_ktest_begin(&tst) == 0);
 
 	igt_kselftest_get_tests(tst.kmod, filter, &tests);
 	igt_subtest_with_dynamic(filter ?: "all-tests") {
@@ -878,9 +878,9 @@ void igt_kselftests(const char *module_name,
 	}
 
 	igt_fixture {
-		igt_kselftest_end(&tst);
+		igt_ktest_end(&tst);
 		igt_require(!igt_list_empty(&tests));
 	}
 
-	igt_kselftest_fini(&tst);
+	igt_ktest_fini(&tst);
 }
