@@ -390,8 +390,6 @@ igt_main_args("e", NULL, help_str, opt_handler, NULL)
 		{ "extended-modeset-hang-oldfb-with-reset", true, false, true },
 		{ "extended-modeset-hang-newfb-with-reset", true, true, true },
 	};
-	struct gem_engine_properties saved_gpu_timeouts[GEM_MAX_ENGINES];
-	int num_engines;
 	int fd;
 
 	igt_fixture {
@@ -409,8 +407,6 @@ igt_main_args("e", NULL, help_str, opt_handler, NULL)
 		for_each_pipe(&display, pipe)
 			active_pipes[last_pipe++] = pipe;
 		last_pipe--;
-
-		gpu_engines_init_timeouts(fd, ARRAY_SIZE(saved_gpu_timeouts), &num_engines, saved_gpu_timeouts);
 	}
 
 	/* XXX Extend to cover atomic rendering tests to all planes + legacy */
@@ -470,8 +466,16 @@ igt_main_args("e", NULL, help_str, opt_handler, NULL)
 	}
 
 	for (i = 0; i < sizeof(tests) / sizeof (tests[0]); i++) {
-		igt_fixture
+		struct gem_engine_properties saved_gpu_timeouts[GEM_MAX_ENGINES];
+		int num_engines;
+
+		igt_fixture {
 			igt_require(display.is_atomic);
+			if (tests[i].reset)
+				gpu_engines_init_timeouts(display.drm_fd,
+							  ARRAY_SIZE(saved_gpu_timeouts),
+							  &num_engines, saved_gpu_timeouts);
+		}
 
 		igt_subtest_with_dynamic(tests[i].name) {
 			igt_hang_t hang;
@@ -501,10 +505,14 @@ igt_main_args("e", NULL, help_str, opt_handler, NULL)
 
 			igt_disallow_hang(display.drm_fd, hang);
 		}
+
+		igt_fixture {
+			if (tests[i].reset)
+				gpu_engines_restore_timeouts(display.drm_fd, num_engines, saved_gpu_timeouts);
+		}
 	}
 
 	igt_fixture {
-		gpu_engines_restore_timeouts(fd, num_engines, saved_gpu_timeouts);
 		igt_display_fini(&display);
 		close(display.drm_fd);
 	}
