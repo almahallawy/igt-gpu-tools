@@ -269,6 +269,7 @@ xe_progs = [
 	'xe_query',
 	'xe_vm',
 	'xe_waitfence',
+	'xe_spin_batch',
 ]
 
 msm_progs = [
