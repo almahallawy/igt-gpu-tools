@@ -275,3 +275,6 @@ igt@kms_prop_blob@basic
 igt@kms_psr@primary_page_flip
 igt@kms_psr@cursor_plane_move
 igt@kms_psr@sprite_plane_onoff
+
+# Run KUnit tests at the end
+igt@xe_live_ktest@.*
