@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <time.h>
 
+#include "drmtest.h"
 #include "igt_core.h"
 #include "igt_list.h"
 #include "i915_drm.h"
@@ -54,6 +55,8 @@ typedef struct igt_spin_factory {
 	unsigned int flags;
 	int fence;
 	uint64_t ahnd;
+	struct drm_xe_engine_class_instance *hwe;
+	uint32_t vm;
 } igt_spin_factory_t;
 
 typedef struct igt_spin {
@@ -83,6 +86,15 @@ typedef struct igt_spin {
 #define SPIN_CLFLUSH (1 << 0)
 
 	struct igt_spin_factory opts;
+
+	struct xe_spin *xe_spin;
+	enum intel_driver driver;
+	size_t bo_size;
+	uint64_t address;
+	unsigned int engine;
+	uint32_t vm;
+	uint32_t syncobj;
+
 } igt_spin_t;
 
 

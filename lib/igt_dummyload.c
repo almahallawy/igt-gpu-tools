@@ -46,6 +46,7 @@
 #include "intel_reg.h"
 #include "ioctl_wrappers.h"
 #include "sw_sync.h"
+#include "xe/xe_spin.h"
 
 /**
  * SECTION:igt_dummyload
@@ -434,6 +435,7 @@ spin_create(int fd, const struct igt_spin_factory *opts)
 	spin = calloc(1, sizeof(struct igt_spin));
 	igt_assert(spin);
 
+	spin->driver = INTEL_DRIVER_I915;
 	spin->timerfd = -1;
 	spin->out_fence = emit_recursive_batch(spin, fd, opts);
 
@@ -447,7 +449,19 @@ spin_create(int fd, const struct igt_spin_factory *opts)
 igt_spin_t *
 __igt_spin_factory(int fd, const struct igt_spin_factory *opts)
 {
-	return spin_create(fd, opts);
+	if (is_xe_device(fd)) {
+		igt_spin_t *spin;
+
+		spin = xe_spin_create(fd, opts);
+
+		pthread_mutex_lock(&list_lock);
+		igt_list_add(&spin->link, &spin_list);
+		pthread_mutex_unlock(&list_lock);
+
+		return spin;
+	} else {
+		return spin_create(fd, opts);
+	}
 }
 
 /**
@@ -466,6 +480,16 @@ igt_spin_t *
 igt_spin_factory(int fd, const struct igt_spin_factory *opts)
 {
 	igt_spin_t *spin;
+
+	if (is_xe_device(fd)) {
+		spin = xe_spin_create(fd, opts);
+
+		pthread_mutex_lock(&list_lock);
+		igt_list_add(&spin->link, &spin_list);
+		pthread_mutex_unlock(&list_lock);
+
+		return spin;
+	}
 
 	if ((opts->flags & IGT_SPIN_POLL_RUN) && opts->engine != ALL_ENGINES) {
 		unsigned int class;
@@ -597,8 +621,12 @@ void igt_spin_end(igt_spin_t *spin)
 	if (!spin)
 		return;
 
-	igt_gettime(&spin->last_signal);
-	sync_write(spin, MI_BATCH_BUFFER_END);
+	if (spin->driver == INTEL_DRIVER_XE) {
+		xe_spin_end(spin->xe_spin);
+	} else {
+		igt_gettime(&spin->last_signal);
+		sync_write(spin, MI_BATCH_BUFFER_END);
+	}
 }
 
 static void __igt_spin_free(int fd, igt_spin_t *spin)
@@ -646,12 +674,14 @@ void igt_spin_free(int fd, igt_spin_t *spin)
 {
 	if (!spin)
 		return;
-
 	pthread_mutex_lock(&list_lock);
 	igt_list_del(&spin->link);
 	pthread_mutex_unlock(&list_lock);
 
-	__igt_spin_free(fd, spin);
+	if (spin->driver == INTEL_DRIVER_XE)
+		xe_spin_free(fd, spin);
+	else
+		__igt_spin_free(fd, spin);
 }
 
 void igt_terminate_spins(void)

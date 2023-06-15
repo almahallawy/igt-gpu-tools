@@ -13,6 +13,7 @@
 #include <stdbool.h>
 
 #include "xe_query.h"
+#include "lib/igt_dummyload.h"
 
 /* Mapped GPU object */
 struct xe_spin {
@@ -21,11 +22,13 @@ struct xe_spin {
 	uint32_t start;
 	uint32_t end;
 };
-
+igt_spin_t *xe_spin_create(int fd, const struct igt_spin_factory *opt);
 void xe_spin_init(struct xe_spin *spin, uint64_t addr, bool preempt);
 bool xe_spin_started(struct xe_spin *spin);
+void xe_spin_sync_wait(int fd, struct igt_spin *spin);
 void xe_spin_wait_started(struct xe_spin *spin);
 void xe_spin_end(struct xe_spin *spin);
+void xe_spin_free(int fd, struct igt_spin *spin);
 
 struct xe_cork {
 	struct xe_spin *spin;

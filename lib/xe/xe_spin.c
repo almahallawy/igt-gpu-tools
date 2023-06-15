@@ -82,6 +82,103 @@ void xe_spin_end(struct xe_spin *spin)
 	spin->end = 0;
 }
 
+/**
+ * xe_spin_create:
+ *@opt: controlling options such as allocator handle, engine, vm etc
+ *
+ * igt_spin_new for xe, xe_spin_create submits a batch using xe_spin_init
+ * which wraps around vm bind and unbinding the object associated to it.
+ * This returs a spinner after submitting a dummy load.
+ *
+ */
+igt_spin_t *
+xe_spin_create(int fd, const struct igt_spin_factory *opt)
+{
+	size_t bo_size = xe_get_default_alignment(fd);
+	uint64_t ahnd = opt->ahnd, addr;
+	struct igt_spin *spin;
+	struct xe_spin *xe_spin;
+	struct drm_xe_sync sync = {
+		.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL,
+	};
+	struct drm_xe_exec exec = {
+		.num_batch_buffer = 1,
+		.num_syncs = 1,
+		.syncs = to_user_pointer(&sync),
+	};
+
+	igt_assert(ahnd);
+	spin = calloc(1, sizeof(struct igt_spin));
+	igt_assert(spin);
+
+	spin->driver = INTEL_DRIVER_XE;
+	spin->syncobj = syncobj_create(fd, 0);
+	spin->vm = opt->vm;
+	spin->engine = opt->engine;
+
+	if (!spin->vm)
+		spin->vm = xe_vm_create(fd, 0, 0);
+
+	if (!spin->engine) {
+		if (opt->hwe)
+			spin->engine = xe_engine_create(fd, spin->vm, opt->hwe, 0);
+		else
+			spin->engine = xe_engine_create_class(fd, spin->vm, DRM_XE_ENGINE_CLASS_COPY);
+	}
+
+	spin->handle = xe_bo_create(fd, 0, spin->vm, bo_size);
+	xe_spin = xe_bo_map(fd, spin->handle, bo_size);
+	addr = intel_allocator_alloc_with_strategy(ahnd, spin->handle, bo_size, 0, ALLOC_STRATEGY_LOW_TO_HIGH);
+	xe_vm_bind_sync(fd, spin->vm, spin->handle, 0, addr, bo_size);
+
+	xe_spin_init(xe_spin, addr, true);
+	exec.engine_id = spin->engine;
+	exec.address = addr;
+	sync.handle = spin->syncobj;
+	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC, &exec), 0);
+	xe_spin_wait_started(xe_spin);
+
+	spin->bo_size = bo_size;
+	spin->address = addr;
+	spin->xe_spin = xe_spin;
+	spin->opts = *opt;
+
+	return spin;
+}
+
+void xe_spin_sync_wait(int fd, struct igt_spin *spin)
+{
+	igt_assert(syncobj_wait(fd, &spin->syncobj, 1, INT64_MAX, 0, NULL));
+}
+
+/*
+ * xe_spin_free:
+ *@spin: spin state from igt_spin_new()
+ *
+ * Wrapper to free spinner whhich is triggered by xe_spin_create.
+ * which distroys vm, engine and unbinds the vm which is binded to
+ * the engine and bo.
+ *
+ */
+void xe_spin_free(int fd, struct igt_spin *spin)
+{
+	igt_assert(spin->driver == INTEL_DRIVER_XE);
+	xe_spin_end(spin->xe_spin);
+	xe_spin_sync_wait(fd, spin);
+	xe_vm_unbind_sync(fd, spin->vm, 0, spin->address, spin->bo_size);
+	syncobj_destroy(fd, spin->syncobj);
+	gem_munmap(spin->xe_spin, spin->bo_size);
+	gem_close(fd, spin->handle);
+
+	if (!spin->opts.engine)
+		xe_engine_destroy(fd, spin->engine);
+
+	if (!spin->opts.vm)
+		xe_vm_destroy(fd, spin->vm);
+
+	free(spin);
+}
+
 void xe_cork_init(int fd, struct drm_xe_engine_class_instance *hwe,
 		  struct xe_cork *cork)
 {
