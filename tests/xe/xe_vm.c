@@ -875,7 +875,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 	};
 	uint32_t engine, bind_engine = 0;
 #define BIND_ARRAY_MAX_N_EXEC	16
-	struct drm_xe_vm_bind_op bind_ops[BIND_ARRAY_MAX_N_EXEC];
+	struct drm_xe_vm_bind_op bind_ops[BIND_ARRAY_MAX_N_EXEC] = { };
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
