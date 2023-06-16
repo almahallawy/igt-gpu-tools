@@ -18,6 +18,12 @@
  *
  * SUBTEST: freq-reset
  * Description: Test basic freq API works after a reset
+ *
+ * SUBTEST: freq-reset-multiple
+ * Description: Test basic freq API works after multiple resets
+ *
+ * SUBTEST: freq-suspend
+ * Description: Test basic freq API works after a runtime suspend
  */
 
 IGT_TEST_DESCRIPTION("Test SLPC freq API");
@@ -49,7 +55,6 @@ static void test_freq_basic_api(int dirfd, int gt)
 	rpn = get_freq(dirfd, RPS_RPn_FREQ_MHZ);
 	rp0 = get_freq(dirfd, RPS_RP0_FREQ_MHZ);
 	rpe = get_freq(dirfd, RPS_RP1_FREQ_MHZ);
-	igt_info("System min freq: %dMHz; max freq: %dMHz\n", rpn, rp0);
 
 	/*
 	 * Negative bound tests
@@ -79,31 +84,66 @@ static void test_freq_basic_api(int dirfd, int gt)
 
 }
 
-static void test_reset(int i915, int dirfd, int gt)
+static void test_reset(int i915, int dirfd, int gt, int count)
 {
 	uint32_t rpn = get_freq(dirfd, RPS_RPn_FREQ_MHZ);
 	int fd;
 
+	for (int i = 0; i < count; i++) {
+		igt_assert_f(set_freq(dirfd, RPS_MIN_FREQ_MHZ, rpn) > 0,
+			     "Failed after %d good cycles\n", i);
+		igt_assert_f(set_freq(dirfd, RPS_MAX_FREQ_MHZ, rpn) > 0,
+			     "Failed after %d good cycles\n", i);
+		usleep(ACT_FREQ_LATENCY_US);
+		igt_assert_f(get_freq(dirfd, RPS_CUR_FREQ_MHZ) == rpn,
+			     "Failed after %d good cycles\n", i);
+
+		/* Manually trigger a GT reset */
+		fd = igt_debugfs_gt_open(i915, gt, "reset", O_WRONLY);
+		igt_require(fd >= 0);
+		igt_ignore_warn(write(fd, "1\n", 2));
+
+		igt_assert_f(get_freq(dirfd, RPS_CUR_FREQ_MHZ) == rpn,
+			     "Failed after %d good cycles\n", i);
+	}
+	close(fd);
+}
+
+static void test_suspend(int i915, int dirfd, int gt)
+{
+	uint32_t rpn = get_freq(dirfd, RPS_RPn_FREQ_MHZ);
+
 	igt_assert(set_freq(dirfd, RPS_MIN_FREQ_MHZ, rpn) > 0);
 	igt_assert(set_freq(dirfd, RPS_MAX_FREQ_MHZ, rpn) > 0);
 	usleep(ACT_FREQ_LATENCY_US);
-	igt_assert(get_freq(dirfd, RPS_MIN_FREQ_MHZ) == rpn);
+	igt_assert(get_freq(dirfd, RPS_CUR_FREQ_MHZ) == rpn);
 
-	/* Manually trigger a GT reset */
-	fd = igt_debugfs_gt_open(i915, gt, "reset", O_WRONLY);
-	igt_require(fd >= 0);
-	igt_ignore_warn(write(fd, "1\n", 2));
-	close(fd);
+	/* Manually trigger a suspend */
+	igt_system_suspend_autoresume(SUSPEND_STATE_S3,
+				      SUSPEND_TEST_NONE);
 
-	igt_assert(get_freq(dirfd, RPS_MIN_FREQ_MHZ) == rpn);
-	igt_assert(get_freq(dirfd, RPS_MAX_FREQ_MHZ) == rpn);
+	igt_assert(get_freq(dirfd, RPS_CUR_FREQ_MHZ) == rpn);
+}
+
+int i915 = -1;
+uint32_t *stash_min, *stash_max;
+
+static void restore_sysfs_freq(int sig)
+{
+	int dirfd, gt;
+	/* Restore frequencies */
+	for_each_sysfs_gt_dirfd(i915, dirfd, gt) {
+		igt_pm_ignore_slpc_efficient_freq(i915, dirfd, false);
+		igt_assert(set_freq(dirfd, RPS_MAX_FREQ_MHZ, stash_max[gt]) > 0);
+		igt_assert(set_freq(dirfd, RPS_MIN_FREQ_MHZ, stash_min[gt]) > 0);
+	}
+	free(stash_min);
+	free(stash_max);
+	close(i915);
 }
 
 igt_main
 {
-	int i915 = -1;
-	uint32_t *stash_min, *stash_max;
-
 	igt_fixture {
 		int num_gts, dirfd, gt;
 
@@ -122,7 +162,9 @@ igt_main
 		for_each_sysfs_gt_dirfd(i915, dirfd, gt) {
 			stash_min[gt] = get_freq(dirfd, RPS_MIN_FREQ_MHZ);
 			stash_max[gt] = get_freq(dirfd, RPS_MAX_FREQ_MHZ);
+			igt_pm_ignore_slpc_efficient_freq(i915, dirfd, true);
 		}
+		igt_install_exit_handler(restore_sysfs_freq);
 	}
 
 	igt_describe("Test basic API for controlling min/max GT frequency");
@@ -140,16 +182,24 @@ igt_main
 
 		for_each_sysfs_gt_dirfd(i915, dirfd, gt)
 			igt_dynamic_f("gt%u", gt)
-				test_reset(i915, dirfd, gt);
+				test_reset(i915, dirfd, gt, 1);
 	}
 
-	igt_fixture {
+	igt_describe("Test basic freq API works after multiple resets");
+	igt_subtest_with_dynamic_f("freq-reset-multiple") {
 		int dirfd, gt;
-		/* Restore frequencies */
-		for_each_sysfs_gt_dirfd(i915, dirfd, gt) {
-			igt_assert(set_freq(dirfd, RPS_MAX_FREQ_MHZ, stash_max[gt]) > 0);
-			igt_assert(set_freq(dirfd, RPS_MIN_FREQ_MHZ, stash_min[gt]) > 0);
-		}
-		close(i915);
+
+		for_each_sysfs_gt_dirfd(i915, dirfd, gt)
+			igt_dynamic_f("gt%u", gt)
+				test_reset(i915, dirfd, gt, 50);
+	}
+
+	igt_describe("Test basic freq API works after suspend");
+	igt_subtest_with_dynamic_f("freq-suspend") {
+		int dirfd, gt;
+
+		for_each_sysfs_gt_dirfd(i915, dirfd, gt)
+			igt_dynamic_f("gt%u", gt)
+				test_suspend(i915, dirfd, gt);
 	}
 }
