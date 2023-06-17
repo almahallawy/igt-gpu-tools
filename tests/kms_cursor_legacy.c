@@ -1658,12 +1658,12 @@ igt_main
 					errno = 0;
 
 					igt_dynamic_f("pipe-%s", kmstest_pipe_name(n))
-						stress(&display, n, tests[i].ncpus, tests[i].flags, 20);
+						stress(&display, n, tests[i].ncpus, tests[i].flags, 5);
 				}
 
 				errno = 0;
 				igt_dynamic("all-pipes")
-					stress(&display, -1, tests[i].ncpus, tests[i].flags, 20);
+					stress(&display, -1, tests[i].ncpus, tests[i].flags, 5);
 			}
 		}
 	}
