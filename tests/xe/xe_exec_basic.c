@@ -33,22 +33,18 @@
  * SUBTEST: once-%s
  * Description: Run %arg[1] test only once
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: many-%s
  * Description: Run %arg[1] test many times
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: many-engines-%s
  * Description: Run %arg[1] test on many engines
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: many-engines-many-vm-%s
  * Description: Run %arg[1] test on many engines and many VMs
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: twice-%s
  * Description: Run %arg[1] test twice

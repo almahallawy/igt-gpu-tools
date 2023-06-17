@@ -203,7 +203,6 @@ static void test_freq_basic_api(int sysfs, int gt_id)
  * SUBTEST: freq_fixed_exec
  * Description: Test fixed frequency request when engine is doing some work
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void test_freq_fixed(int sysfs, int gt_id)
@@ -252,7 +251,6 @@ static void test_freq_fixed(int sysfs, int gt_id)
  * SUBTEST: freq_range_exec
  * Description: Test range frequency request when engine is doing some work
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void test_freq_range(int sysfs, int gt_id)
@@ -278,7 +276,6 @@ static void test_freq_range(int sysfs, int gt_id)
  * SUBTEST: freq_low_max
  * Description: Test frequency request to minimal and maximum values
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void test_freq_low_max(int sysfs, int gt_id)
@@ -301,7 +298,6 @@ static void test_freq_low_max(int sysfs, int gt_id)
  * SUBTEST: freq_suspend
  * Description: Check frequency after returning from suspend
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void test_suspend(int sysfs, int gt_id)
@@ -324,12 +320,10 @@ static void test_suspend(int sysfs, int gt_id)
  * SUBTEST: freq_reset
  * Description: test frequency reset only once
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: freq_reset_multiple
  * Description: test frequency reset multiple times
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void test_reset(int fd, int sysfs, int gt_id, int cycles)

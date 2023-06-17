@@ -36,7 +36,6 @@
  *	The correct driver behaviour should be not to rebind anything unless
  *	there is worked queued on one of the VM's compute engines.
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
 {

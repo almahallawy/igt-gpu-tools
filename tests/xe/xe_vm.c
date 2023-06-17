@@ -84,7 +84,6 @@ write_dwords(int fd, uint32_t vm, int n_dwords, uint64_t *addrs)
  * Description: Test scratch page creation and write
  * Functionality: scratch page
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void
@@ -207,7 +206,6 @@ uint64_t addrs_57b[] = {
  * Description: bind once on one BO
  * Functionality: bind BO
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void
@@ -225,7 +223,6 @@ test_bind_once(int fd)
  * Description: bind many times on one BO
  * Functionality: bind BO
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void
@@ -246,7 +243,6 @@ test_bind_one_bo_many_times(int fd)
  * Description: Test bind many times and many VM on one BO
  * Functionality: bind BO
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void
@@ -265,7 +261,6 @@ test_bind_one_bo_many_times_many_vm(int fd)
  * Description: Test unbind all with %arg[1] VMAs
  * Functionality: unbind
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * arg[1].values: 2, 8
  */
@@ -306,7 +301,6 @@ static void unbind_all(int fd, int n_vmas)
  *	and that it is correctly handled.
  * Functionality: userptr
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void userptr_invalid(int fd)
 {
@@ -343,13 +337,11 @@ struct vm_thread_data {
  * Description: Test VM async ops error
  * Functionality: VM
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: vm-async-ops-err-destroy
  * Description: Test VM async ops error destroy
  * Functionality: VM
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void *vm_async_ops_err_thread(void *data)
@@ -839,25 +831,21 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci)
  * Description: Test bind array twice
  * Functionality: bind engines
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: bind-array-many
  * Description: Test bind array many times
  * Functionality: bind engines
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: bind-array-engine-twice
  * Description: Test bind array engine twice
  * Functionality: bind engines
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: bind-array-engine-many
  * Description: Test bind array engine many times
  * Functionality: bind engines
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void
 test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
@@ -983,7 +971,6 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
  * Description: Test %arg[1] with %arg[2] bind size
  * Functionality: bind
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * arg[1]:
  *
@@ -1002,7 +989,6 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
  * Description: Test %arg[1] with %arg[2] bind size
  * Functionality: userptr bind
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * arg[1]:
  *
@@ -1022,7 +1008,6 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
  * Description: Test %arg[1] with %arg[2] bind size
  * Functionality: mixed bind
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * arg[1]:
  *
@@ -1038,7 +1023,6 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
  * Description: Test %arg[1] with %arg[2] bind size
  * Functionality: mixed bind
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * arg[1]:
  *
@@ -1293,7 +1277,6 @@ static void *hammer_thread(void *tdata)
  * Description: Test munmap style unbind with %arg[1]
  * Functionality: unbind
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * arg[1]:
  *

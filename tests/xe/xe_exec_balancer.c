@@ -31,7 +31,6 @@
  * 	Run a test to check if virtual engines can be running on all instances
  *	of a class simultaneously
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void test_all_active(int fd, int gt, int class)
 {
@@ -139,17 +138,14 @@ static void test_all_active(int fd, int gt, int class)
  * SUBTEST: once-%s
  * Description: Run %arg[1] test only once
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: many-%s
  * Description: Run %arg[1] test many times
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: many-engines-%s
  * Description: Run %arg[1] test on many engines
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: twice-%s
  * Description: Run %arg[1] test twice
@@ -362,7 +358,6 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
  * Description: Run compute mode virtual engine arg[1] test only once
  *
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: twice-cm-%s
  * Description: Run compute mode virtual engine arg[1] test twice
@@ -371,12 +366,10 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
  * SUBTEST: many-cm-%s
  * Description: Run compute mode virtual engine arg[1] test many times
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: many-engines-cm-%s
  * Description: Run compute mode virtual engine arg[1] test on many engines
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  *
  * SUBTEST: no-exec-cm-%s

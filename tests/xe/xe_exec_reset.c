@@ -25,7 +25,6 @@
  * SUBTEST: spin
  * Description: test spin
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
 {
@@ -106,22 +105,18 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
  * SUBTEST: %s-cancel
  * Description: Test %arg[1] cancel
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: %s-engine-reset
  * Description: Test %arg[1] engine reset
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: %s-cat-error
  * Description: Test %arg[1] cat error
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: %s-gt-reset
  * Description: Test %arg[1] GT reset
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: virtual-close-fd-no-exec
  * Description: Test virtual close fd no-exec
@@ -130,17 +125,14 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
  * SUBTEST: parallel-close-fd-no-exec
  * Description: Test parallel close fd no-exec
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: %s-close-fd
  * Description: Test %arg[1] close fd
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: %s-close-engines-close-fd
  * Description: Test %arg[1] close engines close fd
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * arg[1]:
  *
@@ -327,22 +319,18 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
  * SUBTEST: cancel
  * Description: Test cancel
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: engine-reset
  * Description: Test engine reset
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: cat-error
  * Description: Test cat error
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: gt-reset
  * Description: Test GT reset
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: close-fd-no-exec
  * Description: Test close fd no-exec
@@ -351,12 +339,10 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
  * SUBTEST: close-fd
  * Description: Test close fd
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: close-engines-close-fd
  * Description: Test close engines close fd
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void
@@ -508,17 +494,14 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
  * SUBTEST: cm-engine-reset
  * Description: Test compute mode engine reset
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: cm-cat-error
  * Description: Test compute mode cat-error
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: cm-gt-reset
  * Description: Test compute mode GT reset
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: cm-close-fd-no-exec
  * Description: Test compute mode close fd no-exec
@@ -527,12 +510,10 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
  * SUBTEST: cm-close-fd
  * Description: Test compute mode close fd
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: cm-close-engines-close-fd
  * Description: Test compute mode close engines close fd
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void

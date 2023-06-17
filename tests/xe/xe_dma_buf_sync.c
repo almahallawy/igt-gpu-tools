@@ -81,12 +81,10 @@ static bool sync_file_busy(int sync_file)
  * SUBTEST: export-dma-buf-many
  * Description: Test exporting many sync files from a dma-buf
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: export-dma-buf-many-read-sync
  * Description: Test export many prime BO as sync file and verify business
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void

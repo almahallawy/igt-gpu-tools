@@ -118,7 +118,6 @@ static void print_buf(struct intel_buf *buf, const char *name)
  * SUBTEST: reset-bb
  * Description: check bb reset
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void reset_bb(struct buf_ops *bops)
 {
@@ -134,7 +133,6 @@ static void reset_bb(struct buf_ops *bops)
  * SUBTEST: purge-bb
  * Description: check bb reset == full (purge)
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void purge_bb(struct buf_ops *bops)
 {
@@ -216,7 +214,6 @@ static void simple_bb(struct buf_ops *bops, bool new_context)
  * SUBTEST: bb-with-allocator
  * Description: check bb with passed allocator
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void bb_with_allocator(struct buf_ops *bops)
 {
@@ -249,7 +246,6 @@ static void bb_with_allocator(struct buf_ops *bops)
  * SUBTEST: lot-of-buffers
  * Description: check running bb with many buffers
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 #define NUM_BUFS 500
 static void lot_of_buffers(struct buf_ops *bops)
@@ -290,7 +286,6 @@ static void lot_of_buffers(struct buf_ops *bops)
  * SUBTEST: add-remove-objects
  * Description: check bb object manipulation (add + remove)
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void add_remove_objects(struct buf_ops *bops)
 {
@@ -334,7 +329,6 @@ static void add_remove_objects(struct buf_ops *bops)
  * SUBTEST: destroy-bb
  * Description: check bb destroy/create
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void destroy_bb(struct buf_ops *bops)
 {
@@ -394,7 +388,6 @@ static void destroy_bb(struct buf_ops *bops)
  * SUBTEST: create-in-region
  * Description: check size validation on available regions
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void create_in_region(struct buf_ops *bops, uint64_t region)
 {
@@ -794,7 +787,6 @@ static void do_intel_bb_blit(struct buf_ops *bops, int loops, uint32_t tiling)
  * SUBTEST: offset-control
  * Description: check offset is kept on default simple allocator
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static void offset_control(struct buf_ops *bops)
 {
@@ -879,7 +871,6 @@ static void offset_control(struct buf_ops *bops)
  * SUBTEST: delta-check
  * Description: check delta is honoured in intel-bb pipelines
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 #define DELTA_BUFFERS 3
 static void delta_check(struct buf_ops *bops)
@@ -945,7 +936,6 @@ static void delta_check(struct buf_ops *bops)
  * SUBTEST: render
  * Description: check intel-bb render pipeline
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 static int render(struct buf_ops *bops, uint32_t tiling,
 		  uint32_t width, uint32_t height)

@@ -39,12 +39,10 @@
  * SUBTEST: once-%s
  * Description: Run %arg[1] compute machine test only once
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: many-%s
  * Description: Run %arg[1] compute machine test many times
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * arg[1]:
  *
@@ -68,7 +66,6 @@
  * SUBTEST: many-engines-%s
  * Description: Run %arg[1] compute machine test on many engines
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category*
  *
  * arg[1]:
  *

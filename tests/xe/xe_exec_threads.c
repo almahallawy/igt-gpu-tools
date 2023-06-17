@@ -816,7 +816,6 @@ static void *vm_async_ops_err_thread(void *data)
  * SUBTEST: threads-%s
  * Description: Run threads %arg[1] test with multi threads
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  * arg[1]:
  * @basic:
  *	basic

@@ -132,7 +132,6 @@ static void test_with_fd_dup(void)
  * SUBTEST: basic-with_two_bos
  * Description: basic prime import/export with two BOs
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void test_with_two_bos(void)
@@ -176,7 +175,6 @@ static void test_with_two_bos(void)
  * SUBTEST: basic-with_one_bo_two_files
  * Description: basic prime import/export with one BO and two files
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void test_with_one_bo_two_files(void)
@@ -447,7 +445,6 @@ static void test_export_close_race(void)
  * SUBTEST: basic-llseek-size
  * Description: basic BO llseek size test
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void test_llseek_size(void)
@@ -482,7 +479,6 @@ static void test_llseek_size(void)
  * SUBTEST: basic-llseek-bad
  * Description: basid bad BO llseek size test
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 static void test_llseek_bad(void)

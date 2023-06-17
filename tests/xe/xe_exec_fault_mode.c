@@ -38,22 +38,18 @@
  * SUBTEST: once-%s
  * Description: Run %arg[1] fault mode test only once
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: twice-%s
  * Description: Run %arg[1] fault mode test twice
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: many-%s
  * Description: Run %arg[1] fault mode test many times
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: many-engines-%s
  * Description: Run %arg[1] fault mode test on many engines
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * arg[1]:
  *
@@ -327,23 +323,19 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
  * SUBTEST: atomic-once
  * Description: Run atomic fault mode test only once
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: atomic-once-wait
  * Description: Run atomic wait fault mode test once
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: atomic-many
  * Description: Run atomic fault mode test many times
  * Description: atomic many
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * SUBTEST: atomic-many-wait
  * Description: Run atomic wait fault mode test many times
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  */
 static void

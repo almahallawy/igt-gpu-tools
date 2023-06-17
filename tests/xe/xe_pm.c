@@ -9,7 +9,6 @@
  * Sub-category: power management
  * Test category: functionality test
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  */
 
 #include <limits.h>

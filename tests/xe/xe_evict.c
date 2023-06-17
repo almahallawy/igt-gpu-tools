@@ -462,7 +462,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * SUBTEST: evict-%s
  * Description:  %arg[1] evict test.
  * Run type: FULL
- * TODO: change ``'Run type' == FULL`` to a better category
  *
  * arg[1]:
  *
