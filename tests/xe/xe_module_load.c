@@ -5,7 +5,7 @@
 
 /**
  * TEST: Tests the xe module loading
- * Category: Sofware building block
+ * Category: Software building block
  * Sub-category: driver
  * Functionality: module load
  * Test category: functionality test
