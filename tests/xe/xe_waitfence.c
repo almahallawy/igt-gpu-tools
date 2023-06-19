@@ -39,11 +39,11 @@ static void do_bind(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 }
 
 /**
- * SUBTEST: test
+ * SUBTEST: reltime
  * Description: Check basic waitfences functionality
  */
 static void
-test(int fd)
+waitfence(int fd)
 {
 	uint32_t bo_1;
 	uint32_t bo_2;
@@ -94,8 +94,8 @@ igt_main
 		xe_device_get(fd);
 	}
 
-	igt_subtest("test")
-		test(fd);
+	igt_subtest("reltime")
+		waitfence(fd);
 
 	igt_fixture {
 		xe_device_put(fd);
