@@ -79,9 +79,9 @@ void xe_exec(int fd, struct drm_xe_exec *exec);
 void xe_exec_sync(int fd, uint32_t engine, uint64_t addr,
 		  struct drm_xe_sync *sync, uint32_t num_syncs);
 void xe_exec_wait(int fd, uint32_t engine, uint64_t addr);
-void xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
-		    struct drm_xe_engine_class_instance *eci,
-		    int64_t timeout);
+int64_t xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
+		       struct drm_xe_engine_class_instance *eci,
+		       int64_t timeout);
 int64_t xe_wait_ufence_abstime(int fd, uint64_t *addr, uint64_t value,
 			       struct drm_xe_engine_class_instance *eci,
 			       int64_t timeout);

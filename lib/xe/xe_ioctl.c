@@ -401,9 +401,9 @@ void xe_exec_wait(int fd, uint32_t engine, uint64_t addr)
 	syncobj_destroy(fd, sync.handle);
 }
 
-void xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
-		    struct drm_xe_engine_class_instance *eci,
-		    int64_t timeout)
+int64_t xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
+		       struct drm_xe_engine_class_instance *eci,
+		       int64_t timeout)
 {
 	struct drm_xe_wait_user_fence wait = {
 		.addr = to_user_pointer(addr),
@@ -417,6 +417,8 @@ void xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
 	};
 
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait), 0);
+
+	return wait.timeout;
 }
 
 /**
