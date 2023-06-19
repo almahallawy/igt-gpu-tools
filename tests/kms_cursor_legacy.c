@@ -595,7 +595,10 @@ static void basic_flip_cursor(igt_display_t *display,
 	if (flags & BASIC_BUSY)
 	{
 		igt_require_intel(display->drm_fd);
-		ahnd = get_reloc_ahnd(display->drm_fd, 0);
+
+		ahnd = is_i915_device(display->drm_fd) ?
+			get_reloc_ahnd(display->drm_fd, 0) :
+			intel_allocator_open(display->drm_fd, 0, INTEL_ALLOCATOR_RELOC);
 	}
 
 	if (mode >= flip_test_atomic)
@@ -1505,7 +1508,9 @@ static void flip_vs_cursor_busy_crc(igt_display_t *display, bool atomic)
 	igt_output_t *output;
 	igt_plane_t *cursor;
 
-	ahnd = get_reloc_ahnd(display->drm_fd, 0);
+	ahnd = is_i915_device(display->drm_fd) ?
+		get_reloc_ahnd(display->drm_fd, 0) :
+		intel_allocator_open(display->drm_fd, 0, INTEL_ALLOCATOR_RELOC);
 
 	if (atomic)
 		igt_require(display->is_atomic);
