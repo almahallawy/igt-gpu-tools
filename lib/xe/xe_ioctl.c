@@ -36,6 +36,7 @@
 #define major(__v__) (((__v__) >> 8) & 0xff)
 #define minor(__v__) ((__v__) & 0xff)
 #endif
+#include <time.h>
 
 #include "config.h"
 #include "drmtest.h"
@@ -416,6 +417,40 @@ void xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
 	};
 
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait), 0);
+}
+
+/**
+ * xe_wait_ufence_abstime:
+ * @fd: xe device fd
+ * @addr: address of value to compare
+ * @value: expected value (equal) in @address
+ * @eci: engine class instance
+ * @timeout: absolute time when wait expire
+ *
+ * Function compares @value with memory pointed by @addr until they are equal.
+ *
+ * Returns elapsed time in nanoseconds if user fence was signalled.
+ */
+int64_t xe_wait_ufence_abstime(int fd, uint64_t *addr, uint64_t value,
+			       struct drm_xe_engine_class_instance *eci,
+			       int64_t timeout)
+{
+	struct drm_xe_wait_user_fence wait = {
+		.addr = to_user_pointer(addr),
+		.op = DRM_XE_UFENCE_WAIT_EQ,
+		.flags = !eci ? DRM_XE_UFENCE_WAIT_SOFT_OP | DRM_XE_UFENCE_WAIT_ABSTIME : 0,
+		.value = value,
+		.mask = DRM_XE_UFENCE_WAIT_U64,
+		.timeout = timeout,
+		.num_engines = eci ? 1 : 0,
+		.instances = eci ? to_user_pointer(eci) : 0,
+	};
+	struct timespec ts;
+
+	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait), 0);
+	igt_assert_eq(clock_gettime(CLOCK_MONOTONIC, &ts), 0);
+
+	return ts.tv_sec * 1e9 + ts.tv_nsec;
 }
 
 void xe_force_gt_reset(int fd, int gt)
