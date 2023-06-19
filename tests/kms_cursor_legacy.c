@@ -1752,7 +1752,7 @@ igt_main
 	igt_describe("this test perform a busy bo update followed by a cursor update");
 	igt_subtest_group {
 		igt_fixture {
-			igt_require_i915(display.drm_fd);
+			igt_require_intel(display.drm_fd);
 			igt_require_pipe_crc(display.drm_fd);
 			igt_display_require_output(&display);
 		}
