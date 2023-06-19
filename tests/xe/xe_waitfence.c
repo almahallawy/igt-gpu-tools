@@ -38,12 +38,23 @@ static void do_bind(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 	xe_vm_bind(fd, vm, bo, offset, addr, size, sync, 1);
 }
 
+#define MS_TO_NS(ms) (((int64_t)ms) * 1000000)
+enum waittype {
+	RELTIME,
+	ABSTIME,
+};
+
 /**
  * SUBTEST: reltime
- * Description: Check basic waitfences functionality
+ * Description: Check basic waitfences functionality with timeout
+ *              as relative timeout in nanoseconds
+ *
+ * SUBTEST: abstime
+ * Description: Check basic waitfences functionality with timeout
+ *              passed as absolute time in nanoseconds
  */
 static void
-waitfence(int fd)
+waitfence(int fd, enum waittype wt)
 {
 	uint32_t bo_1;
 	uint32_t bo_2;
@@ -52,6 +63,7 @@ waitfence(int fd)
 	uint32_t bo_5;
 	uint32_t bo_6;
 	uint32_t bo_7;
+	int64_t timeout;
 
 	uint32_t vm = xe_vm_create(fd, 0, 0);
 	bo_1 = xe_bo_create_flags(fd, vm, 0x40000, MY_FLAG);
@@ -68,7 +80,25 @@ waitfence(int fd)
 	do_bind(fd, vm, bo_6, 0, 0xc0040000, 0x1c0000, 6);
 	bo_7 = xe_bo_create_flags(fd, vm, 0x10000, MY_FLAG);
 	do_bind(fd, vm, bo_7, 0, 0xeffff0000, 0x10000, 7);
-	xe_wait_ufence(fd, &wait_fence, 7, NULL, 2000);
+
+	if (wt == RELTIME) {
+		timeout = xe_wait_ufence(fd, &wait_fence, 7, NULL, MS_TO_NS(10));
+		igt_debug("wait type: RELTIME - timeout: %ld, timeout left: %ld\n",
+			  MS_TO_NS(10), timeout);
+	} else {
+		struct timespec ts;
+		int64_t current, signalled;
+
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		current = ts.tv_sec * 1e9 + ts.tv_nsec;
+		timeout = current + MS_TO_NS(10);
+		signalled = xe_wait_ufence_abstime(fd, &wait_fence, 7, NULL, timeout);
+		igt_debug("wait type: ABSTIME - timeout: %" PRId64
+			  ", signalled: %" PRId64
+			  ", elapsed: %" PRId64 "\n",
+			  timeout, signalled, signalled - current);
+	}
+
 	xe_vm_unbind_sync(fd, vm, 0, 0x200000, 0x40000);
 	xe_vm_unbind_sync(fd, vm, 0, 0xc0000000, 0x40000);
 	xe_vm_unbind_sync(fd, vm, 0, 0x180000000, 0x40000);
@@ -95,7 +125,10 @@ igt_main
 	}
 
 	igt_subtest("reltime")
-		waitfence(fd);
+		waitfence(fd, RELTIME);
+
+	igt_subtest("abstime")
+		waitfence(fd, ABSTIME);
 
 	igt_fixture {
 		xe_device_put(fd);
