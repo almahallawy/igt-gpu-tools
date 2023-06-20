@@ -819,17 +819,24 @@ class TestList:
     # Subtest list methods
     #
 
-    def get_subtests(self, sort_field = None, expand = None):
+    def get_subtests(self, sort_field = None, expand = None, with_order = False):
 
         """Return an array with all subtests"""
 
         subtests = {}
         subtests[""] = []
 
+        order = None
+
         if sort_field:
             if sort_field.lower() not in self.field_list:
                 sys.exit(f"Field '{sort_field}' is not defined")
             sort_field = self.field_list[sort_field.lower()]
+
+            if with_order:
+                if "_properties_" in self.props[sort_field]:
+                    if "order" in self.props[sort_field]["_properties_"]:
+                        order = self.props[sort_field]["_properties_"]["order"]
 
         for test in sorted(self.doc.keys()):
             fname = self.doc[test]["File"]
@@ -848,20 +855,54 @@ class TestList:
                     if sort_field in subtest:
                         if expand:
                             test_list = subtest[sort_field].split(expand)
+                            test_list = [s.strip() for s in test_list]
+
                             for test_elem in test_list:
-                                test_elem = test_elem.strip()
                                 if test_elem not in subtests:
                                     subtests[test_elem] = []
-                                subtests[test_elem].append(subtest["Summary"])
+                                if order:
+                                    subtests[test_elem].append((subtest["Summary"], test_list))
+                                else:
+                                    subtests[test_elem].append(subtest["Summary"])
                         else:
                             if subtest[sort_field] not in subtests:
                                 subtests[subtest[sort_field]] = []
-                            subtests[subtest[sort_field]].append(subtest["Summary"])
+                                if order:
+                                    subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
+                                else:
+                                    subtests[subtest[sort_field]].append(subtest["Summary"])
+                    else:
+                        if order:
+                            subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
+                        else:
+                            subtests[""].append(subtest["Summary"])
+
+                else:
+                    if order:
+                        subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
                     else:
                         subtests[""].append(subtest["Summary"])
 
-                else:
-                    subtests[""].append(subtest["Summary"])
+        if order:
+            for group, tests in subtests.items():
+                prefix_tests = []
+                suffix_tests = []
+                middle_tests = []
+                is_prefix = True
+                for k in order:
+                    if k == "__all__":
+                        is_prefix = False
+                        continue
+                    for test in tests:
+                        if k in test[1]:
+                            if is_prefix:
+                                prefix_tests.append(test[0])
+                            else:
+                                suffix_tests.append(test[0])
+                for test in tests:
+                    if test[0] not in prefix_tests and test[0] not in suffix_tests:
+                        middle_tests.append(test[0])
+                subtests[group] = prefix_tests + middle_tests + suffix_tests
 
         return subtests
 
@@ -1203,7 +1244,7 @@ class TestList:
         test_prefix = re.sub(r'^igt@', '', test_prefix)
 
         # NOTE: currently, it uses a comma for multi-value delimitter
-        test_subtests = self.get_subtests(sort_field, ",")
+        test_subtests = self.get_subtests(sort_field, ",", with_order = True)
 
         if not os.path.exists(directory):
             os.makedirs(directory)
