@@ -22,7 +22,12 @@
                     },
                     "Run type": {
                         "_properties_": {
-                            "description": "Defines what category of testlist it belongs"
+                            "description": "Defines what category of testlist it belongs",
+                            "order": [
+                                "boot",
+                                "__all__",
+                                "kunit"
+                            ]
                         }
                     }
                 }
