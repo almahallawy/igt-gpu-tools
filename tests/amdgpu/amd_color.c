@@ -53,7 +53,7 @@ typedef struct data {
 
 static void lut_init(lut_t *lut, uint32_t size)
 {
-	igt_assert(size > 0);
+	igt_assert_lt(0, size);
 
 	lut->size = size;
 	lut->data = malloc(size * sizeof(struct drm_color_lut));
@@ -229,7 +229,6 @@ static void test_crtc_linear_degamma(data_t *data)
 
 	data->degamma_lut_size =
 		igt_pipe_obj_get_prop(data->pipe, IGT_CRTC_DEGAMMA_LUT_SIZE);
-	igt_assert_lt(0, data->degamma_lut_size);
 
 	lut_init(&lut_linear, data->degamma_lut_size);
 	lut_gen_linear(&lut_linear, 0xffff);
@@ -277,7 +276,6 @@ static void test_crtc_linear_regamma(data_t *data)
 
 	data->regamma_lut_size =
 		igt_pipe_obj_get_prop(data->pipe, IGT_CRTC_GAMMA_LUT_SIZE);
-	igt_assert_lt(0, data->regamma_lut_size);
 
 	lut_init(&lut_linear, data->regamma_lut_size);
 	lut_gen_linear(&lut_linear, 0xffff);
@@ -339,6 +337,12 @@ static void test_crtc_lut_accuracy(data_t *data)
 
 	igt_require(igt_pipe_obj_has_prop(data->pipe, IGT_CRTC_DEGAMMA_LUT));
 	igt_require(igt_pipe_obj_has_prop(data->pipe, IGT_CRTC_GAMMA_LUT));
+
+	data->degamma_lut_size =
+		igt_pipe_obj_get_prop(data->pipe, IGT_CRTC_DEGAMMA_LUT_SIZE);
+
+	data->regamma_lut_size =
+		igt_pipe_obj_get_prop(data->pipe, IGT_CRTC_GAMMA_LUT_SIZE);
 
 	lut_init(&lut_degamma, data->degamma_lut_size);
 	lut_gen_degamma_srgb(&lut_degamma, 0xffff);
