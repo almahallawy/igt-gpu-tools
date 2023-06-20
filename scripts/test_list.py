@@ -838,6 +838,7 @@ class TestList:
                     if "order" in self.props[sort_field]["_properties_"]:
                         order = self.props[sort_field]["_properties_"]["order"]
 
+        subtest_array = []
         for test in sorted(self.doc.keys()):
             fname = self.doc[test]["File"]
 
@@ -845,43 +846,45 @@ class TestList:
             test_name = re.sub(r'\.[ch]', '', test_name)
             test_name = "igt@" + test_name
 
-            subtest_array = self.expand_subtest(fname, test_name, test, True)
+            subtest_array += self.expand_subtest(fname, test_name, test, True)
 
-            for subtest in subtest_array:
-                if self.__filter_subtest(test, subtest, True):
-                    continue
+        subtest_array.sort(key = lambda x : x.get('Summary'))
 
-                if sort_field:
-                    if sort_field in subtest:
-                        if expand:
-                            test_list = subtest[sort_field].split(expand)
-                            test_list = [s.strip() for s in test_list]
+        for subtest in subtest_array:
+            if self.__filter_subtest(test, subtest, True):
+                continue
 
-                            for test_elem in test_list:
-                                if test_elem not in subtests:
-                                    subtests[test_elem] = []
-                                if order:
-                                    subtests[test_elem].append((subtest["Summary"], test_list))
-                                else:
-                                    subtests[test_elem].append(subtest["Summary"])
-                        else:
-                            if subtest[sort_field] not in subtests:
-                                subtests[subtest[sort_field]] = []
-                                if order:
-                                    subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
-                                else:
-                                    subtests[subtest[sort_field]].append(subtest["Summary"])
+            if sort_field:
+                if sort_field in subtest:
+                    if expand:
+                        test_list = subtest[sort_field].split(expand)
+                        test_list = [s.strip() for s in test_list]
+
+                        for test_elem in test_list:
+                            if test_elem not in subtests:
+                                subtests[test_elem] = []
+                            if order:
+                                subtests[test_elem].append((subtest["Summary"], test_list))
+                            else:
+                                subtests[test_elem].append(subtest["Summary"])
                     else:
-                        if order:
-                            subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
-                        else:
-                            subtests[""].append(subtest["Summary"])
-
+                        if subtest[sort_field] not in subtests:
+                            subtests[subtest[sort_field]] = []
+                            if order:
+                                subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
+                            else:
+                                subtests[subtest[sort_field]].append(subtest["Summary"])
                 else:
                     if order:
                         subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
                     else:
                         subtests[""].append(subtest["Summary"])
+
+            else:
+                if order:
+                    subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
+                else:
+                    subtests[""].append(subtest["Summary"])
 
         if order:
             for group, tests in subtests.items():
