@@ -1560,7 +1560,8 @@ static void do_flush(const struct test_mode *t)
 	struct modeset_params *params = pick_params(t);
 	struct fb_region *target = pick_target(t, params);
 
-	gem_set_domain(drm.fd, target->fb->gem_handle, I915_GEM_DOMAIN_GTT, 0);
+	if (is_i915_device(drm.fd))
+		gem_set_domain(drm.fd, target->fb->gem_handle, I915_GEM_DOMAIN_GTT, 0);
 }
 
 #define DONT_ASSERT_CRC			(1 << 0)
