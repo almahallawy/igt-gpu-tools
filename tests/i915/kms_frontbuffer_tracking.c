@@ -3684,7 +3684,8 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 	t.flip = FLIP_PAGEFLIP;
 	t.tiling = opt.tiling;
 	igt_subtest("basic") {
-		igt_require_gem(drm.fd);
+		if (!is_xe_device(drm.fd))
+			igt_require_gem(drm.fd);
 		basic_subtest(&t);
 	}
 
