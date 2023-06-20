@@ -99,7 +99,7 @@ static const char * const unwanted_drivers[] = {
 /**
  * SUBTEST: force-load
  * Description: Load the Xe driver passing ``force_probe=*`` parameter
- * Run type: BAT
+ * Run type: BAT, boot
  *
  * SUBTEST: load
  * Description: Load the Xe driver
