@@ -331,6 +331,13 @@ static void bypass_8bpc_test(data_t *data)
 	igt_skip_on_f(igt_amd_read_dsc_clock_status(data->drm_fd, data->output->name) == 1,
 		      "DSC enabled on %s and no sense to validate bypass mode\n", data->output->name);
 
+	/* 8bpc bypass only valid when DP or eDP Rx supports 8bpc or up. When
+	 * Rx supports only up to 6bpc, Rx-crc will different from crtc-crc
+	 * with 8bpc.
+	 */
+	igt_skip_on_f(igt_get_output_max_bpc(data->drm_fd, data->output->name) <= 6,
+		      "check /sys/kernel/debug/dri/0/eDP-1 (connector)/output_bpc\n");
+
 	igt_create_fb(data->drm_fd, data->width, data->height,
 		      DRM_FORMAT_XRGB8888, DRM_FORMAT_MOD_LINEAR, &fb);
 
