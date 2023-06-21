@@ -2,6 +2,9 @@
 igt@xe_module_load@load
 
 igt@xe_compute@compute-square
+igt@xe_create@create-engines-noleak
+igt@xe_create@create-engines-leak
+igt@xe_create@create-massive-size
 igt@xe_debugfs@base
 igt@xe_debugfs@gt
 igt@xe_debugfs@forcewake
@@ -182,6 +185,9 @@ igt@xe_intel_bb@simple-bb-ctx
 igt@xe_mmap@system
 igt@xe_mmap@vram
 igt@xe_mmap@vram-system
+igt@xe_mmap@bad-flags
+igt@xe_mmap@bad-extensions
+igt@xe_mmap@bad-object
 igt@xe_mmio@mmio-timestamp
 igt@xe_mmio@mmio-invalid
 igt@xe_prime_self_import@basic-with_one_bo
