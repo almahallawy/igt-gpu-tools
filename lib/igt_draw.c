@@ -674,7 +674,7 @@ static void draw_rect_blt(int fd, struct cmd_data *cmd_data,
 	struct intel_buf *dst;
 	int blt_cmd_len, blt_cmd_tiling, blt_cmd_depth;
 	uint32_t devid = intel_get_drm_devid(fd);
-	int gen = intel_gen(devid);
+	int ver = intel_display_ver(devid);
 	int pitch;
 
 	if (tiling)
@@ -751,9 +751,9 @@ static void draw_rect_blt(int fd, struct cmd_data *cmd_data,
 			igt_assert(false);
 		}
 
-		blt_cmd_len = (gen >= 8) ?  0x5 : 0x4;
+		blt_cmd_len = (ver >= 8) ?  0x5 : 0x4;
 		blt_cmd_tiling = (tiling) ? XY_COLOR_BLT_TILED : 0;
-		pitch = (gen >= 4 && tiling) ? buf->stride / 4 : buf->stride;
+		pitch = (ver >= 4 && tiling) ? buf->stride / 4 : buf->stride;
 
 		switch_blt_tiling(ibb, tiling, true);
 
