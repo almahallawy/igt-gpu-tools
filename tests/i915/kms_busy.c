@@ -219,7 +219,7 @@ static void test_atomic_commit_hang(igt_display_t *dpy, igt_plane_t *primary,
 
 	igt_assert(read(dpy->drm_fd, &ev, sizeof(ev)) == sizeof(ev));
 
-	igt_spin_end(t);
+	igt_spin_free(dpy->drm_fd, t);
 	put_ahnd(ahnd);
 }
 
@@ -304,9 +304,8 @@ test_pageflip_modeset_hang(igt_display_t *dpy,
 
 	igt_assert(read(dpy->drm_fd, &ev, sizeof(ev)) == sizeof(ev));
 
-	igt_spin_end(t);
+	igt_spin_free(dpy->drm_fd, t);
 	put_ahnd(ahnd);
-
 	igt_remove_fb(dpy->drm_fd, &fb);
 }
 
