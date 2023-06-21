@@ -2511,7 +2511,6 @@ static bool use_enginecopy(const struct igt_fb *fb)
 
 	return fb->modifier == I915_FORMAT_MOD_Yf_TILED ||
 	       is_ccs_modifier(fb->modifier) ||
-	       (is_xe_device(fb->fd) && fb->modifier == DRM_FORMAT_MOD_LINEAR) ||
 	       (is_i915_device(fb->fd) && !gem_has_mappable_ggtt(fb->fd));
 }
 
