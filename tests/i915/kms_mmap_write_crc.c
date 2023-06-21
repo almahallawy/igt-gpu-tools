@@ -165,6 +165,9 @@ static void test(data_t *data)
 	/* check that the crc is as expected, which requires that caches got flushed */
 	igt_pipe_crc_collect_crc(data->pipe_crc, &crc);
 	igt_assert_crc_equal(&crc, &data->ref_crc);
+
+	munmap(ptr, fb->size);
+	close(dma_buf_fd);
 }
 
 static void prepare_crtc(data_t *data)
