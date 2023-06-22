@@ -1,7 +1,7 @@
 {
     "description": "JSON file to be used to parse Xe documentation",
     "name": "Tests for Xe Driver",
-    "files": [ "xe_*.c" ],
+    "files": [ "xe_*.c", "../core_hotunplug.c" ],
     "fields": {
         "Category": {
             "_properties_": {
@@ -18,6 +18,11 @@
                     "Functionality": {
                         "_properties_": {
                             "description": "Groups page table tests on buckets containg more detailed functionality"
+                        },
+                        "Feature": {
+                            "_properties_": {
+                                "description": "Describes the lowest level feature bucket"
+                            }
                         }
                     },
                     "Run type": {
