@@ -115,6 +115,7 @@ xe_spin_create(int fd, const struct igt_spin_factory *opt)
 	spin->syncobj = syncobj_create(fd, 0);
 	spin->vm = opt->vm;
 	spin->engine = opt->engine;
+	spin->timerfd = -1;
 
 	if (!spin->vm)
 		spin->vm = xe_vm_create(fd, 0, 0);
@@ -168,6 +169,13 @@ void xe_spin_sync_wait(int fd, struct igt_spin *spin)
 void xe_spin_free(int fd, struct igt_spin *spin)
 {
 	igt_assert(spin->driver == INTEL_DRIVER_XE);
+
+	if (spin->timerfd >= 0) {
+		pthread_cancel(spin->timer_thread);
+		igt_assert(pthread_join(spin->timer_thread, NULL) == 0);
+		close(spin->timerfd);
+	}
+
 	xe_spin_end(spin->xe_spin);
 	xe_spin_sync_wait(fd, spin);
 	xe_vm_unbind_sync(fd, spin->vm, 0, spin->address, spin->bo_size);
