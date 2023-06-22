@@ -240,6 +240,7 @@ i915_progs = [
 	'kms_busy',
 	'kms_ccs',
 	'kms_cdclk',
+	'kms_dirtyfb',
 	'kms_draw_crc',
 	'kms_dsc',
 	'kms_fb_coherency',
