@@ -67,6 +67,14 @@ int intel_ctx_cfg_engine_class(const intel_ctx_cfg_t *cfg, unsigned int engine);
 typedef struct intel_ctx {
 	uint32_t id;
 	intel_ctx_cfg_t cfg;
+
+	/* Xe */
+	int fd;
+	uint32_t vm;
+	uint32_t engine;
+	uint32_t sync_in;
+	uint32_t sync_bind;
+	uint32_t sync_out;
 } intel_ctx_t;
 
 int __intel_ctx_create(int fd, const intel_ctx_cfg_t *cfg,
@@ -80,5 +88,11 @@ const intel_ctx_t *intel_ctx_create_for_gt(int fd, int gt);
 void intel_ctx_destroy(int fd, const intel_ctx_t *ctx);
 
 unsigned int intel_ctx_engine_class(const intel_ctx_t *ctx, unsigned int engine);
+
+intel_ctx_t *intel_ctx_xe(int fd, uint32_t vm, uint32_t engine,
+			  uint32_t sync_in, uint32_t sync_bind, uint32_t sync_out);
+int __intel_ctx_xe_exec(const intel_ctx_t *ctx, uint64_t ahnd, uint64_t bb_offset);
+void intel_ctx_xe_exec(const intel_ctx_t *ctx, uint64_t ahnd, uint64_t bb_offset);
+int intel_ctx_xe_sync(intel_ctx_t *ctx, bool reset_syncs);
 
 #endif

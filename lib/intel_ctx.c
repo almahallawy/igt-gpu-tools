@@ -5,9 +5,12 @@
 
 #include <stddef.h>
 
+#include "i915/gem_engine_topology.h"
+#include "igt_syncobj.h"
+#include "intel_allocator.h"
 #include "intel_ctx.h"
 #include "ioctl_wrappers.h"
-#include "i915/gem_engine_topology.h"
+#include "xe/xe_ioctl.h"
 
 /**
  * SECTION:intel_ctx
@@ -389,4 +392,97 @@ void intel_ctx_destroy(int fd, const intel_ctx_t *ctx)
 unsigned int intel_ctx_engine_class(const intel_ctx_t *ctx, unsigned int engine)
 {
 	return intel_ctx_cfg_engine_class(&ctx->cfg, engine);
+}
+
+/**
+ * intel_ctx_xe:
+ * @fd: open i915 drm file descriptor
+ * @vm: vm
+ * @engine: engine
+ *
+ * Returns an intel_ctx_t representing the xe context.
+ */
+intel_ctx_t *intel_ctx_xe(int fd, uint32_t vm, uint32_t engine,
+			  uint32_t sync_in, uint32_t sync_bind, uint32_t sync_out)
+{
+	intel_ctx_t *ctx;
+
+	ctx = calloc(1, sizeof(*ctx));
+	igt_assert(ctx);
+
+	ctx->fd = fd;
+	ctx->vm = vm;
+	ctx->engine = engine;
+	ctx->sync_in = sync_in;
+	ctx->sync_bind = sync_bind;
+	ctx->sync_out = sync_out;
+
+	return ctx;
+}
+
+int __intel_ctx_xe_exec(const intel_ctx_t *ctx, uint64_t ahnd, uint64_t bb_offset)
+{
+	struct drm_xe_sync syncs[2] = {
+		{ .flags = DRM_XE_SYNC_SYNCOBJ, },
+		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+	};
+	struct drm_xe_exec exec = {
+		.engine_id = ctx->engine,
+		.syncs = (uintptr_t)syncs,
+		.num_syncs = 2,
+		.address = bb_offset,
+		.num_batch_buffer = 1,
+	};
+	uint32_t sync_in = ctx->sync_in;
+	uint32_t sync_bind = ctx->sync_bind ?: syncobj_create(ctx->fd, 0);
+	uint32_t sync_out = ctx->sync_out ?: syncobj_create(ctx->fd, 0);
+	int ret;
+
+	/* Synchronize allocator state -> vm */
+	intel_allocator_bind(ahnd, sync_in, sync_bind);
+
+	/* Pipelined exec */
+	syncs[0].handle = sync_bind;
+	syncs[1].handle = sync_out;
+
+	ret = __xe_exec(ctx->fd, &exec);
+	if (ret)
+		goto err;
+
+	if (!ctx->sync_bind || !ctx->sync_out)
+		syncobj_wait_err(ctx->fd, &sync_out, 1, INT64_MAX, 0);
+
+err:
+	if (!ctx->sync_bind)
+		syncobj_destroy(ctx->fd, sync_bind);
+
+	if (!ctx->sync_out)
+		syncobj_destroy(ctx->fd, sync_out);
+
+	return ret;
+}
+
+void intel_ctx_xe_exec(const intel_ctx_t *ctx, uint64_t ahnd, uint64_t bb_offset)
+{
+	igt_assert_eq(__intel_ctx_xe_exec(ctx, ahnd, bb_offset), 0);
+}
+
+#define RESET_SYNCOBJ(__fd, __sync) do { \
+	if (__sync) \
+		syncobj_reset((__fd), &(__sync), 1); \
+} while (0)
+
+int intel_ctx_xe_sync(intel_ctx_t *ctx, bool reset_syncs)
+{
+	int ret;
+
+	ret = syncobj_wait_err(ctx->fd, &ctx->sync_out, 1, INT64_MAX, 0);
+
+	if (reset_syncs) {
+		RESET_SYNCOBJ(ctx->fd, ctx->sync_in);
+		RESET_SYNCOBJ(ctx->fd, ctx->sync_bind);
+		RESET_SYNCOBJ(ctx->fd, ctx->sync_out);
+	}
+
+	return ret;
 }
