@@ -40,7 +40,7 @@
 #include "intel_bufops.h"
 #include "i915/gem_vm.h"
 #include "i915/i915_crc.h"
-#include "i915/i915_blt.h"
+#include "intel_blt.h"
 /**
  * TEST: api intel bb
  * Description: intel_bb API check.

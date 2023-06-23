@@ -13,7 +13,7 @@
 #include "i915/gem.h"
 #include "i915/gem_create.h"
 #include "lib/intel_chipset.h"
-#include "i915/i915_blt.h"
+#include "intel_blt.h"
 #include "intel_mocs.h"
 /**
  * TEST: gem ccs
@@ -167,7 +167,7 @@ static void surf_copy(int i915,
 	ccs = gem_create(i915, ccssize);
 	ccs2 = gem_create(i915, ccssize);
 
-	surf.i915 = i915;
+	surf.fd = i915;
 	surf.print_bb = param.print_bb;
 	set_surf_object(&surf.src, mid->handle, mid->region, mid->size,
 			uc_mocs, BLT_INDIRECT_ACCESS);

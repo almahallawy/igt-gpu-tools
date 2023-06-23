@@ -27,7 +27,7 @@
 #include "i915/gem_create.h"
 #include "igt.h"
 #include "igt_x86.h"
-#include "i915/i915_blt.h"
+#include "intel_blt.h"
 /**
  * TEST: gem blits
  * Category: Infrastructure

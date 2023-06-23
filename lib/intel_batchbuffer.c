@@ -32,7 +32,7 @@
 #include "huc_copy.h"
 #include "i915/gem_create.h"
 #include "i915/gem_mman.h"
-#include "i915/i915_blt.h"
+#include "intel_blt.h"
 #include "igt_aux.h"
 #include "igt_syncobj.h"
 #include "intel_batchbuffer.h"

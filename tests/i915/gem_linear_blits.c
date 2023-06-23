@@ -48,7 +48,7 @@
 #include "i915/gem_create.h"
 #include "igt.h"
 #include "igt_types.h"
-#include "i915/i915_blt.h"
+#include "intel_blt.h"
 /**
  * TEST: gem linear blits
  * Description: Test doing many blits with a working set larger than the aperture size.

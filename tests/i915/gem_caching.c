@@ -39,7 +39,7 @@
 
 #include "i915/gem.h"
 #include "igt.h"
-#include "i915/i915_blt.h"
+#include "intel_blt.h"
 /**
  * TEST: gem caching
  * Category: Desktop client

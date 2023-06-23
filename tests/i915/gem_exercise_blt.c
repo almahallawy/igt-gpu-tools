@@ -8,7 +8,7 @@
 #include "i915/gem.h"
 #include "i915/gem_create.h"
 #include "lib/intel_chipset.h"
-#include "i915/i915_blt.h"
+#include "intel_blt.h"
 #include "intel_mocs.h"
 /**
  * TEST: gem exercise blt

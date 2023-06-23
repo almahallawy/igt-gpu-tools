@@ -66,7 +66,7 @@
 #include "sw_sync.h"
 
 #include "eviction_common.c"
-#include "i915/i915_blt.h"
+#include "intel_blt.h"
 /**
  * TEST: gem userptr blits
  * Run type: FULL

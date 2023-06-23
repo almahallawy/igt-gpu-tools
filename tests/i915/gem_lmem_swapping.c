@@ -22,7 +22,7 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 #include "drm.h"
-#include "i915/i915_blt.h"
+#include "intel_blt.h"
 #include "intel_mocs.h"
 /**
  * TEST: gem lmem swapping

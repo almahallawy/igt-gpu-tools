@@ -7,7 +7,7 @@
 #include <stddef.h>
 
 #include "intel_chipset.h"
-#include "i915/intel_cmds_info.h"
+#include "intel_cmds_info.h"
 
 #define BLT_INFO(_cmd, _tiling)  { \
 		.blt_cmd_type = _cmd, \

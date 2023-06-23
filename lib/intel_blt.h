@@ -3,11 +3,14 @@
  * Copyright © 2022 Intel Corporation
  */
 
+#ifndef __INTEL_BLT_H__
+#define __INTEL_BLT_H__
+
 /**
- * SECTION:i915_blt
+ * SECTION:intel_blt
  * @short_description: i915 blitter library
  * @title: Blitter library
- * @include: i915_blt.h
+ * @include: intel_blt.h
  *
  * # Introduction
  *
@@ -95,7 +98,7 @@ struct blt_copy_batch {
 
 /* Common for block-copy and fast-copy */
 struct blt_copy_data {
-	int i915;
+	int fd;
 	struct blt_copy_object src;
 	struct blt_copy_object dst;
 	struct blt_copy_batch bb;
@@ -148,7 +151,7 @@ struct blt_ctrl_surf_copy_object {
 };
 
 struct blt_ctrl_surf_copy_data {
-	int i915;
+	int fd;
 	struct blt_ctrl_surf_copy_object src;
 	struct blt_ctrl_surf_copy_object dst;
 	struct blt_copy_batch bb;
@@ -166,51 +169,51 @@ bool blt_cmd_has_property(const struct intel_cmds_info *cmds_info,
 			  enum blt_cmd_type cmd,
 			  uint32_t prop);
 
-bool blt_has_block_copy(int i915);
-bool blt_has_fast_copy(int i915);
-bool blt_has_xy_src_copy(int i915);
+bool blt_has_block_copy(int fd);
+bool blt_has_fast_copy(int fd);
+bool blt_has_xy_src_copy(int fd);
 
-bool blt_fast_copy_supports_tiling(int i915, enum blt_tiling_type tiling);
-bool blt_block_copy_supports_tiling(int i915, enum blt_tiling_type tiling);
-bool blt_xy_src_copy_supports_tiling(int i915, enum blt_tiling_type tiling);
-bool blt_block_copy_supports_compression(int i915);
-bool blt_uses_extended_block_copy(int i915);
+bool blt_fast_copy_supports_tiling(int fd, enum blt_tiling_type tiling);
+bool blt_block_copy_supports_tiling(int fd, enum blt_tiling_type tiling);
+bool blt_xy_src_copy_supports_tiling(int fd, enum blt_tiling_type tiling);
+bool blt_block_copy_supports_compression(int fd);
+bool blt_uses_extended_block_copy(int fd);
 
 const char *blt_tiling_name(enum blt_tiling_type tiling);
 
-uint64_t emit_blt_block_copy(int i915,
+uint64_t emit_blt_block_copy(int fd,
 			     uint64_t ahnd,
 			     const struct blt_copy_data *blt,
 			     const struct blt_block_copy_data_ext *ext,
 			     uint64_t bb_pos,
 			     bool emit_bbe);
 
-int blt_block_copy(int i915,
+int blt_block_copy(int fd,
 		   const intel_ctx_t *ctx,
 		   const struct intel_execution_engine2 *e,
 		   uint64_t ahnd,
 		   const struct blt_copy_data *blt,
 		   const struct blt_block_copy_data_ext *ext);
 
-uint64_t emit_blt_ctrl_surf_copy(int i915,
+uint64_t emit_blt_ctrl_surf_copy(int fd,
 				 uint64_t ahnd,
 				 const struct blt_ctrl_surf_copy_data *surf,
 				 uint64_t bb_pos,
 				 bool emit_bbe);
 
-int blt_ctrl_surf_copy(int i915,
+int blt_ctrl_surf_copy(int fd,
 		       const intel_ctx_t *ctx,
 		       const struct intel_execution_engine2 *e,
 		       uint64_t ahnd,
 		       const struct blt_ctrl_surf_copy_data *surf);
 
-uint64_t emit_blt_fast_copy(int i915,
+uint64_t emit_blt_fast_copy(int fd,
 			    uint64_t ahnd,
 			    const struct blt_copy_data *blt,
 			    uint64_t bb_pos,
 			    bool emit_bbe);
 
-int blt_fast_copy(int i915,
+int blt_fast_copy(int fd,
 		  const intel_ctx_t *ctx,
 		  const struct intel_execution_engine2 *e,
 		  uint64_t ahnd,
@@ -223,13 +226,13 @@ void blt_set_batch(struct blt_copy_batch *batch,
 		   uint32_t handle, uint64_t size, uint32_t region);
 
 struct blt_copy_object *
-blt_create_object(int i915, uint32_t region,
+blt_create_object(int fd, uint32_t region,
 		  uint32_t width, uint32_t height, uint32_t bpp, uint8_t mocs,
 		  enum blt_tiling_type tiling,
 		  enum blt_compression compression,
 		  enum blt_compression_type compression_type,
 		  bool create_mapping);
-void blt_destroy_object(int i915, struct blt_copy_object *obj);
+void blt_destroy_object(int fd, struct blt_copy_object *obj);
 void blt_set_object(struct blt_copy_object *obj,
 		    uint32_t handle, uint64_t size, uint32_t region,
 		    uint8_t mocs, enum blt_tiling_type tiling,
@@ -244,8 +247,10 @@ void blt_set_copy_object(struct blt_copy_object *obj,
 
 void blt_surface_info(const char *info,
 		      const struct blt_copy_object *obj);
-void blt_surface_fill_rect(int i915, const struct blt_copy_object *obj,
+void blt_surface_fill_rect(int fd, const struct blt_copy_object *obj,
 			   uint32_t width, uint32_t height);
-void blt_surface_to_png(int i915, uint32_t run_id, const char *fileid,
+void blt_surface_to_png(int fd, uint32_t run_id, const char *fileid,
 			const struct blt_copy_object *obj,
 			uint32_t width, uint32_t height);
+
+#endif

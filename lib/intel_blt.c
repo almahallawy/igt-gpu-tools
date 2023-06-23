@@ -10,8 +10,8 @@
 #include <cairo.h>
 #include "drm.h"
 #include "igt.h"
-#include "gem_create.h"
-#include "i915_blt.h"
+#include "i915/gem_create.h"
+#include "intel_blt.h"
 
 #define BITRANGE(start, end) (end - start + 1)
 #define GET_CMDS_INFO(__fd) intel_get_cmds_info(intel_get_drm_devid(__fd))
@@ -271,115 +271,115 @@ bool blt_cmd_has_property(const struct intel_cmds_info *cmds_info,
 
 /**
  * blt_has_block_copy
- * @i915: drm fd
+ * @fd: drm fd
  *
- * Check if block copy is supported by @i915 device
+ * Check if block copy is supported by @fd device
  *
  * Returns:
  * true if it does, false otherwise.
  */
-bool blt_has_block_copy(int i915)
+bool blt_has_block_copy(int fd)
 {
-	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(i915);
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
 
 	return blt_supports_command(cmds_info, XY_BLOCK_COPY);
 }
 
 /**
  * blt_has_fast_copy
- * @i915: drm fd
+ * @fd: drm fd
  *
- * Check if fast copy is supported by @i915 device
+ * Check if fast copy is supported by @fd device
  *
  * Returns:
  * true if it does, false otherwise.
  */
-bool blt_has_fast_copy(int i915)
+bool blt_has_fast_copy(int fd)
 {
-	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(i915);
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
 
 	return blt_supports_command(cmds_info, XY_FAST_COPY);
 }
 
 /**
  * blt_has_xy_src_copy
- * @i915: drm fd
+ * @fd: drm fd
  *
- * Check if XY src copy is supported by @i915 device
+ * Check if XY src copy is supported by @fd device
  *
  * Returns:
  * true if it does, false otherwise.
  */
-bool blt_has_xy_src_copy(int i915)
+bool blt_has_xy_src_copy(int fd)
 {
-	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(i915);
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
 
 	return blt_supports_command(cmds_info, XY_SRC_COPY);
 }
 
 /**
  * blt_fast_copy_supports_tiling
- * @i915: drm fd
+ * @fd: drm fd
  * @tiling: tiling format
  *
- * Check if fast copy provided by @i915 device supports @tiling format
+ * Check if fast copy provided by @fd device supports @tiling format
  *
  * Returns:
  * true if it does, false otherwise.
  */
-bool blt_fast_copy_supports_tiling(int i915, enum blt_tiling_type tiling)
+bool blt_fast_copy_supports_tiling(int fd, enum blt_tiling_type tiling)
 {
-	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(i915);
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
 
 	return blt_cmd_supports_tiling(cmds_info, XY_FAST_COPY, tiling);
 }
 
 /**
  * blt_block_copy_supports_tiling
- * @i915: drm fd
+ * @fd: drm fd
  * @tiling: tiling format
  *
- * Check if block copy provided by @i915 device supports @tiling format
+ * Check if block copy provided by @fd device supports @tiling format
  *
  * Returns:
  * true if it does, false otherwise.
  */
-bool blt_block_copy_supports_tiling(int i915, enum blt_tiling_type tiling)
+bool blt_block_copy_supports_tiling(int fd, enum blt_tiling_type tiling)
 {
-	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(i915);
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
 
 	return blt_cmd_supports_tiling(cmds_info, XY_BLOCK_COPY, tiling);
 }
 
 /**
  * blt_xy_src_copy_supports_tiling
- * @i915: drm fd
+ * @fd: drm fd
  * @tiling: tiling format
  *
- * Check if XY src copy provided by @i915 device supports @tiling format
+ * Check if XY src copy provided by @fd device supports @tiling format
  *
  * Returns:
  * true if it does, false otherwise.
  */
-bool blt_xy_src_copy_supports_tiling(int i915, enum blt_tiling_type tiling)
+bool blt_xy_src_copy_supports_tiling(int fd, enum blt_tiling_type tiling)
 {
-	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(i915);
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
 
 	return blt_cmd_supports_tiling(cmds_info, XY_SRC_COPY, tiling);
 }
 
 /**
  * blt_block_copy_supports_compression
- * @i915: drm fd
+ * @fd: drm fd
  *
- * Check if block copy provided by @i915 device supports compression.
+ * Check if block copy provided by @fd device supports compression.
  *
  * Returns:
  * true if it does, false otherwise.
  */
-bool blt_block_copy_supports_compression(int i915)
+bool blt_block_copy_supports_compression(int fd)
 {
-	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(i915);
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
 
 	return blt_cmd_has_property(cmds_info, XY_BLOCK_COPY,
 				    BLT_CMD_SUPPORTS_COMPRESSION);
@@ -387,17 +387,17 @@ bool blt_block_copy_supports_compression(int i915)
 
 /**
  * blt_uses_extended_block_copy
- * @i915: drm fd
+ * @fd: drm fd
  *
- * Check if block copy provided by @i915 device uses an extended version
+ * Check if block copy provided by @fd device uses an extended version
  * of the command.
  *
  * Returns:
  * true if it does, false otherwise.
  */
-bool blt_uses_extended_block_copy(int i915)
+bool blt_uses_extended_block_copy(int fd)
 {
-	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(i915);
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
 
 	return blt_cmd_has_property(cmds_info, XY_BLOCK_COPY, BLT_CMD_EXTENDED);
 }
@@ -678,7 +678,7 @@ static void dump_bb_ext(struct gen12_block_copy_data_ext *data)
 
 /**
  * emit_blt_block_copy:
- * @i915: drm fd
+ * @fd: drm fd
  * @ahnd: allocator handle
  * @blt: basic blitter data (for TGL/DG1 which doesn't support ext version)
  * @ext: extended blitter data (for DG2+, supports flatccs compression)
@@ -691,7 +691,7 @@ static void dump_bb_ext(struct gen12_block_copy_data_ext *data)
  * Returns:
  * Next write position in batch.
  */
-uint64_t emit_blt_block_copy(int i915,
+uint64_t emit_blt_block_copy(int fd,
 			     uint64_t ahnd,
 			     const struct blt_copy_data *blt,
 			     const struct blt_block_copy_data_ext *ext,
@@ -707,14 +707,14 @@ uint64_t emit_blt_block_copy(int i915,
 	igt_assert_f(ahnd, "block-copy supports softpin only\n");
 	igt_assert_f(blt, "block-copy requires data to do blit\n");
 
-	alignment = gem_detect_safe_alignment(i915);
+	alignment = gem_detect_safe_alignment(fd);
 	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment);
 	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment);
 	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
 
 	fill_data(&data, blt, src_offset, dst_offset, ext);
 
-	bb = gem_mmap__device_coherent(i915, blt->bb.handle, 0, blt->bb.size,
+	bb = gem_mmap__device_coherent(fd, blt->bb.handle, 0, blt->bb.size,
 				       PROT_READ | PROT_WRITE);
 
 	igt_assert(bb_pos + sizeof(data) < blt->bb.size);
@@ -752,7 +752,7 @@ uint64_t emit_blt_block_copy(int i915,
 
 /**
  * blt_block_copy:
- * @i915: drm fd
+ * @fd: drm fd
  * @ctx: intel_ctx_t context
  * @e: blitter engine for @ctx
  * @ahnd: allocator handle
@@ -764,7 +764,7 @@ uint64_t emit_blt_block_copy(int i915,
  * Returns:
  * execbuffer status.
  */
-int blt_block_copy(int i915,
+int blt_block_copy(int fd,
 		   const intel_ctx_t *ctx,
 		   const struct intel_execution_engine2 *e,
 		   uint64_t ahnd,
@@ -779,12 +779,12 @@ int blt_block_copy(int i915,
 	igt_assert_f(ahnd, "block-copy supports softpin only\n");
 	igt_assert_f(blt, "block-copy requires data to do blit\n");
 
-	alignment = gem_detect_safe_alignment(i915);
+	alignment = gem_detect_safe_alignment(fd);
 	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment);
 	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment);
 	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
 
-	emit_blt_block_copy(i915, ahnd, blt, ext, 0, true);
+	emit_blt_block_copy(fd, ahnd, blt, ext, 0, true);
 
 	obj[0].offset = CANONICAL(dst_offset);
 	obj[1].offset = CANONICAL(src_offset);
@@ -800,7 +800,7 @@ int blt_block_copy(int i915,
 	execbuf.buffers_ptr = to_user_pointer(obj);
 	execbuf.rsvd1 = ctx ? ctx->id : 0;
 	execbuf.flags = e ? e->flags : I915_EXEC_BLT;
-	ret = __gem_execbuf(i915, &execbuf);
+	ret = __gem_execbuf(fd, &execbuf);
 
 	return ret;
 }
@@ -873,7 +873,7 @@ static void dump_bb_surf_ctrl_cmd(const struct gen12_ctrl_surf_copy_data *data)
 
 /**
  * emit_blt_ctrl_surf_copy:
- * @i915: drm fd
+ * @fd: drm fd
  * @ahnd: allocator handle
  * @surf: blitter data for ctrl-surf-copy
  * @bb_pos: position at which insert block copy commands
@@ -886,7 +886,7 @@ static void dump_bb_surf_ctrl_cmd(const struct gen12_ctrl_surf_copy_data *data)
  * Returns:
  * Next write position in batch.
  */
-uint64_t emit_blt_ctrl_surf_copy(int i915,
+uint64_t emit_blt_ctrl_surf_copy(int fd,
 				 uint64_t ahnd,
 				 const struct blt_ctrl_surf_copy_data *surf,
 				 uint64_t bb_pos,
@@ -900,7 +900,7 @@ uint64_t emit_blt_ctrl_surf_copy(int i915,
 	igt_assert_f(ahnd, "ctrl-surf-copy supports softpin only\n");
 	igt_assert_f(surf, "ctrl-surf-copy requires data to do ctrl-surf-copy blit\n");
 
-	alignment = max_t(uint64_t, gem_detect_safe_alignment(i915), 1ull << 16);
+	alignment = max_t(uint64_t, gem_detect_safe_alignment(fd), 1ull << 16);
 
 	data.dw00.client = 0x2;
 	data.dw00.opcode = 0x48;
@@ -923,7 +923,7 @@ uint64_t emit_blt_ctrl_surf_copy(int i915,
 	data.dw04.dst_address_hi = dst_offset >> 32;
 	data.dw04.dst_mocs = surf->dst.mocs;
 
-	bb = gem_mmap__device_coherent(i915, surf->bb.handle, 0, surf->bb.size,
+	bb = gem_mmap__device_coherent(fd, surf->bb.handle, 0, surf->bb.size,
 				       PROT_READ | PROT_WRITE);
 
 	igt_assert(bb_pos + sizeof(data) < surf->bb.size);
@@ -952,7 +952,7 @@ uint64_t emit_blt_ctrl_surf_copy(int i915,
 
 /**
  * blt_ctrl_surf_copy:
- * @i915: drm fd
+ * @fd: drm fd
  * @ctx: intel_ctx_t context
  * @e: blitter engine for @ctx
  * @ahnd: allocator handle
@@ -964,7 +964,7 @@ uint64_t emit_blt_ctrl_surf_copy(int i915,
  * Returns:
  * execbuffer status.
  */
-int blt_ctrl_surf_copy(int i915,
+int blt_ctrl_surf_copy(int fd,
 		       const intel_ctx_t *ctx,
 		       const struct intel_execution_engine2 *e,
 		       uint64_t ahnd,
@@ -977,12 +977,12 @@ int blt_ctrl_surf_copy(int i915,
 	igt_assert_f(ahnd, "ctrl-surf-copy supports softpin only\n");
 	igt_assert_f(surf, "ctrl-surf-copy requires data to do ctrl-surf-copy blit\n");
 
-	alignment = max_t(uint64_t, gem_detect_safe_alignment(i915), 1ull << 16);
+	alignment = max_t(uint64_t, gem_detect_safe_alignment(fd), 1ull << 16);
 	src_offset = get_offset(ahnd, surf->src.handle, surf->src.size, alignment);
 	dst_offset = get_offset(ahnd, surf->dst.handle, surf->dst.size, alignment);
 	bb_offset = get_offset(ahnd, surf->bb.handle, surf->bb.size, alignment);
 
-	emit_blt_ctrl_surf_copy(i915, ahnd, surf, 0, true);
+	emit_blt_ctrl_surf_copy(fd, ahnd, surf, 0, true);
 
 	obj[0].offset = CANONICAL(dst_offset);
 	obj[1].offset = CANONICAL(src_offset);
@@ -998,7 +998,7 @@ int blt_ctrl_surf_copy(int i915,
 	execbuf.buffers_ptr = to_user_pointer(obj);
 	execbuf.flags = e ? e->flags : I915_EXEC_BLT;
 	execbuf.rsvd1 = ctx ? ctx->id : 0;
-	gem_execbuf(i915, &execbuf);
+	gem_execbuf(fd, &execbuf);
 	put_offset(ahnd, surf->dst.handle);
 	put_offset(ahnd, surf->src.handle);
 	put_offset(ahnd, surf->bb.handle);
@@ -1133,7 +1133,7 @@ static void dump_bb_fast_cmd(struct gen12_fast_copy_data *data)
 
 /**
  * emit_blt_fast_copy:
- * @i915: drm fd
+ * @fd: drm fd
  * @ahnd: allocator handle
  * @blt: blitter data for fast-copy (same as for block-copy but doesn't use
  * compression fields).
@@ -1147,7 +1147,7 @@ static void dump_bb_fast_cmd(struct gen12_fast_copy_data *data)
  * Returns:
  * Next write position in batch.
  */
-uint64_t emit_blt_fast_copy(int i915,
+uint64_t emit_blt_fast_copy(int fd,
 			    uint64_t ahnd,
 			    const struct blt_copy_data *blt,
 			    uint64_t bb_pos,
@@ -1158,7 +1158,7 @@ uint64_t emit_blt_fast_copy(int i915,
 	uint32_t bbe = MI_BATCH_BUFFER_END;
 	uint32_t *bb;
 
-	alignment = gem_detect_safe_alignment(i915);
+	alignment = gem_detect_safe_alignment(fd);
 
 	data.dw00.client = 0x2;
 	data.dw00.opcode = 0x42;
@@ -1194,7 +1194,7 @@ uint64_t emit_blt_fast_copy(int i915,
 	data.dw08.src_address_lo = src_offset;
 	data.dw09.src_address_hi = src_offset >> 32;
 
-	bb = gem_mmap__device_coherent(i915, blt->bb.handle, 0, blt->bb.size,
+	bb = gem_mmap__device_coherent(fd, blt->bb.handle, 0, blt->bb.size,
 				       PROT_READ | PROT_WRITE);
 
 	igt_assert(bb_pos + sizeof(data) < blt->bb.size);
@@ -1222,7 +1222,7 @@ uint64_t emit_blt_fast_copy(int i915,
 
 /**
  * blt_fast_copy:
- * @i915: drm fd
+ * @fd: drm fd
  * @ctx: intel_ctx_t context
  * @e: blitter engine for @ctx
  * @ahnd: allocator handle
@@ -1234,7 +1234,7 @@ uint64_t emit_blt_fast_copy(int i915,
  * Returns:
  * execbuffer status.
  */
-int blt_fast_copy(int i915,
+int blt_fast_copy(int fd,
 		  const intel_ctx_t *ctx,
 		  const struct intel_execution_engine2 *e,
 		  uint64_t ahnd,
@@ -1245,13 +1245,13 @@ int blt_fast_copy(int i915,
 	uint64_t dst_offset, src_offset, bb_offset, alignment;
 	int ret;
 
-	alignment = gem_detect_safe_alignment(i915);
+	alignment = gem_detect_safe_alignment(fd);
 
 	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment);
 	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment);
 	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
 
-	emit_blt_fast_copy(i915, ahnd, blt, 0, true);
+	emit_blt_fast_copy(fd, ahnd, blt, 0, true);
 
 	obj[0].offset = CANONICAL(dst_offset);
 	obj[1].offset = CANONICAL(src_offset);
@@ -1267,7 +1267,7 @@ int blt_fast_copy(int i915,
 	execbuf.buffers_ptr = to_user_pointer(obj);
 	execbuf.rsvd1 = ctx ? ctx->id : 0;
 	execbuf.flags = e ? e->flags : I915_EXEC_BLT;
-	ret = __gem_execbuf(i915, &execbuf);
+	ret = __gem_execbuf(fd, &execbuf);
 	put_offset(ahnd, blt->dst.handle);
 	put_offset(ahnd, blt->src.handle);
 	put_offset(ahnd, blt->bb.handle);
@@ -1297,7 +1297,7 @@ void blt_set_batch(struct blt_copy_batch *batch,
 }
 
 struct blt_copy_object *
-blt_create_object(int i915, uint32_t region,
+blt_create_object(int fd, uint32_t region,
 		  uint32_t width, uint32_t height, uint32_t bpp, uint8_t mocs,
 		  enum blt_tiling_type tiling,
 		  enum blt_compression compression,
@@ -1312,7 +1312,7 @@ blt_create_object(int i915, uint32_t region,
 	obj = calloc(1, sizeof(*obj));
 
 	obj->size = size;
-	igt_assert(__gem_create_in_memory_regions(i915, &handle,
+	igt_assert(__gem_create_in_memory_regions(fd, &handle,
 						  &size, region) == 0);
 
 	blt_set_object(obj, handle, size, region, mocs, tiling,
@@ -1320,18 +1320,18 @@ blt_create_object(int i915, uint32_t region,
 	blt_set_geom(obj, stride, 0, 0, width, height, 0, 0);
 
 	if (create_mapping)
-		obj->ptr = gem_mmap__device_coherent(i915, handle, 0, size,
+		obj->ptr = gem_mmap__device_coherent(fd, handle, 0, size,
 						     PROT_READ | PROT_WRITE);
 
 	return obj;
 }
 
-void blt_destroy_object(int i915, struct blt_copy_object *obj)
+void blt_destroy_object(int fd, struct blt_copy_object *obj)
 {
 	if (obj->ptr)
 		munmap(obj->ptr, obj->size);
 
-	gem_close(i915, obj->handle);
+	gem_close(fd, obj->handle);
 	free(obj);
 }
 
@@ -1372,7 +1372,7 @@ void blt_set_copy_object(struct blt_copy_object *obj,
 
 /**
  * blt_surface_fill_rect:
- * @i915: drm fd
+ * @fd: drm fd
  * @obj: blitter copy object (@blt_copy_object) to fill with gradient pattern
  * @width: width
  * @height: height
@@ -1380,7 +1380,7 @@ void blt_set_copy_object(struct blt_copy_object *obj,
  * Function fills surface @width x @height * 24bpp with color gradient
  * (internally uses ARGB where A == 0xff, see Cairo docs).
  */
-void blt_surface_fill_rect(int i915, const struct blt_copy_object *obj,
+void blt_surface_fill_rect(int fd, const struct blt_copy_object *obj,
 			   uint32_t width, uint32_t height)
 {
 	cairo_surface_t *surface;
@@ -1389,7 +1389,7 @@ void blt_surface_fill_rect(int i915, const struct blt_copy_object *obj,
 	void *map = obj->ptr;
 
 	if (!map)
-		map = gem_mmap__device_coherent(i915, obj->handle, 0,
+		map = gem_mmap__device_coherent(fd, obj->handle, 0,
 						obj->size, PROT_READ | PROT_WRITE);
 
 	surface = cairo_image_surface_create_for_data(map,
@@ -1445,7 +1445,7 @@ void blt_surface_info(const char *info, const struct blt_copy_object *obj)
 
 /**
  * blt_surface_to_png:
- * @i915: drm fd
+ * @fd: drm fd
  * @run_id: prefix id to allow grouping files stored from single run
  * @fileid: file identifier
  * @obj: blitter copy object (@blt_copy_object) to save to png
@@ -1454,7 +1454,7 @@ void blt_surface_info(const char *info, const struct blt_copy_object *obj)
  *
  * Function save surface to png file. Assumes ARGB format where A == 0xff.
  */
-void blt_surface_to_png(int i915, uint32_t run_id, const char *fileid,
+void blt_surface_to_png(int fd, uint32_t run_id, const char *fileid,
 			const struct blt_copy_object *obj,
 			uint32_t width, uint32_t height)
 {
@@ -1470,7 +1470,7 @@ void blt_surface_to_png(int i915, uint32_t run_id, const char *fileid,
 		 obj->compression ? "compressed" : "uncompressed");
 
 	if (!map)
-		map = gem_mmap__device_coherent(i915, obj->handle, 0,
+		map = gem_mmap__device_coherent(fd, obj->handle, 0,
 						obj->size, PROT_READ);
 	format = CAIRO_FORMAT_RGB24;
 	surface = cairo_image_surface_create_for_data(map,
