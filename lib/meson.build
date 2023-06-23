@@ -105,7 +105,8 @@ lib_sources = [
 	'xe/xe_compute_square_kernels.c',
 	'xe/xe_ioctl.c',
 	'xe/xe_query.c',
-	'xe/xe_spin.c'
+	'xe/xe_spin.c',
+	'xe/xe_util.c',
 ]
 
 lib_deps = [
