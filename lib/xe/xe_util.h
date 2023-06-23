@@ -27,4 +27,21 @@ __xe_get_memory_region_set(int xe, uint32_t *mem_regions_type, int num_regions);
 
 char *xe_memregion_dynamic_subtest_name(int xe, struct igt_collection *set);
 
+enum xe_bind_op {
+	XE_OBJECT_BIND,
+	XE_OBJECT_UNBIND,
+};
+
+struct xe_object {
+	uint32_t handle;
+	uint64_t offset;
+	uint64_t size;
+	enum xe_bind_op bind_op;
+	struct igt_list_head link;
+};
+
+void xe_bind_unbind_async(int fd, uint32_t vm, uint32_t bind_engine,
+			  struct igt_list_head *obj_list,
+			  uint32_t sync_in, uint32_t sync_out);
+
 #endif /* XE_UTIL_H */

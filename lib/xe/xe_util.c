@@ -101,3 +101,129 @@ char *xe_memregion_dynamic_subtest_name(int xe, struct igt_collection *set)
 
 	return name;
 }
+
+#ifdef XEBINDDBG
+#define bind_info igt_info
+#define bind_debug igt_debug
+#else
+#define bind_info(...) {}
+#define bind_debug(...) {}
+#endif
+
+static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct igt_list_head *obj_list,
+						   uint32_t *num_ops)
+{
+	struct drm_xe_vm_bind_op *bind_ops, *ops;
+	struct xe_object *obj;
+	uint32_t num_objects = 0, i = 0, op;
+
+	igt_list_for_each_entry(obj, obj_list, link)
+		num_objects++;
+
+	*num_ops = num_objects;
+	if (!num_objects) {
+		bind_info(" [nothing to bind]\n");
+		return NULL;
+	}
+
+	bind_ops = calloc(num_objects, sizeof(*bind_ops));
+	igt_assert(bind_ops);
+
+	igt_list_for_each_entry(obj, obj_list, link) {
+		ops = &bind_ops[i];
+
+		if (obj->bind_op == XE_OBJECT_BIND) {
+			op = XE_VM_BIND_OP_MAP | XE_VM_BIND_FLAG_ASYNC;
+			ops->obj = obj->handle;
+		} else {
+			op = XE_VM_BIND_OP_UNMAP | XE_VM_BIND_FLAG_ASYNC;
+		}
+
+		ops->op = op;
+		ops->obj_offset = 0;
+		ops->addr = obj->offset;
+		ops->range = obj->size;
+		ops->region = 0;
+
+		bind_info("  [%d]: [%6s] handle: %u, offset: %llx, size: %llx\n",
+			  i, obj->bind_op == XE_OBJECT_BIND ? "BIND" : "UNBIND",
+			  ops->obj, (long long)ops->addr, (long long)ops->range);
+		i++;
+	}
+
+	return bind_ops;
+}
+
+/**
+ * xe_bind_unbind_async:
+ * @xe: drm fd of Xe device
+ * @vm: vm to bind/unbind objects to/from
+ * @bind_engine: bind engine, 0 if default
+ * @obj_list: list of xe_object
+ * @sync_in: sync object (fence-in), 0 if there's no input dependency
+ * @sync_out: sync object (fence-out) to signal on bind/unbind completion,
+ *            if 0 wait for bind/unbind completion.
+ *
+ * Function iterates over xe_object @obj_list, prepares binding operation
+ * and does bind/unbind in one step. Providing sync_in / sync_out allows
+ * working in pipelined mode. With sync_in and sync_out set to 0 function
+ * waits until binding operation is complete.
+ */
+void xe_bind_unbind_async(int xe, uint32_t vm, uint32_t bind_engine,
+			  struct igt_list_head *obj_list,
+			  uint32_t sync_in, uint32_t sync_out)
+{
+	struct drm_xe_vm_bind_op *bind_ops;
+	struct drm_xe_sync tabsyncs[2] = {
+		{ .flags = DRM_XE_SYNC_SYNCOBJ, .handle = sync_in },
+		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, .handle = sync_out },
+	};
+	struct drm_xe_sync *syncs;
+	uint32_t num_binds = 0;
+	int num_syncs;
+
+	bind_info("[Binding to vm: %u]\n", vm);
+	bind_ops = xe_alloc_bind_ops(obj_list, &num_binds);
+
+	if (!num_binds) {
+		if (sync_out)
+			syncobj_signal(xe, &sync_out, 1);
+		return;
+	}
+
+	if (sync_in) {
+		syncs = tabsyncs;
+		num_syncs = 2;
+	} else {
+		syncs = &tabsyncs[1];
+		num_syncs = 1;
+	}
+
+	/* User didn't pass sync out, create it and wait for completion */
+	if (!sync_out)
+		tabsyncs[1].handle = syncobj_create(xe, 0);
+
+	bind_info("[Binding syncobjs: (in: %u, out: %u)]\n",
+		  tabsyncs[0].handle, tabsyncs[1].handle);
+
+	if (num_binds == 1) {
+		if ((bind_ops[0].op & 0xffff) == XE_VM_BIND_OP_MAP)
+			xe_vm_bind_async(xe, vm, bind_engine, bind_ops[0].obj, 0,
+					 bind_ops[0].addr, bind_ops[0].range,
+					 syncs, num_syncs);
+		else
+			xe_vm_unbind_async(xe, vm, bind_engine, 0,
+					   bind_ops[0].addr, bind_ops[0].range,
+					   syncs, num_syncs);
+	} else {
+		xe_vm_bind_array(xe, vm, bind_engine, bind_ops,
+				 num_binds, syncs, num_syncs);
+	}
+
+	if (!sync_out) {
+		igt_assert_eq(syncobj_wait_err(xe, &tabsyncs[1].handle, 1, INT64_MAX, 0), 0);
+		syncobj_destroy(xe, tabsyncs[1].handle);
+	}
+
+	free(bind_ops);
+}
