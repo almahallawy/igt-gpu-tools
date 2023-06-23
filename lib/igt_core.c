@@ -74,6 +74,7 @@
 #include "igt_sysrq.h"
 #include "igt_rc.h"
 #include "igt_list.h"
+#include "igt_map.h"
 #include "igt_device_scan.h"
 #include "igt_thread.h"
 #include "runnercomms.h"
@@ -320,6 +321,8 @@ bool test_multi_fork_child;
 /* For allocator purposes */
 pid_t child_pid  = -1;
 __thread pid_t child_tid  = -1;
+struct igt_map *ahnd_map;
+pthread_mutex_t ahnd_map_mutex;
 
 enum {
 	/*
@@ -2523,6 +2526,8 @@ bool __igt_fork(void)
 	case 0:
 		test_child = true;
 		pthread_mutex_init(&print_mutex, NULL);
+		pthread_mutex_init(&ahnd_map_mutex, NULL);
+		ahnd_map = igt_map_create(igt_map_hash_64, igt_map_equal_64);
 		child_pid = getpid();
 		child_tid = -1;
 		exit_handler_count = 0;

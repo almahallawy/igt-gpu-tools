@@ -210,6 +210,9 @@ bool intel_allocator_reserve_if_not_allocated(uint64_t allocator_handle,
 
 void intel_allocator_print(uint64_t allocator_handle);
 
+void intel_allocator_bind(uint64_t allocator_handle,
+			  uint32_t sync_in, uint32_t sync_out);
+
 #define ALLOC_INVALID_ADDRESS (-1ull)
 #define INTEL_ALLOCATOR_NONE   0
 #define INTEL_ALLOCATOR_RELOC  1
