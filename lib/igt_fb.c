@@ -4780,16 +4780,11 @@ int igt_fb_get_fnv1a_crc(struct igt_fb *fb, igt_crc_t *crc)
 		igt_memcpy_from_wc(line, ptr, fb->width * cpp);
 
 		for (x = 0; x < fb->width; x++) {
-			unsigned int i;
 			uint32_t pixel = le32_to_cpu(line[x]);
 			pixel &= 0x00ffffff;
 
-			for (i = 0; i < sizeof(pixel); i++) {
-				uint8_t component = (pixel >> (i * 8)) & 0xff;
-
-				hash ^= component;
-				hash *= FNV1a_PRIME;
-			}
+			hash ^= pixel;
+			hash *= FNV1a_PRIME;
 		}
 	}
 
