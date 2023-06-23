@@ -151,6 +151,16 @@ bool is_intel_device(int fd)
 	return is_i915_device(fd) || is_xe_device(fd);
 }
 
+enum intel_driver get_intel_driver(int fd)
+{
+	if (is_xe_device(fd))
+		return INTEL_DRIVER_XE;
+	else if (is_i915_device(fd))
+		return INTEL_DRIVER_I915;
+
+	igt_assert_f(0, "Device is not handled by Intel driver\n");
+}
+
 static char _forced_driver[16] = "";
 
 /**

@@ -124,6 +124,7 @@ bool is_nouveau_device(int fd);
 bool is_vc4_device(int fd);
 bool is_xe_device(int fd);
 bool is_intel_device(int fd);
+enum intel_driver get_intel_driver(int fd);
 
 /**
  * do_or_die:
