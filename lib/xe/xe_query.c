@@ -468,6 +468,22 @@ const char *xe_region_name(uint64_t region)
 }
 
 /**
+ * xe_region_class:
+ * @fd: xe device fd
+ * @region: region mask
+ *
+ * Returns class of memory region structure for @region mask.
+ */
+uint16_t xe_region_class(int fd, uint64_t region)
+{
+	struct drm_xe_query_mem_region *memreg;
+
+	memreg = xe_mem_region(fd, region);
+
+	return memreg->mem_class;
+}
+
+/**
  * xe_min_page_size:
  * @fd: xe device fd
  * @region: region mask
