@@ -8,7 +8,7 @@
 
 /**
  * SECTION:intel_blt
- * @short_description: i915 blitter library
+ * @short_description: i915/xe blitter library
  * @title: Blitter library
  * @include: intel_blt.h
  *
