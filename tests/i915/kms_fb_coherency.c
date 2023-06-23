@@ -243,6 +243,8 @@ igt_main
 	 * Description: Use display controller CRC hardware to validate (non)coherency
 	 *		of memset operations on future scanout buffer objects
 	 *		mmapped with different mmap methods and different caching modes.
+	 * Mega feature: General Display Features
+	 * Functionality: gtt
 	 */
 	igt_subtest_with_dynamic("memset-crc") {
 		if (gem_has_mappable_ggtt(data.drm_fd)) {
