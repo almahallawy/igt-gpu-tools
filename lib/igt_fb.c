@@ -4755,7 +4755,7 @@ int igt_fb_get_fnv1a_crc(struct igt_fb *fb, igt_crc_t *crc)
 	if (fb->num_planes != 1)
 		return -EINVAL;
 
-	if (fb->drm_format != DRM_FORMAT_XRGB8888)
+	if (fb->drm_format != DRM_FORMAT_XRGB8888 && fb->drm_format != DRM_FORMAT_XRGB2101010)
 		return -EINVAL;
 
 	ptr = igt_fb_map_buffer(fb->fd, fb);
@@ -4781,7 +4781,11 @@ int igt_fb_get_fnv1a_crc(struct igt_fb *fb, igt_crc_t *crc)
 
 		for (x = 0; x < fb->width; x++) {
 			uint32_t pixel = le32_to_cpu(line[x]);
-			pixel &= 0x00ffffff;
+
+			if (fb->drm_format == DRM_FORMAT_XRGB8888)
+				pixel &= 0x00ffffff;
+			else if (fb->drm_format == DRM_FORMAT_XRGB2101010)
+				pixel &= 0x3fffffff;
 
 			hash ^= pixel;
 			hash *= FNV1a_PRIME;
