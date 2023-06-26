@@ -135,7 +135,7 @@ void vmw_svga_device_fini(struct vmw_svga_device *device)
 	vmw_bitvector_free(device->rt_view_bv);
 	vmw_bitvector_free(device->ds_view_bv);
 	vmw_bitvector_free(device->shader_bv);
-	close(device->drm_fd);
+	drm_close_driver(device->drm_fd);
 }
 
 bool vmw_save_data_as_png(struct vmw_surface *surface, void *data,

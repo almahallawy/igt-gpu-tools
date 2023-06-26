@@ -336,6 +336,6 @@ igt_main
 	igt_fixture
 	{
 		vmw_ioctl_context_destroy(fd, cid);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

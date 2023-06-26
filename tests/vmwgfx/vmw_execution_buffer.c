@@ -308,6 +308,6 @@ igt_main_args("st:", long_options, NULL, parse_options, NULL)
 	igt_fixture
 	{
 		vmw_ioctl_context_destroy(fd, cid);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

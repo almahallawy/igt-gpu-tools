@@ -314,7 +314,7 @@ igt_main
 
 	igt_fixture
 	{
-		close(fd1);
-		close(fd2);
+		drm_close_driver(fd1);
+		drm_close_driver(fd2);
 	}
 }
