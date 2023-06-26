@@ -640,7 +640,7 @@ static void run_check_psr_su_cursor(data_t *data, bool test_mpo)
 	 * panning the primary plane at the top-left of screen
 	 * set alpha region in overlay plane and set alpha to 0.0 to show primary plane
 	 * set cursor plane and starting from position of (0, 0)
-	 */ 
+	 */
 	draw_color_alpha(&data->ov_fb[0], 0, 0, data->pfb_w, data->pfb_h, 1.0, 1.0, 1.0, .0);
 	igt_plane_set_fb(data->primary, &data->pm_fb[0]);
 	igt_plane_set_fb(data->overlay, &data->ov_fb[0]);
@@ -763,5 +763,6 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 		}
 		close(data.debugfs_fd);
 		igt_display_fini(&data.display);
+		drm_close_driver(data.fd);
 	}
 }
