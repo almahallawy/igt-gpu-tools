@@ -111,5 +111,5 @@ igt_main
 		test_used_bo(fd, ~0ull);
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

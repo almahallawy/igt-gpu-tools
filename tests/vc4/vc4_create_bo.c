@@ -72,9 +72,9 @@ igt_main
 		munmap(map, size);
 		gem_close(fd2, handle);
 
-		close(fd2);
+		drm_close_driver(fd2);
 	}
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }
