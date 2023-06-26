@@ -636,6 +636,50 @@ int drm_open_driver(int chipset)
 	return fd;
 }
 
+static bool is_valid_fd(int fd)
+{
+	char path[32];
+	char buf[PATH_MAX];
+	int len;
+
+	if (fd < 0)
+		return false;
+
+	snprintf(path, sizeof(path), "/proc/self/fd/%d", fd);
+
+	memset(buf, 0, sizeof(buf));
+	len = readlink(path, buf, sizeof(buf) - 1);
+	if (len <= 0)
+		return false;
+
+	buf[len] = '\0';
+	if (strstr(buf, "/dev/dri/card") == buf ||
+	    strstr(buf, "/dev/dri/renderD") == buf)
+		return true;
+
+	return false;
+}
+
+/**
+ * drm_close_driver:
+ * @fd: a drm file descriptor
+ *
+ * Check the given drm file descriptor @fd is valid & Close if it is
+ * an valid drm fd.
+ *
+ * Returns: 0 on success or -1 on error.
+ */
+int drm_close_driver(int fd)
+{
+	if (!is_valid_fd(fd)) {
+		igt_warn("Don't attempt to close standard/invalid file "
+			 "descriptor: %d\n", fd);
+		return -1;
+	}
+
+	return close(fd);
+}
+
 /**
  * drm_open_driver_master:
  * @chipset: OR'd flags for each chipset to search, eg. #DRIVER_INTEL
