@@ -131,5 +131,6 @@ igt_main
 	igt_fixture {
 		xe_device_put(data.drm_fd);
 		buf_ops_destroy(data.bops);
+		drm_close_driver(data.drm_fd);
 	}
 }
