@@ -166,7 +166,7 @@ static void amd_plug(amdgpu_device_handle device, struct cork *c)
 static void unplug(struct cork *c)
 {
 	vgem_fence_signal(c->device, c->fence);
-	close(c->device);
+	drm_close_driver(c->device);
 }
 
 static void i915_to_amd(int i915, int amd, amdgpu_device_handle device)
@@ -461,7 +461,7 @@ igt_main
 
 	igt_fixture {
 		amdgpu_device_deinitialize(device);
-		close(amd);
-		close(i915);
+		drm_close_driver(amd);
+		drm_close_driver(i915);
 	}
 }

@@ -154,6 +154,6 @@ igt_main
 
 	igt_fixture {
 		amdgpu_device_deinitialize(dev);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

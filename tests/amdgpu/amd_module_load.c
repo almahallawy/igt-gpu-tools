@@ -54,7 +54,7 @@ static void sanity_check(void)
 		err = -errno;
 
 	igt_set_timeout(0, NULL);
-	close(fd);
+	drm_close_driver(fd);
 
 	igt_assert_eq(err, 0);
 }

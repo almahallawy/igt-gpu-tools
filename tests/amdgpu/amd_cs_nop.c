@@ -239,6 +239,6 @@ igt_main
 	igt_fixture {
 		amdgpu_cs_ctx_free(context);
 		amdgpu_device_deinitialize(device);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }
