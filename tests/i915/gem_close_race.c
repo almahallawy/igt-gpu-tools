@@ -303,7 +303,7 @@ static void thread(int fd, struct drm_gem_open name,
 			n++;
 		} while (1);
 
-		close(crashme.fd);
+		/* leave fd to be closed by process termination */
 	}
 
 	timer_delete(timer);
