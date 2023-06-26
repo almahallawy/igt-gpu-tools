@@ -253,7 +253,7 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 	}
 
 	igt_subtest("base") {
-		test_base(fd, xe_dev->config);
+		test_base(fd, xe_config(fd));
 	}
 
 
