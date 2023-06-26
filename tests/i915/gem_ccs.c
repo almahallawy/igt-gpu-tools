@@ -108,7 +108,7 @@ static void surf_copy(int i915,
 	ccs = gem_create(i915, ccssize);
 	ccs2 = gem_create(i915, ccssize);
 
-	surf.fd = i915;
+	blt_ctrl_surf_copy_init(i915, &surf);
 	surf.print_bb = param.print_bb;
 	blt_set_ctrl_surf_object(&surf.src, mid->handle, mid->region, mid->size,
 				 uc_mocs, BLT_INDIRECT_ACCESS);
@@ -160,7 +160,7 @@ static void surf_copy(int i915,
 				 uc_mocs, INDIRECT_ACCESS);
 	blt_ctrl_surf_copy(i915, ctx, e, ahnd, &surf);
 
-	memset(&blt, 0, sizeof(blt));
+	blt_copy_init(i915, &blt);
 	blt.color_depth = CD_32bit;
 	blt.print_bb = param.print_bb;
 	blt_set_copy_object(&blt.src, mid);
@@ -251,7 +251,7 @@ static int blt_block_copy3(int i915,
 	bb_offset = get_offset(ahnd, blt3->bb.handle, blt3->bb.size, alignment);
 
 	/* First blit src -> mid */
-	memset(&blt0, 0, sizeof(blt0));
+	blt_copy_init(i915, &blt0);
 	blt0.src = blt3->src;
 	blt0.dst = blt3->mid;
 	blt0.bb = blt3->bb;
@@ -262,7 +262,7 @@ static int blt_block_copy3(int i915,
 	bb_pos = emit_blt_block_copy(i915, ahnd, &blt0, &ext0, bb_pos, false);
 
 	/* Second blit mid -> dst */
-	memset(&blt0, 0, sizeof(blt0));
+	blt_copy_init(i915, &blt0);
 	blt0.src = blt3->mid;
 	blt0.dst = blt3->dst;
 	blt0.bb = blt3->bb;
@@ -273,7 +273,7 @@ static int blt_block_copy3(int i915,
 	bb_pos = emit_blt_block_copy(i915, ahnd, &blt0, &ext0, bb_pos, false);
 
 	/* Third blit dst -> final */
-	memset(&blt0, 0, sizeof(blt0));
+	blt_copy_init(i915, &blt0);
 	blt0.src = blt3->dst;
 	blt0.dst = blt3->final;
 	blt0.bb = blt3->bb;
@@ -331,11 +331,13 @@ static void block_copy(int i915,
 	if (!blt_uses_extended_block_copy(i915))
 		pext = NULL;
 
-	src = blt_create_object(i915, region1, width, height, bpp, uc_mocs,
+	blt_copy_init(i915, &blt);
+
+	src = blt_create_object(&blt, region1, width, height, bpp, uc_mocs,
 				T_LINEAR, COMPRESSION_DISABLED, comp_type, true);
-	mid = blt_create_object(i915, mid_region, width, height, bpp, uc_mocs,
+	mid = blt_create_object(&blt, mid_region, width, height, bpp, uc_mocs,
 				mid_tiling, mid_compression, comp_type, true);
-	dst = blt_create_object(i915, region1, width, height, bpp, uc_mocs,
+	dst = blt_create_object(&blt, region1, width, height, bpp, uc_mocs,
 				T_LINEAR, COMPRESSION_DISABLED, comp_type, true);
 	igt_assert(src->size == dst->size);
 	PRINT_SURFACE_INFO("src", src);
@@ -345,7 +347,6 @@ static void block_copy(int i915,
 	blt_surface_fill_rect(i915, src, width, height);
 	WRITE_PNG(i915, run_id, "src", src, width, height);
 
-	memset(&blt, 0, sizeof(blt));
 	blt.color_depth = CD_32bit;
 	blt.print_bb = param.print_bb;
 	blt_set_copy_object(&blt.src, src);
@@ -390,7 +391,7 @@ static void block_copy(int i915,
 		}
 	}
 
-	memset(&blt, 0, sizeof(blt));
+	blt_copy_init(i915, &blt);
 	blt.color_depth = CD_32bit;
 	blt.print_bb = param.print_bb;
 	blt_set_copy_object(&blt.src, mid);
@@ -427,6 +428,7 @@ static void block_multicopy(int i915,
 			    const struct test_config *config)
 {
 	struct blt_copy3_data blt3 = {};
+	struct blt_copy_data blt = {};
 	struct blt_block_copy3_data_ext ext3 = {}, *pext3 = &ext3;
 	struct blt_copy_object *src, *mid, *dst, *final;
 	const uint32_t bpp = 32;
@@ -446,13 +448,16 @@ static void block_multicopy(int i915,
 	if (!blt_uses_extended_block_copy(i915))
 		pext3 = NULL;
 
-	src = blt_create_object(i915, region1, width, height, bpp, uc_mocs,
+	/* For object creation */
+	blt_copy_init(i915, &blt);
+
+	src = blt_create_object(&blt, region1, width, height, bpp, uc_mocs,
 				T_LINEAR, COMPRESSION_DISABLED, comp_type, true);
-	mid = blt_create_object(i915, mid_region, width, height, bpp, uc_mocs,
+	mid = blt_create_object(&blt, mid_region, width, height, bpp, uc_mocs,
 				mid_tiling, mid_compression, comp_type, true);
-	dst = blt_create_object(i915, region1, width, height, bpp, uc_mocs,
+	dst = blt_create_object(&blt, region1, width, height, bpp, uc_mocs,
 				mid_tiling, COMPRESSION_DISABLED, comp_type, true);
-	final = blt_create_object(i915, region1, width, height, bpp, uc_mocs,
+	final = blt_create_object(&blt, region1, width, height, bpp, uc_mocs,
 				  T_LINEAR, COMPRESSION_DISABLED, comp_type, true);
 	igt_assert(src->size == dst->size);
 	PRINT_SURFACE_INFO("src", src);
@@ -462,7 +467,6 @@ static void block_multicopy(int i915,
 
 	blt_surface_fill_rect(i915, src, width, height);
 
-	memset(&blt3, 0, sizeof(blt3));
 	blt3.color_depth = CD_32bit;
 	blt3.print_bb = param.print_bb;
 	blt_set_copy_object(&blt3.src, src);

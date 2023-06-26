@@ -102,6 +102,7 @@ struct blt_copy_batch {
 /* Common for block-copy and fast-copy */
 struct blt_copy_data {
 	int fd;
+	enum intel_driver driver;
 	struct blt_copy_object src;
 	struct blt_copy_object dst;
 	struct blt_copy_batch bb;
@@ -155,6 +156,7 @@ struct blt_ctrl_surf_copy_object {
 
 struct blt_ctrl_surf_copy_data {
 	int fd;
+	enum intel_driver driver;
 	struct blt_ctrl_surf_copy_object src;
 	struct blt_ctrl_surf_copy_object dst;
 	struct blt_copy_batch bb;
@@ -185,6 +187,8 @@ bool blt_uses_extended_block_copy(int fd);
 
 const char *blt_tiling_name(enum blt_tiling_type tiling);
 
+void blt_copy_init(int fd, struct blt_copy_data *blt);
+
 uint64_t emit_blt_block_copy(int fd,
 			     uint64_t ahnd,
 			     const struct blt_copy_data *blt,
@@ -204,6 +208,8 @@ uint64_t emit_blt_ctrl_surf_copy(int fd,
 				 const struct blt_ctrl_surf_copy_data *surf,
 				 uint64_t bb_pos,
 				 bool emit_bbe);
+
+void blt_ctrl_surf_copy_init(int fd, struct blt_ctrl_surf_copy_data *surf);
 
 int blt_ctrl_surf_copy(int fd,
 		       const intel_ctx_t *ctx,
@@ -230,7 +236,7 @@ void blt_set_batch(struct blt_copy_batch *batch,
 		   uint32_t handle, uint64_t size, uint32_t region);
 
 struct blt_copy_object *
-blt_create_object(int fd, uint32_t region,
+blt_create_object(const struct blt_copy_data *blt, uint32_t region,
 		  uint32_t width, uint32_t height, uint32_t bpp, uint8_t mocs,
 		  enum blt_tiling_type tiling,
 		  enum blt_compression compression,

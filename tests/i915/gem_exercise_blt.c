@@ -89,7 +89,7 @@ static int fast_copy_one_bb(int i915,
 	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
 
 	/* First blit */
-	memset(&blt_tmp, 0, sizeof(blt_tmp));
+	blt_copy_init(i915, &blt_tmp);
 	blt_tmp.src = blt->src;
 	blt_tmp.dst = blt->mid;
 	blt_tmp.bb = blt->bb;
@@ -98,7 +98,7 @@ static int fast_copy_one_bb(int i915,
 	bb_pos = emit_blt_fast_copy(i915, ahnd, &blt_tmp, bb_pos, false);
 
 	/* Second blit */
-	memset(&blt_tmp, 0, sizeof(blt_tmp));
+	blt_copy_init(i915, &blt_tmp);
 	blt_tmp.src = blt->mid;
 	blt_tmp.dst = blt->dst;
 	blt_tmp.bb = blt->bb;
@@ -140,6 +140,7 @@ static void fast_copy_emit(int i915, const intel_ctx_t *ctx,
 			   uint32_t region1, uint32_t region2,
 			   enum blt_tiling_type mid_tiling)
 {
+	struct blt_copy_data bltinit = {};
 	struct blt_fast_copy_data blt = {};
 	struct blt_copy_object *src, *mid, *dst;
 	const uint32_t bpp = 32;
@@ -152,11 +153,12 @@ static void fast_copy_emit(int i915, const intel_ctx_t *ctx,
 
 	igt_assert(__gem_create_in_memory_regions(i915, &bb, &bb_size, region1) == 0);
 
-	src = blt_create_object(i915, region1, width, height, bpp, 0,
+	blt_copy_init(i915, &bltinit);
+	src = blt_create_object(&bltinit, region1, width, height, bpp, 0,
 				T_LINEAR, COMPRESSION_DISABLED, 0, true);
-	mid = blt_create_object(i915, region2, width, height, bpp, 0,
+	mid = blt_create_object(&bltinit, region2, width, height, bpp, 0,
 				mid_tiling, COMPRESSION_DISABLED, 0, true);
-	dst = blt_create_object(i915, region1, width, height, bpp, 0,
+	dst = blt_create_object(&bltinit, region1, width, height, bpp, 0,
 				T_LINEAR, COMPRESSION_DISABLED, 0, true);
 	igt_assert(src->size == dst->size);
 
@@ -212,17 +214,17 @@ static void fast_copy(int i915, const intel_ctx_t *ctx,
 
 	igt_assert(__gem_create_in_memory_regions(i915, &bb, &bb_size, region1) == 0);
 
-	src = blt_create_object(i915, region1, width, height, bpp, 0,
+	blt_copy_init(i915, &blt);
+	src = blt_create_object(&blt, region1, width, height, bpp, 0,
 				T_LINEAR, COMPRESSION_DISABLED, 0, true);
-	mid = blt_create_object(i915, region2, width, height, bpp, 0,
+	mid = blt_create_object(&blt, region2, width, height, bpp, 0,
 				mid_tiling, COMPRESSION_DISABLED, 0, true);
-	dst = blt_create_object(i915, region1, width, height, bpp, 0,
+	dst = blt_create_object(&blt, region1, width, height, bpp, 0,
 				T_LINEAR, COMPRESSION_DISABLED, 0, true);
 	igt_assert(src->size == dst->size);
 
 	blt_surface_fill_rect(i915, src, width, height);
 
-	memset(&blt, 0, sizeof(blt));
 	blt.color_depth = CD_32bit;
 	blt.print_bb = param.print_bb;
 	blt_set_copy_object(&blt.src, src);
@@ -235,7 +237,7 @@ static void fast_copy(int i915, const intel_ctx_t *ctx,
 	WRITE_PNG(i915, mid_tiling, "src", &blt.src, width, height);
 	WRITE_PNG(i915, mid_tiling, "mid", &blt.dst, width, height);
 
-	memset(&blt, 0, sizeof(blt));
+	blt_copy_init(i915, &blt);
 	blt.color_depth = CD_32bit;
 	blt.print_bb = param.print_bb;
 	blt_set_copy_object(&blt.src, mid);

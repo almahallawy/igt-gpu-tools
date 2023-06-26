@@ -2900,7 +2900,7 @@ static void blitcopy(const struct igt_fb *dst_fb,
 			src = blt_fb_init(src_fb, i, mem_region);
 			dst = blt_fb_init(dst_fb, i, mem_region);
 
-			memset(&blt, 0, sizeof(blt));
+			blt_copy_init(src_fb->fd, &blt);
 			blt.color_depth = blt_get_bpp(src_fb);
 			blt_set_copy_object(&blt.src, src);
 			blt_set_copy_object(&blt.dst, dst);

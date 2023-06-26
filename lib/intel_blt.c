@@ -693,6 +693,22 @@ static void dump_bb_ext(struct gen12_block_copy_data_ext *data)
 }
 
 /**
+ * blt_copy_init:
+ * @fd: drm fd
+ * @blt: structure for initialization
+ *
+ * Function is zeroing @blt and sets fd and driver fields (INTEL_DRIVER_I915 or
+ * INTEL_DRIVER_XE).
+ */
+void blt_copy_init(int fd, struct blt_copy_data *blt)
+{
+	memset(blt, 0, sizeof(*blt));
+
+	blt->fd = fd;
+	blt->driver = get_intel_driver(fd);
+}
+
+/**
  * emit_blt_block_copy:
  * @fd: drm fd
  * @ahnd: allocator handle
@@ -887,6 +903,22 @@ static void dump_bb_surf_ctrl_cmd(const struct gen12_ctrl_surf_copy_data *data)
 		 cmd[3], data->dw03.dst_address_lo);
 	igt_info(" dw04: [%08x] dst offset hi (0x%x), src mocs: %u\n",
 		 cmd[4], data->dw04.dst_address_hi, data->dw04.dst_mocs);
+}
+
+/**
+ * blt_ctrl_surf_copy_init:
+ * @fd: drm fd
+ * @surf: structure for initialization
+ *
+ * Function is zeroing @surf and sets fd and driver fields (INTEL_DRIVER_I915 or
+ * INTEL_DRIVER_XE).
+ */
+void blt_ctrl_surf_copy_init(int fd, struct blt_ctrl_surf_copy_data *surf)
+{
+	memset(surf, 0, sizeof(*surf));
+
+	surf->fd = fd;
+	surf->driver = get_intel_driver(fd);
 }
 
 /**
@@ -1317,7 +1349,7 @@ void blt_set_batch(struct blt_copy_batch *batch,
 }
 
 struct blt_copy_object *
-blt_create_object(int fd, uint32_t region,
+blt_create_object(const struct blt_copy_data *blt, uint32_t region,
 		  uint32_t width, uint32_t height, uint32_t bpp, uint8_t mocs,
 		  enum blt_tiling_type tiling,
 		  enum blt_compression compression,
@@ -1329,10 +1361,12 @@ blt_create_object(int fd, uint32_t region,
 	uint32_t stride = tiling == T_LINEAR ? width * 4 : width;
 	uint32_t handle;
 
+	igt_assert_f(blt->driver, "Driver isn't set, have you called blt_copy_init()?\n");
+
 	obj = calloc(1, sizeof(*obj));
 
 	obj->size = size;
-	igt_assert(__gem_create_in_memory_regions(fd, &handle,
+	igt_assert(__gem_create_in_memory_regions(blt->fd, &handle,
 						  &size, region) == 0);
 
 	blt_set_object(obj, handle, size, region, mocs, tiling,
@@ -1340,7 +1374,7 @@ blt_create_object(int fd, uint32_t region,
 	blt_set_geom(obj, stride, 0, 0, width, height, 0, 0);
 
 	if (create_mapping)
-		obj->ptr = gem_mmap__device_coherent(fd, handle, 0, size,
+		obj->ptr = gem_mmap__device_coherent(blt->fd, handle, 0, size,
 						     PROT_READ | PROT_WRITE);
 
 	return obj;

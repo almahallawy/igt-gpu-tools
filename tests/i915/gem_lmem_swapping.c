@@ -308,7 +308,7 @@ init_object_ccs(int i915, struct object *obj, struct blt_copy_object *tmp,
 		buf[j] = seed++;
 	munmap(buf, obj->size);
 
-	memset(&blt, 0, sizeof(blt));
+	blt_copy_init(i915, &blt);
 	blt.color_depth = CD_32bit;
 
 	memcpy(&blt.src, tmp, sizeof(blt.src));
@@ -366,7 +366,7 @@ verify_object_ccs(int i915, const struct object *obj,
 	cmd->handle = gem_create_from_pool(i915, &size, region);
 	blt_set_batch(cmd, cmd->handle, size, region);
 
-	memset(&blt, 0, sizeof(blt));
+	blt_copy_init(i915, &blt);
 	blt.color_depth = CD_32bit;
 
 	memcpy(&blt.src, obj->blt_obj, sizeof(blt.src));
