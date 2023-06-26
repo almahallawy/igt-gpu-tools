@@ -1848,6 +1848,6 @@ igt_main
 		if (intel_psr2_restore)
 			i915_psr2_sel_fetch_restore(display.drm_fd);
 		igt_display_fini(&display);
-		close(display.drm_fd);
+		drm_close_driver(display.drm_fd);
 	}
 }

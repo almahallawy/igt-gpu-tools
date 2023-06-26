@@ -457,7 +457,7 @@ static void test_handle_protection(void) {
 		if (is_xe_device(non_master_fd))
 			xe_device_get(non_master_fd);
 
-		close(non_master_fd);
+		drm_close_driver(non_master_fd);
 	}
 }
 
@@ -489,6 +489,6 @@ igt_main
 		if (is_xe_device(fd))
 			xe_device_put(fd);
 
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

@@ -119,5 +119,5 @@ igt_simple_main
 	if (is_xe_device(drm_fd))
 		xe_device_put(drm_fd);
 
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 }

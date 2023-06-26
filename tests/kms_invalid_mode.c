@@ -300,6 +300,6 @@ igt_main
 		igt_display_fini(&data.display);
 		igt_reset_connectors();
 		drmModeFreeResources(data.res);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

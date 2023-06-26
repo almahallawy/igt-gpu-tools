@@ -182,7 +182,7 @@ test_lifetime(int fd)
 	/* Make sure properties are cleaned up on client exit. */
 	prop_id2 = create_prop(fd2);
 	igt_assert_eq(validate_prop(fd, prop_id2), 0);
-	igt_assert_eq(close(fd2), 0);
+	igt_assert_eq(drm_close_driver(fd2), 0);
 	igt_assert_eq(validate_prop(fd, prop_id2), ENOENT);
 
 	igt_assert_eq(validate_prop(fd, prop_id), 0);
@@ -210,7 +210,7 @@ test_multiple(int fd)
 		igt_assert_eq(destroy_prop(fd2, prop_ids[i]), 0);
 		igt_assert_eq(validate_prop(fd2, prop_ids[i]), ENOENT);
 	}
-	igt_assert_eq(close(fd2), 0);
+	igt_assert_eq(drm_close_driver(fd2), 0);
 
 	fd2 = drm_open_driver(DRIVER_ANY);
 	igt_assert_fd(fd2);
@@ -221,7 +221,7 @@ test_multiple(int fd)
 		igt_assert_eq(validate_prop(fd, prop_ids[i]), 0);
 		igt_assert_eq(validate_prop(fd2, prop_ids[i]), 0);
 	}
-	igt_assert_eq(close(fd2), 0);
+	igt_assert_eq(drm_close_driver(fd2), 0);
 
 	for (i = 0; i < ARRAY_SIZE(prop_ids); i++)
 		igt_assert_eq(validate_prop(fd, prop_ids[i]), ENOENT);
@@ -350,5 +350,5 @@ igt_main
 	prop_tests(fd);
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

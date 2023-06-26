@@ -694,6 +694,6 @@ igt_main
 		}
 		kmstest_set_vt_text_mode();
 		igt_display_fini(&data.display);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

@@ -431,7 +431,7 @@ igt_main
 			if (kms_poll_disabled)
 				kms_poll_state_restore();
 
-			close(second_fd_hybrid);
+			drm_close_driver(second_fd_hybrid);
 		}
 	}
 
@@ -454,9 +454,9 @@ igt_main
 		}
 
 		igt_fixture
-			close(second_fd_vgem);
+			drm_close_driver(second_fd_vgem);
 	}
 
 	igt_fixture
-		close(first_fd);
+		drm_close_driver(first_fd);
 }

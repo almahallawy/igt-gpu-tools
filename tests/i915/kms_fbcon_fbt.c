@@ -408,7 +408,7 @@ static void teardown_environment(struct drm_info *drm)
 
 	drmModeFreeResources(drm->res);
 	close(drm->debugfs_fd);
-	close(drm->fd);
+	drm_close_driver(drm->fd);
 	kmstest_restore_vt_mode();
 }
 

@@ -238,5 +238,5 @@ igt_simple_main
 
 	buf_ops_destroy(data.bops);
 	igt_display_fini(&data.display);
-	close(data.drm_fd);
+	drm_close_driver(data.drm_fd);
 }

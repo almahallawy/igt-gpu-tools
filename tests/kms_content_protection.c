@@ -884,6 +884,6 @@ igt_main
 	igt_fixture {
 		test_content_protection_cleanup();
 		igt_display_fini(&data.display);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

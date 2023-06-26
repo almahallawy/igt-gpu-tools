@@ -65,7 +65,7 @@ static void reset_connectors(void)
 		free(param);
 	}
 
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 }
 
 static void force_load_detect(int drm_fd, drmModeConnectorPtr connector, drmModeRes *res)
@@ -415,7 +415,7 @@ end:
 
 	igt_fixture {
 		drmModeFreeConnector(connector);
-		close(drm_fd);
+		drm_close_driver(drm_fd);
 
 		reset_connectors();
 	}

@@ -121,7 +121,7 @@ test_rmfb(struct rmfb_data *data, igt_output_t *output, enum pipe pipe, bool reo
 	drmModeFreeCrtc(crtc);
 
 	if (reopen) {
-		close(data->drm_fd);
+		drm_close_driver(data->drm_fd);
 
 		data->drm_fd = drm_open_driver_master(DRIVER_ANY);
 		drmSetClientCap(data->drm_fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
@@ -204,6 +204,6 @@ igt_main
 
 	igt_fixture {
 		igt_display_fini(&data.display);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

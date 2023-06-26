@@ -978,6 +978,6 @@ igt_main_args("det:", NULL, help_str, opt_handler, NULL)
 		if (is_xe_device(drm_fd))
 			xe_device_put(drm_fd);
 
-		close(drm_fd);
+		drm_close_driver(drm_fd);
 	}
 }

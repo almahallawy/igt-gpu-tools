@@ -1353,7 +1353,7 @@ static void teardown_drm(void)
 {
 	buf_ops_destroy(drm.bops);
 	igt_display_fini(&drm.display);
-	close(drm.fd);
+	drm_close_driver(drm.fd);
 }
 
 static void setup_modeset(void)

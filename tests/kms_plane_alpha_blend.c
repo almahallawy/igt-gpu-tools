@@ -715,6 +715,6 @@ igt_main_args("e", NULL, help_str, opt_handler, NULL)
 				    COMMIT_ATOMIC : COMMIT_LEGACY);
 
 		igt_display_fini(&data.display);
-		close(data.gfx_fd);
+		drm_close_driver(data.gfx_fd);
 	}
 }

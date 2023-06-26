@@ -676,6 +676,6 @@ igt_main
 		igt_display_reset(&data.display);
 		igt_display_commit(&data.display);
 		igt_display_fini(&data.display);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

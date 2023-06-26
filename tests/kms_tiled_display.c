@@ -623,6 +623,6 @@ igt_main
 		free(data.conns);
 		kmstest_restore_vt_mode();
 		igt_display_fini(&data.display);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

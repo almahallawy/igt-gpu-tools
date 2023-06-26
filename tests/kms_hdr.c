@@ -666,6 +666,6 @@ igt_main
 
 	igt_fixture {
 		igt_display_fini(&data.display);
-		close(data.fd);
+		drm_close_driver(data.fd);
 	}
 }

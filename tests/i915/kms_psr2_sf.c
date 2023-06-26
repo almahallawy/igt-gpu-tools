@@ -1298,6 +1298,6 @@ igt_main
 	igt_fixture {
 		close(data.debugfs_fd);
 		display_fini(&data);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

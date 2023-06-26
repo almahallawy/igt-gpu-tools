@@ -400,6 +400,6 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 		if (is_intel_device(data.drm_fd))
 			intel_allocator_multiprocess_stop();
 		igt_display_fini(&data.display);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

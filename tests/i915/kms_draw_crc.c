@@ -242,7 +242,7 @@ static void teardown_environment(void)
 
 	buf_ops_destroy(bops);
 
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 }
 
 static const char *format_str(int format_index)

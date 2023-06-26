@@ -933,7 +933,7 @@ static void master_tests(int fd)
 		do_ioctl_err(master2_fd, DRM_IOCTL_MODE_RMFB, &f.fb_id, ENOENT);
 
 		igt_device_drop_master(master2_fd);
-		close(master2_fd);
+		drm_close_driver(master2_fd);
 
 		igt_device_set_master(fd);
 	}
@@ -1012,6 +1012,6 @@ igt_main
 		if (is_xe_device(fd))
 			xe_device_put(fd);
 
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

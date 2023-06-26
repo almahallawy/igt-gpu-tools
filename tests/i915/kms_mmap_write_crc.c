@@ -306,7 +306,7 @@ igt_main_args("n", NULL, NULL, opt_handler, NULL)
 
 	igt_fixture {
 		igt_display_fini(&data.display);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 
 		igt_stop_helper(&hog);
 	}

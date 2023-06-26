@@ -601,6 +601,6 @@ igt_main
 			run_subtests_for_pipe(&data);
 
 	igt_fixture {
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

@@ -1082,7 +1082,7 @@ static void multimaster_lease(data_t *data)
 	drmSetClientCap(master2_fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
 	lease2_fd = create_simple_lease(master2_fd, data);
 
-	close(master2_fd); /* close is an implicit DropMaster */
+	drm_close_driver(master2_fd); /* close is an implicit DropMaster */
 	igt_assert(!is_master(lease2_fd));
 
 	igt_device_set_master(data->master.fd);
@@ -1278,6 +1278,6 @@ igt_main
 
 	igt_fixture {
 		igt_display_fini(display);
-		close(data.master.fd);
+		drm_close_driver(data.master.fd);
 	}
 }

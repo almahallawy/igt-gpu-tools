@@ -389,6 +389,6 @@ igt_main
 	/* TODO: legacy gamma_set/get, object set/getprop, getcrtc, getconnector */
 	igt_fixture {
 		igt_display_fini(&display);
-		close(display.drm_fd);
+		drm_close_driver(display.drm_fd);
 	}
 }

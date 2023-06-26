@@ -147,5 +147,5 @@ igt_simple_main
 	igt_require(valid_connectors);
 
 	drmModeFreeResources(res);
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 }

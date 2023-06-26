@@ -193,5 +193,5 @@ igt_simple_main
 	run_test(&data);
 
 	igt_display_fini(&data.display);
-	close(data.drm_fd);
+	drm_close_driver(data.drm_fd);
 }

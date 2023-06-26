@@ -84,6 +84,6 @@ igt_main
 
 	igt_fixture {
 		drmModeFreeConnector(tv_connector);
-		close(drm_fd);
+		drm_close_driver(drm_fd);
 	}
 }
