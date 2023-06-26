@@ -64,6 +64,7 @@
 #include "intel_reg.h"
 #include "ioctl_wrappers.h"
 #include "igt_dummyload.h"
+#include "xe/xe_query.h"
 
 /**
  * SECTION:drmtest
@@ -497,8 +498,13 @@ int __drm_open_driver_another(int idx, int chipset)
 		fd = __open_driver("/dev/dri/card", 0, chipset, idx);
 	}
 
-	if (fd >= 0)
+	if (fd >= 0) {
 		_set_opened_fd(idx, fd);
+
+		/* Cache xe_device struct. */
+		if (is_xe_device(fd))
+			xe_device_get(fd);
+	}
 
 	return fd;
 }
@@ -523,6 +529,8 @@ int __drm_open_driver(int chipset)
 
 int __drm_open_driver_render(int chipset)
 {
+	int fd;
+
 	if (chipset != DRIVER_VGEM && igt_device_filter_count() > 0) {
 		struct igt_device_card card;
 		bool found;
@@ -532,10 +540,16 @@ int __drm_open_driver_render(int chipset)
 		if (!found || !strlen(card.render))
 			return -1;
 
-		return __open_driver_exact(card.render, chipset);
+		fd = __open_driver_exact(card.render, chipset);
+	} else {
+		fd = __open_driver("/dev/dri/renderD", 128, chipset, 0);
 	}
 
-	return __open_driver("/dev/dri/renderD", 128, chipset, 0);
+	/* Cache xe_device struct. */
+	if (fd >= 0 && is_xe_device(fd))
+		xe_device_get(fd);
+
+	return fd;
 }
 
 static int at_exit_drm_fd = -1;
@@ -676,6 +690,10 @@ int drm_close_driver(int fd)
 			 "descriptor: %d\n", fd);
 		return -1;
 	}
+
+	/* Remove xe_device from cache. */
+	if (is_xe_device(fd))
+		xe_device_put(fd);
 
 	return close(fd);
 }
