@@ -309,6 +309,5 @@ igt_main_args("n", NULL, NULL, opt_handler, NULL)
 		close(data.drm_fd);
 
 		igt_stop_helper(&hog);
-		close(data.drm_fd);
 	}
 }
