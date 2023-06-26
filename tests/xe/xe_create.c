@@ -177,7 +177,7 @@ static void create_engines(int fd, enum engine_destroy ed)
 	igt_waitchildren();
 
 	xe_vm_destroy(fd, vm);
-	close(fd);
+	drm_close_driver(fd);
 
 	seconds = igt_seconds_elapsed(&tv);
 	igt_assert_f(seconds < MAXTIME,
@@ -231,6 +231,6 @@ igt_main
 
 	igt_fixture {
 		xe_device_put(xe);
-		close(xe);
+		drm_close_driver(xe);
 	}
 }

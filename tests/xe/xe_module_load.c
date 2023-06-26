@@ -87,7 +87,7 @@ static void load_and_check_xe(const char *opts)
 	/* driver is ready, check if it's bound */
 	drm_fd = __drm_open_driver(DRIVER_XE);
 	igt_fail_on_f(drm_fd < 0, "Cannot open the xe DRM driver after modprobing xe.\n");
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 }
 
 static const char * const unwanted_drivers[] = {

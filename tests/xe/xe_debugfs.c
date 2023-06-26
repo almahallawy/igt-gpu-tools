@@ -271,6 +271,6 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 
 	igt_fixture {
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

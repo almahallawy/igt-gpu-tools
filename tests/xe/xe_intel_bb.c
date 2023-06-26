@@ -1143,6 +1143,6 @@ igt_main_args("dpib", NULL, help_str, opt_handler, NULL)
 	igt_fixture {
 		xe_device_put(xe);
 		buf_ops_destroy(bops);
-		close(xe);
+		drm_close_driver(xe);
 	}
 }

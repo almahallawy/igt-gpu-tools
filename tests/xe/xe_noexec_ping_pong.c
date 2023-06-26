@@ -104,5 +104,5 @@ igt_simple_main
 	test_ping_pong(fd, xe_hw_engine(fd, 0));
 
 	xe_device_put(fd);
-	close(fd);
+	drm_close_driver(fd);
 }

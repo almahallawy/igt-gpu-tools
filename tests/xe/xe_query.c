@@ -492,6 +492,6 @@ igt_main
 
 	igt_fixture {
 		xe_device_put(xe);
-		close(xe);
+		drm_close_driver(xe);
 	}
 }

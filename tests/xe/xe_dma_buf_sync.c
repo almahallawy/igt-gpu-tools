@@ -219,7 +219,7 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 
 	for (i = 0; i < N_FD; ++i) {
 		xe_device_put(fd[i]);
-		close(fd[i]);
+		drm_close_driver(fd[i]);
 	}
 
 }
@@ -256,6 +256,6 @@ igt_main
 
 	igt_fixture {
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

@@ -201,7 +201,7 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 		xe_vm_destroy(fd, vm3);
 	}
 	xe_device_put(fd);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void
@@ -369,7 +369,7 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 	if (flags & MULTI_VM)
 		xe_vm_destroy(fd, vm2);
 	xe_device_put(fd);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 struct thread_data {
@@ -700,5 +700,5 @@ igt_main
 	}
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

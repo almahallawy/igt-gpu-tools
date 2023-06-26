@@ -445,6 +445,6 @@ igt_main
 		set_d3cold_allowed(device.pci_xe, d3cold_allowed);
 		igt_restore_runtime_pm();
 		xe_device_put(device.fd_xe);
-		close(device.fd_xe);
+		drm_close_driver(device.fd_xe);
 	}
 }

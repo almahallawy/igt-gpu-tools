@@ -286,7 +286,7 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 				xe_engine_destroy(fd, engines[i]);
 		}
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 		/* FIXME: wait for idle */
 		usleep(150000);
 		return;
@@ -461,7 +461,7 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 				xe_engine_destroy(fd, engines[i]);
 		}
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 		/* FIXME: wait for idle */
 		usleep(150000);
 		return;
@@ -636,7 +636,7 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 				xe_engine_destroy(fd, engines[i]);
 		}
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 		/* FIXME: wait for idle */
 		usleep(150000);
 		return;
@@ -927,6 +927,6 @@ igt_main
 
 	igt_fixture {
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

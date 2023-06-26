@@ -490,6 +490,6 @@ igt_main
 		}
 		close(sysfs);
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

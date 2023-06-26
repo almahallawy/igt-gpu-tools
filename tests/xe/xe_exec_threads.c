@@ -245,7 +245,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 		xe_vm_destroy(fd, vm);
 	if (owns_fd) {
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }
 
@@ -459,7 +459,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		xe_vm_destroy(fd, vm);
 	if (owns_fd) {
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }
 
@@ -703,7 +703,7 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		xe_vm_destroy(fd, vm);
 	if (owns_fd) {
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }
 
@@ -1407,6 +1407,6 @@ igt_main
 
 	igt_fixture {
 		xe_device_put(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

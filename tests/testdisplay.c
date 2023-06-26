@@ -548,7 +548,7 @@ int update_display(bool probe)
 
 __noreturn static void cleanup_and_exit(int ret)
 {
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 	exit(ret);
 }
 
@@ -779,7 +779,7 @@ out_hotplug:
 out_mainloop:
 	g_main_loop_unref(mainloop);
 out_close:
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 
 	igt_assert_eq(ret, 0);
 }
