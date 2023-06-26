@@ -165,4 +165,7 @@ igt_main
 			break;
 		}
 	}
+
+	igt_fixture
+		drm_close_driver(fd);
 }

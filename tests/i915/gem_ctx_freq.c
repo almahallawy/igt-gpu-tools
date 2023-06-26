@@ -261,4 +261,7 @@ igt_main
 			igt_dynamic_f("gt%u", gt)
 				sysfs_range(dirfd, gt);
 	}
+
+	igt_fixture
+		drm_close_driver(i915);
 }

@@ -1321,4 +1321,7 @@ igt_main
 			intel_allocator_multiprocess_stop();
 		}
 	}
+
+	igt_fixture
+		drm_close_driver(fd);
 }

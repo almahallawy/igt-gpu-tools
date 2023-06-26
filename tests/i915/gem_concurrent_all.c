@@ -2015,4 +2015,9 @@ igt_main
 			}
 		}
 	}
+
+	igt_fixture {
+		drm_close_driver(fd);
+		drm_close_driver(vgem_drv);
+	}
 }

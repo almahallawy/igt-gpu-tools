@@ -605,4 +605,7 @@ igt_main
 		gem_context_destroy(fd, ctx_id);
 		put_ahnd(ahnd);
 	}
+
+	igt_fixture
+		drm_close_driver(fd);
 }

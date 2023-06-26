@@ -999,4 +999,7 @@ igt_main
 		waitboost(drm_fd, true);
 		igt_disallow_hang(drm_fd, hang);
 	}
+
+	igt_fixture
+		drm_close_driver(drm_fd);
 }

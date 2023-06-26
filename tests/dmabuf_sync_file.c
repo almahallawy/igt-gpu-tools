@@ -380,4 +380,7 @@ igt_main
 		     "operations.");
 	igt_subtest("import-multiple-read-write")
 		test_import_multiple(fd, true);
+
+	igt_fixture
+		drm_close_driver(fd);
 }
