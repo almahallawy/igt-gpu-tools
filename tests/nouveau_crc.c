@@ -409,7 +409,9 @@ igt_main
 			close(data.nv_crc_dir);
 		}
 	}
-	igt_fixture
-		igt_display_fini(&data.display);
 
+	igt_fixture {
+		igt_display_fini(&data.display);
+		drm_close_driver(data.drm_fd);
+	}
 }
