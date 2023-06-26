@@ -96,7 +96,7 @@ igt_main
 	}
 
 	igt_fixture {
-		close(fd);
-		close(kms_fd);
+		drm_close_driver(fd);
+		drm_close_driver(kms_fd);
 	}
 }

@@ -82,9 +82,9 @@ igt_main
 		munmap(map, size);
 		igt_panfrost_free_bo(fd2, bo);
 
-		close(fd2);
+		drm_close_driver(fd2);
 	}
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

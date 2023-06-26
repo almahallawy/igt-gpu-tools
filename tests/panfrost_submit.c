@@ -154,7 +154,7 @@ igt_main
                 check_done(headers[2]);
                 igt_panfrost_free_job(fd, submit[0]);
                 igt_panfrost_free_job(tmpfd, submit[1]);
-                close(tmpfd);
+                drm_close_driver(tmpfd);
         }
 
         igt_subtest("pan-submit-and-close") {
@@ -165,7 +165,7 @@ igt_main
                 submit = igt_panfrost_job_loop(tmpfd);
                 do_ioctl(tmpfd, DRM_IOCTL_PANFROST_SUBMIT, submit->args);
                 igt_panfrost_free_job(tmpfd, submit);
-                close(tmpfd);
+                drm_close_driver(tmpfd);
         }
 
         igt_subtest("pan-unhandled-pagefault") {
@@ -197,6 +197,6 @@ igt_main
         }
 
         igt_fixture {
-                close(fd);
+                drm_close_driver(fd);
         }
 }
