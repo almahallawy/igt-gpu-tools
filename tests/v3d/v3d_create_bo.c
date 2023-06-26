@@ -63,9 +63,9 @@ igt_main
 			igt_assert_eq_u32(((uint32_t *)bo->map)[i], 0x0);
 		igt_v3d_free_bo(fd2, bo);
 
-		close(fd2);
+		drm_close_driver(fd2);
 	}
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

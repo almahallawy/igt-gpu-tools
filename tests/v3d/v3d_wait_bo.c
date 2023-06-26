@@ -122,6 +122,6 @@ igt_main
 
 	igt_fixture {
 		igt_v3d_free_bo(fd, bo);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }
