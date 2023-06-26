@@ -87,7 +87,7 @@ igt_msm_dev_close(struct msm_device *dev)
 {
 	if (!dev)
 		return;
-	close(dev->fd);
+	drm_close_driver(dev->fd);
 	free(dev);
 }
 
