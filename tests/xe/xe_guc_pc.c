@@ -381,7 +381,6 @@ igt_main
 
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
 
 		sysfs = igt_sysfs_open(fd);
 		igt_assert(sysfs != -1);
@@ -489,7 +488,6 @@ igt_main
 			set_freq(sysfs, gt, "max", stash_max);
 		}
 		close(sysfs);
-		xe_device_put(fd);
 		drm_close_driver(fd);
 	}
 }

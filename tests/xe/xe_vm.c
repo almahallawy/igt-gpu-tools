@@ -1638,7 +1638,6 @@ igt_main
 
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
 
 		xe_for_each_hw_engine(fd, hwe)
 			if (hwe->engine_class != DRM_XE_ENGINE_CLASS_COPY) {
@@ -1854,8 +1853,6 @@ igt_main
 		}
 	}
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

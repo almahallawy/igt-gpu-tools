@@ -120,8 +120,6 @@ igt_main
 
 		fill_fn = igt_get_gpgpu_fillfunc(data.devid);
 		igt_require_f(fill_fn, "no gpgpu-fill function\n");
-
-		xe_device_get(data.drm_fd);
 	}
 
 	igt_subtest("basic") {
@@ -129,7 +127,6 @@ igt_main
 	}
 
 	igt_fixture {
-		xe_device_put(data.drm_fd);
 		buf_ops_destroy(data.bops);
 		drm_close_driver(data.drm_fd);
 	}

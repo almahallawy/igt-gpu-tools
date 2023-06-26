@@ -1858,9 +1858,6 @@ igt_main_args("e", NULL, help_str, opt_handler, NULL)
 		igt_install_exit_handler(kms_flip_exit_handler);
 		get_timestamp_format();
 
-		if (is_xe_device(drm_fd))
-			xe_device_get(drm_fd);
-
 		if (is_i915_device(drm_fd)) {
 			bops = buf_ops_create(drm_fd);
 		}
@@ -1926,10 +1923,6 @@ igt_main_args("e", NULL, help_str, opt_handler, NULL)
 	}
 	igt_stop_signal_helper();
 
-	igt_fixture {
-		if (is_xe_device(drm_fd))
-			xe_device_put(drm_fd);
-
+	igt_fixture
 		drm_close_driver(drm_fd);
-	}
 }

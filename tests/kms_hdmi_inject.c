@@ -206,9 +206,6 @@ igt_main
 		igt_require(connector);
 
 		kmstest_unset_all_crtcs(drm_fd, res);
-
-		if (is_xe_device(drm_fd))
-			xe_device_get(drm_fd);
 	}
 
 	igt_describe("Make sure that 4K modes exposed by DRM match the "
@@ -223,10 +220,6 @@ igt_main
 
 	igt_fixture {
 		drmModeFreeConnector(connector);
-
-		if (is_xe_device(drm_fd))
-			xe_device_put(drm_fd);
-
 		drm_close_driver(drm_fd);
 	}
 }

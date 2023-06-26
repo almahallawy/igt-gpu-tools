@@ -619,10 +619,8 @@ igt_main
 	int class;
 	int fd;
 
-	igt_fixture {
+	igt_fixture
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
-	}
 
 	igt_subtest("virtual-all-active")
 		xe_for_each_gt(fd, gt)
@@ -699,8 +697,6 @@ igt_main
 					test_cm(fd, gt, class, 1, 0, s->flags);
 	}
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

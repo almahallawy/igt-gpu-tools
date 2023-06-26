@@ -144,10 +144,8 @@ igt_main
 	int fd;
 	int gt, class;
 
-	igt_fixture {
+	igt_fixture
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
-	}
 
 	igt_subtest("spin-basic")
 		spin_basic(fd);
@@ -165,8 +163,6 @@ igt_main
 				spin_all(fd, gt, class);
 	}
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

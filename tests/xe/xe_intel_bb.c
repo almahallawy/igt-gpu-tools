@@ -1069,7 +1069,6 @@ igt_main_args("dpib", NULL, help_str, opt_handler, NULL)
 	igt_fixture {
 		xe = drm_open_driver(DRIVER_XE);
 		bops = buf_ops_create(xe);
-		xe_device_get(xe);
 	}
 
 	igt_describe("Ensure reset is possible on fresh bb");
@@ -1141,7 +1140,6 @@ igt_main_args("dpib", NULL, help_str, opt_handler, NULL)
 	}
 
 	igt_fixture {
-		xe_device_put(xe);
 		buf_ops_destroy(bops);
 		drm_close_driver(xe);
 	}

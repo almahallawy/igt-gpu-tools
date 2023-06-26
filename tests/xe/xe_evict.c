@@ -62,7 +62,6 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 	igt_assert(bo);
 
 	fd = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd);
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
 	if (flags & BIND_ENGINE)
@@ -200,7 +199,6 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 		xe_vm_destroy(fd, vm2);
 		xe_vm_destroy(fd, vm3);
 	}
-	xe_device_put(fd);
 	drm_close_driver(fd);
 }
 
@@ -239,7 +237,6 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 	igt_assert(bo);
 
 	fd = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd);
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
 			  DRM_XE_VM_CREATE_COMPUTE_MODE, 0);
@@ -368,7 +365,6 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 	xe_vm_destroy(fd, vm);
 	if (flags & MULTI_VM)
 		xe_vm_destroy(fd, vm2);
-	xe_device_put(fd);
 	drm_close_driver(fd);
 }
 
@@ -667,7 +663,6 @@ igt_main
 
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
 		igt_require(xe_has_vram(fd));
 		vram_size = xe_vram_size(fd, 0);
 		igt_assert(vram_size);

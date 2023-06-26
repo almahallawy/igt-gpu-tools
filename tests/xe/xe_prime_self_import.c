@@ -105,9 +105,7 @@ static void test_with_fd_dup(void)
 	counter = 0;
 
 	fd1 = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd1);
 	fd2 = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd2);
 
 	handle = xe_bo_create(fd1, 0, 0, BO_SIZE);
 
@@ -122,9 +120,7 @@ static void test_with_fd_dup(void)
 	close(dma_buf_fd2);
 	check_bo(fd2, handle_import, fd2, handle_import);
 
-	xe_device_put(fd1);
 	drm_close_driver(fd1);
-	xe_device_put(fd2);
 	drm_close_driver(fd2);
 }
 
@@ -143,9 +139,7 @@ static void test_with_two_bos(void)
 	counter = 0;
 
 	fd1 = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd1);
 	fd2 = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd2);
 
 	handle1 = xe_bo_create(fd1, 0, 0, BO_SIZE);
 	handle2 = xe_bo_create(fd1, 0, 0, BO_SIZE);
@@ -165,9 +159,7 @@ static void test_with_two_bos(void)
 
 	check_bo(fd2, handle_import, fd2, handle_import);
 
-	xe_device_put(fd1);
 	drm_close_driver(fd1);
-	xe_device_put(fd2);
 	drm_close_driver(fd2);
 }
 
@@ -184,9 +176,7 @@ static void test_with_one_bo_two_files(void)
 	int dma_buf_fd1, dma_buf_fd2;
 
 	fd1 = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd1);
 	fd2 = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd2);
 
 	handle_orig = xe_bo_create(fd1, 0, 0, BO_SIZE);
 	dma_buf_fd1 = prime_handle_to_fd(fd1, handle_orig);
@@ -200,9 +190,7 @@ static void test_with_one_bo_two_files(void)
 	/* dma-buf self importing an flink bo should give the same handle */
 	igt_assert_eq_u32(handle_import, handle_open);
 
-	xe_device_put(fd1);
 	drm_close_driver(fd1);
-	xe_device_put(fd2);
 	drm_close_driver(fd2);
 	close(dma_buf_fd1);
 	close(dma_buf_fd2);
@@ -221,9 +209,7 @@ static void test_with_one_bo(void)
 	int dma_buf_fd;
 
 	fd1 = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd1);
 	fd2 = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd2);
 
 	handle = xe_bo_create(fd1, 0, 0, BO_SIZE);
 
@@ -257,10 +243,8 @@ static void test_with_one_bo(void)
 	check_bo(fd1, handle, fd2, handle_import1);
 
 	/* Completely rip out exporting fd. */
-	xe_device_put(fd1);
 	drm_close_driver(fd1);
 	check_bo(fd2, handle_import1, fd2, handle_import1);
-	xe_device_put(fd2);
 	drm_close_driver(fd2);
 }
 
@@ -313,7 +297,6 @@ static void *thread_fn_reimport_vs_close(void *p)
 	threads = calloc(num_threads, sizeof(pthread_t));
 
 	fds[0] = drm_open_driver(DRIVER_XE);
-	xe_device_get(fds[0]);
 
 	handle = xe_bo_create(fds[0], 0, 0, BO_SIZE);
 
@@ -333,7 +316,6 @@ static void *thread_fn_reimport_vs_close(void *p)
 	}
 
 	pthread_barrier_destroy(&g_barrier);
-	xe_device_put(fds[0]);
 	drm_close_driver(fds[0]);
 	close(fds[1]);
 
@@ -405,13 +387,11 @@ static void test_export_close_race(void)
 	/* Allocate exit handler fds in here so that we dont screw
 	 * up the counts */
 	fake = drm_open_driver(DRIVER_XE);
-	xe_device_get(fake);
 
 	/* TODO: Read object count */
 	obj_count = 0;
 
 	fd = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd);
 	pthread_barrier_init(&g_barrier, NULL, num_threads);
 
 	for (i = 0; i < num_threads; i++) {
@@ -427,7 +407,6 @@ static void test_export_close_race(void)
 	}
 
 	pthread_barrier_destroy(&g_barrier);
-	xe_device_put(fd);
 	drm_close_driver(fd);
 
 	/* TODO: Read object count */
@@ -435,7 +414,6 @@ static void test_export_close_race(void)
 
 	igt_info("leaked %i objects\n", obj_count);
 
-	xe_device_put(fake);
 	drm_close_driver(fake);
 
 	igt_assert_eq(obj_count, 0);
@@ -456,7 +434,6 @@ static void test_llseek_size(void)
 	counter = 0;
 
 	fd = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd);
 
 	for (i = 0; i < 10; i++) {
 		int bufsz = xe_get_default_alignment(fd) << i;
@@ -471,7 +448,6 @@ static void test_llseek_size(void)
 		close(dma_buf_fd);
 	}
 
-	xe_device_put(fd);
 	drm_close_driver(fd);
 }
 
@@ -490,7 +466,6 @@ static void test_llseek_bad(void)
 	counter = 0;
 
 	fd = drm_open_driver(DRIVER_XE);
-	xe_device_get(fd);
 
 	handle = xe_bo_create(fd, 0, 0, BO_SIZE);
 	dma_buf_fd = prime_handle_to_fd(fd, handle);
@@ -507,7 +482,6 @@ static void test_llseek_bad(void)
 
 	close(dma_buf_fd);
 
-	xe_device_put(fd);
 	drm_close_driver(fd);
 }
 
@@ -531,7 +505,6 @@ igt_main
 
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
 	}
 
 	for (i = 0; i < ARRAY_SIZE(tests); i++) {
@@ -539,8 +512,6 @@ igt_main
 			tests[i].fn();
 	}
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

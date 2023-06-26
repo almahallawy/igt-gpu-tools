@@ -516,7 +516,6 @@ igt_main
 
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
 		igt_require(xe_supports_faults(fd));
 	}
 
@@ -560,8 +559,6 @@ igt_main
 		xe_for_each_hw_engine(fd, hwe)
 			test_atomic(fd, hwe, 8, WAIT_ATOMIC);
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

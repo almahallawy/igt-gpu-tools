@@ -404,9 +404,6 @@ static void test_handle_protection(void) {
 	igt_fixture {
 		non_master_fd = drm_open_driver(DRIVER_ANY);
 
-		if (is_xe_device(non_master_fd))
-			xe_device_get(non_master_fd);
-
 		non_master_add.width = 1024;
 		non_master_add.height = 1024;
 		non_master_add.pixel_format = DRM_FORMAT_XRGB8888;
@@ -454,9 +451,6 @@ static void test_handle_protection(void) {
 		do_ioctl(non_master_fd, DRM_IOCTL_MODE_RMFB, &non_master_add.fb_id);
 		gem_close(non_master_fd, non_master_add.handles[0]);
 
-		if (is_xe_device(non_master_fd))
-			xe_device_get(non_master_fd);
-
 		drm_close_driver(non_master_fd);
 	}
 }
@@ -468,9 +462,6 @@ igt_main
 	igt_fixture {
 		fd = drm_open_driver_master(DRIVER_ANY);
 		igt_require(has_getfb_iface(fd));
-
-		if (is_xe_device(fd))
-			xe_device_get(fd);
 	}
 
 	igt_subtest_group
@@ -485,10 +476,6 @@ igt_main
 	igt_subtest_group
 		test_handle_protection();
 
-	igt_fixture {
-		if (is_xe_device(fd))
-			xe_device_put(fd);
-
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

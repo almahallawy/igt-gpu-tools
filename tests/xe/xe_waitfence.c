@@ -118,10 +118,8 @@ igt_main
 {
 	int fd;
 
-	igt_fixture {
+	igt_fixture
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
-	}
 
 	igt_subtest("reltime")
 		waitfence(fd, RELTIME);
@@ -129,8 +127,6 @@ igt_main
 	igt_subtest("abstime")
 		waitfence(fd, ABSTIME);
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

@@ -78,18 +78,14 @@ igt_main
 {
 	int fd;
 
-	igt_fixture {
+	igt_fixture
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
-	}
 
 	igt_subtest("mmio-timestamp")
 		test_xe_mmio_timestamp(fd);
 	igt_subtest("mmio-invalid")
 		test_xe_mmio_invalid(fd);
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

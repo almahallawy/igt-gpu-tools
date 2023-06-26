@@ -112,7 +112,6 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 
 	for (i = 0; i < N_FD; ++i) {
 		fd[i] = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd[0]);
 		vm[i] = xe_vm_create(fd[i], 0, 0);
 		engine[i] = xe_engine_create(fd[i], vm[i], !i ? hwe0 : hwe1, 0);
 	}
@@ -217,11 +216,8 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 		close(dma_buf_fd[i]);
 	}
 
-	for (i = 0; i < N_FD; ++i) {
-		xe_device_put(fd[i]);
+	for (i = 0; i < N_FD; ++i)
 		drm_close_driver(fd[i]);
-	}
-
 }
 
 igt_main
@@ -231,7 +227,6 @@ igt_main
 
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
 
 		xe_for_each_hw_engine(fd, hwe)
 			if (hwe0 == NULL) {
@@ -254,8 +249,6 @@ igt_main
 	igt_subtest("export-dma-buf-many-read-sync")
 		test_export_dma_buf(hwe0, hwe1, 16, READ_SYNC);
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

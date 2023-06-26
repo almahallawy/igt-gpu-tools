@@ -241,14 +241,12 @@ static int opt_handler(int option, int option_index, void *input)
 
 igt_main_args("", long_options, help_str, opt_handler, NULL)
 {
-	struct xe_device *xe_dev;
 	char devnode[PATH_MAX];
 	int fd;
 	int gt;
 
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
-		xe_dev = xe_device_get(fd);
 		__igt_debugfs_dump(fd, "info", IGT_LOG_INFO);
 	}
 
@@ -269,8 +267,6 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 		test_forcewake(fd);
 	}
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

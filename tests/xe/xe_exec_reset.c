@@ -170,10 +170,8 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 
 	igt_assert(n_engines <= MAX_N_ENGINES);
 
-	if (flags & CLOSE_FD) {
+	if (flags & CLOSE_FD)
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
-	}
 
 	xe_for_each_hw_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
@@ -285,7 +283,6 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 			for (i = 0; i < n_engines; i++)
 				xe_engine_destroy(fd, engines[i]);
 		}
-		xe_device_put(fd);
 		drm_close_driver(fd);
 		/* FIXME: wait for idle */
 		usleep(150000);
@@ -374,10 +371,8 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 
 	igt_assert(n_engines <= MAX_N_ENGINES);
 
-	if (flags & CLOSE_FD) {
+	if (flags & CLOSE_FD)
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
-	}
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
 	bo_size = sizeof(*data) * n_execs;
@@ -460,7 +455,6 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 			for (i = 0; i < n_engines; i++)
 				xe_engine_destroy(fd, engines[i]);
 		}
-		xe_device_put(fd);
 		drm_close_driver(fd);
 		/* FIXME: wait for idle */
 		usleep(150000);
@@ -547,10 +541,8 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 
 	igt_assert(n_engines <= MAX_N_ENGINES);
 
-	if (flags & CLOSE_FD) {
+	if (flags & CLOSE_FD)
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
-	}
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
 			  DRM_XE_VM_CREATE_COMPUTE_MODE, 0);
@@ -635,7 +627,6 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 			for (i = 0; i < n_engines; i++)
 				xe_engine_destroy(fd, engines[i]);
 		}
-		xe_device_put(fd);
 		drm_close_driver(fd);
 		/* FIXME: wait for idle */
 		usleep(150000);
@@ -812,10 +803,8 @@ igt_main
 	int class;
 	int fd;
 
-	igt_fixture {
+	igt_fixture
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
-	}
 
 	igt_subtest("spin")
 		xe_for_each_hw_engine(fd, hwe)
@@ -925,8 +914,6 @@ igt_main
 	igt_subtest("gt-reset-stress")
 		gt_reset(fd, 4, 1);
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

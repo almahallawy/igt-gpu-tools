@@ -974,9 +974,6 @@ igt_main
 	igt_fixture {
 		fd = drm_open_driver_master(DRIVER_ANY);
 		igt_require(has_addfb2_iface(fd));
-
-		if (is_xe_device(fd))
-			xe_device_get(fd);
 	}
 
 	invalid_tests(fd);
@@ -1008,10 +1005,6 @@ igt_main
 			igt_display_fini(&display);
 	}
 
-	igt_fixture {
-		if (is_xe_device(fd))
-			xe_device_put(fd);
-
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

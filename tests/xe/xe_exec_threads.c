@@ -73,7 +73,6 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 
 	if (!fd) {
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
 		owns_fd = true;
 	}
 
@@ -243,10 +242,8 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 	}
 	if (owns_vm)
 		xe_vm_destroy(fd, vm);
-	if (owns_fd) {
-		xe_device_put(fd);
+	if (owns_fd)
 		drm_close_driver(fd);
-	}
 }
 
 static void
@@ -283,7 +280,6 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 
 	if (!fd) {
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
 		owns_fd = true;
 	}
 
@@ -458,7 +454,6 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 	if (owns_vm)
 		xe_vm_destroy(fd, vm);
 	if (owns_fd) {
-		xe_device_put(fd);
 		drm_close_driver(fd);
 	}
 }
@@ -496,7 +491,6 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 
 	if (!fd) {
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
 		owns_fd = true;
 	}
 
@@ -701,10 +695,8 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 	}
 	if (owns_vm)
 		xe_vm_destroy(fd, vm);
-	if (owns_fd) {
-		xe_device_put(fd);
+	if (owns_fd)
 		drm_close_driver(fd);
-	}
 }
 
 struct thread_data {
@@ -1395,18 +1387,14 @@ igt_main
 	};
 	int fd;
 
-	igt_fixture {
+	igt_fixture
 		fd = drm_open_driver(DRIVER_XE);
-		xe_device_get(fd);
-	}
 
 	for (const struct section *s = sections; s->name; s++) {
 		igt_subtest_f("threads-%s", s->name)
 			threads(fd, s->flags);
 	}
 
-	igt_fixture {
-		xe_device_put(fd);
+	igt_fixture
 		drm_close_driver(fd);
-	}
 }

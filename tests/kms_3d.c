@@ -37,9 +37,6 @@ igt_simple_main
 
 	drm_fd = drm_open_driver_master(DRIVER_ANY);
 
-	if (is_xe_device(drm_fd))
-		xe_device_get(drm_fd);
-
 	res = drmModeGetResources(drm_fd);
 	igt_require(res);
 
@@ -115,9 +112,6 @@ igt_simple_main
 	kmstest_force_edid(drm_fd, connector, NULL);
 
 	drmModeFreeConnector(connector);
-
-	if (is_xe_device(drm_fd))
-		xe_device_put(drm_fd);
 
 	drm_close_driver(drm_fd);
 }

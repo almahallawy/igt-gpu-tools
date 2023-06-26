@@ -374,8 +374,6 @@ igt_main
 		device.pci_xe = igt_device_get_pci_device(device.fd_xe);
 		device.pci_root = igt_device_get_pci_root_port(device.fd_xe);
 
-		xe_device_get(device.fd_xe);
-
 		/* Always perform initial once-basic exec checking for health */
 		xe_for_each_hw_engine(device.fd_xe, hwe)
 			test_exec(device, hwe, 1, 1, NO_SUSPEND, NO_RPM);
@@ -444,7 +442,6 @@ igt_main
 	igt_fixture {
 		set_d3cold_allowed(device.pci_xe, d3cold_allowed);
 		igt_restore_runtime_pm();
-		xe_device_put(device.fd_xe);
 		drm_close_driver(device.fd_xe);
 	}
 }

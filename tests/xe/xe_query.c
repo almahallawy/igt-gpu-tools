@@ -458,10 +458,8 @@ igt_main
 {
 	int xe;
 
-	igt_fixture {
+	igt_fixture
 		xe = drm_open_driver(DRIVER_XE);
-		xe_device_get(xe);
-	}
 
 	igt_subtest("query-engines")
 		test_query_engines(xe);
@@ -490,8 +488,6 @@ igt_main
 	igt_subtest("query-invalid-extension")
 		test_query_invalid_extension(xe);
 
-	igt_fixture {
-		xe_device_put(xe);
+	igt_fixture
 		drm_close_driver(xe);
-	}
 }
