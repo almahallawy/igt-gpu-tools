@@ -480,6 +480,14 @@ uint32_t xe_min_page_size(int fd, uint64_t region)
 }
 
 /**
+ * xe_config:
+ * @fd: xe device fd
+ *
+ * Returns xe configuration of xe device @fd.
+ */
+xe_dev_FN(xe_config, config, struct drm_xe_query_config *);
+
+/**
  * xe_number_hw_engine:
  * @fd: xe device fd
  *
