@@ -78,7 +78,7 @@ igt_simple_main
 	igt_assert_neq(drmAuthMagic(master2, magic), 0);
 	igt_assert_eq(errno, EINVAL);
 
-	close(client);
-	close(master2);
-	close(master1);
+	drm_close_driver(client);
+	drm_close_driver(master2);
+	drm_close_driver(master1);
 }

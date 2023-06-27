@@ -590,6 +590,6 @@ igt_main
 		free(query_info);
 		igt_collection_destroy(set);
 		igt_collection_destroy(dma_buf_set);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

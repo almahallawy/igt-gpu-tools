@@ -58,5 +58,5 @@ igt_simple_main
 		igt_assert_lte(1, v->version_major);
 
 	drmFree(v);
-	close(fd);
+	drm_close_driver(fd);
 }

@@ -147,8 +147,8 @@ static void test_with_fd_dup(void)
 	close(dma_buf_fd2);
 	check_bo(fd2, handle_import, fd2, handle_import);
 
-	close(fd1);
-	close(fd2);
+	drm_close_driver(fd1);
+	drm_close_driver(fd2);
 }
 
 static void test_with_two_bos(void)
@@ -180,8 +180,8 @@ static void test_with_two_bos(void)
 
 	check_bo(fd2, handle_import, fd2, handle_import);
 
-	close(fd1);
-	close(fd2);
+	drm_close_driver(fd1);
+	drm_close_driver(fd2);
 }
 
 static void test_with_one_bo_two_files(void)
@@ -205,8 +205,8 @@ static void test_with_one_bo_two_files(void)
 	/* dma-buf self importing an flink bo should give the same handle */
 	igt_assert_eq_u32(handle_import, handle_open);
 
-	close(fd1);
-	close(fd2);
+	drm_close_driver(fd1);
+	drm_close_driver(fd2);
 	close(dma_buf_fd1);
 	close(dma_buf_fd2);
 }
@@ -252,7 +252,7 @@ static void test_with_one_bo(void)
 	check_bo(fd1, handle, fd2, handle_import1);
 
 	/* Completely rip out exporting fd. */
-	close(fd1);
+	drm_close_driver(fd1);
 	check_bo(fd2, handle_import1, fd2, handle_import1);
 }
 
@@ -316,14 +316,14 @@ static void test_reimport_close_race(void)
 		igt_assert(status == 0);
 	}
 
-	close(fds[0]);
+	drm_close_driver(fds[0]);
 	close(fds[1]);
 
 	obj_count = igt_get_stable_obj_count(fake) - obj_count;
 
 	igt_info("leaked %i objects\n", obj_count);
 
-	close(fake);
+	drm_close_driver(fake);
 
 	igt_assert_eq(obj_count, 0);
 }
@@ -398,13 +398,13 @@ static void test_export_close_race(void)
 		igt_assert(status == 0);
 	}
 
-	close(fd);
+	drm_close_driver(fd);
 
 	obj_count = igt_get_stable_obj_count(fake) - obj_count;
 
 	igt_info("leaked %i objects\n", obj_count);
 
-	close(fake);
+	drm_close_driver(fake);
 
 	igt_assert_eq(obj_count, 0);
 }
@@ -433,7 +433,7 @@ static void test_llseek_size(void)
 		close(dma_buf_fd);
 	}
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void test_llseek_bad(void)
@@ -462,7 +462,7 @@ static void test_llseek_bad(void)
 
 	close(dma_buf_fd);
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 igt_main

@@ -300,7 +300,7 @@ static int forking_evictions(int fd, struct igt_eviction_test_ops *ops,
 
 		/* drmfd closing will take care of additional bo refs */
 		if (flags & FORKING_EVICTIONS_DUP_DRMFD)
-			close(realfd);
+			drm_close_driver(realfd);
 	}
 
 	igt_waitchildren();

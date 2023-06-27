@@ -266,7 +266,7 @@ igt_main
 		test_valid_cycle(fd);
 
 	igt_fixture {
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 }

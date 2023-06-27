@@ -162,8 +162,8 @@ static void test_setversion(int fd)
 
 static void test_client(int fd)
 {
-	close(drm_open_driver(DRIVER_VGEM));
-	close(drm_open_driver_render(DRIVER_VGEM));
+	drm_close_driver(drm_open_driver(DRIVER_VGEM));
+	drm_close_driver(drm_open_driver_render(DRIVER_VGEM));
 }
 
 static void test_create(int fd)
@@ -635,6 +635,6 @@ igt_main
 		test_debugfs_read(fd);
 
 	igt_fixture {
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

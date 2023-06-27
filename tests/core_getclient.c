@@ -70,5 +70,5 @@ igt_simple_main
 	ret = ioctl(fd, DRM_IOCTL_GET_CLIENT, &client);
 	igt_assert(ret == -1 && errno == EINVAL);
 
-	close(fd);
+	drm_close_driver(fd);
 }

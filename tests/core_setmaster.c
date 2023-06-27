@@ -104,7 +104,7 @@ static void check_drop_set(void)
 	igt_assert_eq(drmDropMaster(master), 0);
 	igt_assert_eq(drmSetMaster(master), 0);
 
-	close(master);
+	drm_close_driver(master);
 }
 
 static unsigned tweak_perm(uint8_t *saved_perm, unsigned max_perm, bool save)
@@ -225,10 +225,10 @@ igt_main
 			igt_assert_eq(drmSetMaster(master), -1);
 			igt_assert_eq(errno, EACCES);
 
-			close(master);
+			drm_close_driver(master);
 		}
 		igt_waitchildren();
 
-		close(master);
+		drm_close_driver(master);
 	}
 }

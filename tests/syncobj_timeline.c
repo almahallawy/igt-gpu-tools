@@ -1936,6 +1936,6 @@ igt_main
 		test_32bits_limit(fd);
 
 	igt_fixture {
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

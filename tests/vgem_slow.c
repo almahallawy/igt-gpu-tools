@@ -97,6 +97,6 @@ igt_main
 		test_nohang(fd);
 
 	igt_fixture {
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

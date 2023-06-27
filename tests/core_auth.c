@@ -214,7 +214,7 @@ static void test_basic_auth(int master)
 	igt_assert(drmGetMagic(slave, &magic) == 0);
 	igt_assert_eq(magic, old_magic);
 
-	close(slave);
+	drm_close_driver(slave);
 }
 
 igt_main
@@ -226,7 +226,7 @@ igt_main
 
 		igt_assert(check_auth(fd) == true);
 
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 	igt_describe("Use 2 clients, check second is authenticated even when first dropped.");
@@ -236,11 +236,11 @@ igt_main
 
 		igt_assert(check_auth(fd2) == true);
 
-		close(fd);
+		drm_close_driver(fd);
 
 		igt_assert(check_auth(fd2) == true);
 
-		close(fd2);
+		drm_close_driver(fd2);
 	}
 
 	/* above tests require that no drm fd is open */

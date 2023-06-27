@@ -267,7 +267,7 @@ static void blit_and_cmp(void)
 
 	intel_bb_destroy(local_batch);
 	buf_ops_destroy(local_bops);
-	close(local_fd);
+	drm_close_driver(local_fd);
 }
 
 /*
@@ -364,6 +364,6 @@ igt_main
 	igt_fixture {
 		buf_ops_destroy(bops);
 
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

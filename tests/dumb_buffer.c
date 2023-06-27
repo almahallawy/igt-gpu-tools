@@ -416,6 +416,6 @@ igt_main
 		always_clear(fd, 30);
 
 	igt_fixture {
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

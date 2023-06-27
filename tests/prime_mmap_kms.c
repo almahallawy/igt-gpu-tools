@@ -263,6 +263,6 @@ igt_main
 
 	igt_fixture {
 		igt_display_fini(&gpu.display);
-		close(gpu.drm_fd);
+		drm_close_driver(gpu.drm_fd);
 	}
 }

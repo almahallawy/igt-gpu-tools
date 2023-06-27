@@ -1062,6 +1062,6 @@ igt_main
 		test_wait_interrupted(fd, WAIT_ALL);
 
 	igt_fixture {
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

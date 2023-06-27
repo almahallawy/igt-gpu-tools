@@ -255,6 +255,6 @@ igt_main
 	igt_fixture {
 		close(sysfs);
 		close(debugfs);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }
