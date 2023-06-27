@@ -181,8 +181,8 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		xe_vm_bind_userptr_async(fd, vm, bind_engines[0],
 					 to_user_pointer(data), addr,
 					 bo_size, sync, 1);
-#define ONE_SEC	1000
-#define HUNDRED_SEC	100000
+#define ONE_SEC	MS_TO_NS(1000)
+#define HUNDRED_SEC	MS_TO_NS(100000)
 
 	fence_timeout = igt_run_in_simulation() ? HUNDRED_SEC : ONE_SEC;
 

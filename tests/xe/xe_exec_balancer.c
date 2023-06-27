@@ -479,7 +479,7 @@ test_cm(int fd, int gt, int class, int n_engines, int n_execs,
 		xe_vm_bind_userptr_async(fd, vm, 0, to_user_pointer(data), addr,
 					 bo_size, sync, 1);
 
-#define ONE_SEC	1000
+#define ONE_SEC	MS_TO_NS(1000)
 	xe_wait_ufence(fd, &data[0].vm_sync, USER_FENCE_VALUE, NULL, ONE_SEC);
 	data[0].vm_sync = 0;
 

@@ -190,7 +190,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 						 bo_size, sync, 1);
 	}
 
-#define ONE_SEC	1000
+#define ONE_SEC	MS_TO_NS(1000)
 	xe_wait_ufence(fd, &data[0].vm_sync, USER_FENCE_VALUE, NULL, ONE_SEC);
 	data[0].vm_sync = 0;
 

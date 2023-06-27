@@ -313,7 +313,7 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 				xe_vm_bind_async(fd, vm, bind_engines[0], __bo,
 						 0, addr, bo_size, sync, 1);
 			}
-#define TWENTY_SEC	20000
+#define TWENTY_SEC	MS_TO_NS(20000)
 			xe_wait_ufence(fd, &data[i].vm_sync, USER_FENCE_VALUE,
 				       NULL, TWENTY_SEC);
 		}

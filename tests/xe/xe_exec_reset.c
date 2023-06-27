@@ -588,7 +588,7 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 	sync[0].addr = to_user_pointer(&data[0].vm_sync);
 	xe_vm_bind_async(fd, vm, 0, bo, 0, addr, bo_size, sync, 1);
 
-#define THREE_SEC	3000
+#define THREE_SEC	MS_TO_NS(3000)
 	xe_wait_ufence(fd, &data[0].vm_sync, USER_FENCE_VALUE, NULL, THREE_SEC);
 	data[0].vm_sync = 0;
 
