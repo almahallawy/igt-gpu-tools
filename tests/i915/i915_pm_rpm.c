@@ -1492,20 +1492,24 @@ static void submit_blt_cmd(uint32_t dst_handle, int dst_size,
 	uint32_t batch_handle;
 	int batch_size = 8 * sizeof(uint32_t);
 	uint32_t batch_buf[batch_size];
+	bool cmd_extended;
 	struct drm_i915_gem_execbuffer2 execbuf = {};
 	struct drm_i915_gem_exec_object2 objs[2] = {{}, {}};
 	struct drm_i915_gem_relocation_entry relocs[1] = {{}};
 	struct drm_i915_gem_wait gem_wait;
 	uint64_t ahnd = get_reloc_ahnd(drm_fd, 0), dst_offset;
+	const struct intel_cmds_info *cmds_info = intel_get_cmds_info(ms_data.devid);
 
 	if (ahnd)
 		dst_offset = get_offset(ahnd, dst_handle, dst_size, 0);
 	else
 		dst_offset = *presumed_dst_offset;
 
+	cmd_extended = blt_cmd_has_property(cmds_info, XY_COLOR_BLT,
+					    BLT_CMD_EXTENDED);
 	i = 0;
 
-	if (intel_gen(ms_data.devid) >= 8)
+	if (cmd_extended)
 		batch_buf[i++] = XY_COLOR_BLT_CMD_NOLEN |
 				 XY_COLOR_BLT_WRITE_ALPHA |
 				 XY_COLOR_BLT_WRITE_RGB | 0x5;
@@ -1518,12 +1522,12 @@ static void submit_blt_cmd(uint32_t dst_handle, int dst_size,
 	batch_buf[i++] = ((y + height) << 16) | (x + width);
 	reloc_pos = i;
 	batch_buf[i++] = dst_offset;
-	if (intel_gen(ms_data.devid) >= 8)
+	if (cmd_extended)
 		batch_buf[i++] = dst_offset >> 32;
 	batch_buf[i++] = color;
 
 	batch_buf[i++] = MI_BATCH_BUFFER_END;
-	if (intel_gen(ms_data.devid) < 8)
+	if (!cmd_extended)
 		batch_buf[i++] = MI_NOOP;
 
 	igt_assert(i * sizeof(uint32_t) == batch_size);
