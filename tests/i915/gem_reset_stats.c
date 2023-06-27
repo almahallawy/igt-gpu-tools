@@ -475,7 +475,7 @@ static void test_rs(const struct intel_execution_ring *e,
 	igt_assert(igt_seconds_elapsed(&ts_injected) <= 30);
 
 	for (i = 0; i < num_fds; i++)
-		close(fd[i]);
+		drm_close_driver(fd[i]);
 }
 
 #define MAX_CTX 100
@@ -551,7 +551,7 @@ static void test_rs_ctx(const struct intel_execution_ring *e,
 
 	for (i = 0; i < num_fds; i++) {
 		assert_reset_status(i, fd[i], 0, RS_NO_ERROR);
-		close(fd[i]);
+		drm_close_driver(fd[i]);
 	}
 }
 
@@ -605,8 +605,8 @@ static void test_ban(const struct intel_execution_ring *e)
 	igt_assert_eq(gem_reset_stats(fd_good, 0, &rs_good), 0);
 	igt_assert_eq(rs_good.batch_active, 0);
 
-	close(fd_bad);
-	close(fd_good);
+	drm_close_driver(fd_bad);
+	drm_close_driver(fd_good);
 }
 
 static void test_ban_ctx(const struct intel_execution_ring *e)
@@ -664,7 +664,7 @@ static void test_ban_ctx(const struct intel_execution_ring *e)
 	igt_assert_eq(gem_reset_stats(fd, ctx_good, &rs_good), 0);
 	igt_assert_eq(rs_good.batch_active, 0);
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void test_unrelated_ctx(const struct intel_execution_ring *e)
@@ -690,8 +690,8 @@ static void test_unrelated_ctx(const struct intel_execution_ring *e)
 	assert_reset_status(0, fd1, ctx_guilty, RS_BATCH_ACTIVE);
 	assert_reset_status(1, fd2, ctx_unrelated, RS_NO_ERROR);
 
-	close(fd1);
-	close(fd2);
+	drm_close_driver(fd1);
+	drm_close_driver(fd2);
 }
 
 static int get_reset_count(int fd, int ctx)
@@ -717,7 +717,7 @@ static void test_close_pending_ctx(const struct intel_execution_ring *e)
 	gem_context_destroy(fd, ctx);
 	igt_assert_eq(__gem_context_destroy(fd, ctx), -ENOENT);
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void test_close_pending(const struct intel_execution_ring *e)
@@ -727,7 +727,7 @@ static void test_close_pending(const struct intel_execution_ring *e)
 	assert_reset_status(fd, fd, 0, RS_NO_ERROR);
 
 	inject_hang(fd, 0, e, 0);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void noop_on_each_ring(int fd, const bool reverse)
@@ -789,7 +789,7 @@ static void test_close_pending_fork(const struct intel_execution_ring *e,
 		 * when gpu is reset and ring lists are cleared.
 		 */
 		noop_on_each_ring(fd2, reverse);
-		close(fd2);
+		drm_close_driver(fd2);
 		pause();
 		exit(0);
 	} else {
@@ -802,7 +802,7 @@ static void test_close_pending_fork(const struct intel_execution_ring *e,
 	}
 
 	igt_post_hang_ring(fd, hang);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void test_reset_count(const struct intel_execution_ring *e,
@@ -842,7 +842,7 @@ static void test_reset_count(const struct intel_execution_ring *e,
 	if (create_ctx)
 		gem_context_destroy(fd, ctx);
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static int _test_params(int fd, int ctx, uint32_t flags, uint32_t pad)
@@ -913,7 +913,7 @@ static void test_params_ctx(void)
 
 	fd = drm_reopen_driver(device);
 	_test_param(fd, gem_context_create(fd));
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void test_params(void)
@@ -922,7 +922,7 @@ static void test_params(void)
 
 	fd = drm_reopen_driver(device);
 	_test_param(fd, 0);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static const struct intel_execution_ring *
@@ -968,7 +968,7 @@ static void defer_hangcheck(const struct intel_execution_ring *engine)
 
 	igt_assert_lt(count_start, count_end);
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static bool gem_has_reset_stats(int fd)
@@ -1177,6 +1177,6 @@ igt_main
 	}
 	igt_fixture {
 		igt_assert(igt_params_set(device, "reset", "%d", INT_MAX /* any reset method */));
-		close(device);
+		drm_close_driver(device);
 	}
 }

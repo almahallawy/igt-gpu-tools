@@ -62,7 +62,7 @@ init(void)
 static void
 deinit(void)
 {
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 }
 
 

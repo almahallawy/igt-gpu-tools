@@ -1001,6 +1001,6 @@ igt_main
 	igt_fixture {
 		intel_register_access_fini(&mmio_data);
 		intel_ctx_destroy(device, ctx);
-		close(device);
+		drm_close_driver(device);
 	}
 }

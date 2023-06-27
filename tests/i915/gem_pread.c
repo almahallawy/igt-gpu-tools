@@ -367,6 +367,6 @@ igt_main_args("s:", NULL, help_str, opt_handler, NULL)
 		free(src);
 		gem_close(fd, dst);
 
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

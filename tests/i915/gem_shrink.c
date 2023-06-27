@@ -381,7 +381,7 @@ static bool has_userptr(void)
 	if (drmIoctl(fd, DRM_IOCTL_I915_GEM_USERPTR, &userptr))
 		err = errno;
 
-	close(fd);
+	drm_close_driver(fd);
 
 	return err == EFAULT;
 }
@@ -430,7 +430,7 @@ static void run_test(int nchildren, uint64_t alloc,
 				int fd = drm_open_driver(DRIVER_INTEL);
 				for (int pass = 0; pass < nchildren; pass++)
 					leak(fd, alloc);
-				close(fd);
+				drm_close_driver(fd);
 			}
 		}
 	}
@@ -442,7 +442,7 @@ static void run_test(int nchildren, uint64_t alloc,
 				int fd = drm_open_driver(DRIVER_INTEL);
 				for (int pass = 0; pass < nchildren; pass++)
 					userptr(fd, alloc, 0);
-				close(fd);
+				drm_close_driver(fd);
 			}
 		}
 		nchildren = (nchildren + 1)/2;
@@ -455,7 +455,7 @@ static void run_test(int nchildren, uint64_t alloc,
 				int fd = drm_open_driver(DRIVER_INTEL);
 				for (int pass = 0; pass < nchildren; pass++)
 					userptr(fd, alloc, UDIRTY);
-				close(fd);
+				drm_close_driver(fd);
 			}
 		}
 		nchildren = (nchildren + 1)/2;
@@ -467,7 +467,7 @@ static void run_test(int nchildren, uint64_t alloc,
 			int fd = drm_open_driver(DRIVER_INTEL);
 			for (int pass = 0; pass < nchildren; pass++)
 				func(fd, alloc);
-			close(fd);
+			drm_close_driver(fd);
 		}
 	}
 	igt_waitchildren();
@@ -510,7 +510,7 @@ static void reclaim(unsigned engine, int timeout)
 
 	munmap((void *)shared, 4096);
 	close(debugfs);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 igt_main
@@ -567,7 +567,7 @@ igt_main
 			 num_processes, alloc_size);
 
 		alloc_size <<= 20;
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 	igt_subtest("reclaim")

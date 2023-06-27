@@ -145,7 +145,7 @@ igt_main
 			gpu_fd = __drm_open_driver_another(child, DRIVER_INTEL);
 			igt_assert_f(gpu_fd > 0, "cannot open gpu-%d, errno=%d\n", child, errno);
 			test_create_close(gpu_fd);
-			close(gpu_fd);
+			drm_close_driver(gpu_fd);
 		}
 
 		igt_waitchildren();

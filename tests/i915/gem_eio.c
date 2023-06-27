@@ -656,7 +656,7 @@ static void test_banned(int fd)
 {
 	fd = reopen_device(fd);
 	__test_banned(fd);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 #define TEST_WEDGE (1)
@@ -690,7 +690,7 @@ static void test_wait(int fd, unsigned int flags, unsigned int wait)
 	igt_require(i915_reset_control(fd, true));
 
 	trigger_reset(fd);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void test_suspend(int fd, int state)
@@ -708,7 +708,7 @@ static void test_suspend(int fd, int state)
 
 	igt_require(i915_reset_control(fd, true));
 	trigger_reset(fd);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void test_inflight(int fd, unsigned int wait)
@@ -772,7 +772,7 @@ static void test_inflight(int fd, unsigned int wait)
 		trigger_reset(fd);
 
 		gem_close(fd, obj[1].handle);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }
 
@@ -833,7 +833,7 @@ static void test_inflight_suspend(int fd)
 
 	igt_assert(i915_reset_control(fd, true));
 	trigger_reset(fd);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static const intel_ctx_t *context_create_safe(int i915)
@@ -923,7 +923,7 @@ static void test_inflight_contexts(int fd, unsigned int wait)
 		for (unsigned int n = 0; n < ARRAY_SIZE(ctx); n++)
 			intel_ctx_destroy(fd, ctx[n]);
 
-		close(fd);
+		drm_close_driver(fd);
 	}
 }
 
@@ -979,7 +979,7 @@ static void test_inflight_external(int fd)
 	put_ahnd(ahnd);
 	igt_assert(i915_reset_control(fd, true));
 	trigger_reset(fd);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void test_inflight_internal(int fd, unsigned int wait)
@@ -1029,7 +1029,7 @@ static void test_inflight_internal(int fd, unsigned int wait)
 
 	igt_assert(i915_reset_control(fd, true));
 	trigger_reset(fd);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void reset_stress(int fd, uint64_t ahnd, const intel_ctx_t *ctx0,

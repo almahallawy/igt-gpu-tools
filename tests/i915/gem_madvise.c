@@ -110,7 +110,7 @@ dontneed_before_mmap(void)
 					PROT_READ | PROT_WRITE,
 					t->type);
 
-		close(fd);
+		drm_close_driver(fd);
 		if (!ptr)
 			continue;
 
@@ -132,7 +132,7 @@ dontneed_before_mmap(void)
 		fd = drm_open_driver(DRIVER_INTEL);
 	}
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void
@@ -156,7 +156,7 @@ dontneed_after_mmap(void)
 					t->type);
 
 		gem_madvise(fd, handle, I915_MADV_DONTNEED);
-		close(fd);
+		drm_close_driver(fd);
 		if (!ptr)
 			continue;
 
@@ -178,7 +178,7 @@ dontneed_after_mmap(void)
 		fd = drm_open_driver(DRIVER_INTEL);
 	}
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void
@@ -194,7 +194,7 @@ dontneed_before_pwrite(void)
 
 	igt_assert_eq(__gem_write(fd, handle, 0, &bbe, sizeof(bbe)), -EFAULT);
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void
@@ -218,7 +218,7 @@ dontneed_before_exec(void)
 	execbuf.batch_len = sizeof(buf);
 	igt_assert_eq(__gem_execbuf(fd, &execbuf), -EFAULT);
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 igt_main

@@ -487,7 +487,7 @@ static void forked(int i915, int timeout)
 	igt_waitchildren_timeout(3 * timeout, NULL);
 
 	free(obj);
-	close(i915);
+	drm_close_driver(i915);
 }
 
 static void single(int fd)

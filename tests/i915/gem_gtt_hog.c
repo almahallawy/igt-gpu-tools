@@ -170,7 +170,7 @@ igt_simple_main
 	int fd = drm_open_driver(DRIVER_INTEL);
 	igt_require_gem(fd);
 	gem_require_mappable_ggtt(fd);
-	close(fd);
+	drm_close_driver(fd);
 
 	data.fd = drm_open_driver(DRIVER_INTEL);
 	data.devid = intel_get_drm_devid(data.fd);

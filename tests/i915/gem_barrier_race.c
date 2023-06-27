@@ -120,7 +120,7 @@ static void intel_context_first_pin_last_unpin_loop(int fd, uint64_t engine, int
 
 	} while (!READ_ONCE(*done));
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void test_remote_request(int fd, uint64_t engine, unsigned int timeout)

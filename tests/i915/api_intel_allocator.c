@@ -579,7 +579,7 @@ static void reopen(int fd)
 
 	__reopen_allocs(fd, fd2, true);
 
-	close(fd2);
+	drm_close_driver(fd2);
 }
 
 #define REOPEN_TIMEOUT 3
@@ -605,7 +605,7 @@ static void reopen_fork(int fd)
 	/* Check references at the end */
 	__reopen_allocs(fd, fd2, true);
 
-	close(fd2);
+	drm_close_driver(fd2);
 
 	intel_allocator_multiprocess_stop();
 }
@@ -924,5 +924,5 @@ igt_main
 		gem_pool(fd);
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

@@ -825,6 +825,6 @@ igt_main
 	igt_fixture {
 		gem_close(fd, handle);
 
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

@@ -275,6 +275,6 @@ igt_main
 
 	igt_fixture {
 		buf_ops_destroy(bops);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

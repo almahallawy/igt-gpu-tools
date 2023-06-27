@@ -196,7 +196,7 @@ test_flink_lifetime(int fd)
 	igt_assert_eq(ret, 0);
 	igt_assert(open_struct.handle != 0);
 
-	close(fd2);
+	drm_close_driver(fd2);
 	fd2 = drm_open_driver(DRIVER_INTEL);
 
 	/* Flink name remains valid due to the second reference */
@@ -205,7 +205,7 @@ test_flink_lifetime(int fd)
 	igt_assert_eq(ret, 0);
 	igt_assert(open_struct.handle != 0);
 
-	close(fd2);
+	drm_close_driver(fd2);
 }
 
 igt_main

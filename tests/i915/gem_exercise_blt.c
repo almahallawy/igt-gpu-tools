@@ -398,6 +398,6 @@ igt_main_args("b:pst:W:H:", NULL, help_str, opt_handler, NULL)
 	}
 
 	igt_fixture {
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

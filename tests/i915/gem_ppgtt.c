@@ -278,8 +278,8 @@ static void flink_and_close(void)
 	igt_assert_eq(offset, offset_new);
 
 	gem_close(fd, bo);
-	close(fd);
-	close(fd2);
+	drm_close_driver(fd);
+	drm_close_driver(fd2);
 }
 
 #define PAGE_SIZE 4096
@@ -412,7 +412,7 @@ static bool has_contexts(void)
 
 	fd = drm_open_driver(DRIVER_INTEL);
 	result = gem_has_contexts(fd);
-	close(fd);
+	drm_close_driver(fd);
 
 	return result;
 }
@@ -425,7 +425,7 @@ igt_main
 		int fd = drm_open_driver(DRIVER_INTEL);
 		igt_require_gem(fd);
 		gem_require_blitter(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 	igt_subtest("blt-vs-render-ctx0") {

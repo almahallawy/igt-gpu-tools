@@ -805,6 +805,6 @@ igt_main
 		igt_stop_hang_detector();
 		gem_close(fd, heavy);
 		gem_close(fd, light);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

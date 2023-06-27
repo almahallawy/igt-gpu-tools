@@ -103,7 +103,7 @@ igt_main
 			igt_require_fd(i915);
 			igt_require_gem(i915);
 			igt_require(gem_has_lmem(i915));
-			close(i915);
+			drm_close_driver(i915);
 		}
 
 		igt_i915_driver_unload();
@@ -142,7 +142,7 @@ igt_main
 	}
 
 	igt_fixture {
-		close(i915);
+		drm_close_driver(i915);
 		igt_i915_driver_unload();
 	}
 }

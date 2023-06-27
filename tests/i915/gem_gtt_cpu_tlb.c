@@ -113,5 +113,5 @@ igt_simple_main
 	for (i = 0; i < OBJ_SIZE/4; i++)
 		igt_assert(ptr[i] == i);
 
-	close(fd);
+	drm_close_driver(fd);
 }

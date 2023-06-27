@@ -2424,7 +2424,7 @@ static void test_unload(unsigned int num_engines)
 		if (fd[count] != -1)
 			count++;
 
-		close(i915);
+		drm_close_driver(i915);
 
 		buf = calloc(count, sizeof(uint64_t));
 		igt_assert(buf);
@@ -2768,13 +2768,13 @@ igt_main
 
 		igt_fixture {
 			intel_ctx_destroy(render_fd, render_ctx);
-			close(render_fd);
+			drm_close_driver(render_fd);
 		}
 	}
 
 	igt_fixture {
 		intel_ctx_destroy(fd, ctx);
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 	igt_subtest("module-unload") {

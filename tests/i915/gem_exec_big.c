@@ -340,5 +340,5 @@ igt_main
 		exhaustive(i915);
 
 	igt_fixture
-		close(i915);
+		drm_close_driver(i915);
 }

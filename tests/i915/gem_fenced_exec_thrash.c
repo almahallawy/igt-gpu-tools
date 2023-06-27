@@ -217,5 +217,5 @@ igt_main
 		run_test(fd, num_fences + 1, intel_gen(devid) >= 4 ? 0 : ENOBUFS, 0);
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

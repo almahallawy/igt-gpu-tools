@@ -791,7 +791,7 @@ static void test_nonpersistent_file(int i915)
 	gem_context_set_persistence(i915, 0, false);
 	spin = igt_spin_new(i915, .ahnd = ahnd, .flags = IGT_SPIN_FENCE_OUT);
 
-	close(i915);
+	drm_close_driver(i915);
 	flush_delayed_fput(debugfs);
 
 	igt_assert_eq(wait_for_status(spin->out_fence, reset_timeout_ms), -EIO);
@@ -1274,7 +1274,7 @@ static void __smoker(int i915, const intel_ctx_cfg_t *cfg,
 
 	intel_ctx_destroy(fd, ctx);
 
-	close(fd);
+	drm_close_driver(fd);
 	flush_delayed_fput(i915);
 
 	igt_spin_end(spin);
@@ -1570,6 +1570,6 @@ igt_main
 	}
 
 	igt_fixture {
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

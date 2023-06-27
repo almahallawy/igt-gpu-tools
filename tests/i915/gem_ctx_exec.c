@@ -403,7 +403,7 @@ static void nohangcheck_hostile(int i915)
 	put_ahnd(ahnd);
 
 	close(dir);
-	close(i915);
+	drm_close_driver(i915);
 }
 
 static void close_race(int i915)

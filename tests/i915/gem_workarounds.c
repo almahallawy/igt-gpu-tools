@@ -305,7 +305,7 @@ static void check_workarounds(int fd, enum operation op, unsigned int flags)
 	if (flags & CONTEXT)
 		intel_ctx_destroy(fd, ctx);
 	if (flags & FD)
-		close(fd);
+		drm_close_driver(fd);
 }
 
 igt_main

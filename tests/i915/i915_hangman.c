@@ -160,7 +160,7 @@ static void check_alive(void)
 	put_ahnd(ahnd);
 	intel_ctx_destroy(fd, ctx);
 	gem_quiescent_gpu(fd);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static bool has_error_state(int dir)
@@ -643,6 +643,6 @@ igt_main
 
 		igt_disallow_hang(device, hang);
 		intel_ctx_destroy(device, ctx);
-		close(device);
+		drm_close_driver(device);
 	}
 }

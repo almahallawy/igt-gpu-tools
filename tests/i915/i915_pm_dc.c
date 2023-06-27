@@ -730,7 +730,7 @@ igt_main
 		close(data.debugfs_root_fd);
 		close(data.msr_fd);
 		display_fini(&data);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 
 	igt_exit();

@@ -457,7 +457,7 @@ static void fini_hang(struct hang *h)
 	put_offset(h->ahnd, h->obj.handle);
 	put_ahnd(h->ahnd);
 	intel_ctx_destroy(h->fd, h->ctx);
-	close(h->fd);
+	drm_close_driver(h->fd);
 }
 
 static void ctx_set_random_priority(int fd, uint32_t ctx)
@@ -829,7 +829,7 @@ static void whisper(int fd, const intel_ctx_t *ctx,
 			gem_close(fd, batches[n].handle);
 		if (flags & FDS) {
 			for (n = 0; n < 64; n++)
-				close(fds[n]);
+				drm_close_driver(fds[n]);
 		}
 	}
 
@@ -939,6 +939,6 @@ igt_main
 	igt_fixture {
 		intel_allocator_multiprocess_stop();
 		intel_ctx_destroy(fd, ctx);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

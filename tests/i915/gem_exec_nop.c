@@ -1150,6 +1150,6 @@ igt_main
 		igt_stop_hang_detector();
 		gem_close(device, handle);
 		intel_ctx_destroy(device, ctx);
-		close(device);
+		drm_close_driver(device);
 	}
 }

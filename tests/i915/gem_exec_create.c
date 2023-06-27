@@ -270,6 +270,6 @@ igt_main
 
 	igt_fixture {
 		igt_stop_hang_detector();
-		close(device);
+		drm_close_driver(device);
 	}
 }

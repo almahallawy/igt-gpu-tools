@@ -314,7 +314,7 @@ igt_main
 			// release resources
 			igt_stop_hang_detector();
 			intel_ctx_destroy(g_fd, ctx);
-			close(g_fd);
+			drm_close_driver(g_fd);
 		}
 
 		igt_waitchildren();
@@ -322,6 +322,6 @@ igt_main
 
 	igt_fixture {
 		intel_allocator_multiprocess_stop();
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

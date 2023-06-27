@@ -206,7 +206,7 @@ static void files(int core, const intel_ctx_cfg_t *cfg,
 			gem_execbuf(fd, &execbuf);
 
 			intel_ctx_destroy(fd, ctx);
-			close(fd);
+			drm_close_driver(fd);
 			count++;
 
 			clock_gettime(CLOCK_MONOTONIC, &end);
@@ -756,6 +756,6 @@ igt_main
 
 	igt_fixture {
 		igt_stop_hang_detector();
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

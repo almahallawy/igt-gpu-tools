@@ -933,7 +933,7 @@ igt_simple_main_args("ds:g:c:t:rbuxmo:fp:",
 	intel_bb_destroy(ibb);
 	buf_ops_destroy(bops);
 
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 
 	igt_stop_signal_helper();
 }

@@ -52,5 +52,5 @@ igt_simple_main
 	igt_assert_eq(ret, -EBUSY);
 
 	igt_remove_fb(drm_fd, &fb);
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 }

@@ -146,5 +146,5 @@ igt_simple_main
 
 	munmap(ptr, size);
 
-	close(fd);
+	drm_close_driver(fd);
 }

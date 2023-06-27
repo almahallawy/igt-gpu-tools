@@ -521,5 +521,5 @@ igt_simple_main_args("s:", NULL, help_str, opt_handler, NULL)
 	}
 
 	gem_close(fd, handle);
-	close(fd);
+	drm_close_driver(fd);
 }

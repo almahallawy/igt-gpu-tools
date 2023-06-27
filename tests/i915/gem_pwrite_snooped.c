@@ -148,5 +148,5 @@ igt_simple_main
 	test(256, 256);
 
 	buf_ops_destroy(bops);
-	close(fd);
+	drm_close_driver(fd);
 }

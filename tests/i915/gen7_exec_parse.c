@@ -476,7 +476,7 @@ static void hsw_load_register_reg(void)
 				   0xabcdabc0);
 	}
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 igt_main
@@ -748,6 +748,6 @@ igt_main
 		igt_stop_hang_detector();
 		gem_close(fd, handle);
 
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

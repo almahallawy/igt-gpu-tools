@@ -323,7 +323,7 @@ gem_deinit(void)
 	case 2:
 		buf_ops_destroy(gem.bops);
 	case 1:
-		close(gem.drm_fd);
+		drm_close_driver(gem.drm_fd);
 	}
 }
 

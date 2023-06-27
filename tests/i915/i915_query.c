@@ -1572,6 +1572,6 @@ igt_main
 		query_parse_and_validate_hwconfig_table(fd);
 
 	igt_fixture {
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

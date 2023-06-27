@@ -687,5 +687,5 @@ igt_main
 		test_set_cache_level(fd);
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

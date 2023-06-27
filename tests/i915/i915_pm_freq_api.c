@@ -139,7 +139,7 @@ static void restore_sysfs_freq(int sig)
 	}
 	free(stash_min);
 	free(stash_max);
-	close(i915);
+	drm_close_driver(i915);
 }
 
 igt_main

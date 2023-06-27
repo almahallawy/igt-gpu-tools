@@ -315,7 +315,7 @@ static void exhaust_shared_gtt(int i915, unsigned int flags)
 		igt_info("Created %lu shared contexts, before %d (%s)\n",
 			 count, err, strerror(-err));
 	}
-	close(i915);
+	drm_close_driver(i915);
 	igt_waitchildren();
 }
 

@@ -2118,7 +2118,7 @@ static void test_invalid_timeline_fence_array(int fd)
 	igt_assert_eq(__gem_execbuf(fd, &execbuf), -EFAULT);
 
 	munmap(ptr, 4096);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static const char *test_syncobj_timeline_unused_fence_desc =
@@ -3701,6 +3701,6 @@ igt_main
 	}
 
 	igt_fixture {
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

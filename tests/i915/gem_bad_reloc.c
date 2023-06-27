@@ -231,5 +231,5 @@ igt_main
 		negative_reloc_blt(fd);
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

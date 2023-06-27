@@ -133,5 +133,5 @@ igt_simple_main
 
 	igt_spin_free(i915, spin);
 	put_ahnd(ahnd);
-	close(i915);
+	drm_close_driver(i915);
 }

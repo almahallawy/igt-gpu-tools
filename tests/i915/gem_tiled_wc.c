@@ -250,5 +250,5 @@ igt_simple_main
 		munmap(linear, last_page - first_page);
 	}
 
-	close(fd);
+	drm_close_driver(fd);
 }

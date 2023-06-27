@@ -357,6 +357,6 @@ igt_main
 
 		igt_display_fini(&display);
 		igt_pm_restore_sata_link_power_management();
-		close(display.drm_fd);
+		drm_close_driver(display.drm_fd);
 	}
 }

@@ -141,7 +141,7 @@ static void test_flink_name(int timeout)
 		 igt_stats_get_max(&stats));
 	igt_stats_fini(&stats);
 
-	close(fd);
+	drm_close_driver(fd);
 }
 
 static void *thread_fn_flink_close(void *p)
@@ -202,13 +202,13 @@ static void test_flink_close(void)
 		igt_assert(status == 0);
 	}
 
-	close(fd);
+	drm_close_driver(fd);
 
 	obj_count = igt_get_stable_obj_count(fake) - obj_count;
 
 	igt_info("leaked %i objects\n", obj_count);
 
-	close(fake);
+	drm_close_driver(fake);
 
 	igt_assert_eq(obj_count, 0);
 }

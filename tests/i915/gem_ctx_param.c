@@ -636,5 +636,5 @@ igt_main
 		test_get_invalid_param(fd, I915_CONTEXT_PARAM_ENGINES);
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

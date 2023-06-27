@@ -1908,6 +1908,6 @@ igt_main_args("dpibc:", NULL, help_str, opt_handler, NULL)
 
 	igt_fixture {
 		buf_ops_destroy(bops);
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

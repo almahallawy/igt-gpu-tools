@@ -587,6 +587,6 @@ igt_main
 
 	igt_fixture {
 		close(engines);
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

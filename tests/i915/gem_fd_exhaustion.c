@@ -75,5 +75,5 @@ igt_simple_main
 
 	igt_waitchildren();
 
-	close(fd);
+	drm_close_driver(fd);
 }

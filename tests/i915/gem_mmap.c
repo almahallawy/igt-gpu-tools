@@ -372,5 +372,5 @@ igt_main
 		test_huge_bo(2);
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

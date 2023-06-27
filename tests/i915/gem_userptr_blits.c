@@ -1086,7 +1086,7 @@ static void test_nohangcheck_hostile(int i915)
 	close(fence);
 
 	close(dir);
-	close(i915);
+	drm_close_driver(i915);
 }
 
 static size_t hugepagesize(void)
@@ -1644,9 +1644,9 @@ static int test_dmabuf(void)
 
 	/* destroy userptr object and expect SIGBUS */
 	free_userptr_bo(fd1, handle);
-	close(fd1);
+	drm_close_driver(fd1);
 
-	close(fd2);
+	drm_close_driver(fd2);
 	reset_handle_ptr();
 
 	return 0;

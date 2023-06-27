@@ -597,6 +597,6 @@ igt_main
 
 	igt_fixture {
 		intel_ctx_destroy(i915, ctx);
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

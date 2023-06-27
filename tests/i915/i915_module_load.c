@@ -280,7 +280,7 @@ static void gem_sanitycheck(void)
 		store_all(i915);
 	errno = 0;
 
-	close(i915);
+	drm_close_driver(i915);
 	igt_assert_eq(err, expected);
 }
 
@@ -328,7 +328,7 @@ static void load_and_check_i915(void)
 
 	/* make sure the GPU is idle */
 	gem_quiescent_gpu(drm_fd);
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 
 	/* make sure we can do basic memory ops */
 	gem_sanitycheck();
@@ -369,7 +369,7 @@ static uint32_t  driver_load_with_lmem_bar_size(uint32_t lmem_bar_size, bool che
 		}
 	}
 
-	close(i915);
+	drm_close_driver(i915);
 
 	return lmem_bar_size;
 }
@@ -461,7 +461,7 @@ igt_main
 			igt_require_gem(i915);
 			igt_require(gem_has_lmem(i915));
 			igt_skip_on_f(igt_sysfs_get_num_gt(i915) > 1, "Skips for more than one lmem instance.\n");
-			close(i915);
+			drm_close_driver(i915);
 		}
 
 		/* Test for lmem_bar_size modparam support */

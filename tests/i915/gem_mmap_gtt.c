@@ -869,13 +869,13 @@ test_isolation(int i915)
 	igt_info("B: {fd:%d, handle:%d, offset:%"PRIx64"}\n",
 		 B, b, offset_b);
 
-	close(B);
+	drm_close_driver(B);
 
 	ptr = mmap(0, 4096, PROT_READ, MAP_SHARED, A, offset_a);
 	igt_assert(ptr != MAP_FAILED);
 	munmap(ptr, 4096);
 
-	close(A);
+	drm_close_driver(A);
 
 	ptr = mmap(0, 4096, PROT_READ, MAP_SHARED, A, offset_a);
 	igt_assert(ptr == MAP_FAILED);
@@ -1979,5 +1979,5 @@ igt_main
 
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

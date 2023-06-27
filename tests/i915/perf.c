@@ -4704,7 +4704,7 @@ gen12_test_single_ctx_render_target_writes_a_counter(const struct intel_executio
 			igt_drop_root();
 			gen12_single_ctx_helper(e);
 
-			close(drm_fd);
+			drm_close_driver(drm_fd);
 		}
 		child_ret = igt_wait_helper(&child);
 		igt_assert(WEXITSTATUS(child_ret) == EAGAIN ||
@@ -5485,7 +5485,7 @@ test_i915_ref_count(void)
 	igt_debug("ref count after opening i915 perf stream = %u\n", ref_count1);
 	igt_assert(ref_count1 > ref_count0);
 
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 	close(sysfs);
 	drm_fd = -1;
 	sysfs = -1;
@@ -6194,6 +6194,6 @@ igt_main
 			put_engine_groups(perf_oa_groups, num_perf_oa_groups);
 
 		intel_ctx_destroy(drm_fd, ctx);
-		close(drm_fd);
+		drm_close_driver(drm_fd);
 	}
 }

@@ -1299,6 +1299,6 @@ igt_main
 		igt_stop_hang_detector();
 		gem_close(i915, handle);
 
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

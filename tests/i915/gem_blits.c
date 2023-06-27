@@ -904,6 +904,6 @@ igt_main
 
 	igt_fixture {
 		put_ahnd(device.ahnd);
-		close(device.fd);
+		drm_close_driver(device.fd);
 	}
 }

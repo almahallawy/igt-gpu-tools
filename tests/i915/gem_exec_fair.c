@@ -1440,6 +1440,6 @@ igt_main
 
 	igt_fixture {
 		igt_stop_hang_detector();
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

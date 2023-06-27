@@ -244,7 +244,7 @@ static int run_test(int threads_per_fence, void *f, int tiling,
 		igt_assert(func(&t) == (void *)0);
 	}
 
-	close(t.fd);
+	drm_close_driver(t.fd);
 
 	return 0;
 }

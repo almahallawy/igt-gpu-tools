@@ -330,6 +330,6 @@ igt_main
 		intel_buf_destroy(tiled_staging_buf);
 		buf_ops_destroy(bops);
 
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

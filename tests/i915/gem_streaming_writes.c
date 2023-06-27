@@ -448,5 +448,5 @@ igt_main
 		test_batch(fd, 2, 1);
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

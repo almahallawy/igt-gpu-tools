@@ -230,5 +230,5 @@ igt_simple_main
 		}
 	}
 
-	close(fd);
+	drm_close_driver(fd);
 }

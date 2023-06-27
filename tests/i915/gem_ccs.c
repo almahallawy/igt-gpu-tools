@@ -764,6 +764,6 @@ igt_main_args("bf:pst:W:H:", NULL, help_str, opt_handler, NULL)
 
 	igt_fixture {
 		igt_disallow_hang(i915, hang);
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

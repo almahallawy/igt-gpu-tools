@@ -77,5 +77,5 @@ igt_simple_main
 
 	igt_assert(has_known_intel_chipset(intel));
 
-	close(intel);
+	drm_close_driver(intel);
 }

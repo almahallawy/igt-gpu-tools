@@ -336,6 +336,6 @@ igt_main
 
 	igt_fixture {
 		intel_ctx_destroy(fd, ctx);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

@@ -113,6 +113,6 @@ igt_main
 		igt_collection_destroy(set);
 		igt_stop_hang_detector();
 		intel_ctx_destroy(fd, ctx);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

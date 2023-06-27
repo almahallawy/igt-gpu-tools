@@ -150,6 +150,6 @@ igt_main
 
 	igt_fixture {
 		put_ahnd(ahnd);
-		close(drm_fd);
+		drm_close_driver(drm_fd);
 	}
 }

@@ -256,7 +256,7 @@ test_shrink(int fd, unsigned int mode)
 		igt_system_suspend_autoresume(mode, SUSPEND_TEST_NONE);
 
 		munmap(mem, size);
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 	igt_waitchildren();
@@ -300,7 +300,7 @@ test_suspend_without_i915(int state)
 		igt_pm_get_d3cold_allowed(&card, d3cold_allowed);
 		igt_pm_set_d3cold_allowed(&card, "0\n");
 	}
-	close(fd);
+	drm_close_driver(fd);
 
 	igt_kmsg(KMSG_INFO "Unloading i915\n");
 	igt_assert_eq(igt_i915_driver_unload(),0);
@@ -383,5 +383,5 @@ igt_main
 		test_forcewake(fd, true);
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }

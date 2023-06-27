@@ -718,7 +718,7 @@ static void test_evict(int i915,
 
 		igt_waitchildren();
 		intel_ctx_destroy(fd, ctx);
-		close(fd);
+		drm_close_driver(fd);
 		intel_allocator_multiprocess_stop();
 	} else {
 		__do_evict(i915, ctx, &region->region, &params, params.seed);
@@ -790,7 +790,7 @@ static void test_smem_oom(int i915,
 			   params.seed + child + 1);
 
 		intel_ctx_destroy(fd, ctx);
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 	/* smem memory hog process, respawn till the lmem process completes */
@@ -811,7 +811,7 @@ static void test_smem_oom(int i915,
 						break;
 					gem_leak(fd, alloc);
 				}
-				close(fd);
+				drm_close_driver(fd);
 			}
 			/*
 			 * Wait for grand-child processes to finish or be
@@ -903,7 +903,7 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 			igt_require_fd(i915);
 			igt_require_gem(i915);
 			igt_require(gem_has_lmem(i915));
-			close(i915);
+			drm_close_driver(i915);
 		}
 
 		igt_i915_driver_unload();
@@ -948,7 +948,7 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 	igt_fixture {
 		intel_ctx_destroy(i915, ctx);
 		free(regions);
-		close(i915);
+		drm_close_driver(i915);
 		igt_i915_driver_unload();
 	}
 

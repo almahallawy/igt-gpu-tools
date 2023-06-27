@@ -181,6 +181,6 @@ igt_main
 	igt_fixture {
 		igt_collection_destroy(set);
 		igt_stop_hang_detector();
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

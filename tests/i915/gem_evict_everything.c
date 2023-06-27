@@ -351,6 +351,6 @@ igt_main
 
 	igt_fixture {
 		igt_stop_hang_helper();
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

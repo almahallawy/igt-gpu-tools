@@ -917,7 +917,7 @@ static void pm_rps_exit_handler(int sig)
 	if (lh.igt_proc.running)
 		load_helper_stop();
 
-	close(drm_fd);
+	drm_close_driver(drm_fd);
 }
 
 igt_main

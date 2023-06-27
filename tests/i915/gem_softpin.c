@@ -1433,7 +1433,7 @@ static void *thread(void *data)
 			  fd, ctx->id, t->engine, succeeded);
 	intel_ctx_destroy(fd, ctx);
 	gem_close(fd, obj[1].handle);
-	close(fd);
+	drm_close_driver(fd);
 
 	return (void *) from_user_pointer(ret);
 }
@@ -1747,6 +1747,6 @@ igt_main
 
 	igt_fixture {
 		intel_ctx_destroy(fd, ctx);
-		close(fd);
+		drm_close_driver(fd);
 	}
 }

@@ -999,6 +999,6 @@ igt_main_args("dac", NULL, help_str, opt_handler, NULL)
 		igt_stop_hang_detector();
 		buf_ops_destroy(data.bops);
 		igt_collection_destroy(set);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

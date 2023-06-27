@@ -98,7 +98,7 @@ static void data_init(data_t *data)
 static void data_fini(data_t *data)
 {
 	buf_ops_destroy(data->bops);
-	close(data->fd);
+	drm_close_driver(data->fd);
 }
 
 static void scratch_buf_init(data_t *data, struct intel_buf *buf,

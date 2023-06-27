@@ -370,7 +370,7 @@ static void isolation(int i915)
 	gem_read(i915, obj[0].handle, 0, &result, sizeof(result));
 	igt_assert_eq(result, 1);
 
-	close(other);
+	drm_close_driver(other);
 
 	gem_close(i915, obj[1].handle);
 	gem_close(i915, obj[0].handle);
@@ -411,6 +411,6 @@ igt_main
 	}
 
 	igt_fixture {
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

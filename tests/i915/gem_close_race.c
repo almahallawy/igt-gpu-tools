@@ -329,7 +329,7 @@ static void multigpu_threads(int timeout, unsigned int flags, int gpu_count)
 
 		igt_waitchildren();
 		gem_quiescent_gpu(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 	igt_waitchildren();
@@ -348,7 +348,7 @@ static void threads(int timeout, unsigned int flags)
 	igt_waitchildren();
 
 	gem_quiescent_gpu(fd);
-	close(fd);
+	drm_close_driver(fd);
 }
 
 igt_main
@@ -372,7 +372,7 @@ igt_main
 		gpu_count = igt_device_filter_count();
 
 		igt_fork_hang_detector(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 	igt_describe("Basic workload submission.");
@@ -384,7 +384,7 @@ igt_main
 		igt_waitchildren();
 
 		gem_quiescent_gpu(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 	igt_describe("Basic workload submission on multi-GPU machine.");
@@ -397,7 +397,7 @@ igt_main
 			igt_assert(fd > 0);
 			process(fd, child);
 			gem_quiescent_gpu(fd);
-			close(fd);
+			drm_close_driver(fd);
 		}
 
 		igt_waitchildren();
@@ -424,7 +424,7 @@ igt_main
 		igt_waitchildren();
 
 		gem_quiescent_gpu(fd);
-		close(fd);
+		drm_close_driver(fd);
 	}
 
 	igt_describe("Share buffer handle across different drm fd's and trying to race"

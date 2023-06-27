@@ -388,6 +388,6 @@ igt_main
 		intel_buf_destroy(scratch_buf);
 		intel_buf_destroy(staging_buf);
 		buf_ops_destroy(data.bops);
-		close(data.drm_fd);
+		drm_close_driver(data.drm_fd);
 	}
 }

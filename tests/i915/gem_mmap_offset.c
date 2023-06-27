@@ -434,13 +434,13 @@ static void isolation(int i915)
 				igt_assert_eq(errno, EACCES);
 			}
 
-			close(B);
+			drm_close_driver(B);
 
 			ptr = mmap(0, 4096, PROT_READ, MAP_SHARED, A, offset_a);
 			igt_assert(ptr != MAP_FAILED);
 			munmap(ptr, 4096);
 
-			close(A);
+			drm_close_driver(A);
 
 			ptr = mmap(0, 4096, PROT_READ, MAP_SHARED, A, offset_a);
 			igt_assert(ptr == MAP_FAILED);
@@ -735,7 +735,7 @@ static void open_flood(int i915, int timeout)
 			mmap_offset_ioctl(i915, &arg);
 		}
 
-		close(tmp);
+		drm_close_driver(tmp);
 		count++;
 	}
 
@@ -1013,6 +1013,6 @@ igt_main
 		blt_coherency(i915);
 
 	igt_fixture {
-		close(i915);
+		drm_close_driver(i915);
 	}
 }

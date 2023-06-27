@@ -162,5 +162,5 @@ igt_simple_main
 		gem_madvise(fd, handle, I915_MADV_DONTNEED);
 	}
 
-	close(fd);
+	drm_close_driver(fd);
 }

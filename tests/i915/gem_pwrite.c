@@ -639,5 +639,5 @@ igt_main_args("s:", NULL, help_str, opt_handler, NULL)
 	}
 
 	igt_fixture
-		close(fd);
+		drm_close_driver(fd);
 }
