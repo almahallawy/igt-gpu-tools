@@ -38,7 +38,6 @@ static void do_bind(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 	xe_vm_bind(fd, vm, bo, offset, addr, size, sync, 1);
 }
 
-#define MS_TO_NS(ms) (((int64_t)ms) * 1000000)
 enum waittype {
 	RELTIME,
 	ABSTIME,

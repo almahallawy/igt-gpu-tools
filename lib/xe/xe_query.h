@@ -99,4 +99,6 @@ bool xe_has_engine_class(int fd, uint16_t engine_class);
 struct xe_device *xe_device_get(int fd);
 void xe_device_put(int fd);
 
+#define MS_TO_NS(ms) (((int64_t)ms) * 1000000)
+
 #endif	/* XE_QUERY_H */
