@@ -131,7 +131,11 @@ xe_spin_create(int fd, const struct igt_spin_factory *opt)
 	addr = intel_allocator_alloc_with_strategy(ahnd, spin->handle, bo_size, 0, ALLOC_STRATEGY_LOW_TO_HIGH);
 	xe_vm_bind_sync(fd, spin->vm, spin->handle, 0, addr, bo_size);
 
-	xe_spin_init(xe_spin, addr, true);
+	if (!(opt->flags & IGT_SPIN_NO_PREEMPTION))
+		xe_spin_init(xe_spin, addr, true);
+	else
+		xe_spin_init(xe_spin, addr, false);
+
 	exec.engine_id = spin->engine;
 	exec.address = addr;
 	sync.handle = spin->syncobj;
