@@ -23,6 +23,7 @@ enum blt_cmd_type {
 	XY_SRC_COPY,
 	XY_FAST_COPY,
 	XY_BLOCK_COPY,
+	XY_COLOR_BLT,
 	__BLT_MAX_CMD
 };
 

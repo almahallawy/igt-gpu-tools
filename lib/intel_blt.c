@@ -318,6 +318,22 @@ bool blt_has_xy_src_copy(int fd)
 }
 
 /**
+ * blt_has_xy_color
+ * @fd: drm fd
+ *
+ * Check if XY_COLOR_BLT is supported by @fd device
+ *
+ * Returns:
+ * true if it does, false otherwise.
+ */
+bool blt_has_xy_color(int fd)
+{
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
+
+	return blt_supports_command(cmds_info, XY_COLOR_BLT);
+}
+
+/**
  * blt_fast_copy_supports_tiling
  * @fd: drm fd
  * @tiling: tiling format
