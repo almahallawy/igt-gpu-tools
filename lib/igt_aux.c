@@ -703,6 +703,7 @@ void igt_print_activity(void)
 
 static int autoresume_delay;
 bool __console_suspend_saved_state;
+bool __pm_debug_messages_state;
 
 #define SYSFS_MODULE_PRINTK "/sys/module/printk/parameters/"
 #define CONSOLE_SUSPEND_DISABLE false
@@ -913,7 +914,7 @@ static bool is_mem_sleep_state_supported(int power_dir, enum igt_mem_sleep state
 
 static void igt_aux_pm_suspend_dbg_restore_exit_handler(int sig)
 {
-	int sysfs_fd;
+	int sysfs_fd, power_dir;
 
 	sysfs_fd = open(SYSFS_MODULE_PRINTK, O_RDONLY);
 	if (sysfs_fd < 0)
@@ -921,17 +922,30 @@ static void igt_aux_pm_suspend_dbg_restore_exit_handler(int sig)
 
 	igt_sysfs_set_boolean(sysfs_fd, "console_suspend", __console_suspend_saved_state);
 	close(sysfs_fd);
+
+	power_dir = open("/sys/power", O_RDONLY);
+	if (power_dir <  0)
+		return;
+
+	if (!faccessat(power_dir, "pm_debug_messages", R_OK |  W_OK, 0))
+		igt_sysfs_set_boolean(power_dir, "pm_debug_messages", __pm_debug_messages_state);
+
+	close(power_dir);
 }
 
 /**
  * igt_aux_enable_pm_suspend_dbg:
+ * @power_dir: /sys/power/ dir fd
  *
  * Enhance the System wide suspend/resume debugging by
- * disabling console suspend. Disabling console suspend dump the suspend/resume
- * logs over serial console. That will be useful to debug CI Suspend/Resume issues
- * tagged with 'Incomplete' result.
+ * disabling console suspend and enabling PM debug messages.
+ * Disabling console suspend dump the suspend/resume logs over serial console.
+ * That will be useful to debug CI Suspend/Resume issues tagged
+ * with 'Incomplete' result.
+ * pm_debug_messages sysfs enables Linux PM Core debug messages, which will
+ * be useful to debug system wide suspend/resume related issues.
  */
-static void igt_aux_enable_pm_suspend_dbg(void)
+static void igt_aux_enable_pm_suspend_dbg(int power_dir)
 {
 	int sysfs_fd;
 
@@ -942,10 +956,17 @@ static void igt_aux_enable_pm_suspend_dbg(void)
 		if (!igt_sysfs_set_boolean(sysfs_fd, "console_suspend", CONSOLE_SUSPEND_DISABLE))
 			igt_warn("Unable to disable console suspend\n");
 
-		igt_install_exit_handler(igt_aux_pm_suspend_dbg_restore_exit_handler);
 	} else {
 		igt_warn("Unable to open printk parameters Err:%d\n", errno);
 	}
+
+	/* pm_debug_messages depends on  CONFIG_PM_SLEEP_DEBUG */
+	if (!faccessat(power_dir, "pm_debug_messages", R_OK |  W_OK, 0)) {
+		__pm_debug_messages_state = igt_sysfs_get_boolean(sysfs_fd, "pm_debug_messages");
+		igt_sysfs_set_boolean(power_dir, "pm_debug_messages", true);
+	}
+
+	igt_install_exit_handler(igt_aux_pm_suspend_dbg_restore_exit_handler);
 
 	close(sysfs_fd);
 }
@@ -988,7 +1009,7 @@ void igt_system_suspend_autoresume(enum igt_suspend_state state,
 		      "Suspend to disk requires swap space.\n");
 
 	orig_test = get_suspend_test(power_dir);
-	igt_aux_enable_pm_suspend_dbg();
+	igt_aux_enable_pm_suspend_dbg(power_dir);
 
 	if (state == SUSPEND_STATE_S3) {
 		orig_mem_sleep = get_mem_sleep();
