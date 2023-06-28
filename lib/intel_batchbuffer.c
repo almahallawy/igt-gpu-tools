@@ -214,8 +214,8 @@ static uint32_t find_engine(const intel_ctx_cfg_t *cfg, unsigned int class)
 
 static void exec_blit(int fd,
 		      struct drm_i915_gem_exec_object2 *objs,
-		      uint32_t count, unsigned int gen,
-		      uint32_t ctx, const intel_ctx_cfg_t *cfg)
+		      uint32_t count, uint32_t ctx,
+		      const intel_ctx_cfg_t *cfg)
 {
 	struct drm_i915_gem_execbuffer2 exec;
 	uint32_t devid = intel_get_drm_devid(fd);
@@ -514,7 +514,7 @@ void igt_blitter_src_copy(int fd,
 		objs[2].flags |= EXEC_OBJECT_PINNED | EXEC_OBJECT_SUPPORTS_48B_ADDRESS;
 	}
 
-	exec_blit(fd, objs, 3, gen, ctx, cfg);
+	exec_blit(fd, objs, 3, ctx, cfg);
 
 	gem_close(fd, batch_handle);
 }
@@ -636,7 +636,7 @@ void igt_blitter_fast_copy__raw(int fd,
 		objs[2].flags |= EXEC_OBJECT_PINNED;
 	}
 
-	exec_blit(fd, objs, 3, intel_gen(intel_get_drm_devid(fd)), ctx, cfg);
+	exec_blit(fd, objs, 3, ctx, cfg);
 
 	gem_close(fd, batch_handle);
 }
