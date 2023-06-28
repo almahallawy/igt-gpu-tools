@@ -702,6 +702,10 @@ void igt_print_activity(void)
 }
 
 static int autoresume_delay;
+bool __console_suspend_saved_state;
+
+#define SYSFS_MODULE_PRINTK "/sys/module/printk/parameters/"
+#define CONSOLE_SUSPEND_DISABLE false
 
 static const char *suspend_state_name[] = {
 	[SUSPEND_STATE_FREEZE] = "freeze",
@@ -907,6 +911,45 @@ static bool is_mem_sleep_state_supported(int power_dir, enum igt_mem_sleep state
 	return str;
 }
 
+static void igt_aux_pm_suspend_dbg_restore_exit_handler(int sig)
+{
+	int sysfs_fd;
+
+	sysfs_fd = open(SYSFS_MODULE_PRINTK, O_RDONLY);
+	if (sysfs_fd < 0)
+		return;
+
+	igt_sysfs_set_boolean(sysfs_fd, "console_suspend", __console_suspend_saved_state);
+	close(sysfs_fd);
+}
+
+/**
+ * igt_aux_enable_pm_suspend_dbg:
+ *
+ * Enhance the System wide suspend/resume debugging by
+ * disabling console suspend. Disabling console suspend dump the suspend/resume
+ * logs over serial console. That will be useful to debug CI Suspend/Resume issues
+ * tagged with 'Incomplete' result.
+ */
+static void igt_aux_enable_pm_suspend_dbg(void)
+{
+	int sysfs_fd;
+
+	sysfs_fd = open(SYSFS_MODULE_PRINTK, O_RDONLY);
+	if (sysfs_fd > 0) {
+		__console_suspend_saved_state = igt_sysfs_get_boolean(sysfs_fd, "console_suspend");
+
+		if (!igt_sysfs_set_boolean(sysfs_fd, "console_suspend", CONSOLE_SUSPEND_DISABLE))
+			igt_warn("Unable to disable console suspend\n");
+
+		igt_install_exit_handler(igt_aux_pm_suspend_dbg_restore_exit_handler);
+	} else {
+		igt_warn("Unable to open printk parameters Err:%d\n", errno);
+	}
+
+	close(sysfs_fd);
+}
+
 /**
  * igt_system_suspend_autoresume:
  * @state: an #igt_suspend_state, the target suspend state
@@ -945,6 +988,7 @@ void igt_system_suspend_autoresume(enum igt_suspend_state state,
 		      "Suspend to disk requires swap space.\n");
 
 	orig_test = get_suspend_test(power_dir);
+	igt_aux_enable_pm_suspend_dbg();
 
 	if (state == SUSPEND_STATE_S3) {
 		orig_mem_sleep = get_mem_sleep();
