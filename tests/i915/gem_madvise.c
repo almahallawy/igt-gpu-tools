@@ -109,11 +109,10 @@ dontneed_before_mmap(void)
 		ptr = __gem_mmap_offset(fd, handle, 0, OBJECT_SIZE,
 					PROT_READ | PROT_WRITE,
 					t->type);
-
-		drm_close_driver(fd);
 		if (!ptr)
 			continue;
 
+		drm_close_driver(fd);
 		old_sigsegv = signal(SIGSEGV, sigtrap);
 		old_sigbus = signal(SIGBUS, sigtrap);
 		switch (sigsetjmp(jmp, SIGBUS | SIGSEGV)) {
@@ -156,10 +155,10 @@ dontneed_after_mmap(void)
 					t->type);
 
 		gem_madvise(fd, handle, I915_MADV_DONTNEED);
-		drm_close_driver(fd);
 		if (!ptr)
 			continue;
 
+		drm_close_driver(fd);
 		old_sigsegv = signal(SIGSEGV, sigtrap);
 		old_sigbus = signal(SIGBUS, sigtrap);
 		switch (sigsetjmp(jmp, SIGBUS | SIGSEGV)) {
