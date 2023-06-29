@@ -270,6 +270,7 @@ xe_progs = [
 	'xe_vm',
 	'xe_waitfence',
 	'xe_spin_batch',
+	'xe_sysfs_defaults',
 ]
 
 msm_progs = [
