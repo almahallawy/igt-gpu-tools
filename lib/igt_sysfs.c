@@ -856,3 +856,50 @@ void igt_sysfs_rw_attr_verify(igt_sysfs_rw_attr_t *rw)
 	igt_assert_eq(get, prev);
 	igt_assert(!ret);
 }
+
+/**
+ * igt_sysfs_engines:
+ * @xe: fd of the device
+ * @engines: fd of the directory engine
+ * @property: property array
+ * @test: Dynamic engine test
+ *
+ * It iterates over sysfs/engines and runs a dynamic engine test.
+ *
+ */
+void igt_sysfs_engines(int xe, int engines, const char **property,
+		       void (*test)(int, int, const char **))
+{
+	struct dirent *de;
+	DIR *dir;
+
+	lseek(engines, 0, SEEK_SET);
+
+	dir = fdopendir(engines);
+	if (!dir)
+		close(engines);
+
+	while ((de = readdir(dir))) {
+		int engine_fd;
+
+		if (*de->d_name == '.')
+			continue;
+
+		engine_fd = openat(engines, de->d_name, O_RDONLY);
+		if (engine_fd < 0)
+			continue;
+
+		igt_dynamic(de->d_name) {
+			if (property) {
+				struct stat st;
+
+				igt_require(fstatat(engine_fd, property[0], &st, 0) == 0);
+				igt_require(fstatat(engine_fd, property[1], &st, 0) == 0);
+				igt_require(fstatat(engine_fd, property[2], &st, 0) == 0);
+			}
+			errno = 0;
+			test(xe, engine_fd, property);
+		}
+		close(engine_fd);
+	}
+}

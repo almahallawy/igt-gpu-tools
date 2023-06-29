@@ -147,4 +147,7 @@ typedef struct igt_sysfs_rw_attr {
 
 void igt_sysfs_rw_attr_verify(igt_sysfs_rw_attr_t *rw);
 
+void igt_sysfs_engines(int xe, int engines, const char **property,
+		       void (*test)(int, int, const char **));
+
 #endif /* __IGT_SYSFS_H__ */
