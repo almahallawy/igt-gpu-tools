@@ -357,7 +357,7 @@ static void *vm_async_ops_err_thread(void *data)
 		.op = DRM_XE_UFENCE_WAIT_NEQ,
 		.flags = DRM_XE_UFENCE_WAIT_VM_ERROR,
 		.mask = DRM_XE_UFENCE_WAIT_U32,
-		.timeout = 1000,
+		.timeout = MS_TO_NS(1000),
 	};
 
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE,
