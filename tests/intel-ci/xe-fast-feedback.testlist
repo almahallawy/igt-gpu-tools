@@ -259,8 +259,6 @@ igt@kms_chamelium_hpd@common-hpd-after-suspend
 igt@kms_chamelium_hpd@dp-hpd-fast
 igt@kms_chamelium_hpd@hdmi-hpd-fast
 igt@kms_chamelium_hpd@vga-hpd-fast
-igt@kms_cursor_legacy@basic-busy-flip-before-cursor-atomic
-igt@kms_cursor_legacy@basic-busy-flip-before-cursor-legacy
 igt@kms_cursor_legacy@basic-flip-after-cursor-atomic
 igt@kms_cursor_legacy@basic-flip-after-cursor-legacy
 igt@kms_cursor_legacy@basic-flip-after-cursor-varying-size
