@@ -254,6 +254,7 @@ xe_progs = [
 	'xe_exec_compute_mode',
 	'xe_exec_fault_mode',
 	'xe_exec_reset',
+	'xe_exec_store',
 	'xe_exec_threads',
 	'xe_gpgpu_fill',
 	'xe_guc_pc',
