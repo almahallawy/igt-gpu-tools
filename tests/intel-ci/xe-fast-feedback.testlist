@@ -163,8 +163,6 @@ igt@xe_gpgpu_fill@basic
 igt@xe_guc_pc@freq_basic_api
 igt@xe_guc_pc@freq_fixed_idle
 igt@xe_guc_pc@freq_range_idle
-igt@xe_guc_pc@rc6_on_idle
-igt@xe_guc_pc@rc0_on_exec
 igt@xe_huc_copy@huc_copy
 igt@xe_intel_bb@add-remove-objects
 igt@xe_intel_bb@bb-with-allocator
@@ -191,6 +189,7 @@ igt@xe_mmap@vram
 igt@xe_mmap@vram-system
 igt@xe_mmio@mmio-timestamp
 igt@xe_mmio@mmio-invalid
+igt@xe_pm_residency@gt-c6-on-idle
 igt@xe_prime_self_import@basic-with_one_bo
 igt@xe_prime_self_import@basic-with_fd_dup
 #igt@xe_prime_self_import@export-vs-gem_close-race
