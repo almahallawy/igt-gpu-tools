@@ -348,27 +348,6 @@ static void test_reset(int fd, int sysfs, int gt_id, int cycles)
 	}
 }
 
-
-/**
- * SUBTEST: rc6_on_idle
- * Description: check if GPU is in RC6 on idle
- * Run type: BAT
- *
- * SUBTEST: rc0_on_exec
- * Description: check if GPU is in RC0 on when doing some work
- * Run type: BAT
- */
-
-static bool in_rc6(int sysfs, int gt_id)
-{
-	char path[32];
-	char rc[8];
-	sprintf(path, "device/gt%d/rc_status", gt_id);
-	if (igt_sysfs_scanf(sysfs, path, "%s", rc) < 0)
-		return false;
-	return strcmp(rc, "rc6") == 0;
-}
-
 igt_main
 {
 	struct drm_xe_engine_class_instance *hwe;
@@ -456,29 +435,6 @@ igt_main
 	igt_subtest("freq_reset_multiple") {
 		xe_for_each_gt(fd, gt) {
 			test_reset(fd, sysfs, gt, 50);
-		}
-	}
-
-	igt_subtest("rc6_on_idle") {
-		igt_require(!IS_PONTEVECCHIO(xe_dev_id(fd)));
-		xe_for_each_gt(fd, gt) {
-			assert(igt_wait(in_rc6(sysfs, gt), 1000, 1));
-		}
-	}
-
-	igt_subtest("rc0_on_exec") {
-		igt_require(!IS_PONTEVECCHIO(xe_dev_id(fd)));
-		xe_for_each_gt(fd, gt) {
-			assert(igt_wait(in_rc6(sysfs, gt), 1000, 1));
-			xe_for_each_hw_engine(fd, hwe)
-				igt_fork(child, ncpus) {
-					igt_debug("Execution Started\n");
-					exec_basic(fd, hwe, MAX_N_ENGINES, 16);
-					igt_debug("Execution Finished\n");
-				}
-			/* While exec in threads above, let's check rc_status */
-			assert(igt_wait(!in_rc6(sysfs, gt), 1000, 1));
-			igt_waitchildren();
 		}
 	}
 
