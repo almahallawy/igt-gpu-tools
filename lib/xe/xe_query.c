@@ -445,7 +445,7 @@ struct drm_xe_query_mem_region *xe_mem_region(int fd, uint64_t region)
  * xe_region_name:
  * @region: region mask
  *
- * Returns region string like "system" or "vram-n" where n=0...62.
+ * Returns region string like "system" or "vramN" where N=0...62.
  */
 const char *xe_region_name(uint64_t region)
 {
@@ -457,7 +457,7 @@ const char *xe_region_name(uint64_t region)
 		vrams = calloc(64, sizeof(char *));
 		for (int i = 0; i < 64; i++) {
 			if (i != 0)
-				asprintf(&vrams[i], "vram-%d", i - 1);
+				asprintf(&vrams[i], "vram%d", i - 1);
 			else
 				asprintf(&vrams[i], "system");
 			igt_assert(vrams[i]);
