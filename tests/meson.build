@@ -276,6 +276,7 @@ xe_progs = [
 	'xe_exec_reset',
 	'xe_exec_store',
 	'xe_exec_threads',
+	'xe_exercise_blt',
 	'xe_gpgpu_fill',
 	'xe_guc_pc',
 	'xe_huc_copy',
