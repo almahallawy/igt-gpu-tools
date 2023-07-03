@@ -377,68 +377,6 @@ static unsigned int measured_usleep(unsigned int usec)
 #define TEST_OTHER (128)
 #define TEST_ALL   (256)
 
-static igt_spin_t *__spin_poll(int fd, uint64_t ahnd, const intel_ctx_t *ctx,
-			       const struct intel_execution_engine2 *e)
-{
-	struct igt_spin_factory opts = {
-		.ahnd = ahnd,
-		.ctx = ctx,
-		.engine = e->flags,
-	};
-
-	if (gem_class_can_store_dword(fd, e->class))
-		opts.flags |= IGT_SPIN_POLL_RUN;
-
-	return __igt_spin_factory(fd, &opts);
-}
-
-static unsigned long __spin_wait(int fd, igt_spin_t *spin)
-{
-	struct timespec start = { };
-
-	igt_nsec_elapsed(&start);
-
-	if (igt_spin_has_poll(spin)) {
-		unsigned long timeout = 0;
-
-		while (!igt_spin_has_started(spin)) {
-			unsigned long t = igt_nsec_elapsed(&start);
-
-			igt_assert(gem_bo_busy(fd, spin->handle));
-			if ((t - timeout) > 250e6) {
-				timeout = t;
-				igt_warn("Spinner not running after %.2fms\n",
-					 (double)t / 1e6);
-				igt_assert(t < 2e9);
-			}
-		}
-	} else {
-		igt_debug("__spin_wait - usleep mode\n");
-		usleep(500e3); /* Better than nothing! */
-	}
-
-	igt_assert(gem_bo_busy(fd, spin->handle));
-	return igt_nsec_elapsed(&start);
-}
-
-static igt_spin_t *__spin_sync(int fd, uint64_t ahnd, const intel_ctx_t *ctx,
-			       const struct intel_execution_engine2 *e)
-{
-	igt_spin_t *spin = __spin_poll(fd, ahnd, ctx, e);
-
-	__spin_wait(fd, spin);
-
-	return spin;
-}
-
-static igt_spin_t *spin_sync(int fd, uint64_t ahnd, const intel_ctx_t *ctx,
-			     const struct intel_execution_engine2 *e)
-{
-	igt_require_gem(fd);
-
-	return __spin_sync(fd, ahnd, ctx, e);
-}
-
 static void end_spin(int fd, igt_spin_t *spin, unsigned int flags)
 {
 	if (!spin)
@@ -484,7 +422,7 @@ single(int gem_fd, const intel_ctx_t *ctx,
 	fd = open_pmu(gem_fd, I915_PMU_ENGINE_BUSY(e->class, e->instance));
 
 	if (flags & TEST_BUSY)
-		spin = spin_sync(gem_fd, ahnd, ctx, e);
+		spin = igt_sync_spin(gem_fd, ahnd, ctx, e);
 	else
 		spin = NULL;
 
@@ -536,7 +474,7 @@ busy_start(int gem_fd, const intel_ctx_t *ctx,
 	 */
 	sleep(2);
 
-	spin = __spin_sync(gem_fd, ahnd, ctx, e);
+	spin = __igt_sync_spin(gem_fd, ahnd, ctx, e);
 
 	fd = open_pmu(gem_fd, I915_PMU_ENGINE_BUSY(e->class, e->instance));
 
@@ -583,7 +521,7 @@ busy_double_start(int gem_fd, const intel_ctx_t *ctx,
 	 * re-submission in execlists mode. Make sure busyness is correctly
 	 * reported with the engine busy, and after the engine went idle.
 	 */
-	spin[0] = __spin_sync(gem_fd, ahnd, ctx, e);
+	spin[0] = __igt_sync_spin(gem_fd, ahnd, ctx, e);
 	usleep(500e3);
 	spin[1] = __igt_spin_new(gem_fd,
 				 .ahnd = ahndN,
@@ -675,7 +613,7 @@ busy_check_all(int gem_fd, const intel_ctx_t *ctx,
 
 	igt_assert_eq(i, num_engines);
 
-	spin = spin_sync(gem_fd, ahnd, ctx, e);
+	spin = igt_sync_spin(gem_fd, ahnd, ctx, e);
 	pmu_read_multi(fd[0], num_engines, tval[0]);
 	slept = measured_usleep(batch_duration_ns / 1000);
 	if (flags & TEST_TRAILING_IDLE)
@@ -737,7 +675,7 @@ most_busy_check_all(int gem_fd, const intel_ctx_t *ctx,
 		else if (spin)
 			__submit_spin(gem_fd, spin, e_, 64);
 		else
-			spin = __spin_poll(gem_fd, ahnd, ctx, e_);
+			spin = __igt_sync_spin_poll(gem_fd, ahnd, ctx, e_);
 
 		val[i++] = I915_PMU_ENGINE_BUSY(e_->class, e_->instance);
 	}
@@ -749,7 +687,7 @@ most_busy_check_all(int gem_fd, const intel_ctx_t *ctx,
 		fd[i] = open_group(gem_fd, val[i], fd[0]);
 
 	/* Small delay to allow engines to start. */
-	usleep(__spin_wait(gem_fd, spin) * num_engines / 1e3);
+	usleep(__igt_sync_spin_wait(gem_fd, spin) * num_engines / 1e3);
 
 	pmu_read_multi(fd[0], num_engines, tval[0]);
 	slept = measured_usleep(batch_duration_ns / 1000);
@@ -796,7 +734,7 @@ all_busy_check_all(int gem_fd, const intel_ctx_t *ctx,
 		if (spin)
 			__submit_spin(gem_fd, spin, e, 64);
 		else
-			spin = __spin_poll(gem_fd, ahnd, ctx, e);
+			spin = __igt_sync_spin_poll(gem_fd, ahnd, ctx, e);
 
 		val[i++] = I915_PMU_ENGINE_BUSY(e->class, e->instance);
 	}
@@ -807,7 +745,7 @@ all_busy_check_all(int gem_fd, const intel_ctx_t *ctx,
 		fd[i] = open_group(gem_fd, val[i], fd[0]);
 
 	/* Small delay to allow engines to start. */
-	usleep(__spin_wait(gem_fd, spin) * num_engines / 1e3);
+	usleep(__igt_sync_spin_wait(gem_fd, spin) * num_engines / 1e3);
 
 	pmu_read_multi(fd[0], num_engines, tval[0]);
 	slept = measured_usleep(batch_duration_ns / 1000);
@@ -848,7 +786,7 @@ no_sema(int gem_fd, const intel_ctx_t *ctx,
 			   fd[0]);
 
 	if (flags & TEST_BUSY)
-		spin = spin_sync(gem_fd, ahnd, ctx, e);
+		spin = igt_sync_spin(gem_fd, ahnd, ctx, e);
 	else
 		spin = NULL;
 
@@ -1406,7 +1344,7 @@ multi_client(int gem_fd, const intel_ctx_t *ctx,
 	 */
 	fd[1] = open_pmu(gem_fd, config);
 
-	spin = spin_sync(gem_fd, ahnd, ctx, e);
+	spin = igt_sync_spin(gem_fd, ahnd, ctx, e);
 
 	val[0] = val[1] = __pmu_read_single(fd[0], &ts[0]);
 	slept[1] = measured_usleep(batch_duration_ns / 1000);
@@ -1776,7 +1714,7 @@ static igt_spin_t *spin_sync_gt(int i915, uint64_t ahnd, unsigned int gt,
 
 	igt_debug("Using engine %u:%u\n", e.class, e.instance);
 
-	return spin_sync(i915, ahnd, *ctx, &e);
+	return igt_sync_spin(i915, ahnd, *ctx, &e);
 }
 
 static void

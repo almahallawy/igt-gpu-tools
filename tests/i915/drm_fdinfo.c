@@ -138,68 +138,6 @@ static unsigned int measured_usleep(unsigned int usec)
 #define FLAG_HANG (8)
 #define TEST_ISOLATION (16)
 
-static igt_spin_t *__spin_poll(int fd, uint64_t ahnd, const intel_ctx_t *ctx,
-			       const struct intel_execution_engine2 *e)
-{
-	struct igt_spin_factory opts = {
-		.ahnd = ahnd,
-		.ctx = ctx,
-		.engine = e ? e->flags : 0,
-	};
-
-	if (!e || gem_class_can_store_dword(fd, e->class))
-		opts.flags |= IGT_SPIN_POLL_RUN;
-
-	return __igt_spin_factory(fd, &opts);
-}
-
-static unsigned long __spin_wait(int fd, igt_spin_t *spin)
-{
-	struct timespec start = { };
-
-	igt_nsec_elapsed(&start);
-
-	if (igt_spin_has_poll(spin)) {
-		unsigned long timeout = 0;
-
-		while (!igt_spin_has_started(spin)) {
-			unsigned long t = igt_nsec_elapsed(&start);
-
-			igt_assert(gem_bo_busy(fd, spin->handle));
-			if ((t - timeout) > 250e6) {
-				timeout = t;
-				igt_warn("Spinner not running after %.2fms\n",
-					 (double)t / 1e6);
-				igt_assert(t < 2e9);
-			}
-		}
-	} else {
-		igt_debug("__spin_wait - usleep mode\n");
-		usleep(500e3); /* Better than nothing! */
-	}
-
-	igt_assert(gem_bo_busy(fd, spin->handle));
-	return igt_nsec_elapsed(&start);
-}
-
-static igt_spin_t *__spin_sync(int fd, uint64_t ahnd, const intel_ctx_t *ctx,
-			       const struct intel_execution_engine2 *e)
-{
-	igt_spin_t *spin = __spin_poll(fd, ahnd, ctx, e);
-
-	__spin_wait(fd, spin);
-
-	return spin;
-}
-
-static igt_spin_t *spin_sync(int fd, uint64_t ahnd, const intel_ctx_t *ctx,
-			     const struct intel_execution_engine2 *e)
-{
-	igt_require_gem(fd);
-
-	return __spin_sync(fd, ahnd, ctx, e);
-}
-
 static void end_spin(int fd, igt_spin_t *spin, unsigned int flags)
 {
 	if (!spin)
@@ -264,7 +202,7 @@ single(int gem_fd, const intel_ctx_t *ctx,
 	ahnd = get_reloc_ahnd(spin_fd, ctx->id);
 
 	if (flags & TEST_BUSY)
-		spin = spin_sync(spin_fd, ahnd, ctx, e);
+		spin = igt_sync_spin(spin_fd, ahnd, ctx, e);
 	else
 		spin = NULL;
 
@@ -349,7 +287,7 @@ busy_check_all(int gem_fd, const intel_ctx_t *ctx,
 
 	memset(tval, 0, sizeof(tval));
 
-	spin = spin_sync(gem_fd, ahnd, ctx, e);
+	spin = igt_sync_spin(gem_fd, ahnd, ctx, e);
 
 	read_busy_all(gem_fd, tval[0]);
 	slept = measured_usleep(batch_duration_ns / 1000);
@@ -418,14 +356,14 @@ most_busy_check_all(int gem_fd, const intel_ctx_t *ctx,
 			__submit_spin(gem_fd, spin, e_, 64);
 			busy_class[e_->class]++;
 		} else {
-			spin = __spin_poll(gem_fd, ahnd, ctx, e_);
+			spin = __igt_sync_spin_poll(gem_fd, ahnd, ctx, e_);
 			busy_class[e_->class]++;
 		}
 	}
 	igt_require(spin); /* at least one busy engine */
 
 	/* Small delay to allow engines to start. */
-	usleep(__spin_wait(gem_fd, spin) * num_engines / 1e3);
+	usleep(__igt_sync_spin_wait(gem_fd, spin) * num_engines / 1e3);
 
 	read_busy_all(gem_fd, tval[0]);
 	slept = measured_usleep(batch_duration_ns / 1000);
@@ -475,12 +413,12 @@ all_busy_check_all(int gem_fd, const intel_ctx_t *ctx,
 		if (spin)
 			__submit_spin(gem_fd, spin, e, 64);
 		else
-			spin = __spin_poll(gem_fd, ahnd, ctx, e);
+			spin = __igt_sync_spin_poll(gem_fd, ahnd, ctx, e);
 		busy_class[e->class]++;
 	}
 
 	/* Small delay to allow engines to start. */
-	usleep(__spin_wait(gem_fd, spin) * num_engines / 1e3);
+	usleep(__igt_sync_spin_wait(gem_fd, spin) * num_engines / 1e3);
 
 	read_busy_all(gem_fd, tval[0]);
 	slept = measured_usleep(batch_duration_ns / 1000);
@@ -624,7 +562,7 @@ virtual(int i915, const intel_ctx_cfg_t *base_cfg, unsigned int flags)
 			ahnd = get_reloc_ahnd(i915, ctx->id);
 
 			if (flags & TEST_BUSY)
-				spin = spin_sync(i915, ahnd, ctx, NULL);
+				spin = igt_sync_spin(i915, ahnd, ctx, NULL);
 			else
 				spin = NULL;
 
@@ -732,11 +670,12 @@ virtual_all(int i915, const intel_ctx_cfg_t *base_cfg, unsigned int flags)
 			if (spin)
 				__virt_submit_spin(i915, spin, ctx[i], 64);
 			else
-				spin = __spin_poll(i915, ahnd, ctx[i], NULL);
+				spin = __igt_sync_spin_poll(i915, ahnd, ctx[i],
+							    NULL);
 		}
 
 		/* Small delay to allow engines to start. */
-		usleep(__spin_wait(i915, spin) * count / 1e3);
+		usleep(__igt_sync_spin_wait(i915, spin) * count / 1e3);
 
 		val = read_busy(i915, class);
 		slept = measured_usleep(batch_duration_ns / 1000);

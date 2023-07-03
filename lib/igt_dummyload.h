@@ -143,6 +143,17 @@ void igt_terminate_spins(void);
 void igt_unshare_spins(void);
 void igt_free_spins(int i915);
 
+struct intel_execution_engine2;
+
+igt_spin_t *__igt_sync_spin_poll(int i915, uint64_t ahnd,
+				 const intel_ctx_t *ctx,
+				 const struct intel_execution_engine2 *e);
+unsigned long __igt_sync_spin_wait(int i915, igt_spin_t *spin);
+igt_spin_t *__igt_sync_spin(int i915, uint64_t ahnd, const intel_ctx_t *ctx,
+			    const struct intel_execution_engine2 *e);
+igt_spin_t *igt_sync_spin(int i915, uint64_t ahnd, const intel_ctx_t *ctx,
+			  const struct intel_execution_engine2 *e);
+
 enum igt_cork_type {
 	CORK_SYNC_FD = 1,
 	CORK_VGEM_HANDLE

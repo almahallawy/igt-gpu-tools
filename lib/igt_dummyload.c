@@ -33,6 +33,7 @@
 #include "drmtest.h"
 #include "i915/gem_create.h"
 #include "i915/gem_engine_topology.h"
+#include "i915/gem.h"
 #include "i915/gem_mman.h"
 #include "i915/gem_submission.h"
 #include "igt_aux.h"
@@ -713,6 +714,110 @@ void igt_unshare_spins(void)
 	igt_list_for_each_entry_safe(it, n, &spin_list, link)
 		IGT_INIT_LIST_HEAD(&it->link);
 	IGT_INIT_LIST_HEAD(&spin_list);
+}
+
+/**
+ * __igt_sync_spin_poll:
+ * @i915: open i915 drm file descriptor
+ * @ahnd: allocator handle
+ * @ctx: intel_ctx_t context
+ * @e: engine to execute on
+ *
+ * Starts a recursive batch on an engine.
+ *
+ * Returns a #igt_spin_t which can be used with both standard and igt_sync_spin
+ * API family. Callers should consult @gem_class_can_store_dword to whether
+ * the target platform+engine can reliably support the igt_sync_spin API.
+ */
+igt_spin_t *
+__igt_sync_spin_poll(int i915, uint64_t ahnd, const intel_ctx_t *ctx,
+		     const struct intel_execution_engine2 *e)
+{
+	struct igt_spin_factory opts = {
+		.ahnd = ahnd,
+		.ctx = ctx,
+		.engine = e ? e->flags : 0,
+	};
+
+	if (!e || gem_class_can_store_dword(i915, e->class))
+		opts.flags |= IGT_SPIN_POLL_RUN;
+
+	return __igt_spin_factory(i915, &opts);
+}
+
+/**
+ * __igt_sync_spin_wait:
+ * @i915: open i915 drm file descriptor
+ * @spin: previously create sync spinner
+ *
+ * Waits for a spinner to be running on the hardware.
+ *
+ * Callers should consult @gem_class_can_store_dword to whether the target
+ * platform+engine can reliably support the igt_sync_spin API.
+ */
+unsigned long __igt_sync_spin_wait(int i915, igt_spin_t *spin)
+{
+	struct timespec start = { };
+
+	igt_nsec_elapsed(&start);
+
+	if (igt_spin_has_poll(spin)) {
+		unsigned long timeout = 0;
+
+		while (!igt_spin_has_started(spin)) {
+			unsigned long t = igt_nsec_elapsed(&start);
+
+			igt_assert(gem_bo_busy(i915, spin->handle));
+			if ((t - timeout) > 250e6) {
+				timeout = t;
+				igt_warn("Spinner not running after %.2fms\n",
+					 (double)t / 1e6);
+				igt_assert(t < 2e9);
+			}
+		}
+	} else {
+		igt_debug("__spin_wait - usleep mode\n");
+		usleep(500e3); /* Better than nothing! */
+	}
+
+	igt_assert(gem_bo_busy(i915, spin->handle));
+	return igt_nsec_elapsed(&start);
+}
+
+igt_spin_t *
+__igt_sync_spin(int i915, uint64_t ahnd, const intel_ctx_t *ctx,
+		const struct intel_execution_engine2 *e)
+{
+	igt_spin_t *spin = __igt_sync_spin_poll(i915, ahnd, ctx, e);
+
+	__igt_sync_spin_wait(i915, spin);
+
+	return spin;
+}
+
+/**
+ * igt_sync_spin:
+ * @i915: open i915 drm file descriptor
+ * @ahnd: allocator handle
+ * @ctx: intel_ctx_t context
+ * @e: engine to execute on
+ *
+ * Starts a recursive batch on an engine.
+ *
+ * Returns a #igt_spin_t and tries to guarantee it to be running at the time of
+ * the return. Otherwise it does a best effort only. Callers should check for
+ * @gem_class_can_store_dword if they want to be sure guarantee can be given.
+ *
+ * Both standard and igt_sync_spin API family can be used on the returned
+ * spinner object.
+ */
+igt_spin_t *
+igt_sync_spin(int i915, uint64_t ahnd, const intel_ctx_t *ctx,
+	      const struct intel_execution_engine2 *e)
+{
+	igt_require_gem(i915);
+
+	return __igt_sync_spin(i915, ahnd, ctx, e);
 }
 
 static uint32_t plug_vgem_handle(struct igt_cork *cork, int fd)

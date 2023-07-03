@@ -47,6 +47,7 @@
 #include "i915/gem_ring.h"
 #include "igt.h"
 #include "igt_device.h"
+#include "igt_dummyload.h"
 #include "igt_fb.h"
 #include "igt_kms.h"
 #include "igt_stats.h"
@@ -429,22 +430,12 @@ static igt_spin_t *__spin_poll(int fd, uint64_t ahnd, const intel_ctx_t *ctx,
 	return __igt_spin_factory(fd, &opts);
 }
 
-static void __spin_wait(int fd, igt_spin_t *spin)
-{
-	if (igt_spin_has_poll(spin)) {
-		igt_spin_busywait_until_started(spin);
-	} else {
-		igt_debug("__spin_wait - usleep mode\n");
-		usleep(500e3); /* Better than nothing! */
-	}
-}
-
 static igt_spin_t *spin_sync(int fd, uint64_t ahnd, const intel_ctx_t *ctx,
 			     unsigned long flags)
 {
 	igt_spin_t *spin = __spin_poll(fd, ahnd, ctx, flags);
 
-	__spin_wait(fd, spin);
+	__igt_sync_spin_wait(fd, spin);
 
 	return spin;
 }
@@ -963,7 +954,7 @@ static void test_inflight_external(int fd)
 	fence = execbuf.rsvd2 >> 32;
 	igt_assert(fence != -1);
 
-	__spin_wait(fd, hang);
+	__igt_sync_spin_wait(fd, hang);
 	manual_hang(fd);
 
 	gem_sync(fd, hang->handle); /* wedged, with an unready batch */
