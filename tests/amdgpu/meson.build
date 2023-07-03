@@ -25,6 +25,7 @@ if libdrm_amdgpu.found()
 			  'amd_prime',
 			  'amd_psr',
 			  'amd_uvd_dec',
+			  'amd_uvd_enc',
 			  'amd_vrr_range',
 			]
 	amdgpu_deps += libdrm_amdgpu
