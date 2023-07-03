@@ -2526,6 +2526,9 @@ static bool blitter_ok(const struct igt_fb *fb)
 
 static bool use_enginecopy(const struct igt_fb *fb)
 {
+	if (!is_intel_device(fb->fd))
+		return false;
+
 	if (!is_xe_device(fb->fd) && blitter_ok(fb))
 		return false;
 
