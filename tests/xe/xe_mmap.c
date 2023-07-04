@@ -40,17 +40,13 @@ static void
 test_mmap(int fd, uint32_t flags)
 {
 	uint32_t bo;
-	uint64_t mmo;
 	void *map;
 
 	igt_require_f(flags, "Device doesn't support such memory region\n");
 
 	bo = xe_bo_create_flags(fd, 0, 4096, flags);
-	mmo = xe_bo_mmap_offset(fd, bo);
 
-	map = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, fd, mmo);
-	igt_assert(map != MAP_FAILED);
-
+	map = xe_bo_map(fd, bo, 4096);
 	strcpy(map, "Write some data to the BO!");
 
 	munmap(map, 4096);
