@@ -274,6 +274,7 @@ const char *igt_interactive_debug;
 bool igt_skip_crc_compare;
 
 /* subtests helpers */
+static bool show_testlist = false;
 static bool list_subtests = false;
 static bool describe_subtests = false;
 static char *run_single_subtest = NULL;
@@ -326,6 +327,7 @@ enum {
 	 * conflict with core ones
 	 */
 	OPT_LIST_SUBTESTS = 500,
+	OPT_SHOW_TESTLIST,
 	OPT_DESCRIBE_SUBTESTS,
 	OPT_RUN_SUBTEST,
 	OPT_RUN_DYNAMIC_SUBTEST,
@@ -896,6 +898,7 @@ static void print_usage(const char *help_str, bool output_on_stderr)
 
 	fprintf(f, "Usage: %s [OPTIONS]\n", command_str);
 	fprintf(f, "  --list-subtests\n"
+		   "  --show-testlist\n"
 		   "  --run-subtest <pattern>\n"
 		   "  --dynamic-subtest <pattern>\n"
 		   "  --debug[=log-domain]\n"
@@ -1076,6 +1079,7 @@ static int common_init(int *argc, char **argv,
 	int c, option_index = 0, i, x;
 	static struct option long_options[] = {
 		{"list-subtests",     no_argument,       NULL, OPT_LIST_SUBTESTS},
+		{"show-testlist",     no_argument,       NULL, OPT_SHOW_TESTLIST},
 		{"describe",          optional_argument, NULL, OPT_DESCRIBE_SUBTESTS},
 		{"run-subtest",       required_argument, NULL, OPT_RUN_SUBTEST},
 		{"dynamic-subtest",   required_argument, NULL, OPT_RUN_DYNAMIC_SUBTEST},
@@ -1189,6 +1193,9 @@ static int common_init(int *argc, char **argv,
 			if (!run_single_subtest)
 				list_subtests = true;
 			break;
+		case OPT_SHOW_TESTLIST:
+			show_testlist = true;
+			break;
 		case OPT_DESCRIBE_SUBTESTS:
 			if (optarg)
 				run_single_subtest = strdup(optarg);
@@ -1256,6 +1263,10 @@ out:
 		if (run_single_subtest) {
 			igt_warn("Unknown subtest: %s\n", run_single_subtest);
 			exit(IGT_EXIT_INVALID);
+		}
+		if (show_testlist) {
+			printf("igt@%s\n", igt_test_name());
+			exit(0);
 		}
 		if (list_subtests)
 			exit(IGT_EXIT_INVALID);
@@ -1449,6 +1460,9 @@ bool __igt_run_subtest(const char *subtest_name, const char *file, const int lin
 		__igt_print_description(subtest_name, file, line);
 		_clear_current_description();
 		return false;
+	} else if (show_testlist) {
+		printf("igt@%s@%s\n", igt_test_name(), subtest_name);
+		return false;
 	} else if (list_subtests) {
 		printf("%s\n", subtest_name);
 		return false;
@@ -1522,7 +1536,7 @@ const char *igt_subtest_name(void)
  */
 bool igt_only_list_subtests(void)
 {
-	return list_subtests;
+	return list_subtests || show_testlist;
 }
 
 
