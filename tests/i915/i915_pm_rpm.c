@@ -861,13 +861,15 @@ static void assert_drm_infos_equal(struct compare_data *d1,
 		assert_drm_crtcs_equal(d1->crtcs[i], d2->crtcs[i]);
 }
 
-static bool find_i2c_path(const char *connector_name, char *i2c_path)
+static bool find_i2c_path(const char *connector_name,
+			  char *i2c_path, size_t i2c_path_size)
 {
 	struct dirent *dirent;
 	DIR *dir;
 	int sysfs_card_fd = igt_sysfs_open(drm_fd);
 	int connector_fd = -1;
 	bool found_i2c_file = false;
+	ssize_t r;
 
 	dir = fdopendir(sysfs_card_fd);
 	igt_assert(dir);
@@ -889,9 +891,24 @@ static bool find_i2c_path(const char *connector_name, char *i2c_path)
 	if (connector_fd < 0)
 		return false;
 
+	/* try the standard "ddc" symlink first */
+	r = readlinkat(connector_fd, "ddc", i2c_path, i2c_path_size);
+	if (r > 0 && r != i2c_path_size) {
+		int num;
+
+		i2c_path[r] = '\0';
+
+		if (sscanf(basename(i2c_path), "i2c-%d", &num) == 1) {
+			snprintf(i2c_path, i2c_path_size, "/dev/i2c-%d", num);
+			return true;
+		}
+	}
+
 	dir = fdopendir(connector_fd);
 	igt_assert(dir);
 
+	/* fall back to old "i2c-?" symlink */
+	/* FIXME nuke this at some point */
 	while ((dirent = readdir(dir))) {
 		if (strncmp(dirent->d_name, "i2c-", 4) == 0) {
 			sprintf(i2c_path, "/dev/%s", dirent->d_name);
@@ -926,9 +943,11 @@ static bool i2c_read_edid(const char *connector_name, unsigned char *edid)
 		.nmsgs = 2,
 	};
 
-	result = find_i2c_path(connector_name, i2c_path);
+	result = find_i2c_path(connector_name, i2c_path, sizeof(i2c_path));
 	if (!result)
 		return false;
+
+	igt_info("Testing %s %s\n", connector_name, i2c_path);
 
 	fd = open(i2c_path, O_RDWR);
 	igt_assert_neq(fd, -1);
