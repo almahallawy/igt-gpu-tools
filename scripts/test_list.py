@@ -909,35 +909,17 @@ class TestList:
 
         return subtests
 
-    def __get_testlist(self, name):
-        match = re.match(r"(.*/)?(.*)\.c$", name)
-        if not match:
-            return []
-
-        basename = "igt@" + match.group(2)
-
-        fname = os.path.join(self.igt_build_path, "tests", match.group(2))
-        if not os.path.isfile(fname):
-            print(f"Error: file {fname} doesn't exist.")
-            sys.exit(1)
-        try:
-            result = subprocess.run([ fname, "--list-subtests" ],
-                                    check = True,
-                                    stdout = subprocess.PIPE,
-                                    universal_newlines=True)
-            subtests = result.stdout.splitlines()
-
-            return [basename  + "@" + i for i in subtests]
-        except subprocess.CalledProcessError:
-            # Handle it as a test using igt_simple_main
-            return [basename]
-
     def get_testlist(self):
 
         """ Return a list of tests as reported by --list-subtests """
         tests = []
         for name in self.filenames:
-            tests += self.__get_testlist(name)
+            fname = re.sub(r"\.c$", ".testlist", name.split('/')[-1])
+            fname = os.path.join(self.igt_build_path, "tests", fname)
+
+            with open(fname, 'r', encoding='utf8') as handle:
+                for line in handle:
+                    tests.append(line)
 
         return sorted(tests)
 
