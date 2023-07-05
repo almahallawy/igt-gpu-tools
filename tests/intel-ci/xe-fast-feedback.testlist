@@ -145,6 +145,7 @@ igt@xe_exec_fault_mode@twice-invalid-userptr-fault
 igt@xe_exec_reset@close-fd-no-exec
 igt@xe_exec_reset@cm-close-fd-no-exec
 igt@xe_exec_reset@virtual-close-fd-no-exec
+igt@xe_exec_store@basic-store
 #igt@xe_exec_threads@threads-basic
 igt@xe_exec_threads@threads-shared-vm-basic
 igt@xe_exec_threads@threads-fd-basic
