@@ -870,7 +870,7 @@ static void print_version(void)
 {
 	struct utsname uts;
 
-	if (list_subtests)
+	if (igt_only_list_subtests())
 		return;
 
 	uname(&uts);
@@ -1198,12 +1198,12 @@ static int common_init(int *argc, char **argv,
 			break;
 		case OPT_RUN_SUBTEST:
 			assert(optarg);
-			if (!list_subtests)
+			if (!igt_only_list_subtests())
 				run_single_subtest = strdup(optarg);
 			break;
 		case OPT_RUN_DYNAMIC_SUBTEST:
 			assert(optarg);
-			if (!list_subtests)
+			if (!igt_only_list_subtests())
 				run_single_dynamic_subtest = strdup(optarg);
 			break;
 		case OPT_DESCRIPTION:
@@ -1265,7 +1265,7 @@ out:
 		/* exit with no error for -h/--help */
 		exit(ret == -1 ? 0 : IGT_EXIT_INVALID);
 
-	if (!list_subtests) {
+	if (!igt_only_list_subtests()) {
 		bind_fbcon(false);
 		igt_kmsg(KMSG_INFO "%s: executing\n", command_str);
 		print_version();
@@ -3098,7 +3098,7 @@ void igt_vlog(const char *domain, enum igt_log_level level, const char *format, 
 	if (!thread_id)
 		return;
 
-	if (list_subtests && level <= IGT_LOG_WARN)
+	if (igt_only_list_subtests() && level <= IGT_LOG_WARN)
 		return;
 
 	if (vasprintf(&line, format, args) == -1)
