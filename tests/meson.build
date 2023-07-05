@@ -352,35 +352,57 @@ extra_dependencies = {
 
 test_executables = []
 test_list = []
+testlist_files = []
 
 foreach prog : test_progs
-	test_executables += executable(prog, [prog + '.c'] + extra_sources.get(prog, []),
+	testexe = executable(prog, [prog + '.c'] + extra_sources.get(prog, []),
 		   dependencies : test_deps + extra_dependencies.get(prog, []),
 		   install_dir : libexecdir,
 		   install_rpath : libexecdir_rpathdir,
 		   install : true)
+	test_executables += testexe
 	test_list += prog
+	name = prog.split('/').get(-1)
+	testlist_files += custom_target(name + '.testlist',
+		     build_by_default : true,
+		     command : [testexe, '--show-testlist'],
+		     capture : true,
+		     output : name + '.testlist')
 endforeach
 
 foreach prog : i915_progs
-	test_executables += executable(prog,
+	testexe = executable(prog,
 		   [join_paths('i915', prog + '.c')] + extra_sources.get(prog, []),
 		   dependencies : test_deps + extra_dependencies.get(prog, []),
 		   install_dir : libexecdir,
 		   install_rpath : libexecdir_rpathdir,
 		   install : true)
+	test_executables += testexe
 	test_list += prog
+	name = prog.split('/').get(-1)
+	testlist_files += custom_target(name + '.testlist',
+		     build_by_default : true,
+		     command : [testexe, '--show-testlist'],
+		     capture : true,
+		     output : name + '.testlist')
 endforeach
 
 if build_xe
 	foreach prog : xe_progs
-		test_executables += executable(prog,
+		testexe = executable(prog,
 			   [join_paths('xe', prog + '.c')] + extra_sources.get(prog, []),
 			   dependencies : test_deps + extra_dependencies.get(prog, []),
 			   install_dir : libexecdir,
 			   install_rpath : libexecdir_rpathdir,
 			   install : true)
 		test_list += prog
+		test_executables += testexe
+		name = prog.split('/').get(-1)
+		testlist_files += custom_target(name + '.testlist',
+			     build_by_default : true,
+			     command : [testexe, '--show-testlist'],
+			     capture : true,
+			     output : name + '.testlist')
 	endforeach
 	build_info += 'Xe **experimental** tests enabled.'
 endif
@@ -396,7 +418,7 @@ endforeach
 
 if chamelium.found()
 	foreach prog : chamelium_progs
-		test_executables += executable(prog,
+		testexe = executable(prog,
 				 [join_paths('chamelium', prog + '.c'),
 					join_paths('chamelium', 'kms_chamelium_helper.c')],
 				 dependencies : test_deps,
@@ -404,16 +426,30 @@ if chamelium.found()
 				 install_rpath : libexecdir_rpathdir,
 				 install : true)
 		test_list += prog
+		test_executables += testexe
+		name = prog.split('/').get(-1)
+		testlist_files += custom_target(name + '.testlist',
+			     build_by_default : true,
+			     command : [testexe, '--show-testlist'],
+			     capture : true,
+			     output : name + '.testlist')
 	endforeach
 	test_deps += chamelium
 
-	test_executables += executable('kms_chamelium_color',
+	name = 'kms_chamelium_color'
+	testexe = executable('kms_chamelium_color',
 				[ 'chamelium/kms_chamelium_color.c', 'kms_color_helper.c' ],
 				dependencies : test_deps + [ chamelium ],
 				install_dir : libexecdir,
 				install_rpath : libexecdir_rpathdir,
 				install : true)
-	test_list += 'kms_chamelium_color'
+	test_list += name
+	test_executables += testexe
+	testlist_files += custom_target(name + '.testlist',
+		     build_by_default : true,
+		     command : [testexe, '--show-testlist'],
+		     capture : true,
+		     output : name + '.testlist')
 endif
 
 subdir('amdgpu')
@@ -449,11 +485,16 @@ foreach prog : test_list
 	test('testcase check ' + prog, test_script, args : prog)
 endforeach
 
-executable('gem_stress', 'i915/gem_stress.c',
+testexe = executable('gem_stress', 'i915/gem_stress.c',
 	   install : true,
 	   install_dir : libexecdir,
 	   install_rpath : libexecdir_rpathdir,
 	   dependencies : igt_deps)
+testlist_files += custom_target('gem_stress.testlist',
+                build_by_default : true,
+                command : [testexe, '--show-testlist'],
+                capture : true,
+                output : 'gem_stress.testlist')
 
 image_files = [
   '1080p-left.png',

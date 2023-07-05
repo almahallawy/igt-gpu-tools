@@ -12,7 +12,7 @@ i915_test_config = join_paths(source_root, 'tests', 'i915', 'i915_test_config.js
 
 check_testlist = []
 if build_tests
-	doc_dependencies = test_executables
+	doc_dependencies = testlist_files
 	# Check if documentation matches the actual tests and tests can run
 	if not meson.is_cross_build()
 		build_info += 'Will Check if documentation is in sync with testlist'
