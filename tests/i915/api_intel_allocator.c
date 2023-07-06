@@ -612,32 +612,27 @@ static void reopen_fork(int fd)
 
 static void open_vm(int fd)
 {
-	uint64_t ahnd[4], offset[4], size = 0x1000;
+	uint64_t ahnd[3], offset[3], size = 0x1000;
 	int i, n = ARRAY_SIZE(ahnd);
 
 	ahnd[0] = intel_allocator_open_vm(fd, 1, INTEL_ALLOCATOR_SIMPLE);
 	ahnd[1] = intel_allocator_open_vm(fd, 1, INTEL_ALLOCATOR_SIMPLE);
-	ahnd[2] = intel_allocator_open_vm_as(ahnd[1], 2);
-	ahnd[3] = intel_allocator_open(fd, 3, INTEL_ALLOCATOR_SIMPLE);
+	ahnd[2] = intel_allocator_open(fd, 2, INTEL_ALLOCATOR_SIMPLE);
 
 	offset[0] = intel_allocator_alloc(ahnd[0], 1, size, 0);
 	offset[1] = intel_allocator_alloc(ahnd[1], 2, size, 0);
 	igt_assert(offset[0] != offset[1]);
 
-	offset[2] = intel_allocator_alloc(ahnd[2], 3, size, 0);
-	igt_assert(offset[0] != offset[2] && offset[1] != offset[2]);
-
-	offset[3] = intel_allocator_alloc(ahnd[3], 1, size, 0);
-	igt_assert(offset[0] == offset[3]);
+	offset[2] = intel_allocator_alloc(ahnd[2], 1, size, 0);
+	igt_assert(offset[0] == offset[2]);
 
 	/*
-	 * As ahnd[0-2] lead to same allocator check can we free all handles
+	 * As ahnd[0-1] lead to same allocator check we can free all handles
 	 * using selected ahnd.
 	 */
-	intel_allocator_free(ahnd[0], 1);
-	intel_allocator_free(ahnd[0], 2);
-	intel_allocator_free(ahnd[0], 3);
-	intel_allocator_free(ahnd[3], 1);
+	igt_assert_eq(intel_allocator_free(ahnd[0], 1), true);
+	igt_assert_eq(intel_allocator_free(ahnd[1], 2), true);
+	igt_assert_eq(intel_allocator_free(ahnd[2], 1), true);
 
 	for (i = 0; i < n - 1; i++)
 		igt_assert_eq(intel_allocator_close(ahnd[i]), (i == n - 2));
