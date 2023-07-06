@@ -9,6 +9,9 @@
 #include "igt.h"
 #include "igt_aux.h"
 #include "intel_allocator.h"
+#include "xe/xe_ioctl.h"
+#include "xe/xe_query.h"
+
 /**
  * TEST: api intel allocator
  * Category: Infrastructure
@@ -454,6 +457,7 @@ static void __simple_allocs(int fd)
 	uint32_t handles[SIMPLE_GROUP_ALLOCS];
 	uint64_t ahnd;
 	uint32_t ctx;
+	bool is_xe = is_xe_device(fd);
 	int i;
 
 	ctx = rand() % 2;
@@ -463,7 +467,12 @@ static void __simple_allocs(int fd)
 		uint32_t size;
 
 		size = (rand() % 4 + 1) * 0x1000;
-		handles[i] = gem_create(fd, size);
+		if (is_xe)
+			handles[i] = xe_bo_create_flags(fd, 0, size,
+							system_memory(fd));
+		else
+			handles[i] = gem_create(fd, size);
+
 		intel_allocator_alloc(ahnd, handles[i], size, 0x1000);
 	}
 
@@ -573,8 +582,6 @@ static void reopen(int fd)
 {
 	int fd2;
 
-	igt_require_gem(fd);
-
 	fd2 = drm_reopen_driver(fd);
 
 	__reopen_allocs(fd, fd2, true);
@@ -586,8 +593,6 @@ static void reopen(int fd)
 static void reopen_fork(int fd)
 {
 	int fd2;
-
-	igt_require_gem(fd);
 
 	intel_allocator_multiprocess_start();
 
@@ -838,7 +843,7 @@ igt_main
 	struct allocators *a;
 
 	igt_fixture {
-		fd = drm_open_driver(DRIVER_INTEL);
+		fd = drm_open_driver(DRIVER_INTEL | DRIVER_XE);
 		atomic_init(&next_handle, 1);
 		srandom(0xdeadbeef);
 	}
@@ -911,12 +916,16 @@ igt_main
 	igt_subtest_f("open-vm")
 		open_vm(fd);
 
-	igt_subtest_f("execbuf-with-allocator")
+	igt_subtest_f("execbuf-with-allocator") {
+		igt_require(is_i915_device(fd));
 		execbuf_with_allocator(fd);
+	}
 
 	igt_describe("Verifies creating and executing bb from gem pool");
-	igt_subtest_f("gem-pool")
+	igt_subtest_f("gem-pool") {
+		igt_require(is_i915_device(fd));
 		gem_pool(fd);
+	}
 
 	igt_fixture
 		drm_close_driver(fd);
