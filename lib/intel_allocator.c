@@ -25,7 +25,6 @@
 static const char *reqtype_str[] = {
 	[REQ_STOP]		= "stop",
 	[REQ_OPEN]		= "open",
-	[REQ_OPEN_AS]		= "open as",
 	[REQ_CLOSE]		= "close",
 	[REQ_ADDRESS_RANGE]	= "address range",
 	[REQ_ALLOC]		= "alloc",
@@ -376,19 +375,6 @@ static struct allocator *allocator_open(int fd, uint32_t ctx, uint32_t vm,
 	return al;
 }
 
-static struct allocator *allocator_open_as(struct allocator *base,
-					   uint32_t new_vm, uint64_t *ahndp)
-{
-	struct allocator *al;
-
-	igt_assert(ahndp);
-	al = __allocator_create(base->fd, base->ctx, new_vm, base->ial);
-	__allocator_get(al);
-	*ahndp = __handle_create(al);
-
-	return al;
-}
-
 static bool allocator_close(uint64_t ahnd)
 {
 	struct allocator *al;
@@ -509,47 +495,6 @@ static int handle_request(struct alloc_req *req, struct alloc_resp *resp)
 				   req->open.ctx, req->open.vm,
 				   req->open.allocator_type,
 				   (long long) req->open.default_alignment,
-				   refcnt - 1, refcnt, ret - 1, ret);
-			break;
-
-		case REQ_OPEN_AS:
-			/* lock first to avoid concurrent close */
-			pthread_mutex_lock(&map_mutex);
-
-			al = __allocator_find_by_handle(req->allocator_handle);
-			resp->response_type = RESP_OPEN_AS;
-
-			if (!al) {
-				alloc_info("<open as> [tid: %ld] ahnd: %" PRIx64
-					   " -> no handle\n",
-					   (long) req->tid, req->allocator_handle);
-				pthread_mutex_unlock(&map_mutex);
-				break;
-			}
-
-			if (!al->vm) {
-				alloc_info("<open as> [tid: %ld] ahnd: %" PRIx64
-					   " -> only open as for <fd, vm> is possible\n",
-					   (long) req->tid, req->allocator_handle);
-				pthread_mutex_unlock(&map_mutex);
-				break;
-			}
-
-
-			al = allocator_open_as(al, req->open_as.new_vm, &ahnd);
-			refcnt = atomic_load(&al->refcount);
-			ret = atomic_load(&al->ial->refcount);
-			pthread_mutex_unlock(&map_mutex);
-
-			resp->response_type = RESP_OPEN_AS;
-			resp->open.allocator_handle = ahnd;
-
-			alloc_info("<open as> [tid: %ld] fd: %d, ahnd: %" PRIx64
-				   ", ctx: %u, vm: %u"
-				   ", alloc_type: %u, al->refcnt: %ld->%ld"
-				   ", refcnt: %d->%d\n",
-				   (long) req->tid, al->fd, ahnd,
-				   al->ctx, al->vm, al->ial->type,
 				   refcnt - 1, refcnt, ret - 1, ret);
 			break;
 
@@ -1035,24 +980,6 @@ uint64_t intel_allocator_open_vm(int fd, uint32_t vm, uint8_t allocator_type)
 {
 	return intel_allocator_open_vm_full(fd, vm, 0, 0, allocator_type,
 					    ALLOC_STRATEGY_HIGH_TO_LOW, 0);
-}
-
-uint64_t intel_allocator_open_vm_as(uint64_t allocator_handle, uint32_t new_vm)
-{
-	struct alloc_req req = { .request_type = REQ_OPEN_AS,
-				 .allocator_handle = allocator_handle,
-				 .open_as.new_vm = new_vm };
-	struct alloc_resp resp;
-
-	/* Get child_tid only once at open() */
-	if (child_tid == -1)
-		child_tid = gettid();
-
-	igt_assert(handle_request(&req, &resp) == 0);
-	igt_assert(resp.open_as.allocator_handle);
-	igt_assert(resp.response_type == RESP_OPEN_AS);
-
-	return resp.open.allocator_handle;
 }
 
 /**

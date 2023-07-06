@@ -13,7 +13,6 @@
 enum reqtype {
 	REQ_STOP,
 	REQ_OPEN,
-	REQ_OPEN_AS,
 	REQ_CLOSE,
 	REQ_ADDRESS_RANGE,
 	REQ_ALLOC,
@@ -27,7 +26,6 @@ enum reqtype {
 
 enum resptype {
 	RESP_OPEN,
-	RESP_OPEN_AS,
 	RESP_CLOSE,
 	RESP_ADDRESS_RANGE,
 	RESP_ALLOC,
@@ -57,10 +55,6 @@ struct alloc_req {
 			uint8_t allocator_strategy;
 			uint64_t default_alignment;
 		} open;
-
-		struct {
-			uint32_t new_vm;
-		} open_as;
 
 		struct {
 			uint32_t handle;
@@ -100,7 +94,7 @@ struct alloc_resp {
 	union {
 		struct {
 			uint64_t allocator_handle;
-		} open, open_as;
+		} open;
 
 		struct {
 			bool is_empty;
