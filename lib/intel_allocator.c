@@ -1330,9 +1330,6 @@ static int equal_handles(const void *key1, const void *key2)
 {
 	const struct handle_entry *h1 = key1, *h2 = key2;
 
-	alloc_debug("h1: %llx, h2: %llx\n",
-		   (long long) h1->handle, (long long) h2->handle);
-
 	return h1->handle == h2->handle;
 }
 
@@ -1340,18 +1337,12 @@ static int equal_ctx(const void *key1, const void *key2)
 {
 	const struct allocator *a1 = key1, *a2 = key2;
 
-	alloc_debug("a1: <fd: %d, ctx: %u>, a2 <fd: %d, ctx: %u>\n",
-		   a1->fd, a1->ctx, a2->fd, a2->ctx);
-
 	return a1->fd == a2->fd && a1->ctx == a2->ctx;
 }
 
 static int equal_vm(const void *key1, const void *key2)
 {
 	const struct allocator *a1 = key1, *a2 = key2;
-
-	alloc_debug("a1: <fd: %d, vm: %u>, a2 <fd: %d, vm: %u>\n",
-		   a1->fd, a1->vm, a2->fd, a2->vm);
 
 	return a1->fd == a2->fd && a1->vm == a2->vm;
 }
