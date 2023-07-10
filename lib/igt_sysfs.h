@@ -38,6 +38,11 @@
 	     (dirfd__ = igt_sysfs_gt_open(i915__, gt__)) != -1; \
 	     close(dirfd__), gt__++)
 
+#define for_each_sysfs_tile_dirfd(xe__, dirfd__, tile__) \
+	for (tile__ = 0; \
+	     (dirfd__ = xe_sysfs_tile_open(xe__, tile__)) != -1; \
+	     close(dirfd__), tile__++)
+
 #define i915_for_each_gt for_each_sysfs_gt_dirfd
 
 #define igt_sysfs_rps_write(dir, id, data, len) \
@@ -150,4 +155,7 @@ void igt_sysfs_rw_attr_verify(igt_sysfs_rw_attr_t *rw);
 void igt_sysfs_engines(int xe, int engines, const char **property,
 		       void (*test)(int, int, const char **));
 
+char *xe_sysfs_tile_path(int xe_device, int tile, char *path, int pathlen);
+int xe_sysfs_tile_open(int xe_device, int tile);
+int xe_sysfs_get_num_tiles(int xe_device);
 #endif /* __IGT_SYSFS_H__ */

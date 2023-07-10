@@ -903,3 +903,74 @@ void igt_sysfs_engines(int xe, int engines, const char **property,
 		close(engine_fd);
 	}
 }
+
+/**
+ * xe_sysfs_tile_path:
+ * @xe_device: fd of the device
+ * @tile: tile number
+ * @path: buffer to fill with the sysfs tile path to the device
+ * @pathlen: length of @path buffer
+ *
+ * Returns:
+ * The directory path, or NULL on failure.
+ */
+char *xe_sysfs_tile_path(int xe_device, int tile, char *path, int pathlen)
+{
+	struct stat st;
+
+	if (xe_device < 0)
+		return NULL;
+
+	if (igt_debug_on(fstat(xe_device, &st)) || igt_debug_on(!S_ISCHR(st.st_mode)))
+		return NULL;
+
+	snprintf(path, pathlen, "/sys/dev/char/%d:%d/device/tile%d",
+		 major(st.st_rdev), minor(st.st_rdev), tile);
+
+	if (!access(path, F_OK))
+		return path;
+	return NULL;
+}
+
+/**
+ * xe_sysfs_tile_open:
+ * @xe_device: fd of the device
+ * @tile: tile number
+ *
+ * This opens the sysfs tile directory corresponding to device and tile for use
+ *
+ * Returns:
+ * The directory fd, or -1 on failure.
+ */
+int xe_sysfs_tile_open(int xe_device, int tile)
+{
+	char path[96];
+
+	if (!xe_sysfs_tile_path(xe_device, tile, path, sizeof(path)))
+		return -1;
+
+	return open(path, O_RDONLY);
+}
+
+/**
+ * xe_sysfs_get_num_tiles:
+ * @xe_device: fd of the device
+ *
+ * Reads number of tile sysfs entries.
+ * Asserts for at least one tile entry.
+ * (see xe_sysfs_tile_path).
+ *
+ * Returns: Number of tiles.
+ */
+int xe_sysfs_get_num_tiles(int xe_device)
+{
+	int num_tiles = 0;
+	char path[96];
+
+	while (xe_sysfs_tile_path(xe_device, num_tiles, path, sizeof(path)))
+		++num_tiles;
+
+	igt_assert_f(num_tiles > 0, "No GT sysfs entry is found.");
+
+	return num_tiles;
+}
