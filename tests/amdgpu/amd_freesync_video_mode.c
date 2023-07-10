@@ -552,12 +552,6 @@ static void prepare_test(
 		enum pipe pipe,
 		drmModeModeInfo *mode)
 {
-	/* Reset output */
-	igt_display_reset(&data->display);
-	igt_output_set_pipe(output, pipe);
-
-	igt_output_override_mode(output, mode);
-
 	/* Prepare resources */
 	if (!data->fb_initialized) {
 		int fb_id;
@@ -579,15 +573,11 @@ static void prepare_test(
 		data->fb_initialized = true;
 	}
 
+	/* set output mode */
+	igt_output_override_mode(output, mode);
 	/* Take care of any required modesetting before the test begins. */
 	data->primary = igt_output_get_plane_type(output, DRM_PLANE_TYPE_PRIMARY);
 	igt_plane_set_fb(data->primary, &data->fbs[0]);
-
-	/* Clear vrr_enabled state before enabling it, because
-	 * it might be left enabled if the previous test fails.
-	 */
-	igt_pipe_set_prop_value(&data->display, pipe, IGT_CRTC_VRR_ENABLED, 0);
-
 	igt_display_commit2(&data->display, COMMIT_ATOMIC);
 }
 
@@ -752,7 +742,6 @@ static void init_data(data_t *data, igt_output_t *output)
 
 static void finish_test(data_t *data, enum pipe pipe, igt_output_t *output)
 {
-	set_vrr_on_pipe(data, pipe, 0);
 	igt_plane_set_fb(data->primary, NULL);
 	igt_output_set_pipe(output, PIPE_NONE);
 	igt_output_override_mode(output, NULL);
@@ -828,6 +817,8 @@ mode_transition(data_t *data, enum pipe pipe, igt_output_t *output, uint32_t sce
 	result = flip_and_measure(data, output, pipe, interval, 2 * NSECS_PER_SEC, ANIM_TYPE_CIRCLE_WAVE);
 	result = flip_and_measure(data, output, pipe, interval, TEST_DURATION_NS, ANIM_TYPE_CIRCLE_WAVE);
 	igt_assert_f(result > 75, "Target refresh rate not meet 75%% (result=%d%%\n", result);
+	set_vrr_on_pipe(data, pipe, false);
+
 	finish_test(data, pipe, output);
 }
 
@@ -848,6 +839,9 @@ run_test(data_t *data, uint32_t scene)
 
 		for_each_pipe(&data->display, pipe)
 			if (igt_pipe_connector_valid(pipe, output)) {
+				igt_display_reset(&data->display);
+				igt_output_set_pipe(output, pipe);
+
 				igt_dynamic_f("pipe-%s-%s", kmstest_pipe_name(pipe), output->name)
 				mode_transition(data, pipe, output, scene);
 				found = true;
