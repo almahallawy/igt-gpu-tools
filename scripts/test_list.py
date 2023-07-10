@@ -1274,7 +1274,7 @@ class TestList:
             testlist = test.lower()
             if testlist == "":
                 fname = "other"
-            elif testlist == "bat":
+            elif testlist == "bat":         # Basic Acceptance Test
                 fname = "fast-feedback"
             else:
                 fname = testlist
