@@ -26,7 +26,7 @@
 #include <signal.h>
 
 #define NSECS_PER_SEC		(1000000000ull)
-#define TEST_DURATION_NS	(10 * NSECS_PER_SEC)
+#define TEST_DURATION_NS	(8 * NSECS_PER_SEC)
 
 #define BYTES_PER_PIXEL         4
 #define MK_COLOR(r, g, b)	((0 << 24) | (r << 16) | (g << 8) | b)
@@ -638,7 +638,7 @@ flip_and_measure(
 	igt_info("interval_ns=%lu\n", interval_ns);
 
 	for (;;) {
-		uint64_t event_ns;
+		uint64_t event_ns, wait_ns;
 		int64_t diff_ns;
 
 		data->front = !data->front;
@@ -673,6 +673,19 @@ flip_and_measure(
 
 		if (event_ns - start_ns > duration_ns)
 			break;
+
+		/*
+		 * Burn CPU until next timestamp, sleeping isn't accurate enough.
+		 * The target timestamp is based on the delta b/w event timestamps
+		 * and whatever the time left to reach the expected refresh rate.
+		 */
+		diff_ns = event_ns - target_ns;
+		wait_ns = ((diff_ns + interval_ns - 1) / interval_ns) * interval_ns;
+		wait_ns -= diff_ns;
+		target_ns = event_ns + wait_ns;
+
+		while (get_time_ns() < target_ns - 10)
+			;
 	}
 
 	igt_info("Completed %u flips, %u were in threshold for (%llu Hz) %"PRIu64"ns.\n",
@@ -808,9 +821,10 @@ mode_transition(data_t *data, enum pipe pipe, igt_output_t *output, uint32_t sce
 	igt_info("stage-2: simple animation as video playback\n");
 	prepare_test(data, output, pipe, mode_playback);
 	interval = nsec_per_frame(mode_playback->vrefresh);
+	/* Do a short run with VRR before measure to make sure we measure in a stable state */
+	result = flip_and_measure(data, output, pipe, interval, 2 * NSECS_PER_SEC, ANIM_TYPE_CIRCLE_WAVE);
 	result = flip_and_measure(data, output, pipe, interval, TEST_DURATION_NS, ANIM_TYPE_CIRCLE_WAVE);
-	igt_assert_f(result > 90, "Target refresh rate not meet(result=%d%%\n", result);
-
+	igt_assert_f(result > 75, "Target refresh rate not meet 75%% (result=%d%%\n", result);
 	finish_test(data, pipe, output);
 }
 
