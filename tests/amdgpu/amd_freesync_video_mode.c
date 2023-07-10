@@ -421,10 +421,11 @@ static drmModeModeInfo *select_mode(
 	case FSV_NON_FREESYNC_VIDEO_MODE:
 		for (i = 0; i < data->count_modes; i++) {
 			mode = &data->modes[i];
-			if (mode->vrefresh == refresh_rate &&
-			    !is_freesync_video_mode(data, mode)) {
+			if (mode->hdisplay == data->hdisplay &&
+				mode->vdisplay == data->vdisplay &&
+				mode->vrefresh == refresh_rate &&
+				!is_freesync_video_mode(data, mode))
 				break;
-			}
 		}
 		if (i >= data->count_modes)
 			mode = NULL;
