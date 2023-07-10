@@ -569,7 +569,7 @@ class TestList:
 
             subtest_array = self.expand_subtest(fname, name, test, subtest_only)
             for subtest in subtest_array:
-                if self.__filter_subtest(test, subtest, True):
+                if self.__filter_subtest(self.doc[test], subtest, True):
                     continue
 
                 summary = subtest["Summary"]
@@ -851,7 +851,7 @@ class TestList:
         subtest_array.sort(key = lambda x : x.get('Summary'))
 
         for subtest in subtest_array:
-            if self.__filter_subtest(test, subtest, True):
+            if self.__filter_subtest(self.doc[test], subtest, True):
                 continue
 
             if sort_field:
