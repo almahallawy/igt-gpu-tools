@@ -429,8 +429,8 @@ class TestList:
 
         for subtest in self.doc[test]["subtest"].keys():
             summary = test_name
-            if self.doc[test]["subtest"][subtest]["Summary"] != '':
-                summary += self.subtest_separator + self.doc[test]["subtest"][subtest]["Summary"]
+            if self.doc[test]["subtest"][subtest]["_summary_"] != '':
+                summary += self.subtest_separator + self.doc[test]["subtest"][subtest]["_summary_"]
             if not summary:
                 continue
 
@@ -441,10 +441,10 @@ class TestList:
             if num_vars == 0:
                 subtest_dict = {}
 
-                subtest_dict["Summary"] = summary
+                subtest_dict["_summary_"] = summary
 
                 for k in sorted(self.doc[test]["subtest"][subtest].keys()):
-                    if k in [ 'Summary', 'arg', 'subtest_line' ]:
+                    if k in [ '_summary_', 'arg', 'subtest_line' ]:
                         continue
 
                     if not allow_inherit:
@@ -510,10 +510,10 @@ class TestList:
 
                 # Store the element
                 subtest_dict = {}
-                subtest_dict["Summary"] = arg_summary
+                subtest_dict["_summary_"] = arg_summary
 
                 for field in sorted(self.doc[test]["subtest"][subtest].keys()):
-                    if field in [ 'Summary', 'arg', 'subtest_line' ]:
+                    if field in [ '_summary_', 'arg', 'subtest_line' ]:
                         continue
 
                     sub_field = self.doc[test]["subtest"][subtest][field]
@@ -581,11 +581,11 @@ class TestList:
                 if self.__filter_subtest(self.doc[test], subtest, True):
                     continue
 
-                summary = subtest["Summary"]
+                summary = subtest["_summary_"]
 
                 dic[summary] = {}
                 for field in sorted(subtest.keys()):
-                    if field in [ 'Summary', 'arg', 'subtest_line' ]:
+                    if field in [ '_summary_', 'arg', 'subtest_line' ]:
                         continue
                     dic[summary][field] = subtest[field]
 
@@ -646,12 +646,12 @@ class TestList:
             for subtest in subtest_array:
 
                 print()
-                print(subtest["Summary"])
-                print(len(subtest["Summary"]) * '=')
+                print(subtest["_summary_"])
+                print(len(subtest["_summary_"]) * '=')
                 print("")
 
                 for field in sorted(subtest.keys()):
-                    if field in [ 'Summary', 'arg', 'subtest_line' ]:
+                    if field in [ '_summary_', 'arg', 'subtest_line' ]:
                         continue
 
                     print(f":{field}:", subtest[field])
@@ -857,7 +857,7 @@ class TestList:
 
             subtest_array += self.expand_subtest(fname, test_name, test, True)
 
-        subtest_array.sort(key = lambda x : x.get('Summary'))
+        subtest_array.sort(key = lambda x : x.get('_summary_'))
 
         for subtest in subtest_array:
             if self.__filter_subtest(self.doc[test], subtest, True):
@@ -873,27 +873,27 @@ class TestList:
                             if test_elem not in subtests:
                                 subtests[test_elem] = []
                             if order:
-                                subtests[test_elem].append((subtest["Summary"], test_list))
+                                subtests[test_elem].append((subtest["_summary_"], test_list))
                             else:
-                                subtests[test_elem].append(subtest["Summary"])
+                                subtests[test_elem].append(subtest["_summary_"])
                     else:
                         if subtest[sort_field] not in subtests:
                             subtests[subtest[sort_field]] = []
                             if order:
-                                subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
+                                subtests[test_elem].append((subtest["_summary_"], [subtest[sort_field]]))
                             else:
-                                subtests[subtest[sort_field]].append(subtest["Summary"])
+                                subtests[subtest[sort_field]].append(subtest["_summary_"])
                 else:
                     if order:
-                        subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
+                        subtests[test_elem].append((subtest["_summary_"], [subtest[sort_field]]))
                     else:
-                        subtests[""].append(subtest["Summary"])
+                        subtests[""].append(subtest["_summary_"])
 
             else:
                 if order:
-                    subtests[test_elem].append((subtest["Summary"], [subtest[sort_field]]))
+                    subtests[test_elem].append((subtest["_summary_"], [subtest[sort_field]]))
                 else:
-                    subtests[""].append(subtest["Summary"])
+                    subtests[""].append(subtest["_summary_"])
 
         if order:
             for group, tests in subtests.items():
@@ -1082,7 +1082,7 @@ class TestList:
 
                         self.doc[current_test] = {}
                         self.doc[current_test]["arg"] = {}
-                        self.doc[current_test]["Summary"] = match.group(1)
+                        self.doc[current_test]["_summary_"] = match.group(1)
                         self.doc[current_test]["File"] = fname
                         self.doc[current_test]["subtest"] = {}
                         self.doc[current_test]["subtest_line"] = {}
@@ -1120,7 +1120,7 @@ class TestList:
                             continue
                         self.doc[current_test]["subtest"][current_subtest][field] = self.doc[current_test][field]
 
-                    self.doc[current_test]["subtest"][current_subtest]["Summary"] = match.group(1)
+                    self.doc[current_test]["subtest"][current_subtest]["_summary_"] = match.group(1)
                     self.doc[current_test]["subtest"][current_subtest]["Description"] = ''
                     self.doc[current_test]["subtest_line"][current_subtest] = file_ln
 
