@@ -155,6 +155,8 @@ void igt_sysfs_rw_attr_verify(igt_sysfs_rw_attr_t *rw);
 void igt_sysfs_engines(int xe, int engines, const char **property,
 		       void (*test)(int, int, const char **));
 
+char *xe_sysfs_gt_path(int xe_device, int gt, char *path, int pathlen);
+int xe_sysfs_gt_open(int xe_device, int gt);
 char *xe_sysfs_tile_path(int xe_device, int tile, char *path, int pathlen);
 int xe_sysfs_tile_open(int xe_device, int tile);
 int xe_sysfs_get_num_tiles(int xe_device);

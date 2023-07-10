@@ -45,6 +45,7 @@
 #include "igt_sysfs.h"
 #include "igt_device.h"
 #include "igt_io.h"
+#include "intel_chipset.h"
 
 /**
  * SECTION:igt_sysfs
@@ -204,6 +205,59 @@ int igt_sysfs_open(int device)
 	char path[80];
 
 	if (!igt_sysfs_path(device, path, sizeof(path)))
+		return -1;
+
+	return open(path, O_RDONLY);
+}
+
+/**
+ * xe_sysfs_gt_path:
+ * @xe_device: fd of the device
+ * @gt: gt number
+ * @path: buffer to fill with the sysfs gt path to the device
+ * @pathlen: length of @path buffer
+ *
+ * Returns:
+ * The directory path, or NULL on failure.
+ */
+char *xe_sysfs_gt_path(int xe_device, int gt, char *path, int pathlen)
+{
+	struct stat st;
+
+	if (xe_device < 0)
+		return NULL;
+
+	if (igt_debug_on(fstat(xe_device, &st)) || igt_debug_on(!S_ISCHR(st.st_mode)))
+		return NULL;
+
+	if (IS_PONTEVECCHIO(intel_get_drm_devid(xe_device)))
+		snprintf(path, pathlen, "/sys/dev/char/%d:%d/device/tile%d/gt%d",
+			 major(st.st_rdev), minor(st.st_rdev), gt, gt);
+	else
+		snprintf(path, pathlen, "/sys/dev/char/%d:%d/device/tile0/gt%d",
+			 major(st.st_rdev), minor(st.st_rdev), gt);
+
+	if (!access(path, F_OK))
+		return path;
+
+	return NULL;
+}
+
+/**
+ * xe_sysfs_gt_open:
+ * @xe_device: fd of the device
+ * @gt: gt number
+ *
+ * This opens the sysfs gt directory corresponding to device and tile for use
+ *
+ * Returns:
+ * The directory fd, or -1 on failure.
+ */
+int xe_sysfs_gt_open(int xe_device, int gt)
+{
+	char path[96];
+
+	if (!xe_sysfs_gt_path(xe_device, gt, path, sizeof(path)))
 		return -1;
 
 	return open(path, O_RDONLY);
