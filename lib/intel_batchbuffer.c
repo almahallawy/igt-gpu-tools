@@ -2742,7 +2742,7 @@ void intel_bb_emit_blt_copy(struct intel_bb *ibb,
 				     XY_SRC_COPY_BLT_WRITE_RGB);
 			break;
 		default:
-			igt_fail(IGT_EXIT_FAILURE);
+			igt_assert_f(0, "Unsupported pixel depth\n");
 		}
 	} else {
 		br13_bits = fast_copy_dword1(ibb->fd, src->tiling, dst->tiling, bpp);
