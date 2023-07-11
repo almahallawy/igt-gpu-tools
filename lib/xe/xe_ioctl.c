@@ -357,7 +357,7 @@ void *xe_bo_mmap_ext(int fd, uint32_t bo, size_t size, int prot)
 	return __xe_bo_map(fd, bo, size, prot);
 }
 
-static int __xe_exec(int fd, struct drm_xe_exec *exec)
+int __xe_exec(int fd, struct drm_xe_exec *exec)
 {
 	int err = 0;
 
