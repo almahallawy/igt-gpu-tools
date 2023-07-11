@@ -200,7 +200,7 @@ static void create_massive_size(int fd)
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
 
 	xe_for_each_mem_region(fd, memreg, region) {
-		ret = __create_bo(fd, vm, -1ULL >> 32, region, &handle);
+		ret = __create_bo(fd, vm, -1ULL << 32, region, &handle);
 		igt_assert_eq(ret, -ENOSPC);
 	}
 }
