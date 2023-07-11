@@ -362,7 +362,6 @@ static void block_copy(int i915,
 	if (mid->compression)
 		igt_assert(memcmp(src->ptr, mid->ptr, src->size) != 0);
 
-	WRITE_PNG(i915, run_id, "src", &blt.src, width, height);
 	WRITE_PNG(i915, run_id, "mid", &blt.dst, width, height);
 
 	if (config->surfcopy && pext) {
