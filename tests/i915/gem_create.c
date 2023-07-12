@@ -668,14 +668,25 @@ static void create_ext_set_pat(int fd)
 	ret = __gem_create_ext(fd, &size, 0, &handle, &setparam_pat.base);
 
 	/*
-	 * With a valid PAT index specified, returning -EINVAL here
-	 * indicates set_pat extension is not supported
+	 * Currently the PAT index is supported only for Meteor Lake, so that
+	 * we expect:
+	 *
+	 *  * -EINVAL if i915 does not support the PAT index, e.g. the kernel is
+	 *    too old to have the PAT index supported.
+	 *  * -ENODEV if we are trying to set the PAT index on a non Meteor Lake
+	 *    platform.
+	 *
+	 * In both cases, though, the I915_GEM_CREATE_EXT_SET_PAT flag is not
+	 * supported.
 	 */
-	if (ret == -EINVAL)
-		igt_skip("I915_GEM_CREATE_EXT_SET_PAT is not supported\n");
-	else if (!IS_METEORLAKE(devid))
-		igt_assert_eq(ret, -ENODEV);
+	igt_skip_on_f(ret == -EINVAL ||
+		      (ret == -ENODEV && IS_METEORLAKE(devid)),
+		      "I915_GEM_CREATE_EXT_SET_PAT is not supported\n");
 
+	/*
+	 * This means that we are on a Meteor Lake and the PAT
+	 * index is already supported by the running i915
+	 */
 	igt_assert(ret == 0);
 
 	/*
