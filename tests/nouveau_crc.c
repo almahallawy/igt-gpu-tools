@@ -264,15 +264,18 @@ static void test_ctx_flip_threshold_reset_after_capture(data_t *data)
 {
 	igt_pipe_crc_t *pipe_crc;
 	const int fd = data->drm_fd;
+	uint32_t value = 0;
 
 	pipe_crc = igt_pipe_crc_new(fd, data->pipe, IGT_PIPE_CRC_SOURCE_AUTO);
 
 	set_crc_flip_threshold(data, 5);
 	igt_pipe_crc_start(pipe_crc);
-	igt_assert_eq(igt_sysfs_get_u32(data->nv_crc_dir, "flip_threshold"), 5);
+	__igt_sysfs_get_u32(data->nv_crc_dir, "flip_threshold", &value);
+	igt_assert_eq(value, 5);
 	igt_pipe_crc_stop(pipe_crc);
 
-	igt_assert_neq(igt_sysfs_get_u32(data->nv_crc_dir, "flip_threshold"), 5);
+	__igt_sysfs_get_u32(data->nv_crc_dir, "flip_threshold", &value);
+	igt_assert_neq(value, 5);
 	igt_pipe_crc_free(pipe_crc);
 }
 

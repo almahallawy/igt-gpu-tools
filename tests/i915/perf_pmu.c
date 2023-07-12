@@ -1782,7 +1782,7 @@ static igt_spin_t *spin_sync_gt(int i915, uint64_t ahnd, unsigned int gt,
 static void
 test_frequency(int gem_fd, unsigned int gt)
 {
-	uint32_t min_freq, max_freq, boost_freq;
+	uint32_t min_freq = 0, max_freq = 0, boost_freq = 0, read_value = 0;
 	uint64_t val[2], start[2], slept;
 	double min[2], max[2];
 	igt_spin_t *spin;
@@ -1793,9 +1793,9 @@ test_frequency(int gem_fd, unsigned int gt)
 	sysfs = igt_sysfs_gt_open(gem_fd, gt);
 	igt_require(sysfs >= 0);
 
-	min_freq = igt_sysfs_get_u32(sysfs, "rps_RPn_freq_mhz");
-	max_freq = igt_sysfs_get_u32(sysfs, "rps_RP0_freq_mhz");
-	boost_freq = igt_sysfs_get_u32(sysfs, "rps_boost_freq_mhz");
+	__igt_sysfs_get_u32(sysfs, "rps_RPn_freq_mhz", &min_freq);
+	__igt_sysfs_get_u32(sysfs, "rps_RP0_freq_mhz", &max_freq);
+	__igt_sysfs_get_u32(sysfs, "rps_boost_freq_mhz", &boost_freq);
 	igt_info("Frequency: min=%u, max=%u, boost=%u MHz\n",
 		 min_freq, max_freq, boost_freq);
 	igt_require(min_freq > 0 && max_freq > 0 && boost_freq > 0);
@@ -1808,12 +1808,15 @@ test_frequency(int gem_fd, unsigned int gt)
 	/*
 	 * Set GPU to min frequency and read PMU counters.
 	 */
-	igt_require(igt_sysfs_set_u32(sysfs, "rps_min_freq_mhz", min_freq));
-	igt_require(igt_sysfs_get_u32(sysfs, "rps_min_freq_mhz") == min_freq);
-	igt_require(igt_sysfs_set_u32(sysfs, "rps_max_freq_mhz", min_freq));
-	igt_require(igt_sysfs_get_u32(sysfs, "rps_max_freq_mhz") == min_freq);
-	igt_require(igt_sysfs_set_u32(sysfs, "rps_boost_freq_mhz", min_freq));
-	igt_require(igt_sysfs_get_u32(sysfs, "rps_boost_freq_mhz") == min_freq);
+	igt_require(__igt_sysfs_set_u32(sysfs, "rps_min_freq_mhz", min_freq));
+	igt_require(__igt_sysfs_get_u32(sysfs, "rps_min_freq_mhz", &read_value));
+	igt_require(read_value == min_freq);
+	igt_require(__igt_sysfs_set_u32(sysfs, "rps_max_freq_mhz", min_freq));
+	igt_require(__igt_sysfs_get_u32(sysfs, "rps_max_freq_mhz", &read_value));
+	igt_require(read_value == min_freq);
+	igt_require(__igt_sysfs_set_u32(sysfs, "rps_boost_freq_mhz", min_freq));
+	igt_require(__igt_sysfs_get_u32(sysfs, "rps_boost_freq_mhz", &read_value));
+	igt_require(read_value == min_freq);
 
 	gem_quiescent_gpu(gem_fd); /* Idle to be sure the change takes effect */
 	spin = spin_sync_gt(gem_fd, ahnd, gt, &ctx);
@@ -1834,13 +1837,16 @@ test_frequency(int gem_fd, unsigned int gt)
 	/*
 	 * Set GPU to max frequency and read PMU counters.
 	 */
-	igt_require(igt_sysfs_set_u32(sysfs, "rps_max_freq_mhz", max_freq));
-	igt_require(igt_sysfs_get_u32(sysfs, "rps_max_freq_mhz") == max_freq);
-	igt_require(igt_sysfs_set_u32(sysfs, "rps_boost_freq_mhz", boost_freq));
-	igt_require(igt_sysfs_get_u32(sysfs, "rps_boost_freq_mhz") == boost_freq);
+	igt_require(__igt_sysfs_set_u32(sysfs, "rps_max_freq_mhz", max_freq));
+	igt_require(__igt_sysfs_get_u32(sysfs, "rps_max_freq_mhz", &read_value));
+	igt_require(read_value == max_freq);
+	igt_require(__igt_sysfs_set_u32(sysfs, "rps_boost_freq_mhz", boost_freq));
+	igt_require(__igt_sysfs_get_u32(sysfs, "rps_boost_freq_mhz", &read_value));
+	igt_require(read_value == boost_freq);
 
-	igt_require(igt_sysfs_set_u32(sysfs, "rps_min_freq_mhz", max_freq));
-	igt_require(igt_sysfs_get_u32(sysfs, "rps_min_freq_mhz") == max_freq);
+	igt_require(__igt_sysfs_set_u32(sysfs, "rps_min_freq_mhz", max_freq));
+	igt_require(__igt_sysfs_get_u32(sysfs, "rps_min_freq_mhz", &read_value));
+	igt_require(read_value == max_freq);
 
 	gem_quiescent_gpu(gem_fd);
 	spin = spin_sync_gt(gem_fd, ahnd, gt, &ctx);
@@ -1859,10 +1865,11 @@ test_frequency(int gem_fd, unsigned int gt)
 	/*
 	 * Restore min/max.
 	 */
-	igt_sysfs_set_u32(sysfs, "rps_min_freq_mhz", min_freq);
-	if (igt_sysfs_get_u32(sysfs, "rps_min_freq_mhz") != min_freq)
+	__igt_sysfs_set_u32(sysfs, "rps_min_freq_mhz", min_freq);
+	__igt_sysfs_get_u32(sysfs, "rps_min_freq_mhz", &read_value);
+	if (read_value != min_freq)
 		igt_warn("Unable to restore min frequency to saved value [%u MHz], now %u MHz\n",
-			 min_freq, igt_sysfs_get_u32(sysfs, "rps_min_freq_mhz"));
+			 min_freq, read_value);
 	close(fd[0]);
 	close(fd[1]);
 	put_ahnd(ahnd);

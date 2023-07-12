@@ -65,12 +65,14 @@ unsigned gem_submission_method(int fd)
 	const int gen = intel_gen(intel_get_drm_devid(fd));
 	unsigned method = GEM_SUBMISSION_RINGBUF;
 	int dir;
+	uint32_t value = 0;
 
 	dir = igt_params_open(fd);
 	if (dir < 0)
 		return 0;
 
-	if (igt_sysfs_get_u32(dir, "enable_guc") & 1) {
+	__igt_sysfs_get_u32(dir, "enable_guc", &value);
+	if (value & 1) {
 		method = GEM_SUBMISSION_GUC;
 	} else if (gen >= 8) {
 		method = GEM_SUBMISSION_EXECLISTS;

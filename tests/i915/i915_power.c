@@ -38,7 +38,8 @@ static void sanity(int i915)
 	double idle, busy;
 	igt_spin_t *spin;
 	uint64_t ahnd;
-	int dir, gt, req, act;
+	int dir, gt;
+	uint32_t req = 0, act = 0;
 
 #define DURATION_SEC 2
 
@@ -58,9 +59,9 @@ static void sanity(int i915)
 	igt_spin_busywait_until_started(spin);
 	busy = measure_power(&pwr, DURATION_SEC);
 	i915_for_each_gt(i915, dir, gt) {
-		req = igt_sysfs_get_u32(dir, "rps_cur_freq_mhz");
-		act = igt_sysfs_get_u32(dir, "rps_act_freq_mhz");
-		igt_info("gt %d: req MHz: %d, act MHz: %d\n", gt, req, act);
+		__igt_sysfs_get_u32(dir, "rps_cur_freq_mhz", &req);
+		__igt_sysfs_get_u32(dir, "rps_act_freq_mhz", &act);
+		igt_info("gt %d: req MHz: %u, act MHz: %u\n", gt, req, act);
 	}
 	igt_free_spins(i915);
 	put_ahnd(ahnd);

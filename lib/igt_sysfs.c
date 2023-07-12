@@ -566,119 +566,233 @@ int igt_sysfs_printf(int dir, const char *attr, const char *fmt, ...)
 }
 
 /**
- * igt_sysfs_get_u32:
- * @dir: directory for the device from igt_sysfs_open()
- * @attr: name of the sysfs node to open
+ * __igt_sysfs_get_u32:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to read
+ * @value: pointer for storing read value
  *
  * Convenience wrapper to read a unsigned 32bit integer from a sysfs file.
  *
  * Returns:
- * The value read.
+ * True if value successfully read, false otherwise.
+ */
+bool __igt_sysfs_get_u32(int dir, const char *attr, uint32_t *value)
+{
+	if (igt_debug_on(igt_sysfs_scanf(dir, attr, "%u", value) != 1))
+		return false;
+
+	return true;
+}
+
+/**
+ * igt_sysfs_get_u32:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to read
+ *
+ * Convenience wrapper to read a unsigned 32bit integer from a sysfs file.
+ * It asserts on failure.
+ *
+ * Returns:
+ * Read value.
  */
 uint32_t igt_sysfs_get_u32(int dir, const char *attr)
 {
-	uint32_t result;
+	uint32_t value;
 
-	if (igt_debug_on(igt_sysfs_scanf(dir, attr, "%u", &result) != 1))
-		return 0;
+	igt_assert_f(__igt_sysfs_get_u32(dir, attr, &value),
+		     "Failed to read %s attribute (%s)\n", attr, strerror(errno));
 
-	return result;
+	return value;
 }
 
 /**
- * igt_sysfs_get_u64:
- * @dir: directory for the device from igt_sysfs_open()
- * @attr: name of the sysfs node to open
- *
- * Convenience wrapper to read a unsigned 64bit integer from a sysfs file.
- *
- * Returns:
- * The value read.
- */
-uint64_t igt_sysfs_get_u64(int dir, const char *attr)
-{
-	uint64_t result;
-
-	if (igt_debug_on(igt_sysfs_scanf(dir, attr, "%"PRIu64, &result) != 1))
-		return 0;
-
-	return result;
-}
-
-/**
- * igt_sysfs_set_u64:
- * @dir: directory for the device from igt_sysfs_open()
- * @attr: name of the sysfs node to open
- * @value: value to set
- *
- * Convenience wrapper to write a unsigned 64bit integer to a sysfs file.
- *
- * Returns:
- * True if successfully written
- */
-bool igt_sysfs_set_u64(int dir, const char *attr, uint64_t value)
-{
-	return igt_sysfs_printf(dir, attr, "%"PRIu64, value) > 0;
-}
-
-/**
- * igt_sysfs_set_u32:
- * @dir: directory for the device from igt_sysfs_open()
- * @attr: name of the sysfs node to open
+ * __igt_sysfs_set_u32:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to write
  * @value: value to set
  *
  * Convenience wrapper to write a unsigned 32bit integer to a sysfs file.
  *
  * Returns:
- * True if successfully written
+ * True if successfully written, false otherwise.
  */
-bool igt_sysfs_set_u32(int dir, const char *attr, uint32_t value)
+bool __igt_sysfs_set_u32(int dir, const char *attr, uint32_t value)
 {
 	return igt_sysfs_printf(dir, attr, "%u", value) > 0;
 }
 
 /**
- * igt_sysfs_get_boolean:
- * @dir: directory for the device from igt_sysfs_open()
- * @attr: name of the sysfs node to open
+ * igt_sysfs_set_u32:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to write
+ * @value: value to set
  *
- * Convenience wrapper to read a boolean sysfs file.
- * 
- * Returns:
- * The value read.
+ * Convenience wrapper to write a unsigned 32bit integer to a sysfs file.
+ * It asserts on failure.
  */
-bool igt_sysfs_get_boolean(int dir, const char *attr)
+void igt_sysfs_set_u32(int dir, const char *attr, uint32_t value)
 {
-	int result;
-	char *buf;
+	igt_assert_f(__igt_sysfs_set_u32(dir, attr, value),
+		     "Failed to write %u to %s attribute (%s)\n", value, attr, strerror(errno));
+}
 
-	buf = igt_sysfs_get(dir, attr);
-	if (igt_debug_on(!buf))
+/**
+ * __igt_sysfs_get_u64:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to read
+ * @value: pointer for storing read value
+ *
+ * Convenience wrapper to read a unsigned 64bit integer from a sysfs file.
+ *
+ * Returns:
+ * True if value successfully read, false otherwise.
+ */
+bool __igt_sysfs_get_u64(int dir, const char *attr, uint64_t *value)
+{
+	if (igt_debug_on(igt_sysfs_scanf(dir, attr, "%"PRIu64, value) != 1))
 		return false;
 
-	if (sscanf(buf, "%d", &result) != 1) {
-		/* kernel's param_get_bool() returns "Y"/"N" */
-		result = !strcasecmp(buf, "Y");
+	return true;
+}
+
+/**
+ * igt_sysfs_get_u64:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to read
+ *
+ * Convenience wrapper to read a unsigned 64bit integer from a sysfs file.
+ * It asserts on failure.
+ *
+ * Returns:
+ * Read value.
+ */
+uint64_t igt_sysfs_get_u64(int dir, const char *attr)
+{
+	uint64_t value;
+
+	igt_assert_f(__igt_sysfs_get_u64(dir, attr, &value),
+		     "Failed to read %s attribute (%s)\n", attr, strerror(errno));
+
+	return value;
+}
+
+/**
+ * __igt_sysfs_set_u64:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to write
+ * @value: value to set
+ *
+ * Convenience wrapper to write a unsigned 64bit integer to a sysfs file.
+ *
+ * Returns:
+ * True if successfully written, false otherwise.
+ */
+bool __igt_sysfs_set_u64(int dir, const char *attr, uint64_t value)
+{
+	return igt_sysfs_printf(dir, attr, "%"PRIu64, value) > 0;
+}
+
+/**
+ * igt_sysfs_set_u64:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to write
+ * @value: value to set
+ *
+ * Convenience wrapper to write a unsigned 64bit integer to a sysfs file.
+ * It asserts on failure.
+ */
+void igt_sysfs_set_u64(int dir, const char *attr, uint64_t value)
+{
+	igt_assert_f(__igt_sysfs_set_u64(dir, attr, value),
+		     "Failed to write  %"PRIu64" to %s attribute (%s)\n",
+		     value, attr, strerror(errno));
+}
+
+/**
+ * __igt_sysfs_get_boolean:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to read
+ * @value: pointer for storing read value
+ *
+ * Convenience wrapper to read a boolean sysfs file.
+ *
+ * Returns:
+ * True if value successfully read, false otherwise.
+ */
+bool __igt_sysfs_get_boolean(int dir, const char *attr, bool *value)
+{
+	char *buf;
+	int ret, read_value;
+
+	buf = igt_sysfs_get(dir, attr);
+	if (igt_debug_on_f(!buf, "Failed to read %s attribute (%s)\n", attr, strerror(errno)))
+		return false;
+
+	ret = sscanf(buf, "%d", &read_value);
+	if (((ret == 1) && (read_value == 1)) || ((ret == 0) && !strcasecmp(buf, "Y"))) {
+		*value = true;
+	} else if (((ret == 1) && (read_value == 0)) || ((ret == 0) && !strcasecmp(buf, "N"))) {
+		*value = false;
+	} else {
+		igt_debug("Value read from %s attribute (%s) is not as expected (0|1|N|Y|n|y)\n",
+			  attr, buf);
+		free(buf);
+		return false;
 	}
 
 	free(buf);
-	return result;
+	return true;
+}
+
+/**
+ * igt_sysfs_get_boolean:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to read
+ *
+ * Convenience wrapper to read a boolean sysfs file.
+ * It asserts on failure.
+ *
+ * Returns:
+ * Read value.
+ */
+bool igt_sysfs_get_boolean(int dir, const char *attr)
+{
+	bool value;
+
+	igt_assert(__igt_sysfs_get_boolean(dir, attr, &value));
+
+	return value;
+}
+
+/**
+ * __igt_sysfs_set_boolean:
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to write
+ * @value: value to set
+ *
+ * Convenience wrapper to write a boolean sysfs file.
+ *
+ * Returns:
+ * True if successfully written, false otherwise.
+ */
+bool __igt_sysfs_set_boolean(int dir, const char *attr, bool value)
+{
+	return igt_sysfs_printf(dir, attr, "%d", value) == 1;
 }
 
 /**
  * igt_sysfs_set_boolean:
- * @dir: directory for the device from igt_sysfs_open()
- * @attr: name of the sysfs node to open
+ * @dir: directory corresponding to attribute
+ * @attr: name of the sysfs node to write
  * @value: value to set
  *
  * Convenience wrapper to write a boolean sysfs file.
- * 
- * Returns:
- * The value read.
+ * It asserts on failure.
  */
-bool igt_sysfs_set_boolean(int dir, const char *attr, bool value)
+void igt_sysfs_set_boolean(int dir, const char *attr, bool value)
 {
-	return igt_sysfs_printf(dir, attr, "%d", value) == 1;
+	igt_assert_f(__igt_sysfs_set_boolean(dir, attr, value),
+		     "Failed to write %u to %s attribute (%s)\n", value, attr, strerror(errno));
 }
 
 static void bind_con(const char *name, bool enable)
@@ -845,14 +959,14 @@ static bool rw_attr_equal_within_epsilon(uint64_t x, uint64_t ref, double tol)
 /* Sweep the range of values for an attribute to identify matching reads/writes */
 static int rw_attr_sweep(igt_sysfs_rw_attr_t *rw)
 {
-	uint64_t get, set = rw->start;
+	uint64_t get = 0, set = rw->start;
 	int num_points = 0;
 	bool ret;
 
 	igt_debug("'%s': sweeping range of values\n", rw->attr);
 	while (set < UINT64_MAX / 2) {
-		ret = igt_sysfs_set_u64(rw->dir, rw->attr, set);
-		get = igt_sysfs_get_u64(rw->dir, rw->attr);
+		ret = __igt_sysfs_set_u64(rw->dir, rw->attr, set);
+		__igt_sysfs_get_u64(rw->dir, rw->attr, &get);
 		igt_debug("'%s': ret %d set %lu get %lu\n", rw->attr, ret, set, get);
 		if (ret && rw_attr_equal_within_epsilon(get, set, rw->tol)) {
 			igt_debug("'%s': matches\n", rw->attr);
@@ -888,7 +1002,7 @@ static int rw_attr_sweep(igt_sysfs_rw_attr_t *rw)
  */
 void igt_sysfs_rw_attr_verify(igt_sysfs_rw_attr_t *rw)
 {
-	uint64_t prev, get;
+	uint64_t prev = 0, get = 0;
 	struct stat st;
 	int ret;
 
@@ -896,7 +1010,7 @@ void igt_sysfs_rw_attr_verify(igt_sysfs_rw_attr_t *rw)
 	igt_assert(st.st_mode & 0222); /* writable */
 	igt_assert(rw->start);	/* cannot be 0 */
 
-	prev = igt_sysfs_get_u64(rw->dir, rw->attr);
+	__igt_sysfs_get_u64(rw->dir, rw->attr, &prev);
 	igt_debug("'%s': prev %lu\n", rw->attr, prev);
 
 	ret = rw_attr_sweep(rw);
@@ -905,8 +1019,8 @@ void igt_sysfs_rw_attr_verify(igt_sysfs_rw_attr_t *rw)
 	 * Restore previous value: we don't assert before this point so
 	 * that we can restore the attr before asserting
 	 */
-	igt_assert_eq(1, igt_sysfs_set_u64(rw->dir, rw->attr, prev));
-	get = igt_sysfs_get_u64(rw->dir, rw->attr);
+	igt_sysfs_set_u64(rw->dir, rw->attr, prev);
+	__igt_sysfs_get_u64(rw->dir, rw->attr, &get);
 	igt_assert_eq(get, prev);
 	igt_assert(!ret);
 }

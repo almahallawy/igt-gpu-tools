@@ -50,25 +50,26 @@ static void spin_all(void)
 
 static void restore_rps_defaults(int dir)
 {
-	int def, min, max;
+	int def;
+	uint32_t min = 0, max = 0;
 
 	/* Read from gt/gtN/.defaults/ write to gt/gtN/ */
 	def = openat(dir, ".defaults", O_RDONLY);
 	if (def < 0)
 		return;
 
-	max = igt_sysfs_get_u32(def, "rps_max_freq_mhz");
-	igt_sysfs_set_u32(dir, "rps_max_freq_mhz", max);
+	__igt_sysfs_get_u32(def, "rps_max_freq_mhz", &max);
+	__igt_sysfs_set_u32(dir, "rps_max_freq_mhz", max);
 
-	min = igt_sysfs_get_u32(def, "rps_min_freq_mhz");
-	igt_sysfs_set_u32(dir, "rps_min_freq_mhz", min);
+	__igt_sysfs_get_u32(def, "rps_min_freq_mhz", &min);
+	__igt_sysfs_set_u32(dir, "rps_min_freq_mhz", min);
 
 	close(def);
 }
 
 static void setup_freq(int gt, int dir)
 {
-	int rp0, rp1, rpn, min, max, act, media;
+	uint32_t rp0 = 0, rp1 = 0, rpn = 0, min = 0, max = 0, act = 0, media = 0;
 
 	ctx = intel_ctx_create_all_physical(i915);
 	ahnd = get_reloc_ahnd(i915, ctx->id);
@@ -81,17 +82,18 @@ static void setup_freq(int gt, int dir)
 	wait_freq_set();
 
 	/* Print some debug information */
-	rp0 = igt_sysfs_get_u32(dir, "rps_RP0_freq_mhz");
-	rp1 = igt_sysfs_get_u32(dir, "rps_RP1_freq_mhz");
-	rpn = igt_sysfs_get_u32(dir, "rps_RPn_freq_mhz");
-	min = igt_sysfs_get_u32(dir, "rps_min_freq_mhz");
-	max = igt_sysfs_get_u32(dir, "rps_max_freq_mhz");
-	act = igt_sysfs_get_u32(dir, "rps_act_freq_mhz");
+	rp0 = __igt_sysfs_get_u32(dir, "rps_RP0_freq_mhz", &rp0);
+	rp1 = __igt_sysfs_get_u32(dir, "rps_RP1_freq_mhz", &rp1);
+	rpn = __igt_sysfs_get_u32(dir, "rps_RPn_freq_mhz", &rpn);
+	min = __igt_sysfs_get_u32(dir, "rps_min_freq_mhz", &min);
+	max = __igt_sysfs_get_u32(dir, "rps_max_freq_mhz", &max);
+	act = __igt_sysfs_get_u32(dir, "rps_act_freq_mhz", &act);
 
-	igt_debug("RP0 MHz: %d, RP1 MHz: %d, RPn MHz: %d, min MHz: %d, max MHz: %d, act MHz: %d\n", rp0, rp1, rpn, min, max, act);
+	igt_debug("RP0 MHz: %u, RP1 MHz: %u, RPn MHz: %u, min MHz: %u, max MHz: %u, act MHz: %u\n",
+		  rp0, rp1, rpn, min, max, act);
 
 	if (igt_sysfs_has_attr(dir, "media_freq_factor")) {
-		media = igt_sysfs_get_u32(dir, "media_freq_factor");
+		__igt_sysfs_get_u32(dir, "media_freq_factor", &media);
 		igt_debug("media ratio: %.2f\n", media * FREQ_SCALE_FACTOR);
 	}
 }
@@ -108,6 +110,7 @@ static void cleanup(int dir)
 static void media_freq(int gt, int dir)
 {
 	float scale;
+	uint32_t rp0 = 0, rpn = 0;
 
 	igt_require(igt_sysfs_has_attr(dir, "media_freq_factor"));
 
@@ -116,9 +119,9 @@ static void media_freq(int gt, int dir)
 
 	setup_freq(gt, dir);
 
-	igt_debug("media RP0 mhz: %d, media RPn mhz: %d\n",
-		  igt_sysfs_get_u32(dir, "media_RP0_freq_mhz"),
-		  igt_sysfs_get_u32(dir, "media_RPn_freq_mhz"));
+	__igt_sysfs_get_u32(dir, "media_RP0_freq_mhz", &rp0);
+	__igt_sysfs_get_u32(dir, "media_RPn_freq_mhz", &rpn);
+	igt_debug("media RP0 MHz: %u, media RPn MHz: %u\n", rp0, rpn);
 	igt_debug("media ratio value 0.0 represents dynamic mode\n");
 
 	/*
@@ -127,7 +130,8 @@ static void media_freq(int gt, int dir)
 	 * modes. Fixed ratio modes should return the same value.
 	 */
 	for (int v = 256; v >= 0; v -= 64) {
-		int getv, ret;
+		int ret;
+		uint32_t getv = 0;
 
 		/*
 		 * Check that we can set the mode. Ratios other than 1:2
@@ -141,7 +145,7 @@ static void media_freq(int gt, int dir)
 
 		wait_freq_set();
 
-		getv = igt_sysfs_get_u32(dir, "media_freq_factor");
+		__igt_sysfs_get_u32(dir, "media_freq_factor", &getv);
 
 		igt_debug("media ratio set: %.2f, media ratio get: %.2f\n",
 			  v * scale, getv * scale);

@@ -341,7 +341,7 @@ static void kms_poll_state_restore(void)
 	int sysfs_fd;
 
 	igt_assert((sysfs_fd = open(KMS_HELPER, O_RDONLY)) >= 0);
-	igt_sysfs_set_boolean(sysfs_fd, "poll", kms_poll_saved_state);
+	__igt_sysfs_set_boolean(sysfs_fd, "poll", kms_poll_saved_state);
 	close(sysfs_fd);
 
 }

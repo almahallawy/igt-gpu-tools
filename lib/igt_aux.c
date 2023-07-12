@@ -953,7 +953,7 @@ static void igt_aux_enable_pm_suspend_dbg(int power_dir)
 	if (sysfs_fd > 0) {
 		__console_suspend_saved_state = igt_sysfs_get_boolean(sysfs_fd, "console_suspend");
 
-		if (!igt_sysfs_set_boolean(sysfs_fd, "console_suspend", CONSOLE_SUSPEND_DISABLE))
+		if (!__igt_sysfs_set_boolean(sysfs_fd, "console_suspend", CONSOLE_SUSPEND_DISABLE))
 			igt_warn("Unable to disable console suspend\n");
 
 	} else {

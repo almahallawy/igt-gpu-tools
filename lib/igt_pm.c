@@ -1415,5 +1415,5 @@ void igt_pm_ignore_slpc_efficient_freq(int i915, int gtfd, bool val)
 		return;
 
 	igt_require(igt_sysfs_has_attr(gtfd, "slpc_ignore_eff_freq"));
-	igt_assert(igt_sysfs_set_u32(gtfd, "slpc_ignore_eff_freq", val));
+	igt_sysfs_set_u32(gtfd, "slpc_ignore_eff_freq", val);
 }

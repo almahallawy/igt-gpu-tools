@@ -720,7 +720,7 @@ static void fence_order(int i915)
 		.buffer_count = ARRAY_SIZE(obj),
 	};
 	uint64_t wr, rw;
-	int min, max;
+	uint32_t min = 0, max = 0;
 	double freq;
 	int sysfs;
 
@@ -742,14 +742,14 @@ static void fence_order(int i915)
 	 */
 
 	sysfs = igt_sysfs_open(i915);
-	min = igt_sysfs_get_u32(sysfs, "gt_RPn_freq_mhz");
-	max = igt_sysfs_get_u32(sysfs, "gt_RP0_freq_mhz");
+	__igt_sysfs_get_u32(sysfs, "gt_RPn_freq_mhz", &min);
+	__igt_sysfs_get_u32(sysfs, "gt_RP0_freq_mhz", &max);
 	igt_require(max > min);
 
 	/* Only allow ourselves to upclock via waitboosting */
-	igt_sysfs_printf(sysfs, "gt_min_freq_mhz", "%d", min);
-	igt_sysfs_printf(sysfs, "gt_max_freq_mhz", "%d", min);
-	igt_sysfs_printf(sysfs, "gt_boost_freq_mhz", "%d", max);
+	igt_sysfs_printf(sysfs, "gt_min_freq_mhz", "%u", min);
+	igt_sysfs_printf(sysfs, "gt_max_freq_mhz", "%u", min);
+	igt_sysfs_printf(sysfs, "gt_boost_freq_mhz", "%u", max);
 
 	/* Warm up to bind the vma */
 	__fence_order(i915, &obj[0], &execbuf, 0, 0, &freq);
@@ -763,8 +763,8 @@ static void fence_order(int i915)
 	gem_close(i915, obj[0].handle);
 	gem_close(i915, obj[1].handle);
 
-	igt_sysfs_printf(sysfs, "gt_min_freq_mhz", "%d", min);
-	igt_sysfs_printf(sysfs, "gt_max_freq_mhz", "%d", max);
+	igt_sysfs_printf(sysfs, "gt_min_freq_mhz", "%u", min);
+	igt_sysfs_printf(sysfs, "gt_max_freq_mhz", "%u", max);
 
 	close(sysfs);
 
@@ -830,7 +830,7 @@ static void engine_order(int i915)
 	uint64_t forward, backward, both;
 	unsigned int num_engines;
 	const intel_ctx_t *ctx;
-	int min, max;
+	uint32_t min = 0, max = 0;
 	double freq;
 	int sysfs;
 
@@ -862,14 +862,14 @@ static void engine_order(int i915)
 	execbuf.rsvd1 = ctx->id;
 
 	sysfs = igt_sysfs_open(i915);
-	min = igt_sysfs_get_u32(sysfs, "gt_RPn_freq_mhz");
-	max = igt_sysfs_get_u32(sysfs, "gt_RP0_freq_mhz");
+	__igt_sysfs_get_u32(sysfs, "gt_RPn_freq_mhz", &min);
+	__igt_sysfs_get_u32(sysfs, "gt_RP0_freq_mhz", &max);
 	igt_require(max > min);
 
 	/* Only allow ourselves to upclock via waitboosting */
-	igt_sysfs_printf(sysfs, "gt_min_freq_mhz", "%d", min);
-	igt_sysfs_printf(sysfs, "gt_max_freq_mhz", "%d", min);
-	igt_sysfs_printf(sysfs, "gt_boost_freq_mhz", "%d", max);
+	igt_sysfs_printf(sysfs, "gt_min_freq_mhz", "%u", min);
+	igt_sysfs_printf(sysfs, "gt_max_freq_mhz", "%u", min);
+	igt_sysfs_printf(sysfs, "gt_boost_freq_mhz", "%u", max);
 
 	/* Warm up to bind the vma */
 	gem_execbuf(i915, &execbuf);
@@ -893,8 +893,8 @@ static void engine_order(int i915)
 	gem_close(i915, obj[1].handle);
 	intel_ctx_destroy(i915, ctx);
 
-	igt_sysfs_printf(sysfs, "gt_min_freq_mhz", "%d", min);
-	igt_sysfs_printf(sysfs, "gt_max_freq_mhz", "%d", max);
+	igt_sysfs_printf(sysfs, "gt_min_freq_mhz", "%u", min);
+	igt_sysfs_printf(sysfs, "gt_max_freq_mhz", "%u", max);
 
 	close(sysfs);
 
