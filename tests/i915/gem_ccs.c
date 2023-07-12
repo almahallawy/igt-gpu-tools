@@ -77,17 +77,6 @@ struct test_config {
 	bool suspend_resume;
 };
 
-static void set_surf_object(struct blt_ctrl_surf_copy_object *obj,
-			    uint32_t handle, uint32_t region, uint64_t size,
-			    uint8_t mocs, enum blt_access_type access_type)
-{
-	obj->handle = handle;
-	obj->region = region;
-	obj->size = size;
-	obj->mocs = mocs;
-	obj->access_type = access_type;
-}
-
 #define PRINT_SURFACE_INFO(name, obj) do { \
 	if (param.print_surface_info) \
 		blt_surface_info((name), (obj)); } while (0)
@@ -169,10 +158,10 @@ static void surf_copy(int i915,
 
 	surf.fd = i915;
 	surf.print_bb = param.print_bb;
-	set_surf_object(&surf.src, mid->handle, mid->region, mid->size,
-			uc_mocs, BLT_INDIRECT_ACCESS);
-	set_surf_object(&surf.dst, ccs, REGION_SMEM, ccssize,
-			uc_mocs, DIRECT_ACCESS);
+	blt_set_ctrl_surf_object(&surf.src, mid->handle, mid->region, mid->size,
+				 uc_mocs, BLT_INDIRECT_ACCESS);
+	blt_set_ctrl_surf_object(&surf.dst, ccs, REGION_SMEM, ccssize,
+				 uc_mocs, DIRECT_ACCESS);
 	bb_size = 4096;
 	igt_assert_eq(__gem_create(i915, &bb_size, &bb1), 0);
 	blt_set_batch(&surf.bb, bb1, bb_size, REGION_SMEM);
@@ -191,8 +180,8 @@ static void surf_copy(int i915,
 
 		igt_system_suspend_autoresume(SUSPEND_STATE_FREEZE, SUSPEND_TEST_NONE);
 
-		set_surf_object(&surf.dst, ccs2, REGION_SMEM, ccssize,
-				0, DIRECT_ACCESS);
+		blt_set_ctrl_surf_object(&surf.dst, ccs2, REGION_SMEM, ccssize,
+					 0, DIRECT_ACCESS);
 		blt_ctrl_surf_copy(i915, ctx, e, ahnd, &surf);
 		gem_sync(i915, surf.dst.handle);
 
@@ -213,10 +202,10 @@ static void surf_copy(int i915,
 	/* corrupt ccs */
 	for (int i = 0; i < surf.dst.size / sizeof(uint32_t); i++)
 		ccsmap[i] = i;
-	set_surf_object(&surf.src, ccs, REGION_SMEM, ccssize,
-			uc_mocs, DIRECT_ACCESS);
-	set_surf_object(&surf.dst, mid->handle, mid->region, mid->size,
-			uc_mocs, INDIRECT_ACCESS);
+	blt_set_ctrl_surf_object(&surf.src, ccs, REGION_SMEM, ccssize,
+				 uc_mocs, DIRECT_ACCESS);
+	blt_set_ctrl_surf_object(&surf.dst, mid->handle, mid->region, mid->size,
+				 uc_mocs, INDIRECT_ACCESS);
 	blt_ctrl_surf_copy(i915, ctx, e, ahnd, &surf);
 
 	memset(&blt, 0, sizeof(blt));
