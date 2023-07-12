@@ -245,8 +245,10 @@ class TestList:
     Description: test ioctls
     """
 
-    def __init__(self, config_fname, include_plan = False, file_list = False,
+    def __init__(self, config_fname = None,
+                 include_plan = False, file_list = None,
                  igt_build_path = None,
+                 config_dict = None, sources_path = None,
                  test_tag = "TEST", subtest_tag = "SUBTESTS?",
                  main_name = "igt", subtest_separator = "@"):
         self.doc = {}
@@ -265,18 +267,34 @@ class TestList:
 
         self.internal_fields =  [ '_summary_', '_arg_', '_subtest_line_' ]
 
+        # Exclusive or: either one is needed
+        if bool(config_fname) == bool(config_dict):
+            sys.exit("Error: either config filename or config dict shall be used")
+
         if self.main_name:
             self.main_name += subtest_separator
 
-        driver_name = re.sub(r'(.*/)?([^\/]+)/.*', r'\2', config_fname).capitalize()
-
         implemented_class = None
 
-        with open(config_fname, 'r', encoding='utf8') as handle:
-            self.config = json.load(handle)
+        if config_fname:
+            with open(config_fname, 'r', encoding='utf8') as handle:
+                self.config = json.load(handle)
 
-        config_origin = config_fname
-        cfg_path = os.path.realpath(os.path.dirname(config_fname)) + "/"
+            config_origin = config_fname
+            cfg_path = os.path.realpath(os.path.dirname(config_fname)) + "/"
+            driver_name = re.sub(r'(.*/)?([^\/]+)/.*', r'\2', config_fname).capitalize()
+
+        else:
+            self.config = config_dict
+            config_origin = "config dict"
+            cfg_path = "./"
+            driver_name = main_name
+
+        if sources_path:
+            cfg_path = os.path.realpath(sources_path) + "/"
+
+        if not self.config:
+            sys.exit("Error: configuration is empty!")
 
         self.__add_field(None, 0, 0, self.config["fields"])
 
