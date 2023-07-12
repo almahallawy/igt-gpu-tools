@@ -305,7 +305,8 @@ class TestList:
                 if sublevel_count[level - 1] == 1:
                     del item["_properties_"]["level"]
                     del item["_properties_"]["sublevel"]
-        del self.props["_properties_"]
+        if "_properties_" in self.props:
+            del self.props["_properties_"]
 
         has_implemented = False
         if not self.filenames:
