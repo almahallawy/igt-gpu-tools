@@ -259,5 +259,7 @@ void blt_surface_fill_rect(int fd, const struct blt_copy_object *obj,
 void blt_surface_to_png(int fd, uint32_t run_id, const char *fileid,
 			const struct blt_copy_object *obj,
 			uint32_t width, uint32_t height);
+void blt_dump_corruption_info_32b(const struct blt_copy_object *surf1,
+				  const struct blt_copy_object *surf2);
 
 #endif

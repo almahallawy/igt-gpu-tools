@@ -1516,3 +1516,67 @@ void blt_surface_to_png(int fd, uint32_t run_id, const char *fileid,
 	if (!obj->ptr)
 		munmap(map, obj->size);
 }
+
+static int compare_nxn(const struct blt_copy_object *surf1,
+		       const struct blt_copy_object *surf2,
+		       int xsize, int ysize, int bx, int by)
+{
+	int x, y, corrupted;
+	uint32_t pos, px1, px2;
+
+	corrupted = 0;
+	for (y = 0; y < ysize; y++) {
+		for (x = 0; x < xsize; x++) {
+			pos = bx * xsize + by * ysize * surf1->pitch / 4;
+			pos += x + y * surf1->pitch / 4;
+			px1 = surf1->ptr[pos];
+			px2 = surf2->ptr[pos];
+			if (px1 != px2)
+				corrupted++;
+		}
+	}
+
+	return corrupted;
+}
+
+/**
+ * blt_dump_corruption_info_32b:
+ * @surf1: first surface
+ * @surf2: second surface
+ *
+ * Function dumps ascii representation of the surfaces corruption. Comparison
+ * is performed on 8x8 32bpp color pixel blocks. Number of differences on
+ * such block varies from 0 (no corruption) to 64 (pixels on those surfaces
+ * differs). It is added then to '0' ascii character to point the corruption
+ * occurred, for non affected block '.' is printed out.
+ *
+ * Idea of this function is to determine character of the differences between
+ * two surfaces without generating difference image.
+ *
+ * Currently function assumes both @surf1 and @surf2 are 32-bit color surfaces.
+ */
+void blt_dump_corruption_info_32b(const struct blt_copy_object *surf1,
+				  const struct blt_copy_object *surf2)
+{
+	const int xsize = 8, ysize = 8;
+	int w, h, bx, by, corrupted;
+
+	igt_assert(surf1->x1 == surf2->x1 && surf1->x2 == surf2->x2);
+	igt_assert(surf1->y1 == surf2->y1 && surf1->y2 == surf2->y2);
+	w = surf1->x2;
+	h = surf1->y2;
+
+	igt_info("dump corruption - width: %d, height: %d, sizex: %x, sizey: %x\n",
+		 surf1->x2, surf1->y2, xsize, ysize);
+
+	for (by = 0; by < h / ysize; by++) {
+		for (bx = 0; bx < w / xsize; bx++) {
+			corrupted = compare_nxn(surf1, surf2, xsize, ysize, bx, by);
+			if (corrupted == 0)
+				igt_info(".");
+			else
+				igt_info("%c", '0' + corrupted);
+		}
+		igt_info("\n");
+	}
+}
