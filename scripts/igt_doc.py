@@ -48,8 +48,10 @@ parser.add_argument('--files', nargs='+',
 
 parse_args = parser.parse_args()
 
-tests = TestList(parse_args.config, parse_args.include_plan, parse_args.files,
-                 parse_args.igt_build_path)
+tests = TestList(config_fname = parse_args.config,
+                 include_plan = parse_args.include_plan,
+                 file_list = parse_args.files,
+                 igt_build_path = parse_args.igt_build_path)
 
 if parse_args.filter_field:
     for filter_expr in parse_args.filter_field:
