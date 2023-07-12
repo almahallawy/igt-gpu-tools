@@ -595,7 +595,7 @@ class TestList:
     # Output methods
     #
 
-    def print_rest_flat(self, filename):
+    def print_rest_flat(self, filename = None):
 
         """Print tests and subtests ordered by tests"""
 
@@ -707,7 +707,7 @@ class TestList:
                     sheet[row].append('')
         return sheet
 
-    def print_nested_rest(self, filename):
+    def print_nested_rest(self, filename = None):
 
         """Print tests and subtests ordered by tests"""
 
