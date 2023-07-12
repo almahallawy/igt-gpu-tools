@@ -669,6 +669,7 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 	case GFX8: /* tested */
 	case GFX9: /* tested */
 	case GFX10:/* tested */
+	case GFX10_3: /* tested */
 		amdgpu_device_ip_block_add(&gfx_v8_x_ip_block);
 		amdgpu_device_ip_block_add(&compute_v8_x_ip_block);
 		amdgpu_device_ip_block_add(&sdma_v3_x_ip_block);
@@ -679,8 +680,6 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 
 		igt_assert_eq(gfx_v8_x_ip_block.funcs->family_id, FAMILY_VI);
 		igt_assert_eq(sdma_v3_x_ip_block.funcs->family_id, FAMILY_VI);
-		break;
-	case GFX10_3:
 		break;
 	default:
 		igt_info("amdgpu: GFX or old.\n");
