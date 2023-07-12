@@ -1390,6 +1390,17 @@ void blt_set_copy_object(struct blt_copy_object *obj,
 	memcpy(obj, orig, sizeof(*obj));
 }
 
+void blt_set_ctrl_surf_object(struct blt_ctrl_surf_copy_object *obj,
+			      uint32_t handle, uint32_t region, uint64_t size,
+			      uint8_t mocs, enum blt_access_type access_type)
+{
+	obj->handle = handle;
+	obj->region = region;
+	obj->size = size;
+	obj->mocs = mocs;
+	obj->access_type = access_type;
+}
+
 /**
  * blt_surface_fill_rect:
  * @fd: drm fd

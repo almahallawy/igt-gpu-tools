@@ -248,6 +248,9 @@ void blt_set_object_ext(struct blt_block_copy_object_ext *obj,
 			enum blt_surface_type surface_type);
 void blt_set_copy_object(struct blt_copy_object *obj,
 			 const struct blt_copy_object *orig);
+void blt_set_ctrl_surf_object(struct blt_ctrl_surf_copy_object *obj,
+			      uint32_t handle, uint32_t region, uint64_t size,
+			      uint8_t mocs, enum blt_access_type access_type);
 
 void blt_surface_info(const char *info,
 		      const struct blt_copy_object *obj);
