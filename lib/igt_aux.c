@@ -962,7 +962,7 @@ static void igt_aux_enable_pm_suspend_dbg(int power_dir)
 
 	/* pm_debug_messages depends on  CONFIG_PM_SLEEP_DEBUG */
 	if (!faccessat(power_dir, "pm_debug_messages", R_OK |  W_OK, 0)) {
-		__pm_debug_messages_state = igt_sysfs_get_boolean(sysfs_fd, "pm_debug_messages");
+		__pm_debug_messages_state = igt_sysfs_get_boolean(power_dir, "pm_debug_messages");
 		igt_sysfs_set_boolean(power_dir, "pm_debug_messages", true);
 	}
 
