@@ -596,20 +596,13 @@ class TestList:
     # Output methods
     #
 
-    def print_rest_flat(self, filename = None):
+    def print_rest_flat(self, filename = None, return_string = False):
 
         """Print tests and subtests ordered by tests"""
 
-        handler = None
-        if filename:
-            original_stdout = sys.stdout
-            handler = open(filename, "w", encoding='utf8') # pylint: disable=R1732
-            sys.stdout = handler
-
-        print("=" * len(self.title))
-        print(self.title)
-        print("=" * len(self.title))
-        print()
+        out = "=" * len(self.title) + "\n"
+        out += self.title + "\n"
+        out += "=" * len(self.title) + "\n\n"
 
         for test in sorted(self.doc.keys()):
             fname = self.doc[test]["File"]
@@ -631,10 +624,9 @@ class TestList:
             if not subtest_array:
                 continue
 
-            print(len(name) * '=')
-            print(name)
-            print(len(name) * '=')
-            print()
+            out += len(name) * '=' + "\n"
+            out += name + "\n"
+            out += len(name) * '=' + "\n\n"
 
             for field in sorted(self.doc[test].keys()):
                 if field == "subtest":
@@ -642,29 +634,30 @@ class TestList:
                 if field in self.internal_fields:
                     continue
 
-                print(f":{field}: {self.doc[test][field]}")
+                out += f":{field}: {self.doc[test][field]}\n"
 
             for subtest in subtest_array:
 
-                print()
-                print(subtest["_summary_"])
-                print(len(subtest["_summary_"]) * '=')
-                print("")
+                out += "\n" + subtest["_summary_"] + "\n"
+                out += len(subtest["_summary_"]) * '=' + "\n\n"
 
                 for field in sorted(subtest.keys()):
                     if field in self.internal_fields:
                         continue
 
-                    print(f":{field}:", subtest[field])
+                    out += f":{field}:" + subtest[field] + "\n"
 
-                print()
+                out += "\n"
 
-            print()
-            print()
+            out += "\n\n"
 
-        if handler:
-            handler.close()
-            sys.stdout = original_stdout
+        if filename:
+            with open(filename, "w", encoding='utf8') as handle:
+                handle.write(out)
+        elif not return_string:
+            print(out)
+        else:
+            return out
 
     def get_spreadsheet(self):
 
@@ -708,7 +701,7 @@ class TestList:
                     sheet[row].append('')
         return sheet
 
-    def print_nested_rest(self, filename = None):
+    def print_nested_rest(self, filename = None, return_string = False):
 
         """Print tests and subtests ordered by tests"""
 
@@ -718,10 +711,9 @@ class TestList:
             handler = open(filename, "w", encoding='utf8') # pylint: disable=R1732
             sys.stdout = handler
 
-        print("=" * len(self.title))
-        print(self.title)
-        print("=" * len(self.title))
-        print()
+        out = "=" * len(self.title) + "\n"
+        out += self.title + "\n"
+        out += "=" * len(self.title) + "\n\n"
 
         # Identify the sort order for the fields
         fields_order = []
@@ -765,14 +757,11 @@ class TestList:
 
                 title_str = fields_order[i] + ": " + fields[fields_order[i]]
 
-                print(title_str)
-                print(level_markers[marker] * len(title_str))
-                print()
+                out += title_str + "\n"
+                out += level_markers[marker] * len(title_str) + "\n\n"
                 marker += 1
 
-            print()
-            print("``" + subtest + "``")
-            print()
+            out += "\n``" + subtest + "``" + "\n\n"
 
             # print non-hierarchy fields
             for field in fields_order:
@@ -780,7 +769,7 @@ class TestList:
                     continue
 
                 if field in fields:
-                    print(f":{field}: {fields[field]}")
+                    out += f":{field}: {fields[field]}" + "\n"
 
             # Store current values
             for i in range(cur_level, len(fields_order)):
@@ -792,11 +781,15 @@ class TestList:
                 else:
                     old_fields[i] = ''
 
-            print()
+            out += "\n"
 
-        if handler:
-            handler.close()
-            sys.stdout = original_stdout
+        if filename:
+            with open(filename, "w", encoding='utf8') as handle:
+                handle.write(out)
+        elif not return_string:
+            print(out)
+        else:
+            return out
 
     def print_json(self, out_fname):
 
