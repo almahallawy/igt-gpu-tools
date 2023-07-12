@@ -274,71 +274,71 @@ class TestList:
         with open(config_fname, 'r', encoding='utf8') as handle:
             self.config = json.load(handle)
 
-            self.__add_field(None, 0, 0, self.config["fields"])
+        self.__add_field(None, 0, 0, self.config["fields"])
 
-            sublevel_count = [ 0 ] * self.level_count
+        sublevel_count = [ 0 ] * self.level_count
 
-            for field, item in self.props.items():
-                if "sublevel" in item["_properties_"]:
-                    level = item["_properties_"]["level"]
-                    sublevel = item["_properties_"]["sublevel"]
-                    if sublevel > sublevel_count[level - 1]:
-                        sublevel_count[level - 1] = sublevel
+        for field, item in self.props.items():
+            if "sublevel" in item["_properties_"]:
+                level = item["_properties_"]["level"]
+                sublevel = item["_properties_"]["sublevel"]
+                if sublevel > sublevel_count[level - 1]:
+                    sublevel_count[level - 1] = sublevel
 
-                field_lc = field.lower()
-                self.field_list[field_lc] = field
-                field_plural = _plural(field_lc)
-                if field_lc != field_plural:
-                    self.field_list[field_plural] = field
+            field_lc = field.lower()
+            self.field_list[field_lc] = field
+            field_plural = _plural(field_lc)
+            if field_lc != field_plural:
+                self.field_list[field_plural] = field
 
-            if include_plan:
-                self.props["Class"] = {}
-                self.props["Class"]["_properties_"] = {}
-                self.props["Class"]["_properties_"]["level"] = 1
-                self.props["Class"]["_properties_"]["sublevel"] = sublevel_count[0] + 1
+        if include_plan:
+            self.props["Class"] = {}
+            self.props["Class"]["_properties_"] = {}
+            self.props["Class"]["_properties_"]["level"] = 1
+            self.props["Class"]["_properties_"]["sublevel"] = sublevel_count[0] + 1
 
-            # Remove non-multilevel items, as we're only interested on
-            # hierarchical item levels here
-            for field, item in self.props.items():
-                if "sublevel" in item["_properties_"]:
-                    level = item["_properties_"]["level"]
-                    if sublevel_count[level - 1] == 1:
-                        del item["_properties_"]["level"]
-                        del item["_properties_"]["sublevel"]
-            del self.props["_properties_"]
+        # Remove non-multilevel items, as we're only interested on
+        # hierarchical item levels here
+        for field, item in self.props.items():
+            if "sublevel" in item["_properties_"]:
+                level = item["_properties_"]["level"]
+                if sublevel_count[level - 1] == 1:
+                    del item["_properties_"]["level"]
+                    del item["_properties_"]["sublevel"]
+        del self.props["_properties_"]
 
-            has_implemented = False
-            if not self.filenames:
-                self.filenames = []
-                exclude_files = []
-                files = self.config["files"]
-                exclude_file_glob = self.config.get("exclude_files", [])
-                for cfg_file in exclude_file_glob:
-                    cfg_file = os.path.realpath(os.path.dirname(config_fname)) + "/" + cfg_file
-                    for fname in glob.glob(cfg_file):
-                        exclude_files.append(fname)
+        has_implemented = False
+        if not self.filenames:
+            self.filenames = []
+            exclude_files = []
+            files = self.config["files"]
+            exclude_file_glob = self.config.get("exclude_files", [])
+            for cfg_file in exclude_file_glob:
+                cfg_file = os.path.realpath(os.path.dirname(config_fname)) + "/" + cfg_file
+                for fname in glob.glob(cfg_file):
+                    exclude_files.append(fname)
 
-                for cfg_file in files:
-                    cfg_file = os.path.realpath(os.path.dirname(config_fname)) + "/" + cfg_file
-                    for fname in glob.glob(cfg_file):
-                        if fname in exclude_files:
-                            continue
-                        self.filenames.append(fname)
-                        has_implemented = True
-            else:
-                for cfg_file in self.filenames:
-                    if cfg_file:
-                        has_implemented = True
+            for cfg_file in files:
+                cfg_file = os.path.realpath(os.path.dirname(config_fname)) + "/" + cfg_file
+                for fname in glob.glob(cfg_file):
+                    if fname in exclude_files:
+                        continue
+                    self.filenames.append(fname)
+                    has_implemented = True
+        else:
+            for cfg_file in self.filenames:
+                if cfg_file:
+                    has_implemented = True
 
-            has_planned = False
-            if include_plan and "planning_files" in self.config:
-                implemented_class = "Implemented"
-                files = self.config["planning_files"]
-                for cfg_file in files:
-                    cfg_file = os.path.realpath(os.path.dirname(config_fname)) + "/" + cfg_file
-                    for fname in glob.glob(cfg_file):
-                        self.plan_filenames.append(fname)
-                        has_planned = True
+        has_planned = False
+        if include_plan and "planning_files" in self.config:
+            implemented_class = "Implemented"
+            files = self.config["planning_files"]
+            for cfg_file in files:
+                cfg_file = os.path.realpath(os.path.dirname(config_fname)) + "/" + cfg_file
+                for fname in glob.glob(cfg_file):
+                    self.plan_filenames.append(fname)
+                    has_planned = True
 
         planned_class = None
         if has_implemented:
