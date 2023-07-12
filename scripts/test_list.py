@@ -255,7 +255,6 @@ class TestList:
         self.filenames = file_list
         self.plan_filenames = []
         self.props = {}
-        self.config_fname = config_fname
         self.igt_build_path = igt_build_path
         self.level_count = 0
         self.field_list = {}
@@ -275,6 +274,9 @@ class TestList:
 
         with open(config_fname, 'r', encoding='utf8') as handle:
             self.config = json.load(handle)
+
+        config_origin = config_fname
+        cfg_path = os.path.realpath(os.path.dirname(config_fname)) + "/"
 
         self.__add_field(None, 0, 0, self.config["fields"])
 
@@ -317,12 +319,12 @@ class TestList:
             files = self.config["files"]
             exclude_file_glob = self.config.get("exclude_files", [])
             for cfg_file in exclude_file_glob:
-                cfg_file = os.path.realpath(os.path.dirname(config_fname)) + "/" + cfg_file
+                cfg_file = cfg_path + cfg_file
                 for fname in glob.glob(cfg_file):
                     exclude_files.append(fname)
 
             for cfg_file in files:
-                cfg_file = os.path.realpath(os.path.dirname(config_fname)) + "/" + cfg_file
+                cfg_file = cfg_path + cfg_file
                 for fname in glob.glob(cfg_file):
                     if fname in exclude_files:
                         continue
@@ -338,7 +340,7 @@ class TestList:
             implemented_class = "Implemented"
             files = self.config["planning_files"]
             for cfg_file in files:
-                cfg_file = os.path.realpath(os.path.dirname(config_fname)) + "/" + cfg_file
+                cfg_file = cfg_path + cfg_file
                 for fname in glob.glob(cfg_file):
                     self.plan_filenames.append(fname)
                     has_planned = True
@@ -366,12 +368,12 @@ class TestList:
                 continue
 
             self.__add_file_documentation(fname, implemented_class, field_re,
-                                          test_tag, subtest_tag)
+                                          test_tag, subtest_tag, config_origin)
 
         if include_plan:
             for fname in self.plan_filenames:
                 self.__add_file_documentation(fname, planned_class, field_re,
-                                              test_tag, subtest_tag)
+                                              test_tag, subtest_tag, config_origin)
 
     #
     # ancillary methods
@@ -1015,7 +1017,7 @@ class TestList:
     #
 
     def __add_file_documentation(self, fname, implemented_class, field_re,
-                                 test_tag, subtest_tag):
+                                 test_tag, subtest_tag, config_origin):
 
         """Adds the contents of test/subtest documentation form a file"""
 
@@ -1225,7 +1227,7 @@ class TestList:
 
                 file_line.rstrip(r"\n")
                 sys.exit(f"{fname}:{file_ln + 1}: Error: unrecognized line. Need to add field at %s?\n\t==> %s" %
-                         (self.config_fname, file_line))
+                         (config_origin, file_line))
 
     def show_subtests(self, sort_field):
 
