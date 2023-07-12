@@ -38,8 +38,11 @@ IGT_TEST_DESCRIPTION("Basic test for enabling Panel Self Refresh for eDP display
 
 /* After a full update, a few fast updates are necessary for PSR to be enabled */
 #define N_FLIPS 6
-/* DMCUB takes some time to actually enable PSR. Worst case delay is 4 seconds */
-#define PSR_SETTLE_DELAY 4
+/* Linux kernel AMD implementaion, After static image is submitted by kernel driver,
+ * kernel driver notify DMCUB FW ready to enter PSR1, DMUB DW takes around 8 seconds
+ * to actually enable PSR1 state.
+ */
+#define PSR_SETTLE_DELAY 10
 
 typedef struct {
 	int x, y;
@@ -234,7 +237,7 @@ static int check_conn_type(data_t *data, uint32_t type) {
 	return -1;
 }
 
-static bool psr_su_supported(data_t *data)
+static bool psr_mode_supported(data_t *data, enum psr_mode mode)
 {
 	/* run PSR-SU test i.i.f. eDP panel and kernel driver both support PSR-SU */
 	if (!igt_amd_output_has_psr_cap(data->fd, data->output->name)) {
@@ -247,24 +250,24 @@ static bool psr_su_supported(data_t *data)
 		return false;
 	}
 
-	if (!igt_amd_psr_support_sink(data->fd, data->output->name, PSR_MODE_2)) {
-		igt_warn(" output %s not support PSR-SU\n", data->output->name);
+	if (!igt_amd_psr_support_sink(data->fd, data->output->name, mode)) {
+		igt_warn(" output %s not support PSR mode %d\n", data->output->name, mode);
 		return false;
 	}
 
-	if (!igt_amd_psr_support_drv(data->fd, data->output->name, PSR_MODE_2)) {
-		igt_warn(" kernel driver not support PSR-SU\n");
+	if (!igt_amd_psr_support_drv(data->fd, data->output->name, mode)) {
+		igt_warn(" kernel driver not support PSR mode %d\n", mode);
 		return false;
 	}
 
 	return true;
 }
 
+/* run_check_psr does not work with dual eDP */
 static void run_check_psr(data_t *data, bool test_null_crtc) {
-	int fd, edp_idx, dp_idx, ret, i, psr_state;
+	int edp_idx, dp_idx, ret, i, psr_state;
 	igt_fb_t ref_fb, ref_fb2;
 	igt_fb_t *flip_fb;
-	enum pipe pipe;
 	igt_output_t *output;
 
 	test_init(data);
@@ -273,7 +276,12 @@ static void run_check_psr(data_t *data, bool test_null_crtc) {
 	dp_idx = check_conn_type(data, DRM_MODE_CONNECTOR_DisplayPort);
 	igt_skip_on_f(edp_idx == -1, "no eDP connector found\n");
 
-	for_each_pipe_with_single_output(&data->display, pipe, output) {
+	/* check if eDP support PSR1, PSR-SU.
+	 * test_null_crtc test is valid only with PSR eDP connected
+	 */
+	igt_skip_on(!psr_mode_supported(data, PSR_MODE_1) && !psr_mode_supported(data, PSR_MODE_2));
+
+	for_each_connected_output(&data->display, output) {
 		if (output->config.connector->connector_type != DRM_MODE_CONNECTOR_eDP)
 			continue;
 
@@ -285,7 +293,7 @@ static void run_check_psr(data_t *data, bool test_null_crtc) {
 				    1.0, 0.0, &ref_fb2);
 
 		igt_plane_set_fb(data->primary, &ref_fb);
-		igt_output_set_pipe(output, pipe);
+
 		igt_display_commit_atomic(&data->display, DRM_MODE_ATOMIC_ALLOW_MODESET, 0);
 
 		for (i = 0; i < N_FLIPS; i++) {
@@ -299,29 +307,26 @@ static void run_check_psr(data_t *data, bool test_null_crtc) {
 			igt_require(ret == 0);
 			kmstest_wait_for_pageflip(data->fd);
 		}
-	}
 
-	/* PSR state takes some time to settle its value on static screen */
-	sleep(PSR_SETTLE_DELAY);
-
-	for_each_pipe_with_single_output(&data->display, pipe, output) {
-		if (output->config.connector->connector_type != DRM_MODE_CONNECTOR_eDP)
-			continue;
+		/* PSR state takes some time to settle its value on static screen */
+		sleep(PSR_SETTLE_DELAY);
 
 		psr_state =  igt_amd_read_psr_state(data->fd, output->name);
 		igt_fail_on_f(psr_state < PSR_STATE0, "Open PSR state debugfs failed\n");
 		igt_fail_on_f(psr_state < PSR_STATE1, "PSR was not enabled for connector %s\n", output->name);
 		igt_fail_on_f(psr_state == PSR_STATE_INVALID, "PSR is invalid for connector %s\n", output->name);
 		igt_fail_on_f(psr_state != PSR_STATE3, "PSR state is expected to be at PSR_STATE3 (Active) on a "
-
 			      "static screen for connector %s\n", output->name);
+
+		igt_remove_fb(data->fd, &ref_fb);
+		igt_remove_fb(data->fd, &ref_fb2);
 	}
 
 	if (test_null_crtc) {
 		/* check whether settings crtc to null generated any warning (eDP+DP) */
 		igt_skip_on_f(dp_idx == -1, "no DP connector found\n");
 
-		for_each_pipe_with_single_output(&data->display, pipe, output) {
+		for_each_connected_output(&data->display, output) {
 			if (output->config.connector->connector_type != DRM_MODE_CONNECTOR_DisplayPort)
 				continue;
 
@@ -330,9 +335,6 @@ static void run_check_psr(data_t *data, bool test_null_crtc) {
 		}
 	}
 
-	igt_remove_fb(data->fd, &ref_fb);
-	igt_remove_fb(data->fd, &ref_fb2);
-	close(fd);
 	test_fini(data);
 }
 
@@ -363,7 +365,7 @@ static void run_check_psr_su_mpo(data_t *data, bool scaling, float scaling_ratio
 	}
 
 	/* run the test i.i.f. eDP panel supports and kernel driver both support PSR-SU  */
-	igt_skip_on(!psr_su_supported(data));
+	igt_skip_on(!psr_mode_supported(data, PSR_MODE_2));
 
 	/* reference background pattern in grey */
 	igt_create_color_fb(data->fd, data->w, data->h, DRM_FORMAT_XRGB8888, DRM_FORMAT_MOD_LINEAR,
@@ -504,7 +506,7 @@ static void run_check_psr_su_ffu(data_t *data)
 	test_init(data);
 
 	/* run the test i.i.f. eDP panel supports and kernel driver both support PSR-SU  */
-	igt_skip_on(!psr_su_supported(data));
+	igt_skip_on(!psr_mode_supported(data, PSR_MODE_2));
 
 	/* reference background pattern in grey */
 	igt_create_color_fb(data->fd, data->w, data->h, DRM_FORMAT_XRGB8888, DRM_FORMAT_MOD_LINEAR,
@@ -616,7 +618,7 @@ static void run_check_psr_su_cursor(data_t *data, bool test_mpo)
 	igt_skip_on_f(edp_idx == -1, "no eDP connector found\n");
 
 	test_init(data);
-	igt_skip_on(!psr_su_supported(data));
+	igt_skip_on(!psr_mode_supported(data, PSR_MODE_2));
 
 	frame_rate = data->mode->vrefresh;
 

@@ -1037,7 +1037,9 @@ bool igt_amd_psr_support_sink(int drm_fd, char *connector_name, enum psr_mode mo
 		return false;
 
 	if (mode == PSR_MODE_1)
-		return strstr(buf, "Sink support: yes [0x01]");
+		return strstr(buf, "Sink support: yes [0x01]") ||
+		       strstr(buf, "Sink support: yes [0x03]") ||
+		       strstr(buf, "Sink support: yes [0x04]");
 	else
 		return strstr(buf, "Sink support: yes [0x03]") ||
 		       strstr(buf, "Sink support: yes [0x04]");
