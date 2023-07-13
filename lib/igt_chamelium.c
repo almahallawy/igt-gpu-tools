@@ -2903,6 +2903,13 @@ struct chamelium *chamelium_init(int drm_fd, igt_display_t *display)
 	chamelium->drm_fd = dup(drm_fd);
 	IGT_INIT_LIST_HEAD(&chamelium->edids);
 
+	/*
+	 * Reset the chamelium and do a disabling modeset for
+	 * TypeC connector to come up nicely
+	 */
+	chamelium_reset(chamelium);
+	igt_modeset_disable_all_outputs(display);
+
 	if (!chamelium_read_port_mappings(chamelium, drm_fd))
 		goto error;
 
