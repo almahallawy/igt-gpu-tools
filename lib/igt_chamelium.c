@@ -99,6 +99,7 @@ struct chamelium_port {
 	char *name;
 	bool adapter_allowed;
 	char *connector_path;
+	bool is_mapped;
 };
 
 struct chamelium_frame_dump {
@@ -2721,6 +2722,7 @@ static bool chamelium_autodiscover(struct chamelium *chamelium)
 			igt_info("Failed to auto-discover port %d\n", port_id);
 			goto unplug_port;
 		}
+		port->is_mapped = true;
 		is_any_port_mapped = true;
 
 		/* If we found a connector for our port, increment the number of valid Chamelium ports. */
@@ -2746,9 +2748,10 @@ unplug_port:
 	}
 
 	/* After we're all set, turn on all supported ports */
-	for (i = 0; i < chamelium->port_count; i++) {
+	for (i = 0; i < CHAMELIUM_MAX_PORTS; i++) {
 		struct chamelium_port *port = &chamelium->ports[i];
-		chamelium_plug(chamelium, port);
+		if (port->is_mapped)
+			chamelium_plug(chamelium, port);
 	}
 	sleep(CHAMELIUM_HOTPLUG_DETECTION_DELAY);
 
