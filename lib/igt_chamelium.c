@@ -2638,6 +2638,43 @@ static bool get_connector_id_for_port(struct chamelium *chamelium,
 	return false;
 }
 
+static void selective_sort_ports(struct chamelium_port *ports) {
+    int mapped_count = 0;
+    int unmapped_count = 0;
+    int mapped_index = 0;
+    int unmapped_index = mapped_count;
+    struct chamelium_port sorted_ports[CHAMELIUM_MAX_PORTS];
+
+    /*
+     * Count the number of mapped and unmapped ports
+     */
+    for (int i = 0; i < CHAMELIUM_MAX_PORTS; i++) {
+        if (ports[i].is_mapped) {
+            mapped_count++;
+        } else {
+            unmapped_count++;
+        }
+    }
+
+    /*
+     * Rearrange the ports such that mapped ports are at the start
+     */
+    unmapped_index = mapped_count;
+
+    for (int i = 0; i < CHAMELIUM_MAX_PORTS; i++) {
+        if (ports[i].is_mapped) {
+            sorted_ports[mapped_index++] = ports[i];
+        } else {
+            sorted_ports[unmapped_index++] = ports[i];
+        }
+    }
+
+    /*
+     * Copy the sorted ports back to the original array
+     */
+    memcpy(ports, sorted_ports, CHAMELIUM_MAX_PORTS * sizeof(struct chamelium_port));
+}
+
 /**
  * chamelium_autodiscover: automagically discover the Chamelium port mapping
  *
@@ -2755,6 +2792,10 @@ unplug_port:
 	}
 	sleep(CHAMELIUM_HOTPLUG_DETECTION_DELAY);
 
+	/*
+	 * Sort the ports based on the is_mapped flag
+	 */
+	selective_sort_ports(chamelium->ports);
 	elapsed_ns = igt_nsec_elapsed(&start);
 	igt_debug("Auto-discovery took %fms and found %i connector(s)\n",
 		  (float)elapsed_ns / (1000 * 1000), chamelium->port_count);
