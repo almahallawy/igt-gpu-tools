@@ -22,6 +22,8 @@
 
 #include "igt.h"
 
+IGT_TEST_DESCRIPTION("Test Color Features for DRM conformance");
+
 /* (De)gamma LUT. */
 typedef struct lut {
 	struct drm_color_lut *data;
@@ -409,8 +411,11 @@ igt_main
 		igt_display_require_output(&data.display);
 	}
 
+	igt_describe("Tests correctness of linear degamma on CRTC");
 	igt_subtest("crtc-linear-degamma") test_crtc_linear_degamma(&data);
+	igt_describe("Tests correctness of linear regamma on CRTC");
 	igt_subtest("crtc-linear-regamma") test_crtc_linear_regamma(&data);
+	igt_describe("Tests color accuracy of CRTC degamma and regamma");
 	igt_subtest("crtc-lut-accuracy") test_crtc_lut_accuracy(&data);
 
 	igt_fixture
