@@ -45,6 +45,11 @@ static unsigned int measured_usleep(unsigned int usec)
 	return igt_nsec_elapsed(&ts) / 1000;
 }
 
+/**
+ * SUBTEST: gt-c6-on-idle
+ * Description: Validate GT C6 state on idle
+ * Run type: BAT
+ */
 static bool is_gt_in_c6(int fd, int gt)
 {
 	char gt_c_state[16];
@@ -101,6 +106,11 @@ igt_main
 		fd = drm_open_driver(DRIVER_XE);
 		igt_require(!IS_PONTEVECCHIO(xe_dev_id(fd)));
 	}
+
+	igt_describe("Validate GT C6 on idle");
+	igt_subtest("gt-c6-on-idle")
+		xe_for_each_gt(fd, gt)
+			igt_assert_f(igt_wait(is_gt_in_c6(fd, gt), 1000, 1), "GT not in C6\n");
 
 	igt_describe("Validate idle residency measured over a time interval is within the tolerance");
 	igt_subtest("idle-residency")
