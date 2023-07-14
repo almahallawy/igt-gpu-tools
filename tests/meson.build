@@ -287,6 +287,7 @@ xe_progs = [
 	'xe_module_load',
 	'xe_noexec_ping_pong',
 	'xe_pm',
+	'xe_pm_residency',
 	'xe_prime_self_import',
 	'xe_query',
 	'xe_sysfs_tile',
