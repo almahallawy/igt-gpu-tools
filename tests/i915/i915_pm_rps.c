@@ -1015,20 +1015,23 @@ static void sysfs_set_u32(int dir, const char *attr, uint32_t set)
 static void test_thresholds(int i915, unsigned int gt, unsigned int flags)
 {
 	uint64_t ahnd = get_reloc_ahnd(i915, 0);
+	unsigned int def_up = 0, def_down = 0;
 	const unsigned int points = 10;
-	unsigned int def_up, def_down;
 	igt_spin_t *spin = NULL;
 	const intel_ctx_t *ctx;
 	unsigned int *ta, *tb;
 	unsigned int i;
 	int sysfs;
+	bool ret;
 
 	sysfs = igt_sysfs_gt_open(i915, gt);
 	igt_require(sysfs >= 0);
 
 	/* Feature test */
-	def_up = igt_sysfs_get_u32(sysfs, "rps_up_threshold_pct");
-	def_down = igt_sysfs_get_u32(sysfs, "rps_down_threshold_pct");
+	ret = __igt_sysfs_get_u32(sysfs, "rps_up_threshold_pct", &def_up);
+	igt_require(ret);
+	ret = __igt_sysfs_get_u32(sysfs, "rps_down_threshold_pct", &def_down);
+	igt_require(ret);
 	igt_require(def_up && def_down);
 
 	/* Check invalid percentages are rejected */
