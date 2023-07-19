@@ -7,6 +7,8 @@ intelci_files = [
   'blacklist-pre-merge.txt',
   'xe-fast-feedback.testlist',
   'xe.blocklist.txt',
+  'chamelium.blacklist',
+  'psr.blacklist',
 ]
 
 install_data(sources : intelci_files, install_dir : datadir)
