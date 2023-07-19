@@ -211,24 +211,30 @@ igt_main
 	igt_subtest("basic")
 		run_test(fd, 2);
 
-	igt_describe("Check with parallel execution.");
-	igt_subtest("normal") {
-		intel_allocator_multiprocess_start();
-		igt_fork(child, ncpus)
-			run_test(fd, count);
-		igt_waitchildren();
-		intel_allocator_multiprocess_stop();
-	}
+	igt_subtest_group {
+		igt_fixture {
+			intel_allocator_multiprocess_start();
+		}
 
-	igt_describe("Check with interrupts in parallel execution.");
-	igt_subtest("interruptible") {
-		intel_allocator_multiprocess_start();
-		igt_fork_signal_helper();
-		igt_fork(child, ncpus)
-			run_test(fd, count);
-		igt_waitchildren();
-		igt_stop_signal_helper();
-		intel_allocator_multiprocess_stop();
+		igt_describe("Check with parallel execution.");
+		igt_subtest("normal") {
+			igt_fork(child, ncpus)
+				run_test(fd, count);
+			igt_waitchildren();
+		}
+
+		igt_describe("Check with interrupts in parallel execution.");
+		igt_subtest("interruptible") {
+			igt_fork_signal_helper();
+			igt_fork(child, ncpus)
+				run_test(fd, count);
+			igt_waitchildren();
+			igt_stop_signal_helper();
+		}
+
+		igt_fixture {
+			intel_allocator_multiprocess_stop();
+		}
 	}
 
 	igt_fixture {

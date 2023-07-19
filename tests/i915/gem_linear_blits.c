@@ -312,24 +312,30 @@ igt_main
 	igt_subtest("basic")
 		run_test(fd, 2, do_relocs);
 
-	igt_describe("The intent is to push beyond the working GTT size to force"
-			" the driver to rebind the buffers");
-	igt_subtest("normal") {
-		intel_allocator_multiprocess_start();
-		igt_fork(child, ncpus)
-			run_test(fd, count, do_relocs);
-		igt_waitchildren();
-		intel_allocator_multiprocess_stop();
-	}
+	igt_subtest_group {
+		igt_fixture {
+			intel_allocator_multiprocess_start();
+		}
 
-	igt_describe("Test with interrupts in between the parent process");
-	igt_subtest("interruptible") {
-		intel_allocator_multiprocess_start();
-		igt_fork_signal_helper();
-		igt_fork(child, ncpus)
-			run_test(fd, count, do_relocs);
-		igt_waitchildren();
-		igt_stop_signal_helper();
-		intel_allocator_multiprocess_stop();
+		igt_describe("The intent is to push beyond the working GTT size to force"
+				" the driver to rebind the buffers");
+		igt_subtest("normal") {
+			igt_fork(child, ncpus)
+				run_test(fd, count, do_relocs);
+			igt_waitchildren();
+		}
+
+		igt_describe("Test with interrupts in between the parent process");
+		igt_subtest("interruptible") {
+			igt_fork_signal_helper();
+			igt_fork(child, ncpus)
+				run_test(fd, count, do_relocs);
+			igt_waitchildren();
+			igt_stop_signal_helper();
+		}
+
+		igt_fixture {
+			intel_allocator_multiprocess_stop();
+		}
 	}
 }

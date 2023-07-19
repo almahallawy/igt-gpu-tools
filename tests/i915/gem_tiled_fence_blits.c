@@ -325,13 +325,21 @@ igt_main
 	igt_subtest("basic")
 		run_test(fd, 2, end);
 
-	igt_describe("Check with parallel execution.");
-	igt_subtest("normal") {
-		intel_allocator_multiprocess_start();
-		igt_fork(child, ncpus)
-			run_test(fd, count, end);
-		igt_waitchildren();
-		intel_allocator_multiprocess_stop();
+	igt_subtest_group {
+		igt_fixture {
+			intel_allocator_multiprocess_start();
+		}
+
+		igt_describe("Check with parallel execution.");
+		igt_subtest("normal") {
+			igt_fork(child, ncpus)
+					run_test(fd, count, end);
+			igt_waitchildren();
+		}
+
+		igt_fixture {
+			intel_allocator_multiprocess_stop();
+		}
 	}
 
 	igt_fixture

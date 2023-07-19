@@ -75,7 +75,7 @@
  *
  * SUBTEST: allocator-fork
  * Category: Infrastructure
- * Description: Check if multiple processes can use alloctor.
+ * Description: Check if multiple processes can use allocator.
  * Feature: mapping
  * Functionality: command submission
  * Run type: FULL
@@ -1060,13 +1060,6 @@ static void test_allocator_fork(int fd)
 	struct drm_i915_gem_exec_object2 objects[num_reserved];
 	uint64_t ahnd, ressize = 4096;
 
-	/*
-	 * Must be called before opening allocator in multiprocess environment
-	 * due to freeing previous allocator infrastructure and proper setup
-	 * of data structures and allocation thread.
-	 */
-	intel_allocator_multiprocess_start();
-
 	ahnd = intel_allocator_open(fd, 0, INTEL_ALLOCATOR_SIMPLE);
 	__reserve(ahnd, fd, true, objects, num_reserved, ressize);
 
@@ -1084,8 +1077,6 @@ static void test_allocator_fork(int fd)
 
 	ahnd = intel_allocator_open(fd, 0, INTEL_ALLOCATOR_SIMPLE);
 	igt_assert(intel_allocator_close(ahnd) == true);
-
-	intel_allocator_multiprocess_stop();
 }
 
 #define BATCH_SIZE (4096<<10)
@@ -1197,7 +1188,6 @@ static void test_allocator_evict(int fd, const intel_ctx_t *ctx,
 	igt_debug("Using %'d batches to fill %'llu aperture on %d engines\n",
 		  count, (long long)size, nengine);
 
-	intel_allocator_multiprocess_start();
 	ahnd = intel_allocator_open_full(fd, 0, 0, size / 16,
 					 INTEL_ALLOCATOR_RELOC,
 					 ALLOC_STRATEGY_NONE, 0);
@@ -1266,7 +1256,6 @@ static void test_allocator_evict(int fd, const intel_ctx_t *ctx,
 	igt_waitchildren();
 
 	intel_allocator_close(ahnd);
-	intel_allocator_multiprocess_stop();
 
 	for (unsigned i = 0; i < count; i++) {
 		munmap(batches[i].ptr, BATCH_SIZE);
@@ -1666,14 +1655,6 @@ igt_main
 			test_allocator_nopin(fd, true);
 		}
 
-		igt_describe("Check if multiple processes can use alloctor.");
-		igt_subtest("allocator-fork")
-			test_allocator_fork(fd);
-
-		igt_describe("Exercise eviction with softpinning.");
-		test_each_engine("allocator-evict", fd, ctx, e)
-			test_allocator_evict(fd, ctx, e->flags, 20);
-
 		igt_describe("Use same offset for all engines and for different handles.");
 		igt_subtest("evict-single-offset")
 			evict_single_offset(fd, ctx, 20);
@@ -1696,6 +1677,25 @@ igt_main
 			}
 			igt_dynamic("all")
 				evict_prime(fd, ctx, NULL, 4);
+		}
+	}
+
+	igt_subtest_group {
+		igt_fixture {
+			igt_require(gem_uses_full_ppgtt(fd));
+			intel_allocator_multiprocess_start();
+		}
+
+		igt_describe("Check if multiple processes can use allocator.");
+		igt_subtest("allocator-fork")
+			test_allocator_fork(fd);
+
+		igt_describe("Exercise eviction with softpinning.");
+		test_each_engine("allocator-evict", fd, ctx, e)
+			test_allocator_evict(fd, ctx, e->flags, 20);
+
+		igt_fixture {
+			intel_allocator_multiprocess_stop();
 		}
 	}
 

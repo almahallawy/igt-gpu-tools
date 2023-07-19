@@ -456,6 +456,8 @@ igt_main
 		igt_require(ring_size);
 
 		ctx = intel_ctx_create_all_physical(fd);
+
+		intel_allocator_multiprocess_start();
 	}
 
 	/* Legacy path for selecting "rings". */
@@ -467,13 +469,11 @@ igt_main
 			for_each_ring(e, fd) {
 				igt_dynamic_f("%s", e->name) {
 					igt_require(gem_can_store_dword(fd, eb_ring(e)));
-					intel_allocator_multiprocess_start();
 					run_test(fd, intel_ctx_0(fd),
 						 eb_ring(e),
 						 m->flags,
 						 m->timeout);
 					gem_quiescent_gpu(fd);
-					intel_allocator_multiprocess_stop();
 				}
 			}
 		}
@@ -491,13 +491,11 @@ igt_main
 					continue;
 
 				igt_dynamic_f("%s", e->name) {
-					intel_allocator_multiprocess_start();
 					run_test(fd, ctx,
 						 e->flags,
 						 m->flags,
 						 m->timeout);
 					gem_quiescent_gpu(fd);
-					intel_allocator_multiprocess_stop();
 				}
 			}
 		}
@@ -506,7 +504,6 @@ igt_main
 	igt_describe("Basic check to fill the ring upto maximum on all engines simultaneously.");
 	igt_subtest("basic-all") {
 		const struct intel_execution_engine2 *e;
-		intel_allocator_multiprocess_start();
 
 		for_each_ctx_engine(fd, ctx, e) {
 			if (!gem_class_can_store_dword(fd, e->class))
@@ -517,10 +514,10 @@ igt_main
 		}
 
 		igt_waitchildren();
-		intel_allocator_multiprocess_stop();
 	}
 
 	igt_fixture {
+		intel_allocator_multiprocess_stop();
 		intel_ctx_destroy(fd, ctx);
 		drm_close_driver(fd);
 	}

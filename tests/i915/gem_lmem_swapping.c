@@ -708,7 +708,6 @@ static void test_evict(int i915,
 	if (flags & TEST_PARALLEL) {
 		int fd = drm_reopen_driver(i915);
 
-		intel_allocator_multiprocess_start();
 		ctx = intel_ctx_create_all_physical(fd);
 		__gem_context_set_persistence(fd, ctx->id, false);
 
@@ -719,7 +718,6 @@ static void test_evict(int i915,
 		igt_waitchildren();
 		intel_ctx_destroy(fd, ctx);
 		drm_close_driver(fd);
-		intel_allocator_multiprocess_stop();
 	} else {
 		__do_evict(i915, ctx, &region->region, &params, params.seed);
 	}
@@ -932,6 +930,7 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 		igt_require(__num_engines__);
 		ctx = intel_ctx_create_all_physical(i915);
 		__gem_context_set_persistence(i915, ctx->id, false);
+		intel_allocator_multiprocess_start();
 
 	}
 
@@ -946,6 +945,7 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 		test_smem_oom(i915, ctx, region);
 
 	igt_fixture {
+		intel_allocator_multiprocess_stop();
 		intel_ctx_destroy(i915, ctx);
 		free(regions);
 		drm_close_driver(i915);
