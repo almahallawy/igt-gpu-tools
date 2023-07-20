@@ -44,4 +44,6 @@ void xe_bind_unbind_async(int fd, uint32_t vm, uint32_t bind_engine,
 			  struct igt_list_head *obj_list,
 			  uint32_t sync_in, uint32_t sync_out);
 
+bool xe_is_gt_in_c6(int fd, int gt);
+
 #endif /* XE_UTIL_H */

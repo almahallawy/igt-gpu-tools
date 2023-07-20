@@ -18,6 +18,7 @@
 #include "xe_drm.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
+#include "xe/xe_util.h"
 
 #include <string.h>
 #include <sys/time.h>
@@ -218,7 +219,7 @@ static void test_freq_basic_api(int fd, int gt_id)
  * Run type: FULL
  */
 
-static void test_freq_fixed(int fd, int gt_id)
+static void test_freq_fixed(int fd, int gt_id, bool gt_idle)
 {
 	uint32_t rpn = get_freq(fd, gt_id, "rpn");
 	uint32_t rpe = get_freq(fd, gt_id, "rpe");
@@ -235,13 +236,26 @@ static void test_freq_fixed(int fd, int gt_id)
 	igt_assert(set_freq(fd, gt_id, "max", rpn) > 0);
 	usleep(ACT_FREQ_LATENCY_US);
 	igt_assert(get_freq(fd, gt_id, "cur") == rpn);
-	igt_assert(get_freq(fd, gt_id, "act") == rpn);
+
+	if (gt_idle) {
+		/* Wait for GT to go in C6 as previous get_freq wakes up GT*/
+		igt_assert(igt_wait(xe_is_gt_in_c6(fd, gt_id), 1000, 10));
+		igt_assert(get_freq(fd, gt_id, "act") == 0);
+	} else {
+		igt_assert(get_freq(fd, gt_id, "act") == rpn);
+	}
 
 	igt_assert(set_freq(fd, gt_id, "min", rpe) > 0);
 	igt_assert(set_freq(fd, gt_id, "max", rpe) > 0);
 	usleep(ACT_FREQ_LATENCY_US);
 	igt_assert(get_freq(fd, gt_id, "cur") == rpe);
-	igt_assert(get_freq(fd, gt_id, "act") == rpe);
+
+	if (gt_idle) {
+		igt_assert(igt_wait(xe_is_gt_in_c6(fd, gt_id), 1000, 10));
+		igt_assert(get_freq(fd, gt_id, "act") == 0);
+	} else {
+		igt_assert(get_freq(fd, gt_id, "act") == rpe);
+	}
 
 	igt_assert(set_freq(fd, gt_id, "min", rp0) > 0);
 	igt_assert(set_freq(fd, gt_id, "max", rp0) > 0);
@@ -252,6 +266,11 @@ static void test_freq_fixed(int fd, int gt_id)
 	 * and respecting our request, by propagating it to the hardware.
 	 */
 	igt_assert(get_freq(fd, gt_id, "cur") == rp0);
+
+	if (gt_idle) {
+		igt_assert(igt_wait(xe_is_gt_in_c6(fd, gt_id), 1000, 10));
+		igt_assert(get_freq(fd, gt_id, "act") == 0);
+	}
 
 	igt_debug("Finished testing fixed request\n");
 }
@@ -266,7 +285,7 @@ static void test_freq_fixed(int fd, int gt_id)
  * Run type: FULL
  */
 
-static void test_freq_range(int fd, int gt_id)
+static void test_freq_range(int fd, int gt_id, bool gt_idle)
 {
 	uint32_t rpn = get_freq(fd, gt_id, "rpn");
 	uint32_t rpe = get_freq(fd, gt_id, "rpe");
@@ -279,8 +298,14 @@ static void test_freq_range(int fd, int gt_id)
 	usleep(ACT_FREQ_LATENCY_US);
 	cur = get_freq(fd, gt_id, "cur");
 	igt_assert(rpn <= cur && cur <= rpe);
-	act = get_freq(fd, gt_id, "act");
-	igt_assert(rpn <= act && act <= rpe);
+
+	if (gt_idle) {
+		igt_assert(igt_wait(xe_is_gt_in_c6(fd, gt_id), 1000, 10));
+		igt_assert(get_freq(fd, gt_id, "act") == 0);
+	} else {
+		act = get_freq(fd, gt_id, "act");
+		igt_assert(rpn <= act && act <= rpe);
+	}
 
 	igt_debug("Finished testing range request\n");
 }
@@ -385,7 +410,8 @@ igt_main
 
 	igt_subtest("freq_fixed_idle") {
 		xe_for_each_gt(fd, gt) {
-			test_freq_fixed(fd, gt);
+			igt_require(igt_wait(xe_is_gt_in_c6(fd, gt), 1000, 10));
+			test_freq_fixed(fd, gt, true);
 		}
 	}
 
@@ -398,14 +424,15 @@ igt_main
 					igt_debug("Execution Finished\n");
 				}
 			/* While exec in threads above, let's check the freq */
-			test_freq_fixed(fd, gt);
+			test_freq_fixed(fd, gt, false);
 			igt_waitchildren();
 		}
 	}
 
 	igt_subtest("freq_range_idle") {
 		xe_for_each_gt(fd, gt) {
-			test_freq_range(fd, gt);
+			igt_require(igt_wait(xe_is_gt_in_c6(fd, gt), 1000, 10));
+			test_freq_range(fd, gt, true);
 		}
 	}
 
@@ -418,7 +445,7 @@ igt_main
 					igt_debug("Execution Finished\n");
 				}
 			/* While exec in threads above, let's check the freq */
-			test_freq_range(fd, gt);
+			test_freq_range(fd, gt, false);
 			igt_waitchildren();
 		}
 	}

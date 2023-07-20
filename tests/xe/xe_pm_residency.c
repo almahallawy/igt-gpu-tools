@@ -15,6 +15,7 @@
 #include "igt_sysfs.h"
 
 #include "xe/xe_query.h"
+#include "xe/xe_util.h"
 
 #define SLEEP_DURATION 3000 /* in milliseconds */
 
@@ -28,6 +29,16 @@ const double tolerance = 0.1;
 		     (tol) * 100.0, (tol) * 100.0, \
 		     (double)(ref))
 
+/**
+ * SUBTEST: gt-c6-on-idle
+ * Description: Validate GT C6 state on idle
+ * Run type: BAT
+ *
+ * SUBTEST: idle-residency
+ * Description: basic residency test to validate idle residency
+ *		measured over a time interval is within the tolerance
+ * Run type: FULL
+ */
 IGT_TEST_DESCRIPTION("Tests for gtidle properties");
 
 static unsigned int measured_usleep(unsigned int usec)
@@ -45,24 +56,6 @@ static unsigned int measured_usleep(unsigned int usec)
 	return igt_nsec_elapsed(&ts) / 1000;
 }
 
-/**
- * SUBTEST: gt-c6-on-idle
- * Description: Validate GT C6 state on idle
- * Run type: BAT
- */
-static bool is_gt_in_c6(int fd, int gt)
-{
-	char gt_c_state[16];
-	int gt_fd;
-
-	gt_fd = xe_sysfs_gt_open(fd, gt);
-	igt_assert(gt_fd >= 0);
-	igt_assert(igt_sysfs_scanf(gt_fd, "gtidle/idle_status", "%s", gt_c_state) == 1);
-	close(gt_fd);
-
-	return strcmp(gt_c_state, "gt-c6") == 0;
-}
-
 static unsigned long read_idle_residency(int fd, int gt)
 {
 	unsigned long residency = 0;
@@ -76,17 +69,11 @@ static unsigned long read_idle_residency(int fd, int gt)
 	return residency;
 }
 
-/**
- * SUBTEST: idle-residency
- * Description: basic residency test to validate idle residency
- *		measured over a time interval is within the tolerance
- * Run type: FULL
- */
 static void test_idle_residency(int fd, int gt)
 {
 	unsigned long elapsed_ms, residency_start, residency_end;
 
-	igt_assert_f(igt_wait(is_gt_in_c6(fd, gt), 1000, 1), "GT not in C6\n");
+	igt_assert_f(igt_wait(xe_is_gt_in_c6(fd, gt), 1000, 1), "GT not in C6\n");
 
 	residency_start = read_idle_residency(fd, gt);
 	elapsed_ms = measured_usleep(SLEEP_DURATION * 1000) / 1000;
@@ -110,7 +97,7 @@ igt_main
 	igt_describe("Validate GT C6 on idle");
 	igt_subtest("gt-c6-on-idle")
 		xe_for_each_gt(fd, gt)
-			igt_assert_f(igt_wait(is_gt_in_c6(fd, gt), 1000, 1), "GT not in C6\n");
+			igt_assert_f(igt_wait(xe_is_gt_in_c6(fd, gt), 1000, 1), "GT not in C6\n");
 
 	igt_describe("Validate idle residency measured over a time interval is within the tolerance");
 	igt_subtest("idle-residency")
