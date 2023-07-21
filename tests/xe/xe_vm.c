@@ -812,6 +812,12 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci)
 	igt_assert_eq(data[0].data, 0xc0ffee);
 
 	syncobj_destroy(fd, sync[0].handle);
+	sync[0].handle = syncobj_create(fd, 0);
+	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+	xe_vm_unbind_all_async(fd, vm, 0, bo, sync, 1);
+	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
+
+	syncobj_destroy(fd, sync[0].handle);
 	for (i = 0; i < N_ENGINES; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
 		xe_engine_destroy(fd, engines[i]);
