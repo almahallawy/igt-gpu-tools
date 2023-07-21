@@ -689,10 +689,18 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
  * Description: Test independent bind engines
  * Functionality: bind engines
  * Run type: BAT
+ *
+ * SUBTEST: bind-engines-conflict
+ * Description: Test conflict bind engines
+ * Functionality: bind engines
+ * Run type: BAT
  */
 
+#define CONFLICT	(0x1 << 0)
+
 static void
-test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci)
+test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci,
+			      unsigned int flags)
 {
 	uint32_t vm;
 	uint64_t addr = 0x1a0000;
@@ -759,7 +767,7 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci)
 			xe_spin_wait_started(&data[i].spin);
 
 			/* Do bind to 1st engine blocked on cork */
-			addr += bo_size;
+			addr += (flags & CONFLICT) ? (0x1 << 21) : bo_size;
 			sync[1].flags &= ~DRM_XE_SYNC_SIGNAL;
 			sync[1].handle = syncobjs[e];
 			xe_vm_bind_async(fd, vm, bind_engines[e], bo, 0, addr,
@@ -795,10 +803,20 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci)
 		xe_exec(fd, &exec);
 	}
 
-	/* Verify initial bind, bind + write to 2nd engine done */
-	igt_assert(syncobj_wait(fd, &syncobjs[1], 1, INT64_MAX, 0, NULL));
-	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
-	igt_assert_eq(data[1].data, 0xc0ffee);
+	if (!(flags & CONFLICT)) {
+		/* Verify initial bind, bind + write to 2nd engine done */
+		igt_assert(syncobj_wait(fd, &syncobjs[1], 1, INT64_MAX, 0,
+					NULL));
+		igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0,
+					NULL));
+		igt_assert_eq(data[1].data, 0xc0ffee);
+	} else {
+		/* Let jobs runs for a bit */
+		usleep(100000);
+		/* bind + write to 2nd engine waiting */
+		igt_assert(!syncobj_wait(fd, &syncobjs[1], 1, 1, 0, NULL));
+		igt_assert(!syncobj_wait(fd, &sync[0].handle, 1, 0, 0, NULL));
+	}
 
 	/* Verify bind + write to 1st engine still inflight */
 	igt_assert(!syncobj_wait(fd, &syncobjs[0], 1, 1, 0, NULL));
@@ -810,6 +828,13 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci)
 	igt_assert(syncobj_wait(fd, &syncobjs[N_ENGINES], 1, INT64_MAX, 0,
 				NULL));
 	igt_assert_eq(data[0].data, 0xc0ffee);
+
+	if (flags & CONFLICT) {
+		/* Verify bind + write to 2nd engine done */
+		igt_assert(syncobj_wait(fd, &syncobjs[1], 1, INT64_MAX, 0,
+					NULL));
+		igt_assert_eq(data[1].data, 0xc0ffee);
+	}
 
 	syncobj_destroy(fd, sync[0].handle);
 	sync[0].handle = syncobj_create(fd, 0);
@@ -2001,7 +2026,11 @@ igt_main
 
 	igt_subtest("bind-engines-independent")
 		xe_for_each_hw_engine(fd, hwe)
-			test_bind_engines_independent(fd, hwe);
+			test_bind_engines_independent(fd, hwe, 0);
+
+	igt_subtest("bind-engines-conflict")
+		xe_for_each_hw_engine(fd, hwe)
+			test_bind_engines_independent(fd, hwe, CONFLICT);
 
 	igt_subtest("bind-array-twice")
 		xe_for_each_hw_engine(fd, hwe)
