@@ -74,6 +74,7 @@ static int validate_entries(int fd, const char *add_path, const char * const str
 static void
 test_base(int fd, struct drm_xe_query_config *config)
 {
+	uint16_t devid = intel_get_drm_devid(fd);
 	static const char * const expected_files[] = {
 		"gt0",
 		"gt1",
@@ -86,7 +87,6 @@ test_base(int fd, struct drm_xe_query_config *config)
 		"clients",
 		"name"
 	};
-
 	char reference[4096];
 	int val = 0;
 
@@ -104,16 +104,19 @@ test_base(int fd, struct drm_xe_query_config *config)
 
 	igt_assert(igt_debugfs_search(fd, "info", reference));
 
-	switch (config->info[XE_QUERY_CONFIG_VA_BITS]) {
-	case 48:
-		val = 3;
-		break;
-	case 57:
-		val = 4;
-		break;
+	if (!AT_LEAST_GEN(devid, 20)) {
+		switch (config->info[XE_QUERY_CONFIG_VA_BITS]) {
+		case 48:
+			val = 3;
+			break;
+		case 57:
+			val = 4;
+			break;
+		}
+
+		sprintf(reference, "vm_max_level %d", val);
+		igt_assert(igt_debugfs_search(fd, "info", reference));
 	}
-	sprintf(reference, "vm_max_level %d", val);
-	igt_assert(igt_debugfs_search(fd, "info", reference));
 
 	igt_assert(igt_debugfs_exists(fd, "gt0", O_RDONLY));
 	if (config->info[XE_QUERY_CONFIG_GT_COUNT] > 1)
