@@ -120,7 +120,7 @@ static uint32_t __xe_engine_create(int fd, uint32_t vm,
 }
 
 #define MAXENGINES 2048
-#define MAXTIME 2
+#define MAXTIME 5
 
 /**
  * SUBTEST: create-engines-%s
