@@ -371,9 +371,6 @@ test_query_config(int fd)
 	igt_info("  XE_QUERY_CONFIG_FLAGS_HAS_VRAM\t%s\n",
 		config->info[XE_QUERY_CONFIG_FLAGS] &
 		XE_QUERY_CONFIG_FLAGS_HAS_VRAM ? "ON":"OFF");
-	igt_info("  XE_QUERY_CONFIG_FLAGS_USE_GUC\t\t%s\n",
-		config->info[XE_QUERY_CONFIG_FLAGS] &
-		XE_QUERY_CONFIG_FLAGS_USE_GUC ? "ON":"OFF");
 	igt_info("XE_QUERY_CONFIG_MIN_ALIGNEMENT\t\t%#llx\n",
 		config->info[XE_QUERY_CONFIG_MIN_ALIGNEMENT]);
 	igt_info("XE_QUERY_CONFIG_VA_BITS\t\t\t%llu\n",

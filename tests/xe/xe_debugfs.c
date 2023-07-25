@@ -104,10 +104,6 @@ test_base(int fd, struct drm_xe_query_config *config)
 
 	igt_assert(igt_debugfs_search(fd, "info", reference));
 
-	sprintf(reference, "enable_guc %s", config->info[XE_QUERY_CONFIG_FLAGS] &
-		XE_QUERY_CONFIG_FLAGS_USE_GUC ? "yes" : "no");
-	igt_assert(igt_debugfs_search(fd, "info", reference));
-
 	sprintf(reference, "tile_count %lld", config->info[XE_QUERY_CONFIG_GT_COUNT]);
 	igt_assert(igt_debugfs_search(fd, "info", reference));
 

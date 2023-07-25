@@ -3,8 +3,8 @@
  * Copyright © 2023 Intel Corporation
  */
 
-#ifndef _UAPI_XE_DRM_H_
-#define _UAPI_XE_DRM_H_
+#ifndef _XE_DRM_H_
+#define _XE_DRM_H_
 
 #include "drm.h"
 
@@ -180,7 +180,7 @@ struct drm_xe_query_mem_region {
 	 * zero.
 	 */
 	__u64 used;
-	/*
+	/**
 	 * @cpu_visible_size: How much of this region can be CPU
 	 * accessed, in bytes.
 	 *
@@ -246,7 +246,6 @@ struct drm_xe_query_config {
 #define XE_QUERY_CONFIG_REV_AND_DEVICE_ID	0
 #define XE_QUERY_CONFIG_FLAGS			1
 	#define XE_QUERY_CONFIG_FLAGS_HAS_VRAM		(0x1 << 0)
-	#define XE_QUERY_CONFIG_FLAGS_USE_GUC		(0x1 << 1)
 #define XE_QUERY_CONFIG_MIN_ALIGNEMENT		2
 #define XE_QUERY_CONFIG_VA_BITS			3
 #define XE_QUERY_CONFIG_GT_COUNT		4
@@ -1051,4 +1050,4 @@ struct drm_xe_vm_madvise {
 }
 #endif
 
-#endif /* _UAPI_XE_DRM_H_ */
+#endif /* _XE_DRM_H_ */
