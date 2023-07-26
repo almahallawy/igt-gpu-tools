@@ -149,7 +149,7 @@ static void store_all(int fd, int gt, int class)
 		eci[num_placements++] = *hwe;
 	}
 
-	igt_require(num_placements > 1);
+	igt_require(num_placements);
 
 	for (i = 0; i < num_placements; i++) {
 		struct drm_xe_engine_create create = {
