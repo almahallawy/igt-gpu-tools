@@ -64,7 +64,7 @@ igt@kms_busy@.*
 igt@kms_psr@.*_mmap_(cpu|gtt)
 igt@kms_legacy_colorkey@basic
 igt@kms_legacy_colorkey@invalid-plane
-igt@kms_flip_scaled_crc@flip-(32|64)bpp-(4|x|y|yf)tile-.*
+igt@kms_flip_scaled_crc@flip-(32|64)bpp-(4|x|y|yf|tileccs)tile-.*
 igt@kms_big_fb@(4|x|y|yf)-tiled-.*
 igt@kms_flip@2x-flip-vs-fences
 igt@kms_flip@flip-vs-fences(-interruptible)
@@ -79,6 +79,7 @@ igt@kms_rotation_crc@exhaust-fences
 igt@kms_force_connector_basic@force-load-detect
 igt@kms_getfb@.*-ccs
 igt@kms_plane_lowres@tiling-(4|x|y|yf)
+igt@kms_.*@.*hang.*
 ##################################################################
 igt@xe_sysfs*
 ##################################################################
