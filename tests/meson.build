@@ -291,6 +291,7 @@ xe_progs = [
 	'xe_prime_self_import',
 	'xe_query',
 	'xe_sysfs_tile',
+	'xe_uevent',
 	'xe_vm',
 	'xe_waitfence',
 	'xe_spin_batch',
