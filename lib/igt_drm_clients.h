@@ -8,6 +8,8 @@
 
 #include <stdint.h>
 
+#include "lib/igt_drm_fdinfo.h"
+
 /**
  * SECTION:igt_drm_clients
  * @short_description: Parsing driver exposed fdinfo to track DRM clients
@@ -39,12 +41,20 @@ struct igt_drm_client_engines {
 	char **names; /* Array of engine names, either auto-detected or from the passed in engine map. */
 };
 
+struct igt_drm_client_regions {
+	unsigned int num_regions; /* Number of discovered memory_regions. */
+	unsigned int max_region_id; /* Largest memory region index discovered.
+				       (Can differ from num_regions - 1 when using the region map facility.) */
+	char **names; /* Array of region names, either auto-detected or from the passed in region map. */
+};
+
 struct igt_drm_clients;
 
 struct igt_drm_client {
 	struct igt_drm_clients *clients; /* Owning list. */
 
 	enum igt_drm_client_status status;
+	struct igt_drm_client_regions *regions; /* Memory regions present in this client, to map with memory usage. */
 	struct igt_drm_client_engines *engines; /* Engines used by this client, to map with busynees data. */
 	unsigned int id; /* DRM client id from fdinfo. */
 	unsigned int drm_minor; /* DRM minor of this client. */
@@ -57,6 +67,7 @@ struct igt_drm_client {
 	unsigned long last_runtime; /* Aggregate busyness on all engines since previous scan. */
 	unsigned long *val; /* Array of engine busyness data, relative to previous scan. */
 	uint64_t *last; /* Array of engine busyness data as parsed from fdinfo. */
+	struct drm_client_meminfo *memory; /* Array of region memory utilisation as parsed from fdinfo. */
 };
 
 struct igt_drm_clients {

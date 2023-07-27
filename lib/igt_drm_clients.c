@@ -103,6 +103,8 @@ igt_drm_client_update(struct igt_drm_client *c, unsigned int pid, char *name,
 			c->clients->max_name_len = len;
 	}
 
+	/* Engines */
+
 	c->last_runtime = 0;
 	c->total_runtime = 0;
 
@@ -116,6 +118,13 @@ igt_drm_client_update(struct igt_drm_client *c, unsigned int pid, char *name,
 		c->val[i] = info->busy[i] - c->last[i];
 		c->last_runtime += c->val[i];
 		c->last[i] = info->busy[i];
+	}
+
+	/* Memory regions */
+	for (i = 0; i <= c->regions->max_region_id; i++) {
+		assert(i < ARRAY_SIZE(info->region_mem));
+
+		c->memory[i] = info->region_mem[i];
 	}
 
 	c->samples++;
@@ -154,6 +163,8 @@ igt_drm_client_add(struct igt_drm_clients *clients,
 	c->id = info->id;
 	c->drm_minor = drm_minor;
 	c->clients = clients;
+
+	/* Engines */
 	c->engines = malloc(sizeof(*c->engines));
 	assert(c->engines);
 	memset(c->engines, 0, sizeof(*c->engines));
@@ -177,6 +188,27 @@ igt_drm_client_add(struct igt_drm_clients *clients,
 	c->val = calloc(c->engines->max_engine_id + 1, sizeof(c->val));
 	c->last = calloc(c->engines->max_engine_id + 1, sizeof(c->last));
 	assert(c->val && c->last);
+
+	/* Memory regions */
+	c->regions = malloc(sizeof(*c->regions));
+	assert(c->regions);
+	memset(c->regions, 0, sizeof(*c->regions));
+	c->regions->names = calloc(info->last_region_index + 1,
+				   sizeof(*c->regions->names));
+	assert(c->regions->names);
+
+	for (i = 0; i <= info->last_region_index; i++) {
+		/* Region map is allowed to be sparse. */
+		if (!info->region_names[i][0])
+			continue;
+
+		c->regions->names[i] = strdup(info->region_names[i]);
+		assert(c->regions->names[i]);
+		c->regions->num_regions++;
+		c->regions->max_region_id = i;
+	}
+	c->memory = calloc(c->regions->max_region_id + 1, sizeof(*c->memory));
+	assert(c->memory);
 
 	igt_drm_client_update(c, pid, name, info);
 }
