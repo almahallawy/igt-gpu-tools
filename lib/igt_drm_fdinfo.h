@@ -30,7 +30,16 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define DRM_CLIENT_FDINFO_MAX_REGIONS 16
 #define DRM_CLIENT_FDINFO_MAX_ENGINES 16
+
+struct drm_client_meminfo {
+	uint64_t total;
+	uint64_t shared;
+	uint64_t resident;
+	uint64_t purgeable;
+	uint64_t active;
+};
 
 struct drm_client_fdinfo {
 	char driver[128];
@@ -42,6 +51,11 @@ struct drm_client_fdinfo {
 	unsigned int capacity[DRM_CLIENT_FDINFO_MAX_ENGINES];
 	char names[DRM_CLIENT_FDINFO_MAX_ENGINES][256];
 	uint64_t busy[DRM_CLIENT_FDINFO_MAX_ENGINES];
+
+	unsigned int num_regions;
+	unsigned int last_region_index;
+	char region_names[DRM_CLIENT_FDINFO_MAX_REGIONS][256];
+	struct drm_client_meminfo region_mem[DRM_CLIENT_FDINFO_MAX_REGIONS];
 };
 
 /**
@@ -51,13 +65,16 @@ struct drm_client_fdinfo {
  * @info: Structure to populate with read data. Must be zeroed.
  * @name_map: Optional array of strings representing engine names
  * @map_entries: Number of strings in the names array
+ * @region_map: Optional array of strings representing memory regions
+ * @region_entries: Number of strings in the region map
  *
  * Returns the number of valid drm fdinfo keys found or zero if not all
  * mandatory keys were present or no engines found.
  */
 unsigned int
 igt_parse_drm_fdinfo(int drm_fd, struct drm_client_fdinfo *info,
-		     const char **name_map, unsigned int map_entries);
+		     const char **name_map, unsigned int map_entries,
+		     const char **region_map, unsigned int region_entries);
 
 /**
  * __igt_parse_drm_fdinfo: Parses the drm fdinfo file
@@ -67,6 +84,8 @@ igt_parse_drm_fdinfo(int drm_fd, struct drm_client_fdinfo *info,
  * @info: Structure to populate with read data. Must be zeroed.
  * @name_map: Optional array of strings representing engine names
  * @map_entries: Number of strings in the names array
+ * @region_map: Optional array of strings representing memory regions
+ * @region_entries: Number of strings in the region map
  *
  * Returns the number of valid drm fdinfo keys found or zero if not all
  * mandatory keys were present or no engines found.
@@ -74,6 +93,7 @@ igt_parse_drm_fdinfo(int drm_fd, struct drm_client_fdinfo *info,
 unsigned int
 __igt_parse_drm_fdinfo(int dir, const char *fd,
 		       struct drm_client_fdinfo *info,
-		       const char **name_map, unsigned int map_entries);
+		       const char **name_map, unsigned int map_entries,
+		       const char **region_map, unsigned int region_entries);
 
 #endif /* IGT_DRM_FDINFO_H */

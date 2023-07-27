@@ -2307,7 +2307,7 @@ static bool has_drm_fdinfo(const struct igt_device_card *card)
 	if (fd < 0)
 		return false;
 
-	cnt = igt_parse_drm_fdinfo(fd, &info, NULL, 0);
+	cnt = igt_parse_drm_fdinfo(fd, &info, NULL, 0, NULL, 0);
 
 	close(fd);
 

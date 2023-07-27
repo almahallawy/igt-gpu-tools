@@ -104,7 +104,7 @@ static void basics(int i915, unsigned int num_classes)
 	unsigned int ret;
 
 	ret = igt_parse_drm_fdinfo(i915, &info, engine_map,
-				   ARRAY_SIZE(engine_map));
+				   ARRAY_SIZE(engine_map), NULL, 0);
 	igt_assert(ret);
 
 	igt_assert(!strcmp(info.driver, "i915"));
@@ -174,7 +174,7 @@ static uint64_t read_busy(int i915, unsigned int class)
 	struct drm_client_fdinfo info = { };
 
 	igt_assert(igt_parse_drm_fdinfo(i915, &info, engine_map,
-					ARRAY_SIZE(engine_map)));
+					ARRAY_SIZE(engine_map), NULL, 0));
 
 	return info.busy[class];
 }
@@ -264,7 +264,7 @@ static void read_busy_all(int i915, uint64_t *val)
 	struct drm_client_fdinfo info = { };
 
 	igt_assert(igt_parse_drm_fdinfo(i915, &info, engine_map,
-					ARRAY_SIZE(engine_map)));
+					ARRAY_SIZE(engine_map), NULL, 0));
 
 	memcpy(val, info.busy, sizeof(info.busy));
 }
@@ -736,7 +736,7 @@ igt_main
 		i915 = __drm_open_driver(DRIVER_INTEL);
 
 		igt_require_gem(i915);
-		igt_require(igt_parse_drm_fdinfo(i915, &info, NULL, 0));
+		igt_require(igt_parse_drm_fdinfo(i915, &info, NULL, 0, NULL, 0));
 
 		ctx = intel_ctx_create_all_physical(i915);
 

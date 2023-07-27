@@ -124,13 +124,82 @@ static const char *find_kv(const char *buf, const char *key, size_t keylen)
 	return *p ? p : NULL;
 }
 
+static int parse_region(char *line, struct drm_client_fdinfo *info,
+			size_t prefix_len,
+			const char **region_map, unsigned int region_entries,
+			uint64_t *val)
+{
+	char *name, *p, *unit = NULL;
+	ssize_t name_len;
+	int found = -1;
+	unsigned int i;
+
+	p = index(line, ':');
+	if (!p || p == line)
+		return -1;
+
+	name_len = p - line - prefix_len;
+	if (name_len < 1)
+		return -1;
+
+	name = line + prefix_len;
+
+	if (region_map) {
+		for (i = 0; i < region_entries; i++) {
+			if (!strncmp(name, region_map[i], name_len)) {
+				found = i;
+				break;
+			}
+		}
+	} else {
+		for (i = 0; i < info->num_regions; i++) {
+			if (!strncmp(name, info->region_names[i], name_len)) {
+				found = i;
+				break;
+			}
+		}
+
+		if (found < 0) {
+			assert((info->num_regions + 1) < ARRAY_SIZE(info->region_names));
+			assert((strlen(name) + 1) < sizeof(info->region_names[0]));
+			strncpy(info->region_names[info->num_regions], name, name_len);
+			found = info->num_regions;
+		}
+	}
+
+	if (found < 0)
+		goto out;
+
+	while (*++p && isspace(*p))
+		;
+	*val = strtoull(p, NULL, 10);
+
+	p = index(p, ' ');
+	if (!p)
+		goto out;
+
+	unit = ++p;
+	if (!strcmp(unit, "KiB")) {
+		*val *= 1024;
+	} else if (!strcmp(unit, "MiB")) {
+		*val *= 1024 * 1024;
+	} else if (!strcmp(unit, "GiB")) {
+		*val *= 1024 * 1024 * 1024;
+	}
+
+out:
+	return found;
+}
+
 unsigned int
 __igt_parse_drm_fdinfo(int dir, const char *fd, struct drm_client_fdinfo *info,
-		       const char **name_map, unsigned int map_entries)
+		       const char **name_map, unsigned int map_entries,
+		       const char **region_map, unsigned int region_entries)
 {
+	bool regions_found[DRM_CLIENT_FDINFO_MAX_REGIONS] = { };
+	unsigned int good = 0, num_capacity = 0;
 	char buf[4096], *_buf = buf;
 	char *l, *ctx = NULL;
-	unsigned int good = 0, num_capacity = 0;
 	size_t count;
 
 	count = read_fdinfo(buf, sizeof(buf), dir, fd);
@@ -173,18 +242,79 @@ __igt_parse_drm_fdinfo(int dir, const char *fd, struct drm_client_fdinfo *info,
 				info->capacity[idx] = val;
 				num_capacity++;
 			}
+		} else if (!strncmp(l, "drm-total-", 10)) {
+			idx = parse_region(l, info, strlen("drm-total-"),
+					   region_map, region_entries, &val);
+			if (idx >= 0) {
+				info->region_mem[idx].total = val;
+				if (!regions_found[idx]) {
+					info->num_regions++;
+					regions_found[idx] = true;
+					if (idx > info->last_region_index)
+						info->last_region_index = idx;
+				}
+			}
+		} else if (!strncmp(l, "drm-shared-", 11)) {
+			idx = parse_region(l, info, strlen("drm-shared-"),
+					   region_map, region_entries, &val);
+			if (idx >= 0) {
+				info->region_mem[idx].shared = val;
+				if (!regions_found[idx]) {
+					info->num_regions++;
+					regions_found[idx] = true;
+					if (idx > info->last_region_index)
+						info->last_region_index = idx;
+				}
+			}
+		} else if (!strncmp(l, "drm-resident-", 13)) {
+			idx = parse_region(l, info, strlen("drm-resident-"),
+					   region_map, region_entries, &val);
+			if (idx >= 0) {
+				info->region_mem[idx].resident = val;
+				if (!regions_found[idx]) {
+					info->num_regions++;
+					regions_found[idx] = true;
+					if (idx > info->last_region_index)
+						info->last_region_index = idx;
+				}
+			}
+		} else if (!strncmp(l, "drm-purgeable-", 14)) {
+			idx = parse_region(l, info, strlen("drm-purgeable-"),
+					   region_map, region_entries, &val);
+			if (idx >= 0) {
+				info->region_mem[idx].purgeable = val;
+				if (!regions_found[idx]) {
+					info->num_regions++;
+					regions_found[idx] = true;
+					if (idx > info->last_region_index)
+						info->last_region_index = idx;
+				}
+			}
+		} else if (!strncmp(l, "drm-active-", 11)) {
+			idx = parse_region(l, info, strlen("drm-active-"),
+					   region_map, region_entries, &val);
+			if (idx >= 0) {
+				info->region_mem[idx].active = val;
+				if (!regions_found[idx]) {
+					info->num_regions++;
+					regions_found[idx] = true;
+					if (idx > info->last_region_index)
+						info->last_region_index = idx;
+				}
+			}
 		}
 	}
 
-	if (good < 2 || !info->num_engines)
+	if (good < 2 || (!info->num_engines && !info->num_regions))
 		return 0; /* fdinfo format not as expected */
 
-	return good + info->num_engines + num_capacity;
+	return good + info->num_engines + num_capacity + info->num_regions;
 }
 
 unsigned int
 igt_parse_drm_fdinfo(int drm_fd, struct drm_client_fdinfo *info,
-		     const char **name_map, unsigned int map_entries)
+		     const char **name_map, unsigned int map_entries,
+		     const char **region_map, unsigned int region_entries)
 {
 	unsigned int res;
 	char fd[64];
@@ -198,7 +328,8 @@ igt_parse_drm_fdinfo(int drm_fd, struct drm_client_fdinfo *info,
 	if (dir < 0)
 		return false;
 
-	res = __igt_parse_drm_fdinfo(dir, fd, info, name_map, map_entries);
+	res = __igt_parse_drm_fdinfo(dir, fd, info, name_map, map_entries,
+				     region_map, region_entries);
 
 	close(dir);
 

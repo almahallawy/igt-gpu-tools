@@ -491,7 +491,8 @@ igt_drm_clients_scan(struct igt_drm_clients *clients,
 
 			if (!__igt_parse_drm_fdinfo(dirfd(fdinfo_dir),
 						    fdinfo_dent->d_name, &info,
-						    name_map, map_entries))
+						    name_map, map_entries,
+						    NULL, 0))
 				continue;
 
 			if (filter_client && !filter_client(clients, &info))
