@@ -1729,9 +1729,10 @@ static void run_pair(int duration, int flags)
 					crtc_idxs[0] = n;
 					crtc_idxs[1] = m;
 
-					/* Limit the execution to PIPE_A combination for hang tests */
+					/* Limit the execution to 2 CRTCs (first & last) for hang tests */
 					if ((flags & TEST_HANG) && !all_pipes &&
-					    (n != 0 && n != resources->count_crtcs))
+					    ((n != 0 && n != resources->count_crtcs) ||
+					    m != resources->count_crtcs - 1))
 						continue;
 
 					run_test_on_crtc_set(&o, crtc_idxs,
