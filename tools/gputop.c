@@ -28,6 +28,7 @@
 
 #include "igt_drm_clients.h"
 #include "igt_drm_fdinfo.h"
+#include "drmtest.h"
 
 static const char *bars[] = { " ", "▏", "▎", "▍", "▌", "▋", "▊", "▉", "█" };
 
@@ -80,7 +81,11 @@ print_client_header(struct igt_drm_client *c, int lines, int con_w, int con_h,
 		return lines;
 
 	putchar('\n');
-	len = printf("%*s ", c->clients->max_pid_len, "PID");
+	if (c->regions->num_regions)
+		len = printf("%*s      MEM      RSS ",
+			     c->clients->max_pid_len, "PID");
+	else
+		len = printf("%*s ", c->clients->max_pid_len, "PID");
 
 	if (c->engines->num_engines) {
 		unsigned int i;
@@ -122,11 +127,27 @@ newheader(const struct igt_drm_client *c, const struct igt_drm_client *pc)
 }
 
 static int
+print_size(uint64_t sz)
+{
+	char units[] = {'B', 'K', 'M', 'G'};
+	unsigned int u;
+
+	for (u = 0; u < ARRAY_SIZE(units) - 1; u++) {
+		if (sz < 1024)
+			break;
+		sz /= 1024;
+	}
+
+	return printf("%7"PRIu64"%c ", sz, units[u]);
+}
+
+static int
 print_client(struct igt_drm_client *c, struct igt_drm_client **prevc,
 	     double t, int lines, int con_w, int con_h,
 	     unsigned int period_us, int *engine_w)
 {
 	unsigned int i;
+	uint64_t sz;
 	int len;
 
 	/* Filter out idle clients. */
@@ -143,6 +164,17 @@ print_client(struct igt_drm_client *c, struct igt_drm_client **prevc,
 	*prevc = c;
 
 	len = printf("%*s ", c->clients->max_pid_len, c->pid_str);
+
+	if (c->regions->num_regions) {
+		for (sz = 0, i = 0; i < c->regions->max_region_id; i++)
+			sz += c->memory[i].total;
+		len += print_size(sz);
+
+		for (sz = 0, i = 0; i < c->regions->max_region_id; i++)
+			sz += c->memory[i].resident;
+		len += print_size(sz);
+	}
+
 	lines++;
 
 	for (i = 0; c->samples > 1 && i <= c->engines->max_engine_id; i++) {
