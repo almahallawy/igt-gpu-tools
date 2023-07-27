@@ -680,7 +680,7 @@ static void create_ext_set_pat(int fd)
 	 * supported.
 	 */
 	igt_skip_on_f(ret == -EINVAL ||
-		      (ret == -ENODEV && IS_METEORLAKE(devid)),
+		      (ret == -ENODEV && !IS_METEORLAKE(devid)),
 		      "I915_GEM_CREATE_EXT_SET_PAT is not supported\n");
 
 	/*
