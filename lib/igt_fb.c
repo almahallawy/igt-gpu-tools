@@ -2529,7 +2529,7 @@ static bool use_enginecopy(const struct igt_fb *fb)
 	if (!is_intel_device(fb->fd))
 		return false;
 
-	if (!is_xe_device(fb->fd) && blitter_ok(fb))
+	if (blitter_ok(fb))
 		return false;
 
 	return fb->modifier == I915_FORMAT_MOD_Yf_TILED ||
@@ -3038,9 +3038,7 @@ static void free_linear_mapping(struct fb_blit_upload *blit)
 		igt_nouveau_delete_bo(&linear->fb);
 	} else if (is_xe_device(fd)) {
 		gem_munmap(linear->map, linear->fb.size);
-		copy_with_engine(blit, fb, &linear->fb);
-
-		syncobj_wait(fd, &blit->ibb->engine_syncobj, 1, INT64_MAX, 0, NULL);
+		blitcopy(fb, &linear->fb);
 		gem_close(fd, linear->fb.gem_handle);
 	} else {
 		gem_munmap(linear->map, linear->fb.size);
@@ -3120,7 +3118,7 @@ static void setup_linear_mapping(struct fb_blit_upload *blit)
 
 		linear->map = igt_nouveau_mmap_bo(&linear->fb, PROT_READ | PROT_WRITE);
 	} else if (is_xe_device(fd)) {
-		copy_with_engine(blit, &linear->fb, fb);
+		blitcopy(&linear->fb, fb);
 
 		linear->map = xe_bo_mmap_ext(fd, linear->fb.gem_handle,
 					     linear->fb.size, PROT_READ | PROT_WRITE);
