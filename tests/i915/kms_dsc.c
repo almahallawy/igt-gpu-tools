@@ -42,6 +42,24 @@ IGT_TEST_DESCRIPTION("Test to validate display stream compression");
 #define TEST_DSC_FORMAT		(1<<1)
 #define TEST_DSC_OUTPUT_FORMAT	(1<<2)
 
+/*
+ * Starting from gen11, intel driver supports DSC1.1. For validating
+ * DSC, the first step is to verify if the sink supports DSC.
+ * If the sink does support DSC, we will validate different
+ * scenarios by forcing dsc. Outline of the tests is as follows:
+ * (i) basic modeset (ii) input bpc (iii) pixel formats
+ * (iv) output formats
+ * In the basic subtest, we perform modeset with default parameters.
+ * Input bpc and pixel formats subtests, we perform modeset
+ * with different input bpc (12/10/8) and pixel formats (YUV/RGB),
+ * respectively. From MTL+, we can verify DSC YCBCR420 output format.
+ * The tests are executed with the RGB444 output format by default.
+ * However, in the output-format subtest, we verify different
+ * output formats (RGB/YCBCR444/YCBCR420). Also, test is added to
+ * validate output formats with different input bpc (12/10/8).
+ */
+
+
 typedef struct {
 	int drm_fd;
 	uint32_t devid;
