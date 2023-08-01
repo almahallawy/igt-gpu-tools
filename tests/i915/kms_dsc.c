@@ -37,6 +37,7 @@ IGT_TEST_DESCRIPTION("Test to validate display stream compression");
 enum dsc_test_type {
 	TEST_DSC_BASIC,
 	TEST_DSC_BPC,
+	TEST_DSC_FORMAT,
 	TEST_DSC_OUTPUT_FORMAT,
 };
 
@@ -302,7 +303,7 @@ igt_main_args("l", NULL, help_str, opt_handler, &data)
 		     "with default parameters and creating fb with diff formats");
 	igt_subtest_with_dynamic("dsc-with-formats") {
 		for (int k = 0; k < ARRAY_SIZE(format_list); k++)
-			test_dsc(&data, TEST_DSC_BASIC, 0,
+			test_dsc(&data, TEST_DSC_FORMAT, 0,
 				 format_list[k], DSC_FORMAT_RGB);
 	}
 
