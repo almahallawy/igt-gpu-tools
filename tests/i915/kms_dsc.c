@@ -350,6 +350,19 @@ igt_main_args("l", NULL, help_str, opt_handler, &data)
 				 output_format_list[k]);
 	}
 
+	igt_describe("Tests basic display stream compression functionality if supported "
+		     "by a connector by forcing DSC and output format on all connectors "
+		     "that support it with certain input BPC for the connector");
+	igt_subtest_with_dynamic("dsc-with-output-formats-with-bpc") {
+		for (int k = 0; k < ARRAY_SIZE(output_format_list); k++) {
+			for (int j = 0; j < ARRAY_SIZE(bpc_list); j++) {
+				test_dsc(&data, TEST_DSC_OUTPUT_FORMAT | TEST_DSC_BPC,
+					 bpc_list[j], DRM_FORMAT_XRGB8888,
+					 output_format_list[k]);
+			}
+		}
+	}
+
 	igt_fixture {
 		igt_display_fini(&data.display);
 		drm_close_driver(data.drm_fd);
