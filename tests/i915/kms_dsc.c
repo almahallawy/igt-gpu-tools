@@ -117,6 +117,7 @@ static void update_display(data_t *data, uint32_t test_type)
 	int ret;
 	bool enabled;
 	int index = 0;
+	int current_bpc = 0;
 	igt_plane_t *primary;
 	drmModeModeInfo *mode;
 	igt_output_t *output = data->output;
@@ -202,11 +203,17 @@ static void update_display(data_t *data, uint32_t test_type)
 
 	restore_force_dsc_en();
 
+	if (test_type & TEST_DSC_BPC) {
+		current_bpc = igt_get_pipe_current_bpc(data->drm_fd, data->pipe);
+		igt_skip_on_f(data->input_bpc != current_bpc,
+			      "Input bpc = %d is not equal to current bpc = %d\n",
+			      data->input_bpc, current_bpc);
+	}
+
 	igt_assert_f(enabled,
 		     "Default DSC enable failed on connector: %s pipe: %s\n",
 		     output->name,
 		     kmstest_pipe_name(data->pipe));
-
 reset:
 	test_reset(data);
 
