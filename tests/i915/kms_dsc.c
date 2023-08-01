@@ -35,6 +35,7 @@
 IGT_TEST_DESCRIPTION("Test to validate display stream compression");
 
 #define LEN		20
+#define DEFAULT_BPC	0
 
 #define TEST_DSC_BASIC		(0<<0)
 #define TEST_DSC_BPC		(1<<0)
@@ -300,7 +301,7 @@ igt_main_args("l", NULL, help_str, opt_handler, &data)
 		     "by a connector by forcing DSC on all connectors that support it "
 		     "with default parameters");
 	igt_subtest_with_dynamic("dsc-basic")
-			test_dsc(&data, TEST_DSC_BASIC, 0,
+			test_dsc(&data, TEST_DSC_BASIC, DEFAULT_BPC,
 				 DRM_FORMAT_XRGB8888, DSC_FORMAT_RGB);
 
 	igt_describe("Tests basic display stream compression functionality if supported "
@@ -308,7 +309,7 @@ igt_main_args("l", NULL, help_str, opt_handler, &data)
 		     "with default parameters and creating fb with diff formats");
 	igt_subtest_with_dynamic("dsc-with-formats") {
 		for (int k = 0; k < ARRAY_SIZE(format_list); k++)
-			test_dsc(&data, TEST_DSC_FORMAT, 0,
+			test_dsc(&data, TEST_DSC_FORMAT, DEFAULT_BPC,
 				 format_list[k], DSC_FORMAT_RGB);
 	}
 
@@ -339,7 +340,8 @@ igt_main_args("l", NULL, help_str, opt_handler, &data)
 		     "that support it");
 	igt_subtest_with_dynamic("dsc-with-output-formats") {
 		for (int k = 0; k < ARRAY_SIZE(output_format_list); k++)
-			test_dsc(&data, TEST_DSC_OUTPUT_FORMAT, 0, DRM_FORMAT_XRGB8888,
+			test_dsc(&data, TEST_DSC_OUTPUT_FORMAT, DEFAULT_BPC,
+				 DRM_FORMAT_XRGB8888,
 				 output_format_list[k]);
 	}
 
