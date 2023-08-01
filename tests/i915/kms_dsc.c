@@ -228,6 +228,8 @@ static void test_dsc(data_t *data, uint32_t test_type, int bpc,
 				{0},
 			    };
 
+	igt_require(check_gen11_bpc_constraint(data->drm_fd, data->input_bpc));
+
 	for_each_pipe_with_valid_output(display, pipe, output) {
 		data->output_format = output_format;
 		data->plane_format = plane_format;
@@ -235,17 +237,13 @@ static void test_dsc(data_t *data, uint32_t test_type, int bpc,
 		data->output = output;
 		data->pipe = pipe;
 
-		if (!is_dsc_supported_by_sink(data->drm_fd, data->output))
+		if (!(is_dsc_supported_by_sink(data->drm_fd, data->output) &&
+		      check_gen11_dp_constraint(data->drm_fd, data->output, data->pipe)))
 			continue;
 
-		if (!is_dsc_output_format_supported(data->drm_fd, data->disp_ver,
-						    data->output, data->output_format))
-			continue;
-
-		if (!check_gen11_dp_constraint(data->drm_fd, data->output, data->pipe))
-			continue;
-
-		if (!check_gen11_bpc_constraint(data->drm_fd, data->output, data->input_bpc))
+		if ((test_type & TEST_DSC_OUTPUT_FORMAT) &&
+		    (!is_dsc_output_format_supported(data->drm_fd, data->disp_ver,
+						     data->output, data->output_format)))
 			continue;
 
 		if (test_type & TEST_DSC_OUTPUT_FORMAT)

@@ -96,7 +96,7 @@ bool check_gen11_dp_constraint(int drmfd, igt_output_t *output, enum pipe pipe)
 }
 
 /* Max DSC Input BPC for ICL is 10 and for TGL+ is 12 */
-bool check_gen11_bpc_constraint(int drmfd, igt_output_t *output, int input_bpc)
+bool check_gen11_bpc_constraint(int drmfd, int input_bpc)
 {
 	uint32_t devid = intel_get_drm_devid(drmfd);
 
