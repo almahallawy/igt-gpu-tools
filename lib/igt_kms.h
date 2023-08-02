@@ -42,6 +42,12 @@
 /* Low-level helpers with kmstest_ prefix */
 
 /**
+ * Clients which do set cursor hotspot and treat the cursor plane
+ * like a mouse cursor should set this property.
+ */
+#define LOCAL_DRM_CLIENT_CAP_CURSOR_PLANE_HOTSPOT	6
+
+/**
  * pipe:
  * @PIPE_NONE: Invalid pipe, used for disconnecting a output from a pipe.
  * @PIPE_ANY: Deprecated alias for @PIPE_NONE.
@@ -318,6 +324,8 @@ enum igt_atomic_plane_properties {
        IGT_PLANE_ZPOS,
        IGT_PLANE_FB_DAMAGE_CLIPS,
        IGT_PLANE_SCALING_FILTER,
+       IGT_PLANE_HOTSPOT_X,
+       IGT_PLANE_HOTSPOT_Y,
        IGT_NUM_PLANE_PROPS
 };
 
@@ -448,6 +456,7 @@ struct igt_display {
 	igt_pipe_t *pipes;
 	bool has_cursor_plane;
 	bool is_atomic;
+	bool has_virt_cursor_plane;
 	bool first_commit;
 
 	uint64_t *modifiers;

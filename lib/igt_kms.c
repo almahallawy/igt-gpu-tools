@@ -601,6 +601,8 @@ const char * const igt_plane_prop_names[IGT_NUM_PLANE_PROPS] = {
 	[IGT_PLANE_CRTC_Y] = "CRTC_Y",
 	[IGT_PLANE_CRTC_W] = "CRTC_W",
 	[IGT_PLANE_CRTC_H] = "CRTC_H",
+	[IGT_PLANE_HOTSPOT_X] = "HOTSPOT_X",
+	[IGT_PLANE_HOTSPOT_Y] = "HOTSPOT_Y",
 	[IGT_PLANE_FB_ID] = "FB_ID",
 	[IGT_PLANE_CRTC_ID] = "CRTC_ID",
 	[IGT_PLANE_IN_FENCE_FD] = "IN_FENCE_FD",
@@ -2296,6 +2298,11 @@ static void igt_plane_reset(igt_plane_t *plane)
 	if (igt_plane_has_prop(plane, IGT_PLANE_SCALING_FILTER))
 		igt_plane_set_prop_enum(plane, IGT_PLANE_SCALING_FILTER, "Default");
 
+	if (igt_plane_has_prop(plane, IGT_PLANE_HOTSPOT_X))
+		igt_plane_set_prop_value(plane, IGT_PLANE_HOTSPOT_X, 0);
+	if (igt_plane_has_prop(plane, IGT_PLANE_HOTSPOT_Y))
+		igt_plane_set_prop_value(plane, IGT_PLANE_HOTSPOT_Y, 0);
+
 	igt_plane_clear_prop_changed(plane, IGT_PLANE_IN_FENCE_FD);
 	plane->values[IGT_PLANE_IN_FENCE_FD] = ~0ULL;
 	plane->gem_handle = 0;
@@ -2679,6 +2686,9 @@ void igt_display_require(igt_display_t *display, int drm_fd)
 	drmSetClientCap(drm_fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
 	if (drmSetClientCap(drm_fd, DRM_CLIENT_CAP_ATOMIC, 1) == 0)
 		display->is_atomic = 1;
+
+	if (drmSetClientCap(drm_fd, LOCAL_DRM_CLIENT_CAP_CURSOR_PLANE_HOTSPOT, 1) == 0)
+		display->has_virt_cursor_plane = 1;
 
 	plane_resources = drmModeGetPlaneResources(display->drm_fd);
 	igt_assert(plane_resources);
