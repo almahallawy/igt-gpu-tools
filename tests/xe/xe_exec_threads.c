@@ -23,7 +23,7 @@
 #include "xe/xe_spin.h"
 #include <string.h>
 
-#define MAX_N_ENGINES	16
+#define MAX_N_EXEC_QUEUES	16
 #define MAX_INSTANCE	9
 #define USERPTR		(0x1 << 0)
 #define REBIND		(0x1 << 1)
@@ -38,25 +38,25 @@
 #define VIRTUAL		(0x1 << 10)
 #define HANG		(0x1 << 11)
 #define REBIND_ERROR	(0x1 << 12)
-#define BIND_ENGINE	(0x1 << 13)
+#define BIND_EXEC_QUEUE	(0x1 << 13)
 
 pthread_barrier_t barrier;
 
 static void
 test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
-	      int class, int n_engines, int n_execs, unsigned int flags)
+	      int class, int n_exec_queues, int n_execs, unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
 	};
-	struct drm_xe_sync sync_all[MAX_N_ENGINES];
+	struct drm_xe_sync sync_all[MAX_N_EXEC_QUEUES];
 	struct drm_xe_exec exec = {
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t syncobjs[MAX_N_EXEC_QUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -69,7 +69,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 	int i, j, b, num_placements = 0;
 	bool owns_vm = false, owns_fd = false;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 
 	if (!fd) {
 		fd = drm_open_driver(DRIVER_XE);
@@ -113,17 +113,17 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 	memset(data, 0, bo_size);
 
 	memset(sync_all, 0, sizeof(sync_all));
-	for (i = 0; i < n_engines; i++) {
-		struct drm_xe_engine_create create = {
+	for (i = 0; i < n_exec_queues; i++) {
+		struct drm_xe_exec_queue_create create = {
 			.vm_id = vm,
 			.width = flags & PARALLEL ? num_placements : 1,
 			.num_placements = flags & PARALLEL ? 1 : num_placements,
 			.instances = to_user_pointer(eci),
 		};
 
-		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE,
+		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE,
 					&create), 0);
-		engines[i] = create.engine_id;
+		exec_queues[i] = create.exec_queue_id;
 		syncobjs[i] = syncobj_create(fd, 0);
 		sync_all[i].flags = DRM_XE_SYNC_SYNCOBJ;
 		sync_all[i].handle = syncobjs[i];
@@ -145,7 +145,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
 		uint64_t batches[MAX_INSTANCE];
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		for (j = 0; j < num_placements && flags & PARALLEL; ++j)
 			batches[j] = batch_addr;
@@ -162,7 +162,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = flags & PARALLEL ?
 			to_user_pointer(batches) : batch_addr;
 		if (e != i)
@@ -171,7 +171,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 
 		if (flags & REBIND && i && !(i & 0x1f)) {
 			xe_vm_unbind_async(fd, vm, 0, 0, addr, bo_size,
-					   sync_all, n_engines);
+					   sync_all, n_exec_queues);
 
 			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
 			addr += bo_size;
@@ -193,7 +193,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 				 * physical memory on next mmap call triggering
 				 * an invalidate.
 				 */
-				for (j = 0; j < n_engines; ++j)
+				for (j = 0; j < n_exec_queues; ++j)
 					igt_assert(syncobj_wait(fd,
 								&syncobjs[j], 1,
 								INT64_MAX, 0,
@@ -216,7 +216,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 		}
 	}
 
-	for (i = 0; i < n_engines; i++)
+	for (i = 0; i < n_exec_queues; i++)
 		igt_assert(syncobj_wait(fd, &syncobjs[i], 1, INT64_MAX, 0,
 					NULL));
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
@@ -230,9 +230,9 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 		igt_assert_eq(data[i].data, 0xc0ffee);
 
 	syncobj_destroy(fd, sync[0].handle);
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 	}
 
 	if (bo) {
@@ -250,7 +250,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 static void
 test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		  struct drm_xe_engine_class_instance *eci,
-		  int n_engines, int n_execs, unsigned int flags)
+		  int n_exec_queues, int n_execs, unsigned int flags)
 {
 #define USER_FENCE_VALUE	0xdeadbeefdeadbeefull
 	struct drm_xe_sync sync[1] = {
@@ -263,7 +263,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		.syncs = to_user_pointer(sync),
 	};
 	int64_t fence_timeout;
-	uint32_t engines[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -277,7 +277,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 	int map_fd = -1;
 	bool owns_vm = false, owns_fd = false;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 
 	if (!fd) {
 		fd = drm_open_driver(DRIVER_XE);
@@ -286,7 +286,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 
 	if (!vm) {
 		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
-				  XE_ENGINE_SET_PROPERTY_COMPUTE_MODE, 0);
+				  XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE, 0);
 		owns_vm = true;
 	}
 
@@ -313,15 +313,15 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 	}
 	memset(data, 0, bo_size);
 
-	for (i = 0; i < n_engines; i++) {
-		struct drm_xe_ext_engine_set_property ext = {
+	for (i = 0; i < n_exec_queues; i++) {
+		struct drm_xe_ext_exec_queue_set_property ext = {
 			.base.next_extension = 0,
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_COMPUTE_MODE,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
 			.value = 1,
 		};
 
-		engines[i] = xe_engine_create(fd, vm, eci,
+		exec_queues[i] = xe_exec_queue_create(fd, vm, eci,
 					      to_user_pointer(&ext));
 	};
 
@@ -346,7 +346,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		uint64_t batch_addr = addr + batch_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		b = 0;
 		data[i].batch[b++] = MI_STORE_DWORD_IMM_GEN4;
@@ -358,7 +358,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 
 		sync[0].addr = addr + (char *)&data[i].exec_sync - (char *)data;
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 		xe_exec(fd, &exec);
 
@@ -442,8 +442,8 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 	for (i = j; i < n_execs; i++)
 		igt_assert_eq(data[i].data, 0xc0ffee);
 
-	for (i = 0; i < n_engines; i++)
-		xe_engine_destroy(fd, engines[i]);
+	for (i = 0; i < n_exec_queues; i++)
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 
 	if (bo) {
 		munmap(data, bo_size);
@@ -462,22 +462,22 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 
 static void
 test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
-		 struct drm_xe_engine_class_instance *eci, int n_engines,
+		 struct drm_xe_engine_class_instance *eci, int n_exec_queues,
 		 int n_execs, int rebind_error_inject, unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
 	};
-	struct drm_xe_sync sync_all[MAX_N_ENGINES];
+	struct drm_xe_sync sync_all[MAX_N_EXEC_QUEUES];
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t bind_engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t bind_exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t syncobjs[MAX_N_EXEC_QUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -486,10 +486,10 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		uint64_t pad;
 		uint32_t data;
 	} *data;
-	int i, j, b, hang_engine = n_engines / 2;
+	int i, j, b, hang_exec_queue = n_exec_queues / 2;
 	bool owns_vm = false, owns_fd = false;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 
 	if (!fd) {
 		fd = drm_open_driver(DRIVER_XE);
@@ -525,23 +525,23 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 	memset(data, 0, bo_size);
 
 	memset(sync_all, 0, sizeof(sync_all));
-	for (i = 0; i < n_engines; i++) {
-		struct drm_xe_ext_engine_set_property preempt_timeout = {
+	for (i = 0; i < n_exec_queues; i++) {
+		struct drm_xe_ext_exec_queue_set_property preempt_timeout = {
 			.base.next_extension = 0,
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_PREEMPTION_TIMEOUT,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
 			.value = 1000,
 		};
 		uint64_t ext = to_user_pointer(&preempt_timeout);
 
-		if (flags & HANG && i == hang_engine)
-			engines[i] = xe_engine_create(fd, vm, eci, ext);
+		if (flags & HANG && i == hang_exec_queue)
+			exec_queues[i] = xe_exec_queue_create(fd, vm, eci, ext);
 		else
-			engines[i] = xe_engine_create(fd, vm, eci, 0);
-		if (flags & BIND_ENGINE)
-			bind_engines[i] = xe_bind_engine_create(fd, vm, 0);
+			exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
+		if (flags & BIND_EXEC_QUEUE)
+			bind_exec_queues[i] = xe_bind_exec_queue_create(fd, vm, 0);
 		else
-			bind_engines[i] = 0;
+			bind_exec_queues[i] = 0;
 		syncobjs[i] = syncobj_create(fd, 0);
 		sync_all[i].flags = DRM_XE_SYNC_SYNCOBJ;
 		sync_all[i].handle = syncobjs[i];
@@ -551,10 +551,10 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 
 	sync[0].handle = syncobj_create(fd, 0);
 	if (bo)
-		xe_vm_bind_async(fd, vm, bind_engines[0], bo, 0, addr,
+		xe_vm_bind_async(fd, vm, bind_exec_queues[0], bo, 0, addr,
 				 bo_size, sync, 1);
 	else
-		xe_vm_bind_userptr_async(fd, vm, bind_engines[0],
+		xe_vm_bind_userptr_async(fd, vm, bind_exec_queues[0],
 					 to_user_pointer(data), addr,
 					 bo_size, sync, 1);
 
@@ -566,9 +566,9 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
 		uint64_t exec_addr;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
-		if (flags & HANG && e == hang_engine && i == e) {
+		if (flags & HANG && e == hang_exec_queue && i == e) {
 			xe_spin_init(&data[i].spin, spin_addr, false);
 			exec_addr = spin_addr;
 		} else {
@@ -587,11 +587,11 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = exec_addr;
 		if (e != i && !(flags & HANG))
 			 syncobj_reset(fd, &syncobjs[e], 1);
-		if ((flags & HANG && e == hang_engine) ||
+		if ((flags & HANG && e == hang_exec_queue) ||
 		    rebind_error_inject > 0) {
 			int err;
 
@@ -606,25 +606,25 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		    (!(i & 0x1f) || rebind_error_inject == i)) {
 #define INJECT_ERROR	(0x1 << 31)
 			if (rebind_error_inject == i)
-				__xe_vm_bind_assert(fd, vm, bind_engines[e],
+				__xe_vm_bind_assert(fd, vm, bind_exec_queues[e],
 						    0, 0, addr, bo_size,
 						    XE_VM_BIND_OP_UNMAP |
 						    XE_VM_BIND_FLAG_ASYNC |
 						    INJECT_ERROR, sync_all,
-						    n_engines, 0, 0);
+						    n_exec_queues, 0, 0);
 			else
-				xe_vm_unbind_async(fd, vm, bind_engines[e],
+				xe_vm_unbind_async(fd, vm, bind_exec_queues[e],
 						   0, addr, bo_size,
-						   sync_all, n_engines);
+						   sync_all, n_exec_queues);
 
 			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
 			addr += bo_size;
 			if (bo)
-				xe_vm_bind_async(fd, vm, bind_engines[e],
+				xe_vm_bind_async(fd, vm, bind_exec_queues[e],
 						 bo, 0, addr, bo_size, sync, 1);
 			else
 				xe_vm_bind_userptr_async(fd, vm,
-							 bind_engines[e],
+							 bind_exec_queues[e],
 							 to_user_pointer(data),
 							 addr, bo_size, sync,
 							 1);
@@ -638,12 +638,12 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 				 * physical memory on next mmap call triggering
 				 * an invalidate.
 				 */
-				for (j = 0; j < n_engines; ++j)
+				for (j = 0; j < n_exec_queues; ++j)
 					igt_assert(syncobj_wait(fd,
 								&syncobjs[j], 1,
 								INT64_MAX, 0,
 								NULL));
-				if (!(flags & HANG && e == hang_engine))
+				if (!(flags & HANG && e == hang_exec_queue))
 					igt_assert_eq(data[i].data, 0xc0ffee);
 			} else if (i * 2 != n_execs) {
 				/*
@@ -662,32 +662,32 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		}
 	}
 
-	for (i = 0; i < n_engines; i++)
+	for (i = 0; i < n_exec_queues; i++)
 		igt_assert(syncobj_wait(fd, &syncobjs[i], 1, INT64_MAX, 0,
 					NULL));
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 
 	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
-	xe_vm_unbind_async(fd, vm, bind_engines[0], 0, addr,
+	xe_vm_unbind_async(fd, vm, bind_exec_queues[0], 0, addr,
 			   bo_size, sync, 1);
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 
 	for (i = flags & INVALIDATE ? n_execs - 1 : 0;
 	     i < n_execs; i++) {
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
-		if (flags & HANG && e == hang_engine)
+		if (flags & HANG && e == hang_exec_queue)
 			igt_assert_eq(data[i].data, 0x0);
 		else
 			igt_assert_eq(data[i].data, 0xc0ffee);
 	}
 
 	syncobj_destroy(fd, sync[0].handle);
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
-		if (bind_engines[i])
-			xe_engine_destroy(fd, bind_engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
+		if (bind_exec_queues[i])
+			xe_exec_queue_destroy(fd, bind_exec_queues[i]);
 	}
 
 	if (bo) {
@@ -714,7 +714,7 @@ struct thread_data {
 	uint32_t vm_legacy_mode;
 	uint32_t vm_compute_mode;
 	struct drm_xe_engine_class_instance *eci;
-	int n_engine;
+	int n_exec_queue;
 	int n_exec;
 	int flags;
 	int rebind_error_inject;
@@ -732,15 +732,15 @@ static void *thread(void *data)
 
 	if (t->flags & PARALLEL || t->flags & VIRTUAL)
 		test_balancer(t->fd, t->gt, t->vm_legacy_mode, t->addr,
-			      t->userptr, t->class, t->n_engine, t->n_exec,
+			      t->userptr, t->class, t->n_exec_queue, t->n_exec,
 			      t->flags);
 	else if (t->flags & COMPUTE_MODE)
 		test_compute_mode(t->fd, t->vm_compute_mode, t->addr,
-				  t->userptr, t->eci, t->n_engine, t->n_exec,
+				  t->userptr, t->eci, t->n_exec_queue, t->n_exec,
 				  t->flags);
 	else
 		test_legacy_mode(t->fd, t->vm_legacy_mode, t->addr, t->userptr,
-				 t->eci, t->n_engine, t->n_exec,
+				 t->eci, t->n_exec_queue, t->n_exec,
 				 t->rebind_error_inject, t->flags);
 
 	return NULL;
@@ -818,8 +818,8 @@ static void *vm_async_ops_err_thread(void *data)
  *	userptr
  * @rebind:
  *	rebind
- * @rebind-bindengine:
- *	rebind bindengine
+ * @rebind-bindexecqueue:
+ *	rebind bindexecqueue
  * @userptr-rebind:
  *	userptr rebind
  * @userptr-invalidate:
@@ -830,8 +830,8 @@ static void *vm_async_ops_err_thread(void *data)
  *	shared vm userptr
  * @shared-vm-rebind:
  *	shared vm rebind
- * @shared-vm-rebind-bindengine:
- *	shared vm rebind bindengine
+ * @shared-vm-rebind-bindexecqueue:
+ *	shared vm rebind bindexecqueue
  * @shared-vm-userptr-rebind:
  *	shared vm userptr rebind
  * @shared-vm-rebind-err:
@@ -1077,7 +1077,7 @@ static void threads(int fd, int flags)
 					      to_user_pointer(&ext));
 		vm_compute_mode = xe_vm_create(fd,
 					       DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
-					       XE_ENGINE_SET_PROPERTY_COMPUTE_MODE,
+					       XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
 					       0);
 
 		vm_err_thread.capture = &capture;
@@ -1101,8 +1101,8 @@ static void threads(int fd, int flags)
 		threads_data[i].vm_legacy_mode = vm_legacy_mode;
 		threads_data[i].vm_compute_mode = vm_compute_mode;
 		threads_data[i].eci = hwe;
-#define N_ENGINE	16
-		threads_data[i].n_engine = N_ENGINE;
+#define N_EXEC_QUEUE	16
+		threads_data[i].n_exec_queue = N_EXEC_QUEUE;
 #define N_EXEC		1024
 		threads_data[i].n_exec = N_EXEC;
 		if (flags & REBIND_ERROR)
@@ -1154,7 +1154,7 @@ static void threads(int fd, int flags)
 					threads_data[i].vm_legacy_mode =
 						vm_legacy_mode;
 					threads_data[i].class = class;
-					threads_data[i].n_engine = N_ENGINE;
+					threads_data[i].n_exec_queue = N_EXEC_QUEUE;
 					threads_data[i].n_exec = N_EXEC;
 					threads_data[i].flags = flags;
 					threads_data[i].flags &= ~BALANCER;
@@ -1182,7 +1182,7 @@ static void threads(int fd, int flags)
 					threads_data[i].vm_legacy_mode =
 						vm_legacy_mode;
 					threads_data[i].class = class;
-					threads_data[i].n_engine = N_ENGINE;
+					threads_data[i].n_exec_queue = N_EXEC_QUEUE;
 					threads_data[i].n_exec = N_EXEC;
 					threads_data[i].flags = flags;
 					threads_data[i].flags &= ~BALANCER;
@@ -1226,15 +1226,15 @@ igt_main
 		{ "basic", 0 },
 		{ "userptr", USERPTR },
 		{ "rebind", REBIND },
-		{ "rebind-bindengine", REBIND | BIND_ENGINE },
+		{ "rebind-bindexecqueue", REBIND | BIND_EXEC_QUEUE },
 		{ "userptr-rebind", USERPTR | REBIND },
 		{ "userptr-invalidate", USERPTR | INVALIDATE },
 		{ "userptr-invalidate-race", USERPTR | INVALIDATE | RACE },
 		{ "shared-vm-basic", SHARED_VM },
 		{ "shared-vm-userptr", SHARED_VM | USERPTR },
 		{ "shared-vm-rebind", SHARED_VM | REBIND },
-		{ "shared-vm-rebind-bindengine", SHARED_VM | REBIND |
-			BIND_ENGINE },
+		{ "shared-vm-rebind-bindexecqueue", SHARED_VM | REBIND |
+			BIND_EXEC_QUEUE },
 		{ "shared-vm-userptr-rebind", SHARED_VM | USERPTR | REBIND },
 		{ "shared-vm-rebind-err", SHARED_VM | REBIND | REBIND_ERROR },
 		{ "shared-vm-userptr-rebind-err", SHARED_VM | USERPTR |

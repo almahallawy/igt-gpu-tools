@@ -389,7 +389,7 @@ static void tgllp_compute_exec_compute(uint32_t *addr_bo_buffer_batch,
 static void tgl_compute_exec(int fd, const unsigned char *kernel,
 			     unsigned int size)
 {
-	uint32_t vm, engine;
+	uint32_t vm, exec_queue;
 	float *dinput;
 	struct drm_xe_sync sync = { 0 };
 #define TGL_BO_DICT_ENTRIES 7
@@ -407,7 +407,7 @@ static void tgl_compute_exec(int fd, const unsigned char *kernel,
 	bo_dict[0].size = ALIGN(size, 0x1000);
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-	engine = xe_engine_create_class(fd, vm, DRM_XE_ENGINE_CLASS_RENDER);
+	exec_queue = xe_exec_queue_create_class(fd, vm, DRM_XE_ENGINE_CLASS_RENDER);
 	sync.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL;
 	sync.handle = syncobj_create(fd, 0);
 
@@ -429,7 +429,7 @@ static void tgl_compute_exec(int fd, const unsigned char *kernel,
 
 	tgllp_compute_exec_compute(bo_dict[6].data, ADDR_SURFACE_STATE_BASE, ADDR_DYNAMIC_STATE_BASE, ADDR_INDIRECT_OBJECT_BASE, OFFSET_INDIRECT_DATA_START);
 
-	xe_exec_wait(fd, engine, ADDR_BATCH);
+	xe_exec_wait(fd, exec_queue, ADDR_BATCH);
 
 	for (int i = 0; i < SIZE_DATA; i++)
 		igt_assert(((float *)bo_dict[5].data)[i] == ((float *)bo_dict[4].data)[i] * ((float *) bo_dict[4].data)[i]);
@@ -441,7 +441,7 @@ static void tgl_compute_exec(int fd, const unsigned char *kernel,
 	}
 
 	syncobj_destroy(fd, sync.handle);
-	xe_engine_destroy(fd, engine);
+	xe_exec_queue_destroy(fd, exec_queue);
 	xe_vm_destroy(fd, vm);
 }
 

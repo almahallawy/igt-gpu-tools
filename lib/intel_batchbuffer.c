@@ -2337,10 +2337,10 @@ __xe_bb_exec(struct intel_bb *ibb, uint64_t flags, bool sync)
 		igt_debug("Run on %s\n", xe_engine_class_string(inst.engine_class));
 
 		if (ibb->engine_id)
-			xe_engine_destroy(ibb->fd, ibb->engine_id);
+			xe_exec_queue_destroy(ibb->fd, ibb->engine_id);
 
 		ibb->engine_id = engine_id =
-			xe_engine_create(ibb->fd, ibb->vm_id, &inst, 0);
+			xe_exec_queue_create(ibb->fd, ibb->vm_id, &inst, 0);
 	} else {
 		engine_id = ibb->engine_id;
 	}

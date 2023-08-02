@@ -35,7 +35,7 @@ struct xe_cork {
 	int fd;
 	uint32_t vm;
 	uint32_t bo;
-	uint32_t engine;
+	uint32_t exec_queue;
 	uint32_t syncobj;
 };
 

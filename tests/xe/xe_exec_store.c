@@ -66,7 +66,7 @@ static void store(int fd)
 	struct data *data;
 	struct drm_xe_engine_class_instance *hw_engine;
 	uint32_t vm;
-	uint32_t engine;
+	uint32_t exec_queue;
 	uint32_t syncobj;
 	size_t bo_size;
 	int value = 0x123456;
@@ -89,8 +89,8 @@ static void store(int fd)
 	data = xe_bo_map(fd, bo, bo_size);
 	store_dword_batch(data, addr, value);
 
-	engine = xe_engine_create(fd, vm, hw_engine, 0);
-	exec.engine_id = engine;
+	exec_queue = xe_exec_queue_create(fd, vm, hw_engine, 0);
+	exec.exec_queue_id = exec_queue;
 	exec.address = data->addr;
 	sync.flags &= DRM_XE_SYNC_SIGNAL;
 	xe_exec(fd, &exec);
@@ -102,7 +102,7 @@ static void store(int fd)
 	munmap(data, bo_size);
 	gem_close(fd, bo);
 
-	xe_engine_destroy(fd, engine);
+	xe_exec_queue_destroy(fd, exec_queue);
 	xe_vm_destroy(fd, vm);
 }
 
@@ -125,7 +125,7 @@ static void store_all(int fd, int gt, int class)
 
 	struct data *data;
 	uint32_t syncobjs[MAX_INSTANCE];
-	uint32_t engines[MAX_INSTANCE];
+	uint32_t exec_queues[MAX_INSTANCE];
 	uint32_t vm;
 	size_t bo_size;
 	uint64_t addr = 0x100000;
@@ -152,16 +152,16 @@ static void store_all(int fd, int gt, int class)
 	igt_require(num_placements);
 
 	for (i = 0; i < num_placements; i++) {
-		struct drm_xe_engine_create create = {
+		struct drm_xe_exec_queue_create create = {
 			.vm_id = vm,
 			.width = 1,
 			.num_placements = num_placements,
 			.instances = to_user_pointer(eci),
 		};
 
-		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE,
+		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE,
 					&create), 0);
-		engines[i] = create.engine_id;
+		exec_queues[i] = create.exec_queue_id;
 		syncobjs[i] = syncobj_create(fd, 0);
 	};
 
@@ -175,7 +175,7 @@ static void store_all(int fd, int gt, int class)
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[i];
 
-		exec.engine_id = engines[i];
+		exec.exec_queue_id = exec_queues[i];
 		exec.address = data->addr;
 		xe_exec(fd, &exec);
 
@@ -190,7 +190,7 @@ static void store_all(int fd, int gt, int class)
 
 	for (i = 0; i < num_placements; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 	}
 	xe_vm_destroy(fd, vm);
 }

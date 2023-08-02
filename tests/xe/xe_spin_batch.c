@@ -41,18 +41,18 @@ static void spin_basic(int fd)
 static void spin(int fd, struct drm_xe_engine_class_instance *hwe)
 {
 	uint64_t ahnd;
-	unsigned int engine;
+	unsigned int exec_queue;
 	uint32_t vm;
 	igt_spin_t *spin;
 
 	vm = xe_vm_create(fd, 0, 0);
-	engine = xe_engine_create(fd, vm, hwe, 0);
+	exec_queue = xe_exec_queue_create(fd, vm, hwe, 0);
 	ahnd = intel_allocator_open(fd, 0, INTEL_ALLOCATOR_RELOC);
 
-	spin = igt_spin_new(fd, .ahnd = ahnd, .engine = engine, .vm = vm);
+	spin = igt_spin_new(fd, .ahnd = ahnd, .engine = exec_queue, .vm = vm);
 
 	igt_spin_free(fd, spin);
-	xe_engine_destroy(fd, engine);
+	xe_exec_queue_destroy(fd, exec_queue);
 	xe_vm_destroy(fd, vm);
 
 	put_ahnd(ahnd);
@@ -98,7 +98,7 @@ static void spin_basic_all(int fd)
 static void spin_all(int fd, int gt, int class)
 {
 	uint64_t ahnd;
-	uint32_t engines[MAX_INSTANCE], vm;
+	uint32_t exec_queues[MAX_INSTANCE], vm;
 	int i, num_placements = 0;
 	struct drm_xe_engine_class_instance eci[MAX_INSTANCE];
 	igt_spin_t *spin[MAX_INSTANCE];
@@ -116,22 +116,22 @@ static void spin_all(int fd, int gt, int class)
 	vm = xe_vm_create(fd, 0, 0);
 
 	for (i = 0; i < num_placements; i++) {
-		struct drm_xe_engine_create create = {
+		struct drm_xe_exec_queue_create create = {
 			.vm_id = vm,
 			.width = 1,
 			.num_placements = num_placements,
 			.instances = to_user_pointer(eci),
 		};
 
-		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE,
+		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE,
 					&create), 0);
-		engines[i] = create.engine_id;
-		spin[i] = igt_spin_new(fd, .ahnd = ahnd, .engine = engines[i], .vm = vm);
+		exec_queues[i] = create.exec_queue_id;
+		spin[i] = igt_spin_new(fd, .ahnd = ahnd, .engine = exec_queues[i], .vm = vm);
 	}
 
 	for (i = 0; i < num_placements; i++) {
 		igt_spin_free(fd, spin[i]);
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 	}
 
 	put_ahnd(ahnd);

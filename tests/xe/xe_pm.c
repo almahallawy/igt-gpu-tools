@@ -25,7 +25,7 @@
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 
-#define MAX_N_ENGINES 16
+#define MAX_N_EXEC_QUEUES 16
 #define NO_SUSPEND -1
 #define NO_RPM -1
 
@@ -208,7 +208,7 @@ static bool out_of_d3(device_t device, enum igt_acpi_d_state state)
 
 static void
 test_exec(device_t device, struct drm_xe_engine_class_instance *eci,
-	  int n_engines, int n_execs, enum igt_suspend_state s_state,
+	  int n_exec_queues, int n_execs, enum igt_suspend_state s_state,
 	  enum igt_acpi_d_state d_state)
 {
 	uint32_t vm;
@@ -222,9 +222,9 @@ test_exec(device_t device, struct drm_xe_engine_class_instance *eci,
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t bind_engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t bind_exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t syncobjs[MAX_N_EXEC_QUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -236,7 +236,7 @@ test_exec(device_t device, struct drm_xe_engine_class_instance *eci,
 	bool check_rpm = (d_state == IGT_ACPI_D3Hot ||
 			  d_state == IGT_ACPI_D3Cold);
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 	igt_assert(n_execs > 0);
 
 	if (check_rpm)
@@ -258,15 +258,15 @@ test_exec(device_t device, struct drm_xe_engine_class_instance *eci,
 				visible_vram_if_possible(device.fd_xe, eci->gt_id));
 	data = xe_bo_map(device.fd_xe, bo, bo_size);
 
-	for (i = 0; i < n_engines; i++) {
-		engines[i] = xe_engine_create(device.fd_xe, vm, eci, 0);
-		bind_engines[i] = 0;
+	for (i = 0; i < n_exec_queues; i++) {
+		exec_queues[i] = xe_exec_queue_create(device.fd_xe, vm, eci, 0);
+		bind_exec_queues[i] = 0;
 		syncobjs[i] = syncobj_create(device.fd_xe, 0);
 	};
 
 	sync[0].handle = syncobj_create(device.fd_xe, 0);
 
-	xe_vm_bind_async(device.fd_xe, vm, bind_engines[0], bo, 0, addr,
+	xe_vm_bind_async(device.fd_xe, vm, bind_exec_queues[0], bo, 0, addr,
 			 bo_size, sync, 1);
 
 	if (check_rpm && runtime_usage_available(device.pci_xe))
@@ -277,7 +277,7 @@ test_exec(device_t device, struct drm_xe_engine_class_instance *eci,
 		uint64_t batch_addr = addr + batch_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		b = 0;
 		data[i].batch[b++] = MI_STORE_DWORD_IMM_GEN4;
@@ -291,7 +291,7 @@ test_exec(device_t device, struct drm_xe_engine_class_instance *eci,
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 
 		if (e != i)
@@ -315,7 +315,7 @@ test_exec(device_t device, struct drm_xe_engine_class_instance *eci,
 		rpm_usage = igt_pm_get_runtime_usage(device.pci_xe);
 
 	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
-	xe_vm_unbind_async(device.fd_xe, vm, bind_engines[0], 0, addr,
+	xe_vm_unbind_async(device.fd_xe, vm, bind_exec_queues[0], 0, addr,
 			   bo_size, sync, 1);
 	igt_assert(syncobj_wait(device.fd_xe, &sync[0].handle, 1, INT64_MAX, 0,
 NULL));
@@ -324,11 +324,11 @@ NULL));
 		igt_assert_eq(data[i].data, 0xc0ffee);
 
 	syncobj_destroy(device.fd_xe, sync[0].handle);
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(device.fd_xe, syncobjs[i]);
-		xe_engine_destroy(device.fd_xe, engines[i]);
-		if (bind_engines[i])
-			xe_engine_destroy(device.fd_xe, bind_engines[i]);
+		xe_exec_queue_destroy(device.fd_xe, exec_queues[i]);
+		if (bind_exec_queues[i])
+			xe_exec_queue_destroy(device.fd_xe, bind_exec_queues[i]);
 	}
 
 	munmap(data, bo_size);

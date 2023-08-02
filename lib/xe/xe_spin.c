@@ -84,7 +84,7 @@ void xe_spin_end(struct xe_spin *spin)
 
 /**
  * xe_spin_create:
- *@opt: controlling options such as allocator handle, engine, vm etc
+ *@opt: controlling options such as allocator handle, exec_queue, vm etc
  *
  * igt_spin_new for xe, xe_spin_create submits a batch using xe_spin_init
  * which wraps around vm bind and unbinding the object associated to it.
@@ -121,9 +121,9 @@ xe_spin_create(int fd, const struct igt_spin_factory *opt)
 
 	if (!spin->engine) {
 		if (opt->hwe)
-			spin->engine = xe_engine_create(fd, spin->vm, opt->hwe, 0);
+			spin->engine = xe_exec_queue_create(fd, spin->vm, opt->hwe, 0);
 		else
-			spin->engine = xe_engine_create_class(fd, spin->vm, DRM_XE_ENGINE_CLASS_COPY);
+			spin->engine = xe_exec_queue_create_class(fd, spin->vm, DRM_XE_ENGINE_CLASS_COPY);
 	}
 
 	spin->handle = xe_bo_create_flags(fd, spin->vm, bo_size,
@@ -137,7 +137,7 @@ xe_spin_create(int fd, const struct igt_spin_factory *opt)
 	else
 		xe_spin_init(xe_spin, addr, false);
 
-	exec.engine_id = spin->engine;
+	exec.exec_queue_id = spin->engine;
 	exec.address = addr;
 	sync.handle = spin->syncobj;
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC, &exec), 0);
@@ -161,8 +161,8 @@ void xe_spin_sync_wait(int fd, struct igt_spin *spin)
  *@spin: spin state from igt_spin_new()
  *
  * Wrapper to free spinner whhich is triggered by xe_spin_create.
- * which distroys vm, engine and unbinds the vm which is binded to
- * the engine and bo.
+ * which distroys vm, exec_queue and unbinds the vm which is binded to
+ * the exec_queue and bo.
  *
  */
 void xe_spin_free(int fd, struct igt_spin *spin)
@@ -176,7 +176,7 @@ void xe_spin_free(int fd, struct igt_spin *spin)
 	gem_close(fd, spin->handle);
 
 	if (!spin->opts.engine)
-		xe_engine_destroy(fd, spin->engine);
+		xe_exec_queue_destroy(fd, spin->engine);
 
 	if (!spin->opts.vm)
 		xe_vm_destroy(fd, spin->vm);
@@ -189,7 +189,7 @@ void xe_cork_init(int fd, struct drm_xe_engine_class_instance *hwe,
 {
 	uint64_t addr = xe_get_default_alignment(fd);
 	size_t bo_size = xe_get_default_alignment(fd);
-	uint32_t vm, bo, engine, syncobj;
+	uint32_t vm, bo, exec_queue, syncobj;
 	struct xe_spin *spin;
 	struct drm_xe_sync sync = {
 		.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL,
@@ -208,11 +208,11 @@ void xe_cork_init(int fd, struct drm_xe_engine_class_instance *hwe,
 
 	xe_vm_bind_sync(fd, vm, bo, 0, addr, bo_size);
 
-	engine = xe_engine_create(fd, vm, hwe, 0);
+	exec_queue = xe_exec_queue_create(fd, vm, hwe, 0);
 	syncobj = syncobj_create(fd, 0);
 
 	xe_spin_init(spin, addr, true);
-	exec.engine_id = engine;
+	exec.exec_queue_id = exec_queue;
 	exec.address = addr;
 	sync.handle = syncobj;
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC, &exec), 0);
@@ -221,7 +221,7 @@ void xe_cork_init(int fd, struct drm_xe_engine_class_instance *hwe,
 	cork->fd = fd;
 	cork->vm = vm;
 	cork->bo = bo;
-	cork->engine = engine;
+	cork->exec_queue = exec_queue;
 	cork->syncobj = syncobj;
 }
 
@@ -249,7 +249,7 @@ void xe_cork_wait_done(struct xe_cork *cork)
 void xe_cork_fini(struct xe_cork *cork)
 {
 	syncobj_destroy(cork->fd, cork->syncobj);
-	xe_engine_destroy(cork->fd, cork->engine);
+	xe_exec_queue_destroy(cork->fd, cork->exec_queue);
 	xe_vm_destroy(cork->fd, cork->vm);
 	gem_close(cork->fd, cork->bo);
 }

@@ -24,7 +24,7 @@
  *
  * SUBTEST:
  * Description:
- *	This test creates compute vms, binds a couple of bos and an engine each,
+ *	This test creates compute vms, binds a couple of bos and an exec_queue each,
  *	thus redying it for execution. However, VRAM memory is over-
  *	committed and while there is still nothing to execute, an eviction
  *	will trigger the VM's rebind worker to rebind the evicted bo, which
@@ -34,7 +34,7 @@
  *	the rebind kworkers using a lot of CPU while the test idles.
  *
  *	The correct driver behaviour should be not to rebind anything unless
- *	there is worked queued on one of the VM's compute engines.
+ *	there is worked queued on one of the VM's compute exec_queues.
  * Run type: FULL
  */
 static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
@@ -44,7 +44,7 @@ static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
 	size_t bo_size = vram_size / NUM_VMS / NUM_BOS;
 	uint32_t vm[NUM_VMS];
 	uint32_t bo[NUM_VMS][NUM_BOS];
-	uint32_t engines[NUM_VMS];
+	uint32_t exec_queues[NUM_VMS];
 	unsigned int i, j;
 
 	igt_skip_on(!bo_size);
@@ -58,10 +58,10 @@ static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
 	 * stats.
 	 */
 	for (i = 0; i < NUM_VMS; ++i) {
-		struct drm_xe_ext_engine_set_property ext = {
+		struct drm_xe_ext_exec_queue_set_property ext = {
 			.base.next_extension = 0,
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_COMPUTE_MODE,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
 			.value = 1,
 		};
 
@@ -76,7 +76,7 @@ static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
 			xe_vm_bind(fd, vm[i], bo[i][j], 0, 0x40000 + j*bo_size,
 				   bo_size, NULL, 0);
 		}
-		engines[i] = xe_engine_create(fd, vm[i], eci,
+		exec_queues[i] = xe_exec_queue_create(fd, vm[i], eci,
 					      to_user_pointer(&ext));
 	}
 
@@ -85,7 +85,7 @@ static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
 	sleep(SECONDS_TO_WAIT);
 
 	for (i = 0; i < NUM_VMS; ++i) {
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 		for (j = 0; j < NUM_BOS; ++j)
 			gem_close(fd, bo[i][j]);
 		xe_vm_destroy(fd, vm[i]);

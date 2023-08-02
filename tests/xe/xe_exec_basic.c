@@ -7,7 +7,7 @@
  * TEST: Basic tests for execbuf functionality
  * Category: Hardware building block
  * Sub-category: execbuf
- * Functionality: engines
+ * Functionality: exec_queues
  * Test category: functionality test
  */
 
@@ -20,15 +20,15 @@
 #include "xe/xe_query.h"
 #include <string.h>
 
-#define MAX_N_ENGINES 16
-#define USERPTR		(0x1 << 0)
-#define REBIND		(0x1 << 1)
-#define INVALIDATE	(0x1 << 2)
-#define RACE		(0x1 << 3)
-#define BIND_ENGINE	(0x1 << 4)
-#define DEFER_ALLOC	(0x1 << 5)
-#define DEFER_BIND	(0x1 << 6)
-#define SPARSE		(0x1 << 7)
+#define MAX_N_EXEC_QUEUES 16
+#define USERPTR			(0x1 << 0)
+#define REBIND			(0x1 << 1)
+#define INVALIDATE		(0x1 << 2)
+#define RACE			(0x1 << 3)
+#define BIND_EXEC_QUEUE	(0x1 << 4)
+#define DEFER_ALLOC		(0x1 << 5)
+#define DEFER_BIND		(0x1 << 6)
+#define SPARSE			(0x1 << 7)
 
 /**
  * SUBTEST: once-%s
@@ -39,12 +39,12 @@
  * Description: Run %arg[1] test many times
  * Run type: FULL
  *
- * SUBTEST: many-engines-%s
- * Description: Run %arg[1] test on many engines
+ * SUBTEST: many-execqueues-%s
+ * Description: Run %arg[1] test on many exec_queues
  * Run type: FULL
  *
- * SUBTEST: many-engines-many-vm-%s
- * Description: Run %arg[1] test on many engines and many VMs
+ * SUBTEST: many-execqueues-many-vm-%s
+ * Description: Run %arg[1] test on many exec_queues and many VMs
  * Run type: FULL
  *
  * SUBTEST: twice-%s
@@ -65,12 +65,12 @@
  * @userptr-rebind:			userptr rebind
  * @userptr-invalidate:			userptr invalidate
  * @userptr-invalidate-race:		userptr invalidate racy
- * @bindengine:				bind engine
- * @bindengine-userptr:			bind engine userptr description
- * @bindengine-rebind:			bind engine rebind description
- * @bindengine-userptr-rebind:		bind engine userptr rebind
- * @bindengine-userptr-invalidate:	bind engine userptr invalidate
- * @bindengine-userptr-invalidate-race:	bind engine userptr invalidate racy
+ * @bindexecqueue:				bind exec_queue
+ * @bindexecqueue-userptr:			bind exec_queue userptr description
+ * @bindexecqueue-rebind:			bind exec_queue rebind description
+ * @bindexecqueue-userptr-rebind:		bind exec_queue userptr rebind
+ * @bindexecqueue-userptr-invalidate:	bind exec_queue userptr invalidate
+ * @bindexecqueue-userptr-invalidate-race:	bind exec_queue userptr invalidate racy
  * @null:				null
  * @null-defer-mmap:			null defer mmap
  * @null-defer-bind:			null defer bind
@@ -79,7 +79,7 @@
 
 static void
 test_exec(int fd, struct drm_xe_engine_class_instance *eci,
-	  int n_engines, int n_execs, int n_vm, unsigned int flags)
+	  int n_exec_queues, int n_execs, int n_vm, unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
@@ -90,13 +90,13 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint64_t addr[MAX_N_ENGINES];
-	uint64_t sparse_addr[MAX_N_ENGINES];
-	uint32_t vm[MAX_N_ENGINES];
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t bind_engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
-	uint32_t bind_syncobjs[MAX_N_ENGINES];
+	uint64_t addr[MAX_N_EXEC_QUEUES];
+	uint64_t sparse_addr[MAX_N_EXEC_QUEUES];
+	uint32_t vm[MAX_N_EXEC_QUEUES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t bind_exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t syncobjs[MAX_N_EXEC_QUEUES];
+	uint32_t bind_syncobjs[MAX_N_EXEC_QUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -106,8 +106,8 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 	} *data;
 	int i, b;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
-	igt_assert(n_vm <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
+	igt_assert(n_vm <= MAX_N_EXEC_QUEUES);
 
 	for (i = 0; i < n_vm; ++i)
 		vm[i] = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
@@ -117,7 +117,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 
 	addr[0] = 0x1a0000;
 	sparse_addr[0] = 0x301a0000;
-	for (i = 1; i < MAX_N_ENGINES; ++i) {
+	for (i = 1; i < MAX_N_EXEC_QUEUES; ++i) {
 		addr[i] = addr[i - 1] + (0x1ull << 32);
 		sparse_addr[i] = sparse_addr[i - 1] + (0x1ull << 32);
 	}
@@ -147,14 +147,14 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 			data = xe_bo_map(fd, bo, bo_size);
 	}
 
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		uint32_t __vm = vm[i % n_vm];
 
-		engines[i] = xe_engine_create(fd, __vm, eci, 0);
-		if (flags & BIND_ENGINE)
-			bind_engines[i] = xe_bind_engine_create(fd, __vm, 0);
+		exec_queues[i] = xe_exec_queue_create(fd, __vm, eci, 0);
+		if (flags & BIND_EXEC_QUEUE)
+			bind_exec_queues[i] = xe_bind_exec_queue_create(fd, __vm, 0);
 		else
-			bind_engines[i] = 0;
+			bind_exec_queues[i] = 0;
 		syncobjs[i] = syncobj_create(fd, 0);
 		bind_syncobjs[i] = syncobj_create(fd, 0);
 	};
@@ -162,14 +162,14 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 	for (i = 0; i < n_vm; ++i) {
 		sync[0].handle = bind_syncobjs[i];
 		if (bo)
-			xe_vm_bind_async(fd, vm[i], bind_engines[i], bo, 0,
+			xe_vm_bind_async(fd, vm[i], bind_exec_queues[i], bo, 0,
 					 addr[i], bo_size, sync, 1);
 		else
-			xe_vm_bind_userptr_async(fd, vm[i], bind_engines[i],
+			xe_vm_bind_userptr_async(fd, vm[i], bind_exec_queues[i],
 						 to_user_pointer(data), addr[i],
 						 bo_size, sync, 1);
 		if (flags & SPARSE)
-			__xe_vm_bind_assert(fd, vm[i], bind_engines[i],
+			__xe_vm_bind_assert(fd, vm[i], bind_exec_queues[i],
 					    0, 0, sparse_addr[i], bo_size,
 					    XE_VM_BIND_OP_MAP |
 					    XE_VM_BIND_FLAG_ASYNC |
@@ -188,7 +188,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = (flags & SPARSE ? sparse_addr[i % n_vm] :
 				     __addr)+ sdi_offset;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		b = 0;
 		data[i].batch[b++] = MI_STORE_DWORD_IMM_GEN4;
@@ -203,7 +203,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 		if (e != i)
 			 syncobj_reset(fd, &syncobjs[e], 1);
@@ -213,18 +213,18 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 			uint32_t __vm = vm[cur_vm];
 
 			sync[1].flags &= ~DRM_XE_SYNC_SIGNAL;
-			xe_vm_unbind_async(fd, __vm, bind_engines[e], 0,
+			xe_vm_unbind_async(fd, __vm, bind_exec_queues[e], 0,
 					   __addr, bo_size, sync + 1, 1);
 
 			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
 			addr[i % n_vm] += bo_size;
 			__addr = addr[i % n_vm];
 			if (bo)
-				xe_vm_bind_async(fd, __vm, bind_engines[e], bo,
+				xe_vm_bind_async(fd, __vm, bind_exec_queues[e], bo,
 						 0, __addr, bo_size, sync, 1);
 			else
 				xe_vm_bind_userptr_async(fd, __vm,
-							 bind_engines[e],
+							 bind_exec_queues[e],
 							 to_user_pointer(data),
 							 __addr, bo_size, sync,
 							 1);
@@ -257,7 +257,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		}
 	}
 
-	for (i = 0; i < n_engines && n_execs; i++)
+	for (i = 0; i < n_exec_queues && n_execs; i++)
 		igt_assert(syncobj_wait(fd, &syncobjs[i], 1, INT64_MAX, 0,
 					NULL));
 
@@ -268,7 +268,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
 	for (i = 0; i < n_vm; ++i) {
 		syncobj_reset(fd, &sync[0].handle, 1);
-		xe_vm_unbind_async(fd, vm[i], bind_engines[i], 0, addr[i],
+		xe_vm_unbind_async(fd, vm[i], bind_exec_queues[i], 0, addr[i],
 				   bo_size, sync, 1);
 		igt_assert(syncobj_wait(fd, &sync[0].handle, 1,
 					INT64_MAX, 0, NULL));
@@ -280,11 +280,11 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 			igt_assert_eq(data[i].data, 0xc0ffee);
 	}
 
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
-		if (bind_engines[i])
-			xe_engine_destroy(fd, bind_engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
+		if (bind_exec_queues[i])
+			xe_exec_queue_destroy(fd, bind_exec_queues[i]);
 	}
 
 	if (bo) {
@@ -318,13 +318,13 @@ igt_main
 		{ "userptr-rebind", USERPTR | REBIND },
 		{ "userptr-invalidate", USERPTR | INVALIDATE },
 		{ "userptr-invalidate-race", USERPTR | INVALIDATE | RACE },
-		{ "bindengine", BIND_ENGINE },
-		{ "bindengine-userptr", BIND_ENGINE | USERPTR },
-		{ "bindengine-rebind", BIND_ENGINE | REBIND },
-		{ "bindengine-userptr-rebind", BIND_ENGINE | USERPTR | REBIND },
-		{ "bindengine-userptr-invalidate", BIND_ENGINE | USERPTR |
+		{ "bindexecqueue", BIND_EXEC_QUEUE },
+		{ "bindexecqueue-userptr", BIND_EXEC_QUEUE | USERPTR },
+		{ "bindexecqueue-rebind", BIND_EXEC_QUEUE | REBIND },
+		{ "bindexecqueue-userptr-rebind", BIND_EXEC_QUEUE | USERPTR | REBIND },
+		{ "bindexecqueue-userptr-invalidate", BIND_EXEC_QUEUE | USERPTR |
 			INVALIDATE },
-		{ "bindengine-userptr-invalidate-race", BIND_ENGINE | USERPTR |
+		{ "bindexecqueue-userptr-invalidate-race", BIND_EXEC_QUEUE | USERPTR |
 			INVALIDATE | RACE },
 		{ NULL },
 	};
@@ -349,14 +349,14 @@ igt_main
 					  64 : 1024, 1,
 					  s->flags);
 
-		igt_subtest_f("many-engines-%s", s->name)
+		igt_subtest_f("many-execqueues-%s", s->name)
 			xe_for_each_hw_engine(fd, hwe)
 				test_exec(fd, hwe, 16,
 					  s->flags & (REBIND | INVALIDATE) ?
 					  64 : 1024, 1,
 					  s->flags);
 
-		igt_subtest_f("many-engines-many-vm-%s", s->name)
+		igt_subtest_f("many-execqueues-many-vm-%s", s->name)
 			xe_for_each_hw_engine(fd, hwe)
 				test_exec(fd, hwe, 16,
 					  s->flags & (REBIND | INVALIDATE) ?

@@ -23,7 +23,7 @@
 #include <string.h>
 #include <sys/time.h>
 
-#define MAX_N_ENGINES 16
+#define MAX_N_EXEC_QUEUES 16
 
 /*
  * Too many intermediate components and steps before freq is adjusted
@@ -32,7 +32,7 @@
 #define ACT_FREQ_LATENCY_US 100000
 
 static void exec_basic(int fd, struct drm_xe_engine_class_instance *eci,
-		       int n_engines, int n_execs)
+		       int n_exec_queues, int n_execs)
 {
 	uint32_t vm;
 	uint64_t addr = 0x1a0000;
@@ -45,9 +45,9 @@ static void exec_basic(int fd, struct drm_xe_engine_class_instance *eci,
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t bind_engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t bind_exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t syncobjs[MAX_N_EXEC_QUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -57,7 +57,7 @@ static void exec_basic(int fd, struct drm_xe_engine_class_instance *eci,
 	} *data;
 	int i, b;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 	igt_assert(n_execs > 0);
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
@@ -69,15 +69,15 @@ static void exec_basic(int fd, struct drm_xe_engine_class_instance *eci,
 				visible_vram_if_possible(fd, eci->gt_id));
 	data = xe_bo_map(fd, bo, bo_size);
 
-	for (i = 0; i < n_engines; i++) {
-		engines[i] = xe_engine_create(fd, vm, eci, 0);
-		bind_engines[i] = 0;
+	for (i = 0; i < n_exec_queues; i++) {
+		exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
+		bind_exec_queues[i] = 0;
 		syncobjs[i] = syncobj_create(fd, 0);
 	};
 
 	sync[0].handle = syncobj_create(fd, 0);
 
-	xe_vm_bind_async(fd, vm, bind_engines[0], bo, 0, addr,
+	xe_vm_bind_async(fd, vm, bind_exec_queues[0], bo, 0, addr,
 			 bo_size, sync, 1);
 
 	for (i = 0; i < n_execs; i++) {
@@ -85,7 +85,7 @@ static void exec_basic(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t batch_addr = addr + batch_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		b = 0;
 		data[i].batch[b++] = MI_STORE_DWORD_IMM_GEN4;
@@ -99,7 +99,7 @@ static void exec_basic(int fd, struct drm_xe_engine_class_instance *eci,
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 
 		if (e != i)
@@ -115,7 +115,7 @@ static void exec_basic(int fd, struct drm_xe_engine_class_instance *eci,
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 
 	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
-	xe_vm_unbind_async(fd, vm, bind_engines[0], 0, addr,
+	xe_vm_unbind_async(fd, vm, bind_exec_queues[0], 0, addr,
 			   bo_size, sync, 1);
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 
@@ -123,11 +123,11 @@ static void exec_basic(int fd, struct drm_xe_engine_class_instance *eci,
 		igt_assert_eq(data[i].data, 0xc0ffee);
 
 	syncobj_destroy(fd, sync[0].handle);
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
-		if (bind_engines[i])
-			xe_engine_destroy(fd, bind_engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
+		if (bind_exec_queues[i])
+			xe_exec_queue_destroy(fd, bind_exec_queues[i]);
 	}
 
 	munmap(data, bo_size);
@@ -212,11 +212,11 @@ static void test_freq_basic_api(int fd, int gt_id)
 
 /**
  * SUBTEST: freq_fixed_idle
- * Description: Test fixed frequency request with engine in idle state
+ * Description: Test fixed frequency request with exec_queue in idle state
  * Run type: BAT
  *
  * SUBTEST: freq_fixed_exec
- * Description: Test fixed frequency request when engine is doing some work
+ * Description: Test fixed frequency request when exec_queue is doing some work
  * Run type: FULL
  */
 
@@ -278,11 +278,11 @@ static void test_freq_fixed(int fd, int gt_id, bool gt_idle)
 
 /**
  * SUBTEST: freq_range_idle
- * Description: Test range frequency request with engine in idle state
+ * Description: Test range frequency request with exec_queue in idle state
  * Run type: BAT
  *
  * SUBTEST: freq_range_exec
- * Description: Test range frequency request when engine is doing some work
+ * Description: Test range frequency request when exec_queue is doing some work
  * Run type: FULL
  */
 
@@ -421,7 +421,7 @@ igt_main
 			xe_for_each_hw_engine(fd, hwe)
 				igt_fork(child, ncpus) {
 					igt_debug("Execution Started\n");
-					exec_basic(fd, hwe, MAX_N_ENGINES, 16);
+					exec_basic(fd, hwe, MAX_N_EXEC_QUEUES, 16);
 					igt_debug("Execution Finished\n");
 				}
 			/* While exec in threads above, let's check the freq */
@@ -442,7 +442,7 @@ igt_main
 			xe_for_each_hw_engine(fd, hwe)
 				igt_fork(child, ncpus) {
 					igt_debug("Execution Started\n");
-					exec_basic(fd, hwe, MAX_N_ENGINES, 16);
+					exec_basic(fd, hwe, MAX_N_EXEC_QUEUES, 16);
 					igt_debug("Execution Finished\n");
 				}
 			/* While exec in threads above, let's check the freq */

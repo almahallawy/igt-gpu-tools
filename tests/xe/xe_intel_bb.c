@@ -195,7 +195,7 @@ static void simple_bb(struct buf_ops *bops, bool new_context)
 
 	if (new_context) {
 		vm = xe_vm_create(xe, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-		ctx = xe_engine_create(xe, vm, xe_hw_engine(xe, 0), 0);
+		ctx = xe_exec_queue_create(xe, vm, xe_hw_engine(xe, 0), 0);
 		intel_bb_destroy(ibb);
 		ibb = intel_bb_create_with_context(xe, ctx, vm, NULL, PAGE_SIZE);
 		intel_bb_out(ibb, MI_BATCH_BUFFER_END);
@@ -203,7 +203,7 @@ static void simple_bb(struct buf_ops *bops, bool new_context)
 		intel_bb_exec(ibb, intel_bb_offset(ibb),
 			      I915_EXEC_DEFAULT | I915_EXEC_NO_RELOC,
 			      true);
-		xe_engine_destroy(xe, ctx);
+		xe_exec_queue_destroy(xe, ctx);
 		xe_vm_destroy(xe, vm);
 	}
 

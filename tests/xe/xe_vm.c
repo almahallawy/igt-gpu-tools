@@ -45,7 +45,7 @@ hash_addr(uint64_t addr)
 static void
 write_dwords(int fd, uint32_t vm, int n_dwords, uint64_t *addrs)
 {
-	uint32_t batch_size, batch_bo, *batch_map, engine;
+	uint32_t batch_size, batch_bo, *batch_map, exec_queue;
 	uint64_t batch_addr = 0x1a0000;
 	int i, b = 0;
 
@@ -72,12 +72,12 @@ write_dwords(int fd, uint32_t vm, int n_dwords, uint64_t *addrs)
 	munmap(batch_map, batch_size);
 
 	xe_vm_bind_sync(fd, vm, batch_bo, 0, batch_addr, batch_size);
-	engine = xe_engine_create_class(fd, vm, DRM_XE_ENGINE_CLASS_COPY);
-	xe_exec_wait(fd, engine, batch_addr);
+	exec_queue = xe_exec_queue_create_class(fd, vm, DRM_XE_ENGINE_CLASS_COPY);
+	xe_exec_wait(fd, exec_queue, batch_addr);
 	xe_vm_unbind_sync(fd, vm, 0, batch_addr, batch_size);
 
 	gem_close(fd, batch_bo);
-	xe_engine_destroy(fd, engine);
+	xe_exec_queue_destroy(fd, exec_queue);
 }
 
 /**
@@ -515,7 +515,7 @@ struct shared_pte_page_data {
 	uint32_t data;
 };
 
-#define MAX_N_ENGINES 4
+#define MAX_N_EXEC_QUEUES 4
 
 static void
 shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
@@ -527,21 +527,21 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
 	};
-	struct drm_xe_sync sync_all[MAX_N_ENGINES + 1];
+	struct drm_xe_sync sync_all[MAX_N_EXEC_QUEUES + 1];
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t syncobjs[MAX_N_EXEC_QUEUES];
 	size_t bo_size;
 	uint32_t *bo;
 	struct shared_pte_page_data **data;
-	int n_engines = n_bo, n_execs = n_bo;
+	int n_exec_queues = n_bo, n_execs = n_bo;
 	int i, b;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 
 	bo = malloc(sizeof(*bo) * n_bo);
 	igt_assert(bo);
@@ -561,8 +561,8 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 	}
 
 	memset(sync_all, 0, sizeof(sync_all));
-	for (i = 0; i < n_engines; i++) {
-		engines[i] = xe_engine_create(fd, vm, eci, 0);
+	for (i = 0; i < n_exec_queues; i++) {
+		exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
 		syncobjs[i] = syncobj_create(fd, 0);
 		sync_all[i].flags = DRM_XE_SYNC_SYNCOBJ;
 		sync_all[i].handle = syncobjs[i];
@@ -579,7 +579,7 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 		uint64_t batch_addr = addr + i * addr_stride + batch_offset;
 		uint64_t sdi_offset = (char *)&data[i]->data - (char *)data[i];
 		uint64_t sdi_addr = addr + i * addr_stride + sdi_offset;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		b = 0;
 		data[i]->batch[b++] = MI_STORE_DWORD_IMM_GEN4;
@@ -593,7 +593,7 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 		xe_exec(fd, &exec);
 	}
@@ -624,7 +624,7 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 		uint64_t batch_addr = addr + i * addr_stride + batch_offset;
 		uint64_t sdi_offset = (char *)&data[i]->data - (char *)data[i];
 		uint64_t sdi_addr = addr + i * addr_stride + sdi_offset;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		if (!(i % 2))
 			continue;
@@ -642,7 +642,7 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 		syncobj_reset(fd, &syncobjs[e], 1);
 		xe_exec(fd, &exec);
@@ -672,9 +672,9 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 		igt_assert_eq(data[i]->data, 0xc0ffee);
 
 	syncobj_destroy(fd, sync[0].handle);
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 	}
 
 	for (i = 0; i < n_bo; ++i) {
@@ -687,21 +687,21 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 
 
 /**
- * SUBTEST: bind-engines-independent
- * Description: Test independent bind engines
- * Functionality: bind engines
+ * SUBTEST: bind-execqueues-independent
+ * Description: Test independent bind exec_queues
+ * Functionality: bind exec_queues
  * Run type: BAT
  *
- * SUBTEST: bind-engines-conflict
- * Description: Test conflict bind engines
- * Functionality: bind engines
+ * SUBTEST: bind-execqueues-conflict
+ * Description: Test conflict bind exec_queues
+ * Functionality: bind exec_queues
  * Run type: BAT
  */
 
 #define CONFLICT	(0x1 << 0)
 
 static void
-test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci,
+test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *eci,
 			      unsigned int flags)
 {
 	uint32_t vm;
@@ -715,10 +715,10 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci,
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-#define N_ENGINES	2
-	uint32_t engines[N_ENGINES];
-	uint32_t bind_engines[N_ENGINES];
-	uint32_t syncobjs[N_ENGINES + 1];
+#define N_EXEC_QUEUES	2
+	uint32_t exec_queues[N_EXEC_QUEUES];
+	uint32_t bind_exec_queues[N_EXEC_QUEUES];
+	uint32_t syncobjs[N_EXEC_QUEUES + 1];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -730,26 +730,26 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci,
 	int i, b;
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-	bo_size = sizeof(*data) * N_ENGINES;
+	bo_size = sizeof(*data) * N_EXEC_QUEUES;
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
 	bo = xe_bo_create_flags(fd, vm, bo_size,
 				visible_vram_if_possible(fd, eci->gt_id));
 	data = xe_bo_map(fd, bo, bo_size);
 
-	for (i = 0; i < N_ENGINES; i++) {
-		engines[i] = xe_engine_create(fd, vm, eci, 0);
-		bind_engines[i] = xe_bind_engine_create(fd, vm, 0);
+	for (i = 0; i < N_EXEC_QUEUES; i++) {
+		exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
+		bind_exec_queues[i] = xe_bind_exec_queue_create(fd, vm, 0);
 		syncobjs[i] = syncobj_create(fd, 0);
 	}
-	syncobjs[N_ENGINES] = syncobj_create(fd, 0);
+	syncobjs[N_EXEC_QUEUES] = syncobj_create(fd, 0);
 
 	/* Initial bind, needed for spinner */
 	sync[0].handle = syncobj_create(fd, 0);
-	xe_vm_bind_async(fd, vm, bind_engines[0], bo, 0, addr, bo_size,
+	xe_vm_bind_async(fd, vm, bind_exec_queues[0], bo, 0, addr, bo_size,
 			 sync, 1);
 
-	for (i = 0; i < N_ENGINES; i++) {
+	for (i = 0; i < N_EXEC_QUEUES; i++) {
 		uint64_t batch_offset = (char *)&data[i].batch - (char *)data;
 		uint64_t batch_addr = addr + batch_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
@@ -759,9 +759,9 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci,
 		int e = i;
 
 		if (i == 0) {
-			/* Cork 1st engine with a spinner */
+			/* Cork 1st exec_queue with a spinner */
 			xe_spin_init(&data[i].spin, spin_addr, true);
-			exec.engine_id = engines[e];
+			exec.exec_queue_id = exec_queues[e];
 			exec.address = spin_addr;
 			sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
 			sync[1].flags |= DRM_XE_SYNC_SIGNAL;
@@ -769,22 +769,22 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci,
 			xe_exec(fd, &exec);
 			xe_spin_wait_started(&data[i].spin);
 
-			/* Do bind to 1st engine blocked on cork */
+			/* Do bind to 1st exec_queue blocked on cork */
 			addr += (flags & CONFLICT) ? (0x1 << 21) : bo_size;
 			sync[1].flags &= ~DRM_XE_SYNC_SIGNAL;
 			sync[1].handle = syncobjs[e];
-			xe_vm_bind_async(fd, vm, bind_engines[e], bo, 0, addr,
+			xe_vm_bind_async(fd, vm, bind_exec_queues[e], bo, 0, addr,
 					 bo_size, sync + 1, 1);
 			addr += bo_size;
 		} else {
-			/* Do bind to 2nd engine which blocks write below */
+			/* Do bind to 2nd exec_queue which blocks write below */
 			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
-			xe_vm_bind_async(fd, vm, bind_engines[e], bo, 0, addr,
+			xe_vm_bind_async(fd, vm, bind_exec_queues[e], bo, 0, addr,
 					 bo_size, sync, 1);
 		}
 
 		/*
-		 * Write to either engine, 1st blocked on spinner + bind, 2nd
+		 * Write to either exec_queue, 1st blocked on spinner + bind, 2nd
 		 * just blocked on bind. The 2nd should make independent
 		 * progress.
 		 */
@@ -798,16 +798,16 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci,
 
 		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
-		sync[1].handle = syncobjs[!i ? N_ENGINES : e];
+		sync[1].handle = syncobjs[!i ? N_EXEC_QUEUES : e];
 
 		exec.num_syncs = 2;
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 		xe_exec(fd, &exec);
 	}
 
 	if (!(flags & CONFLICT)) {
-		/* Verify initial bind, bind + write to 2nd engine done */
+		/* Verify initial bind, bind + write to 2nd exec_queue done */
 		igt_assert(syncobj_wait(fd, &syncobjs[1], 1, INT64_MAX, 0,
 					NULL));
 		igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0,
@@ -816,24 +816,24 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci,
 	} else {
 		/* Let jobs runs for a bit */
 		usleep(100000);
-		/* bind + write to 2nd engine waiting */
+		/* bind + write to 2nd exec_queue waiting */
 		igt_assert(!syncobj_wait(fd, &syncobjs[1], 1, 1, 0, NULL));
 		igt_assert(!syncobj_wait(fd, &sync[0].handle, 1, 0, 0, NULL));
 	}
 
-	/* Verify bind + write to 1st engine still inflight */
+	/* Verify bind + write to 1st exec_queue still inflight */
 	igt_assert(!syncobj_wait(fd, &syncobjs[0], 1, 1, 0, NULL));
-	igt_assert(!syncobj_wait(fd, &syncobjs[N_ENGINES], 1, 1, 0, NULL));
+	igt_assert(!syncobj_wait(fd, &syncobjs[N_EXEC_QUEUES], 1, 1, 0, NULL));
 
-	/* Verify bind + write to 1st engine done after ending spinner */
+	/* Verify bind + write to 1st exec_queue done after ending spinner */
 	xe_spin_end(&data[0].spin);
 	igt_assert(syncobj_wait(fd, &syncobjs[0], 1, INT64_MAX, 0, NULL));
-	igt_assert(syncobj_wait(fd, &syncobjs[N_ENGINES], 1, INT64_MAX, 0,
+	igt_assert(syncobj_wait(fd, &syncobjs[N_EXEC_QUEUES], 1, INT64_MAX, 0,
 				NULL));
 	igt_assert_eq(data[0].data, 0xc0ffee);
 
 	if (flags & CONFLICT) {
-		/* Verify bind + write to 2nd engine done */
+		/* Verify bind + write to 2nd exec_queue done */
 		igt_assert(syncobj_wait(fd, &syncobjs[1], 1, INT64_MAX, 0,
 					NULL));
 		igt_assert_eq(data[1].data, 0xc0ffee);
@@ -846,10 +846,10 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci,
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 
 	syncobj_destroy(fd, sync[0].handle);
-	for (i = 0; i < N_ENGINES; i++) {
+	for (i = 0; i < N_EXEC_QUEUES; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
-		xe_engine_destroy(fd, bind_engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
+		xe_exec_queue_destroy(fd, bind_exec_queues[i]);
 	}
 
 	munmap(data, bo_size);
@@ -857,28 +857,28 @@ test_bind_engines_independent(int fd, struct drm_xe_engine_class_instance *eci,
 	xe_vm_destroy(fd, vm);
 }
 
-#define BIND_ARRAY_BIND_ENGINE_FLAG	(0x1 << 0)
+#define BIND_ARRAY_BIND_EXEC_QUEUE_FLAG	(0x1 << 0)
 
 
 /**
  * SUBTEST: bind-array-twice
  * Description: Test bind array twice
- * Functionality: bind engines
+ * Functionality: bind exec_queues
  * Run type: FULL
  *
  * SUBTEST: bind-array-many
  * Description: Test bind array many times
- * Functionality: bind engines
+ * Functionality: bind exec_queues
  * Run type: FULL
  *
- * SUBTEST: bind-array-engine-twice
- * Description: Test bind array engine twice
- * Functionality: bind engines
+ * SUBTEST: bind-array-exec_queue-twice
+ * Description: Test bind array exec_queue twice
+ * Functionality: bind exec_queues
  * Run type: FULL
  *
- * SUBTEST: bind-array-engine-many
- * Description: Test bind array engine many times
- * Functionality: bind engines
+ * SUBTEST: bind-array-exec_queue-many
+ * Description: Test bind array exec_queue many times
+ * Functionality: bind exec_queues
  * Run type: FULL
  */
 static void
@@ -895,7 +895,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 		.num_batch_buffer = 1,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engine, bind_engine = 0;
+	uint32_t exec_queue, bind_exec_queue = 0;
 #define BIND_ARRAY_MAX_N_EXEC	16
 	struct drm_xe_vm_bind_op bind_ops[BIND_ARRAY_MAX_N_EXEC] = { };
 	size_t bo_size;
@@ -918,9 +918,9 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 				visible_vram_if_possible(fd, eci->gt_id));
 	data = xe_bo_map(fd, bo, bo_size);
 
-	if (flags & BIND_ARRAY_BIND_ENGINE_FLAG)
-		bind_engine = xe_bind_engine_create(fd, vm, 0);
-	engine = xe_engine_create(fd, vm, eci, 0);
+	if (flags & BIND_ARRAY_BIND_EXEC_QUEUE_FLAG)
+		bind_exec_queue = xe_bind_exec_queue_create(fd, vm, 0);
+	exec_queue = xe_exec_queue_create(fd, vm, eci, 0);
 
 	for (i = 0; i < n_execs; ++i) {
 		bind_ops[i].obj = bo;
@@ -937,7 +937,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 	}
 
 	sync[0].handle = syncobj_create(fd, 0);
-	xe_vm_bind_array(fd, vm, bind_engine, bind_ops, n_execs, sync, 1);
+	xe_vm_bind_array(fd, vm, bind_exec_queue, bind_ops, n_execs, sync, 1);
 
 	addr = base_addr;
 	for (i = 0; i < n_execs; i++) {
@@ -963,7 +963,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 			exec.num_syncs = 1;
 		}
 
-		exec.engine_id = engine;
+		exec.exec_queue_id = exec_queue;
 		exec.address = batch_addr;
 		xe_exec(fd, &exec);
 
@@ -978,7 +978,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 	syncobj_reset(fd, &sync[0].handle, 1);
 	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
 	sync[1].flags &= ~DRM_XE_SYNC_SIGNAL;
-	xe_vm_bind_array(fd, vm, bind_engine, bind_ops, n_execs, sync, 2);
+	xe_vm_bind_array(fd, vm, bind_exec_queue, bind_ops, n_execs, sync, 2);
 
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 	igt_assert(syncobj_wait(fd, &sync[1].handle, 1, INT64_MAX, 0, NULL));
@@ -988,9 +988,9 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 
 	syncobj_destroy(fd, sync[0].handle);
 	syncobj_destroy(fd, sync[1].handle);
-	xe_engine_destroy(fd, engine);
-	if (bind_engine)
-		xe_engine_destroy(fd, bind_engine);
+	xe_exec_queue_destroy(fd, exec_queue);
+	if (bind_exec_queue)
+		xe_exec_queue_destroy(fd, bind_exec_queue);
 
 	munmap(data, bo_size);
 	gem_close(fd, bo);
@@ -1070,7 +1070,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 
 static void
 test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
-		 int n_engines, int n_execs, size_t bo_size,
+		 int n_exec_queues, int n_execs, size_t bo_size,
 		 unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
@@ -1084,8 +1084,8 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 	};
 	uint64_t addr = 0x1ull << 30, base_addr = 0x1ull << 30;
 	uint32_t vm;
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t syncobjs[MAX_N_EXEC_QUEUES];
 	uint32_t bo = 0;
 	void *map;
 	struct {
@@ -1100,7 +1100,7 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 		base_addr -= xe_get_default_alignment(fd);
 	}
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
 
 	if (flags & LARGE_BIND_FLAG_USERPTR) {
@@ -1115,8 +1115,8 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 		map = xe_bo_map(fd, bo, bo_size);
 	}
 
-	for (i = 0; i < n_engines; i++) {
-		engines[i] = xe_engine_create(fd, vm, eci, 0);
+	for (i = 0; i < n_exec_queues; i++) {
+		exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
 		syncobjs[i] = syncobj_create(fd, 0);
 	};
 
@@ -1147,7 +1147,7 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t batch_addr = addr + batch_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		data = map + (addr - base_addr);
 		b = 0;
@@ -1165,7 +1165,7 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 		if (i != e)
 			syncobj_reset(fd, &sync[1].handle, 1);
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 		xe_exec(fd, &exec);
 
@@ -1175,7 +1175,7 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 			addr = base_addr + bo_size - 0x1000;
 	}
 
-	for (i = 0; i < n_engines; i++)
+	for (i = 0; i < n_exec_queues; i++)
 		igt_assert(syncobj_wait(fd, &syncobjs[i], 1, INT64_MAX, 0,
 					NULL));
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
@@ -1205,9 +1205,9 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 	}
 
 	syncobj_destroy(fd, sync[0].handle);
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 	}
 
 	if (bo) {
@@ -1246,7 +1246,7 @@ static void *hammer_thread(void *tdata)
 		uint64_t pad;
 		uint32_t data;
 	} *data = t->map;
-	uint32_t engine = xe_engine_create(t->fd, t->vm, t->eci, 0);
+	uint32_t exec_queue = xe_exec_queue_create(t->fd, t->vm, t->eci, 0);
 	int b;
 	int i = 0;
 
@@ -1267,7 +1267,7 @@ static void *hammer_thread(void *tdata)
 		data->batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data->batch));
 
-		exec.engine_id = engine;
+		exec.exec_queue_id = exec_queue;
 		exec.address = batch_addr;
 		if (i % 32) {
 			exec.num_syncs = 0;
@@ -1283,7 +1283,7 @@ static void *hammer_thread(void *tdata)
 	}
 
 	syncobj_destroy(t->fd, sync[0].handle);
-	xe_engine_destroy(t->fd, engine);
+	xe_exec_queue_destroy(t->fd, exec_queue);
 
 	return NULL;
 }
@@ -1368,7 +1368,7 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 	};
 	uint64_t addr = 0x1a00000, base_addr = 0x1a00000;
 	uint32_t vm;
-	uint32_t engine;
+	uint32_t exec_queue;
 	size_t bo_size;
 	uint32_t bo = 0;
 	uint64_t bind_size;
@@ -1408,7 +1408,7 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 	}
 	memset(map, 0, bo_size);
 
-	engine = xe_engine_create(fd, vm, eci, 0);
+	exec_queue = xe_exec_queue_create(fd, vm, eci, 0);
 
 	sync[0].handle = syncobj_create(fd, 0);
 	sync[1].handle = syncobj_create(fd, 0);
@@ -1466,7 +1466,7 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 			syncobj_reset(fd, &sync[1].handle, 1);
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 
-		exec.engine_id = engine;
+		exec.exec_queue_id = exec_queue;
 		exec.address = batch_addr;
 		xe_exec(fd, &exec);
 
@@ -1522,7 +1522,7 @@ try_again_after_invalidate:
 			syncobj_reset(fd, &sync[1].handle, 1);
 			sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 
-			exec.engine_id = engine;
+			exec.exec_queue_id = exec_queue;
 			exec.address = batch_addr;
 			xe_exec(fd, &exec);
 		}
@@ -1593,7 +1593,7 @@ try_again_after_invalidate:
 		syncobj_reset(fd, &sync[1].handle, 1);
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 
-		exec.engine_id = engine;
+		exec.exec_queue_id = exec_queue;
 		exec.address = batch_addr;
 		xe_exec(fd, &exec);
 
@@ -1618,7 +1618,7 @@ try_again_after_invalidate:
 
 	syncobj_destroy(fd, sync[0].handle);
 	syncobj_destroy(fd, sync[1].handle);
-	xe_engine_destroy(fd, engine);
+	xe_exec_queue_destroy(fd, exec_queue);
 	munmap(map, bo_size);
 	if (bo)
 		gem_close(fd, bo);
@@ -1669,7 +1669,7 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 	};
 	uint64_t addr = 0x1a00000, base_addr = 0x1a00000;
 	uint32_t vm;
-	uint32_t engine;
+	uint32_t exec_queue;
 	size_t bo_size;
 	uint32_t bo0 = 0, bo1 = 0;
 	uint64_t bind_size;
@@ -1714,7 +1714,7 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 	memset(map0, 0, bo_size);
 	memset(map1, 0, bo_size);
 
-	engine = xe_engine_create(fd, vm, eci, 0);
+	exec_queue = xe_exec_queue_create(fd, vm, eci, 0);
 
 	sync[0].handle = syncobj_create(fd, 0);
 	sync[1].handle = syncobj_create(fd, 0);
@@ -1772,7 +1772,7 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 			syncobj_reset(fd, &sync[1].handle, 1);
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 
-		exec.engine_id = engine;
+		exec.exec_queue_id = exec_queue;
 		exec.address = batch_addr;
 		xe_exec(fd, &exec);
 
@@ -1840,7 +1840,7 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 			syncobj_reset(fd, &sync[1].handle, 1);
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 
-		exec.engine_id = engine;
+		exec.exec_queue_id = exec_queue;
 		exec.address = batch_addr;
 		xe_exec(fd, &exec);
 
@@ -1872,7 +1872,7 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 
 	syncobj_destroy(fd, sync[0].handle);
 	syncobj_destroy(fd, sync[1].handle);
-	xe_engine_destroy(fd, engine);
+	xe_exec_queue_destroy(fd, exec_queue);
 	munmap(map0, bo_size);
 	munmap(map1, bo_size);
 	if (bo0)
@@ -2033,13 +2033,13 @@ igt_main
 		xe_for_each_hw_engine(fd, hwe)
 			shared_pte_page(fd, hwe, 4, 0x1000ul * 512 * 512 * 512);
 
-	igt_subtest("bind-engines-independent")
+	igt_subtest("bind-execqueues-independent")
 		xe_for_each_hw_engine(fd, hwe)
-			test_bind_engines_independent(fd, hwe, 0);
+			test_bind_execqueues_independent(fd, hwe, 0);
 
-	igt_subtest("bind-engines-conflict")
+	igt_subtest("bind-execqueues-conflict")
 		xe_for_each_hw_engine(fd, hwe)
-			test_bind_engines_independent(fd, hwe, CONFLICT);
+			test_bind_execqueues_independent(fd, hwe, CONFLICT);
 
 	igt_subtest("bind-array-twice")
 		xe_for_each_hw_engine(fd, hwe)
@@ -2049,15 +2049,15 @@ igt_main
 		xe_for_each_hw_engine(fd, hwe)
 			test_bind_array(fd, hwe, 16, 0);
 
-	igt_subtest("bind-array-engine-twice")
+	igt_subtest("bind-array-exec_queue-twice")
 		xe_for_each_hw_engine(fd, hwe)
 			test_bind_array(fd, hwe, 2,
-					BIND_ARRAY_BIND_ENGINE_FLAG);
+					BIND_ARRAY_BIND_EXEC_QUEUE_FLAG);
 
-	igt_subtest("bind-array-engine-many")
+	igt_subtest("bind-array-exec_queue-many")
 		xe_for_each_hw_engine(fd, hwe)
 			test_bind_array(fd, hwe, 16,
-					BIND_ARRAY_BIND_ENGINE_FLAG);
+					BIND_ARRAY_BIND_EXEC_QUEUE_FLAG);
 
 	for (bind_size = 0x1ull << 21; bind_size <= 0x1ull << 31;
 	     bind_size = bind_size << 1) {

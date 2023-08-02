@@ -20,22 +20,22 @@
 #include "xe/xe_query.h"
 #include <string.h>
 
-#define MAX_N_ENGINES 16
-#define MULTI_VM	(0x1 << 0)
-#define THREADED	(0x1 << 1)
-#define MIXED_THREADS	(0x1 << 2)
-#define LEGACY_THREAD	(0x1 << 3)
-#define COMPUTE_THREAD	(0x1 << 4)
-#define EXTERNAL_OBJ	(0x1 << 5)
-#define BIND_ENGINE	(0x1 << 6)
+#define MAX_N_EXEC_QUEUES	16
+#define MULTI_VM			(0x1 << 0)
+#define THREADED			(0x1 << 1)
+#define MIXED_THREADS		(0x1 << 2)
+#define LEGACY_THREAD		(0x1 << 3)
+#define COMPUTE_THREAD		(0x1 << 4)
+#define EXTERNAL_OBJ		(0x1 << 5)
+#define BIND_EXEC_QUEUE		(0x1 << 6)
 
 static void
 test_evict(int fd, struct drm_xe_engine_class_instance *eci,
-	   int n_engines, int n_execs, size_t bo_size,
+	   int n_exec_queues, int n_execs, size_t bo_size,
 	   unsigned long flags, pthread_barrier_t *barrier)
 {
 	uint32_t vm, vm2, vm3;
-	uint32_t bind_engines[3] = { 0, 0, 0 };
+	uint32_t bind_exec_queues[3] = { 0, 0, 0 };
 	uint64_t addr = 0x100000000, base_addr = 0x100000000;
 	struct drm_xe_sync sync[2] = {
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
@@ -46,8 +46,8 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t syncobjs[MAX_N_EXEC_QUEUES];
 	uint32_t *bo;
 	struct {
 		uint32_t batch[16];
@@ -56,7 +56,7 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 	} *data;
 	int i, b;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 
 	bo = calloc(n_execs / 2, sizeof(*bo));
 	igt_assert(bo);
@@ -64,23 +64,23 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 	fd = drm_open_driver(DRIVER_XE);
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-	if (flags & BIND_ENGINE)
-		bind_engines[0] = xe_bind_engine_create(fd, vm, 0);
+	if (flags & BIND_EXEC_QUEUE)
+		bind_exec_queues[0] = xe_bind_exec_queue_create(fd, vm, 0);
 	if (flags & MULTI_VM) {
 		vm2 = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
 		vm3 = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-		if (flags & BIND_ENGINE) {
-			bind_engines[1] = xe_bind_engine_create(fd, vm2, 0);
-			bind_engines[2] = xe_bind_engine_create(fd, vm3, 0);
+		if (flags & BIND_EXEC_QUEUE) {
+			bind_exec_queues[1] = xe_bind_exec_queue_create(fd, vm2, 0);
+			bind_exec_queues[2] = xe_bind_exec_queue_create(fd, vm3, 0);
 		}
 	}
 
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		if (flags & MULTI_VM)
-			engines[i] = xe_engine_create(fd, i & 1 ? vm2 : vm ,
+			exec_queues[i] = xe_exec_queue_create(fd, i & 1 ? vm2 : vm ,
 						      eci, 0);
 		else
-			engines[i] = xe_engine_create(fd, vm, eci, 0);
+			exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
 		syncobjs[i] = syncobj_create(fd, 0);
 	};
 
@@ -90,7 +90,7 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
 		uint32_t __bo;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		if (i < n_execs / 2) {
                         uint32_t _vm = (flags & EXTERNAL_OBJ) &&
@@ -122,17 +122,17 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
 			sync[0].handle = syncobj_create(fd, 0);
 			if (flags & MULTI_VM) {
-				xe_vm_bind_async(fd, vm3, bind_engines[2], __bo,
+				xe_vm_bind_async(fd, vm3, bind_exec_queues[2], __bo,
 						 0, addr,
 						 bo_size, sync, 1);
 				igt_assert(syncobj_wait(fd, &sync[0].handle, 1,
 							INT64_MAX, 0, NULL));
 				xe_vm_bind_async(fd, i & 1 ? vm2 : vm,
-						 i & 1 ? bind_engines[1] :
-						 bind_engines[0], __bo,
+						 i & 1 ? bind_exec_queues[1] :
+						 bind_exec_queues[0], __bo,
 						 0, addr, bo_size, sync, 1);
 			} else {
-				xe_vm_bind_async(fd, vm, bind_engines[0],
+				xe_vm_bind_async(fd, vm, bind_exec_queues[0],
 						 __bo, 0, addr, bo_size,
 						 sync, 1);
 			}
@@ -148,11 +148,11 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
 		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
-		if (i >= n_engines)
+		if (i >= n_exec_queues)
 			syncobj_reset(fd, &syncobjs[e], 1);
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC, &exec), 0);
 
@@ -166,7 +166,7 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 	}
 	munmap(data, ALIGN(sizeof(*data) * n_execs, 0x1000));
 
-	for (i = 0; i < n_engines; i++)
+	for (i = 0; i < n_exec_queues; i++)
 		igt_assert(syncobj_wait(fd, &syncobjs[i], 1, INT64_MAX, 0,
 					NULL));
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
@@ -184,14 +184,14 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 	munmap(data, ALIGN(sizeof(*data) * n_execs, 0x1000));
 
 	syncobj_destroy(fd, sync[0].handle);
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 	}
 
 	for (i = 0; i < 3; i++)
-		if (bind_engines[i])
-			xe_engine_destroy(fd, bind_engines[i]);
+		if (bind_exec_queues[i])
+			xe_exec_queue_destroy(fd, bind_exec_queues[i]);
 
 	for (i = 0; i < n_execs / 2; i++)
 		gem_close(fd, bo[i]);
@@ -206,11 +206,11 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 
 static void
 test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
-	      int n_engines, int n_execs, size_t bo_size, unsigned long flags,
+	      int n_exec_queues, int n_execs, size_t bo_size, unsigned long flags,
 	      pthread_barrier_t *barrier)
 {
 	uint32_t vm, vm2;
-	uint32_t bind_engines[2] = { 0, 0 };
+	uint32_t bind_exec_queues[2] = { 0, 0 };
 	uint64_t addr = 0x100000000, base_addr = 0x100000000;
 #define USER_FENCE_VALUE	0xdeadbeefdeadbeefull
 	struct drm_xe_sync sync[1] = {
@@ -222,7 +222,7 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 		.num_syncs = 1,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
 	uint32_t *bo;
 	struct {
 		uint32_t batch[16];
@@ -233,7 +233,7 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 	} *data;
 	int i, b;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 
 	bo = calloc(n_execs / 2, sizeof(*bo));
 	igt_assert(bo);
@@ -242,28 +242,28 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
 			  DRM_XE_VM_CREATE_COMPUTE_MODE, 0);
-	if (flags & BIND_ENGINE)
-		bind_engines[0] = xe_bind_engine_create(fd, vm, 0);
+	if (flags & BIND_EXEC_QUEUE)
+		bind_exec_queues[0] = xe_bind_exec_queue_create(fd, vm, 0);
 	if (flags & MULTI_VM) {
 		vm2 = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
 				   DRM_XE_VM_CREATE_COMPUTE_MODE, 0);
-		if (flags & BIND_ENGINE)
-			bind_engines[1] = xe_bind_engine_create(fd, vm2, 0);
+		if (flags & BIND_EXEC_QUEUE)
+			bind_exec_queues[1] = xe_bind_exec_queue_create(fd, vm2, 0);
 	}
 
-	for (i = 0; i < n_engines; i++) {
-		struct drm_xe_ext_engine_set_property ext = {
+	for (i = 0; i < n_exec_queues; i++) {
+		struct drm_xe_ext_exec_queue_set_property ext = {
 			.base.next_extension = 0,
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_COMPUTE_MODE,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
 			.value = 1,
 		};
 
 		if (flags & MULTI_VM)
-			engines[i] = xe_engine_create(fd, i & 1 ? vm2 : vm, eci,
+			exec_queues[i] = xe_exec_queue_create(fd, i & 1 ? vm2 : vm, eci,
 						      to_user_pointer(&ext));
 		else
-			engines[i] = xe_engine_create(fd, vm, eci,
+			exec_queues[i] = xe_exec_queue_create(fd, vm, eci,
 						      to_user_pointer(&ext));
 	}
 
@@ -273,7 +273,7 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
 		uint32_t __bo;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		if (i < n_execs / 2) {
                         uint32_t _vm = (flags & EXTERNAL_OBJ) &&
@@ -307,11 +307,11 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 			sync[0].addr = to_user_pointer(&data[i].vm_sync);
 			if (flags & MULTI_VM) {
 				xe_vm_bind_async(fd, i & 1 ? vm2 : vm,
-						 i & 1 ? bind_engines[1] :
-						 bind_engines[0], __bo,
+						 i & 1 ? bind_exec_queues[1] :
+						 bind_exec_queues[0], __bo,
 						 0, addr, bo_size, sync, 1);
 			} else {
-				xe_vm_bind_async(fd, vm, bind_engines[0], __bo,
+				xe_vm_bind_async(fd, vm, bind_exec_queues[0], __bo,
 						 0, addr, bo_size, sync, 1);
 			}
 #define TWENTY_SEC	MS_TO_NS(20000)
@@ -330,7 +330,7 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 		data[i].batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC, &exec), 0);
 
@@ -356,12 +356,12 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 	}
 	munmap(data, ALIGN(sizeof(*data) * n_execs, 0x1000));
 
-	for (i = 0; i < n_engines; i++)
-		xe_engine_destroy(fd, engines[i]);
+	for (i = 0; i < n_exec_queues; i++)
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 
 	for (i = 0; i < 2; i++)
-		if (bind_engines[i])
-			xe_engine_destroy(fd, bind_engines[i]);
+		if (bind_exec_queues[i])
+			xe_exec_queue_destroy(fd, bind_exec_queues[i]);
 
 	for (i = 0; i < n_execs / 2; i++)
 		gem_close(fd, bo[i]);
@@ -379,7 +379,7 @@ struct thread_data {
 	pthread_barrier_t *barrier;
 	int fd;
 	struct drm_xe_engine_class_instance *eci;
-	int n_engines;
+	int n_exec_queues;
 	int n_execs;
 	uint64_t bo_size;
 	int flags;
@@ -396,10 +396,10 @@ static void *thread(void *data)
 	pthread_mutex_unlock(t->mutex);
 
 	if (t->flags & COMPUTE_THREAD)
-		test_evict_cm(t->fd, t->eci, t->n_engines, t->n_execs,
+		test_evict_cm(t->fd, t->eci, t->n_exec_queues, t->n_execs,
 			      t->bo_size, t->flags, t->barrier);
 	else
-		test_evict(t->fd, t->eci, t->n_engines, t->n_execs,
+		test_evict(t->fd, t->eci, t->n_exec_queues, t->n_execs,
 			   t->bo_size, t->flags, t->barrier);
 
 	return NULL;
@@ -407,7 +407,7 @@ static void *thread(void *data)
 
 static void
 threads(int fd, struct drm_xe_engine_class_instance *eci,
-	int n_threads, int n_engines, int n_execs, size_t bo_size,
+	int n_threads, int n_exec_queues, int n_execs, size_t bo_size,
 	unsigned long flags)
 {
 	pthread_barrier_t barrier;
@@ -430,7 +430,7 @@ threads(int fd, struct drm_xe_engine_class_instance *eci,
 		threads_data[i].barrier = &barrier;
 		threads_data[i].fd = fd;
 		threads_data[i].eci = eci;
-		threads_data[i].n_engines = n_engines;
+		threads_data[i].n_exec_queues = n_exec_queues;
 		threads_data[i].n_execs = n_execs;
 		threads_data[i].bo_size = bo_size;
 		threads_data[i].flags = flags;
@@ -477,12 +477,12 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * @large:			large
  * @large-external:		large external
  * @large-multi-vm:		large multi VM
- * @beng-small:			small bind engine
- * @beng-small-external:	small external bind engine
+ * @beng-small:			small bind exec_queue
+ * @beng-small-external:	small external bind exec_queue
  * @beng-small-multi-vm:	small multi VM bind ending
- * @beng-large:			large bind engine
- * @beng-large-external:	large external bind engine
- * @beng-large-multi-vm:	large multi VM bind engine
+ * @beng-large:			large bind exec_queue
+ * @beng-large-external:	large external bind exec_queue
+ * @beng-large-multi-vm:	large multi VM bind exec_queue
  *
  * @small-cm:			small compute machine
  * @small-external-cm:		small external compute machine
@@ -490,12 +490,12 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * @large-cm:			large compute machine
  * @large-external-cm:		large external compute machine
  * @large-multi-vm-cm:		large multi VM compute machine
- * @beng-small-cm:		small bind engine compute machine
- * @beng-small-external-cm:	small external bind engine compute machine
+ * @beng-small-cm:		small bind exec_queue compute machine
+ * @beng-small-external-cm:	small external bind exec_queue compute machine
  * @beng-small-multi-vm-cm:	small multi VM bind ending compute machine
- * @beng-large-cm:		large bind engine compute machine
- * @beng-large-external-cm:	large external bind engine compute machine
- * @beng-large-multi-vm-cm:	large multi VM bind engine compute machine
+ * @beng-large-cm:		large bind exec_queue compute machine
+ * @beng-large-external-cm:	large external bind exec_queue compute machine
+ * @beng-large-multi-vm-cm:	large multi VM bind exec_queue compute machine
  *
  * @threads-small:		threads small
  * @cm-threads-small:		compute mode threads small
@@ -513,28 +513,28 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * @cm-threads-large-multi-vm:	compute mode threads large multi vm
  * @mixed-threads-large-multi-vm:
  *				mixed threads large multi vm
- * @beng-threads-small:		bind engine threads small
- * @beng-cm-threads-small:	bind engine compute mode threads small
- * @beng-mixed-threads-small:	bind engine mixed threads small
+ * @beng-threads-small:		bind exec_queue threads small
+ * @beng-cm-threads-small:	bind exec_queue compute mode threads small
+ * @beng-mixed-threads-small:	bind exec_queue mixed threads small
  * @beng-mixed-many-threads-small:
- *				bind engine mixed many threads small
- * @beng-threads-large:		bind engine threads large
- * @beng-cm-threads-large:	bind engine compute mode threads large
- * @beng-mixed-threads-large:	bind engine mixed threads large
+ *				bind exec_queue mixed many threads small
+ * @beng-threads-large:		bind exec_queue threads large
+ * @beng-cm-threads-large:	bind exec_queue compute mode threads large
+ * @beng-mixed-threads-large:	bind exec_queue mixed threads large
  * @beng-mixed-many-threads-large:
- *				bind engine mixed many threads large
+ *				bind exec_queue mixed many threads large
  * @beng-threads-small-multi-vm:
- *				bind engine threads small multi vm
+ *				bind exec_queue threads small multi vm
  * @beng-cm-threads-small-multi-vm:
- *				bind engine compute mode threads small multi vm
+ *				bind exec_queue compute mode threads small multi vm
  * @beng-mixed-threads-small-multi-vm:
- *				bind engine mixed threads small multi vm
+ *				bind exec_queue mixed threads small multi vm
  * @beng-threads-large-multi-vm:
- *				bind engine threads large multi vm
+ *				bind exec_queue threads large multi vm
  * @beng-cm-threads-large-multi-vm:
- *				bind engine compute mode threads large multi vm
+ *				bind exec_queue compute mode threads large multi vm
  * @beng-mixed-threads-large-multi-vm:
- *				bind engine mixed threads large multi vm
+ *				bind exec_queue mixed threads large multi vm
  */
 
 /*
@@ -552,7 +552,7 @@ igt_main
 	struct drm_xe_engine_class_instance *hwe;
 	const struct section {
 		const char *name;
-		int n_engines;
+		int n_exec_queues;
 		int n_execs;
 		int mul;
 		int div;
@@ -564,20 +564,20 @@ igt_main
 		{ "large", 4, 16, 1, 4, 0 },
 		{ "large-external", 4, 16, 1, 4, EXTERNAL_OBJ },
 		{ "large-multi-vm", 4, 8, 3, 8, MULTI_VM },
-		{ "beng-small", 16, 448, 1, 128, BIND_ENGINE },
-		{ "beng-small-external", 16, 448, 1, 128, BIND_ENGINE |
+		{ "beng-small", 16, 448, 1, 128, BIND_EXEC_QUEUE },
+		{ "beng-small-external", 16, 448, 1, 128, BIND_EXEC_QUEUE |
 			EXTERNAL_OBJ },
-		{ "beng-small-multi-vm", 16, 256, 1, 128, BIND_ENGINE |
+		{ "beng-small-multi-vm", 16, 256, 1, 128, BIND_EXEC_QUEUE |
 			MULTI_VM },
-		{ "beng-large", 4, 16, 1, 4, BIND_ENGINE },
-		{ "beng-large-external", 4, 16, 1, 4, BIND_ENGINE |
+		{ "beng-large", 4, 16, 1, 4, BIND_EXEC_QUEUE },
+		{ "beng-large-external", 4, 16, 1, 4, BIND_EXEC_QUEUE |
 			EXTERNAL_OBJ },
-		{ "beng-large-multi-vm", 4, 8, 3, 8, BIND_ENGINE | MULTI_VM },
+		{ "beng-large-multi-vm", 4, 8, 3, 8, BIND_EXEC_QUEUE | MULTI_VM },
 		{ NULL },
 	};
 	const struct section_cm {
 		const char *name;
-		int n_engines;
+		int n_exec_queues;
 		int n_execs;
 		int mul;
 		int div;
@@ -589,22 +589,22 @@ igt_main
 		{ "large-cm", 4, 16, 1, 4, 0 },
 		{ "large-external-cm", 4, 16, 1, 4, EXTERNAL_OBJ },
 		{ "large-multi-vm-cm", 4, 8, 3, 8, MULTI_VM },
-		{ "beng-small-cm", 16, 448, 1, 128, BIND_ENGINE },
-		{ "beng-small-external-cm", 16, 448, 1, 128, BIND_ENGINE |
+		{ "beng-small-cm", 16, 448, 1, 128, BIND_EXEC_QUEUE },
+		{ "beng-small-external-cm", 16, 448, 1, 128, BIND_EXEC_QUEUE |
 			EXTERNAL_OBJ },
-		{ "beng-small-multi-vm-cm", 16, 256, 1, 128, BIND_ENGINE |
+		{ "beng-small-multi-vm-cm", 16, 256, 1, 128, BIND_EXEC_QUEUE |
 			MULTI_VM },
-		{ "beng-large-cm", 4, 16, 1, 4, BIND_ENGINE },
-		{ "beng-large-external-cm", 4, 16, 1, 4, BIND_ENGINE |
+		{ "beng-large-cm", 4, 16, 1, 4, BIND_EXEC_QUEUE },
+		{ "beng-large-external-cm", 4, 16, 1, 4, BIND_EXEC_QUEUE |
 			EXTERNAL_OBJ },
-		{ "beng-large-multi-vm-cm", 4, 8, 3, 8, BIND_ENGINE |
+		{ "beng-large-multi-vm-cm", 4, 8, 3, 8, BIND_EXEC_QUEUE |
 			MULTI_VM },
 		{ NULL },
 	};
 	const struct section_threads {
 		const char *name;
 		int n_threads;
-		int n_engines;
+		int n_exec_queues;
 		int n_execs;
 		int mul;
 		int div;
@@ -639,33 +639,33 @@ igt_main
 		{ "mixed-threads-large-multi-vm", 2, 2, 4, 3, 8,
 			MIXED_THREADS | MULTI_VM | THREADED },
 		{ "beng-threads-small", 2, 16, 128, 1, 128,
-			THREADED | BIND_ENGINE },
+			THREADED | BIND_EXEC_QUEUE },
 		{ "beng-cm-threads-small", 2, 16, 128, 1, 128,
-			COMPUTE_THREAD | THREADED | BIND_ENGINE },
+			COMPUTE_THREAD | THREADED | BIND_EXEC_QUEUE },
 		{ "beng-mixed-threads-small", 2, 16, 128, 1, 128,
-			MIXED_THREADS | THREADED | BIND_ENGINE },
+			MIXED_THREADS | THREADED | BIND_EXEC_QUEUE },
 		{ "beng-mixed-many-threads-small", 3, 16, 128, 1, 128,
-			THREADED | BIND_ENGINE },
+			THREADED | BIND_EXEC_QUEUE },
 		{ "beng-threads-large", 2, 2, 4, 3, 8,
-			THREADED | BIND_ENGINE },
+			THREADED | BIND_EXEC_QUEUE },
 		{ "beng-cm-threads-large", 2, 2, 4, 3, 8,
-			COMPUTE_THREAD | THREADED | BIND_ENGINE },
+			COMPUTE_THREAD | THREADED | BIND_EXEC_QUEUE },
 		{ "beng-mixed-threads-large", 2, 2, 4, 3, 8,
-			MIXED_THREADS | THREADED | BIND_ENGINE },
+			MIXED_THREADS | THREADED | BIND_EXEC_QUEUE },
 		{ "beng-mixed-many-threads-large", 3, 2, 4, 3, 8,
-			THREADED | BIND_ENGINE },
+			THREADED | BIND_EXEC_QUEUE },
 		{ "beng-threads-small-multi-vm", 2, 16, 128, 1, 128,
-			MULTI_VM | THREADED | BIND_ENGINE },
+			MULTI_VM | THREADED | BIND_EXEC_QUEUE },
 		{ "beng-cm-threads-small-multi-vm", 2, 16, 128, 1, 128,
-			COMPUTE_THREAD | MULTI_VM | THREADED | BIND_ENGINE },
+			COMPUTE_THREAD | MULTI_VM | THREADED | BIND_EXEC_QUEUE },
 		{ "beng-mixed-threads-small-multi-vm", 2, 16, 128, 1, 128,
-			MIXED_THREADS | MULTI_VM | THREADED | BIND_ENGINE },
+			MIXED_THREADS | MULTI_VM | THREADED | BIND_EXEC_QUEUE },
 		{ "beng-threads-large-multi-vm", 2, 2, 4, 3, 8,
-			MULTI_VM | THREADED | BIND_ENGINE },
+			MULTI_VM | THREADED | BIND_EXEC_QUEUE },
 		{ "beng-cm-threads-large-multi-vm", 2, 2, 4, 3, 8,
-			COMPUTE_THREAD | MULTI_VM | THREADED | BIND_ENGINE },
+			COMPUTE_THREAD | MULTI_VM | THREADED | BIND_EXEC_QUEUE },
 		{ "beng-mixed-threads-large-multi-vm", 2, 2, 4, 3, 8,
-			MIXED_THREADS | MULTI_VM | THREADED | BIND_ENGINE },
+			MIXED_THREADS | MULTI_VM | THREADED | BIND_EXEC_QUEUE },
 		{ NULL },
 	};
 	uint64_t vram_size;
@@ -684,21 +684,21 @@ igt_main
 
 	for (const struct section *s = sections; s->name; s++) {
 		igt_subtest_f("evict-%s", s->name)
-			test_evict(-1, hwe, s->n_engines, s->n_execs,
+			test_evict(-1, hwe, s->n_exec_queues, s->n_execs,
 				   calc_bo_size(vram_size, s->mul, s->div),
 				   s->flags, NULL);
 	}
 
 	for (const struct section_cm *s = sections_cm; s->name; s++) {
 		igt_subtest_f("evict-%s", s->name)
-			test_evict_cm(-1, hwe, s->n_engines, s->n_execs,
+			test_evict_cm(-1, hwe, s->n_exec_queues, s->n_execs,
 				      calc_bo_size(vram_size, s->mul, s->div),
 				      s->flags, NULL);
 	}
 
 	for (const struct section_threads *s = sections_threads; s->name; s++) {
 		igt_subtest_f("evict-%s", s->name)
-			threads(-1, hwe, s->n_threads, s->n_engines,
+			threads(-1, hwe, s->n_threads, s->n_exec_queues,
 				 s->n_execs,
 				 calc_bo_size(vram_size, s->mul, s->div),
 				 s->flags);

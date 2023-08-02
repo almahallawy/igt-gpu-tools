@@ -427,7 +427,7 @@ int __intel_ctx_xe_exec(const intel_ctx_t *ctx, uint64_t ahnd, uint64_t bb_offse
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
-		.engine_id = ctx->engine,
+		.exec_queue_id = ctx->engine,
 		.syncs = (uintptr_t)syncs,
 		.num_syncs = 2,
 		.address = bb_offset,

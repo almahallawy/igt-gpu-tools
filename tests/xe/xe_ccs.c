@@ -337,12 +337,12 @@ static void block_copy(int xe,
 		};
 		intel_ctx_t *surf_ctx = ctx;
 		uint64_t surf_ahnd = ahnd;
-		uint32_t vm, engine;
+		uint32_t vm, exec_queue;
 
 		if (config->new_ctx) {
 			vm = xe_vm_create(xe, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-			engine = xe_engine_create(xe, vm, &inst, 0);
-			surf_ctx = intel_ctx_xe(xe, vm, engine, 0, 0, 0);
+			exec_queue = xe_exec_queue_create(xe, vm, &inst, 0);
+			surf_ctx = intel_ctx_xe(xe, vm, exec_queue, 0, 0, 0);
 			surf_ahnd = intel_allocator_open(xe, surf_ctx->vm,
 							 INTEL_ALLOCATOR_RELOC);
 		}
@@ -350,7 +350,7 @@ static void block_copy(int xe,
 			  config->suspend_resume);
 
 		if (surf_ctx != ctx) {
-			xe_engine_destroy(xe, engine);
+			xe_exec_queue_destroy(xe, exec_queue);
 			xe_vm_destroy(xe, vm);
 			free(surf_ctx);
 			put_ahnd(surf_ahnd);
@@ -512,7 +512,7 @@ static void block_copy_test(int xe,
 	};
 	intel_ctx_t *ctx;
 	struct igt_collection *regions;
-	uint32_t vm, engine;
+	uint32_t vm, exec_queue;
 	int tiling;
 
 	if (config->compression && !blt_block_copy_supports_compression(xe))
@@ -548,17 +548,17 @@ static void block_copy_test(int xe,
 				uint32_t sync_bind, sync_out;
 
 				vm = xe_vm_create(xe, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-				engine = xe_engine_create(xe, vm, &inst, 0);
+				exec_queue = xe_exec_queue_create(xe, vm, &inst, 0);
 				sync_bind = syncobj_create(xe, 0);
 				sync_out = syncobj_create(xe, 0);
-				ctx = intel_ctx_xe(xe, vm, engine,
+				ctx = intel_ctx_xe(xe, vm, exec_queue,
 						   0, sync_bind, sync_out);
 
 				copyfns[copy_function].copyfn(xe, ctx,
 							      region1, region2,
 							      tiling, config);
 
-				xe_engine_destroy(xe, engine);
+				xe_exec_queue_destroy(xe, exec_queue);
 				xe_vm_destroy(xe, vm);
 				syncobj_destroy(xe, sync_bind);
 				syncobj_destroy(xe, sync_out);

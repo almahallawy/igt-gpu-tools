@@ -4,7 +4,7 @@
  */
 
 /**
- * TEST: Basic tests for execbuf functionality for virtual and parallel engines
+ * TEST: Basic tests for execbuf functionality for virtual and parallel exec_queues
  * Category: Hardware building block
  * Sub-category: execbuf
  * Functionality: reset
@@ -39,7 +39,7 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engine;
+	uint32_t exec_queue;
 	uint32_t syncobj;
 	size_t bo_size;
 	uint32_t bo = 0;
@@ -54,7 +54,7 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
 				visible_vram_if_possible(fd, eci->gt_id));
 	spin = xe_bo_map(fd, bo, bo_size);
 
-	engine = xe_engine_create(fd, vm, eci, 0);
+	exec_queue = xe_exec_queue_create(fd, vm, eci, 0);
 	syncobj = syncobj_create(fd, 0);
 
 	sync[0].handle = syncobj_create(fd, 0);
@@ -66,7 +66,7 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
 	sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 	sync[1].handle = syncobj;
 
-	exec.engine_id = engine;
+	exec.exec_queue_id = exec_queue;
 	exec.address = addr;
 	xe_exec(fd, &exec);
 
@@ -84,31 +84,31 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
 
 	syncobj_destroy(fd, sync[0].handle);
 	syncobj_destroy(fd, syncobj);
-	xe_engine_destroy(fd, engine);
+	xe_exec_queue_destroy(fd, exec_queue);
 
 	munmap(spin, bo_size);
 	gem_close(fd, bo);
 	xe_vm_destroy(fd, vm);
 }
 
-#define MAX_N_ENGINES 16
-#define MAX_INSTANCE 9
-#define CANCEL		(0x1 << 0)
-#define ENGINE_RESET	(0x1 << 1)
-#define GT_RESET	(0x1 << 2)
-#define CLOSE_FD	(0x1 << 3)
-#define CLOSE_ENGINES	(0x1 << 4)
-#define VIRTUAL		(0x1 << 5)
-#define PARALLEL	(0x1 << 6)
-#define CAT_ERROR	(0x1 << 7)
+#define MAX_N_EXECQUEUES	16
+#define MAX_INSTANCE		9
+#define CANCEL				(0x1 << 0)
+#define EXEC_QUEUE_RESET	(0x1 << 1)
+#define GT_RESET			(0x1 << 2)
+#define CLOSE_FD			(0x1 << 3)
+#define CLOSE_EXEC_QUEUES	(0x1 << 4)
+#define VIRTUAL				(0x1 << 5)
+#define PARALLEL			(0x1 << 6)
+#define CAT_ERROR			(0x1 << 7)
 
 /**
  * SUBTEST: %s-cancel
  * Description: Test %arg[1] cancel
  * Run type: FULL
  *
- * SUBTEST: %s-engine-reset
- * Description: Test %arg[1] engine reset
+ * SUBTEST: %s-execqueue-reset
+ * Description: Test %arg[1] exec_queue reset
  * Run type: FULL
  *
  * SUBTEST: %s-cat-error
@@ -131,8 +131,8 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
  * Description: Test %arg[1] close fd
  * Run type: FULL
  *
- * SUBTEST: %s-close-engines-close-fd
- * Description: Test %arg[1] close engines close fd
+ * SUBTEST: %s-close-execqueues-close-fd
+ * Description: Test %arg[1] close exec_queues close fd
  * Run type: FULL
  *
  * arg[1]:
@@ -142,7 +142,7 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
  */
 
 static void
-test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
+test_balancer(int fd, int gt, int class, int n_exec_queues, int n_execs,
 	      unsigned int flags)
 {
 	uint32_t vm;
@@ -155,8 +155,8 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXECQUEUES];
+	uint32_t syncobjs[MAX_N_EXECQUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -169,7 +169,7 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 	struct drm_xe_engine_class_instance eci[MAX_INSTANCE];
 	int i, j, b, num_placements = 0, bad_batches = 1;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXECQUEUES);
 
 	if (flags & CLOSE_FD)
 		fd = drm_open_driver(DRIVER_XE);
@@ -191,20 +191,20 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 	bo = xe_bo_create_flags(fd, vm, bo_size, visible_vram_if_possible(fd, gt));
 	data = xe_bo_map(fd, bo, bo_size);
 
-	for (i = 0; i < n_engines; i++) {
-		struct drm_xe_ext_engine_set_property job_timeout = {
+	for (i = 0; i < n_exec_queues; i++) {
+		struct drm_xe_ext_exec_queue_set_property job_timeout = {
 			.base.next_extension = 0,
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_JOB_TIMEOUT,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_JOB_TIMEOUT,
 			.value = 50,
 		};
-		struct drm_xe_ext_engine_set_property preempt_timeout = {
+		struct drm_xe_ext_exec_queue_set_property preempt_timeout = {
 			.base.next_extension = 0,
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_PREEMPTION_TIMEOUT,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
 			.value = 1000,
 		};
-		struct drm_xe_engine_create create = {
+		struct drm_xe_exec_queue_create create = {
 			.vm_id = vm,
 			.width = flags & PARALLEL ? num_placements : 1,
 			.num_placements = flags & PARALLEL ? 1 : num_placements,
@@ -213,12 +213,12 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 
 		if (flags & CANCEL)
 			create.extensions = to_user_pointer(&job_timeout);
-		else if (flags & ENGINE_RESET)
+		else if (flags & EXEC_QUEUE_RESET)
 			create.extensions = to_user_pointer(&preempt_timeout);
 
-		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE,
+		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE,
 					&create), 0);
-		engines[i] = create.engine_id;
+		exec_queues[i] = create.exec_queue_id;
 		syncobjs[i] = syncobj_create(fd, 0);
 	};
 	exec.num_batch_buffer = flags & PARALLEL ? num_placements : 1;
@@ -226,7 +226,7 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 	sync[0].handle = syncobj_create(fd, 0);
 	xe_vm_bind_async(fd, vm, 0, bo, 0, addr, bo_size, sync, 1);
 
-	if (flags & VIRTUAL && (flags & CAT_ERROR || flags & ENGINE_RESET ||
+	if (flags & VIRTUAL && (flags & CAT_ERROR || flags & EXEC_QUEUE_RESET ||
 				flags & GT_RESET))
 		bad_batches = num_placements;
 
@@ -241,7 +241,7 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 		uint64_t sdi_addr = base_addr + sdi_offset;
 		uint64_t exec_addr;
 		uint64_t batches[MAX_INSTANCE];
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		for (j = 0; j < num_placements && flags & PARALLEL; ++j)
 			batches[j] = batch_addr;
@@ -268,7 +268,7 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = flags & PARALLEL ?
 			to_user_pointer(batches) : exec_addr;
 		if (e != i)
@@ -280,9 +280,9 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 		xe_force_gt_reset(fd, gt);
 
 	if (flags & CLOSE_FD) {
-		if (flags & CLOSE_ENGINES) {
-			for (i = 0; i < n_engines; i++)
-				xe_engine_destroy(fd, engines[i]);
+		if (flags & CLOSE_EXEC_QUEUES) {
+			for (i = 0; i < n_exec_queues; i++)
+				xe_exec_queue_destroy(fd, exec_queues[i]);
 		}
 		drm_close_driver(fd);
 		/* FIXME: wait for idle */
@@ -290,7 +290,7 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 		return;
 	}
 
-	for (i = 0; i < n_engines && n_execs; i++)
+	for (i = 0; i < n_exec_queues && n_execs; i++)
 		igt_assert(syncobj_wait(fd, &syncobjs[i], 1, INT64_MAX, 0,
 					NULL));
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
@@ -303,9 +303,9 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
 		igt_assert_eq(data[i].data, 0xc0ffee);
 
 	syncobj_destroy(fd, sync[0].handle);
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 	}
 
 	munmap(data, bo_size);
@@ -318,8 +318,8 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
  * Description: Test cancel
  * Run type: FULL
  *
- * SUBTEST: engine-reset
- * Description: Test engine reset
+ * SUBTEST: execqueue-reset
+ * Description: Test exec_queue reset
  * Run type: FULL
  *
  * SUBTEST: cat-error
@@ -338,14 +338,14 @@ test_balancer(int fd, int gt, int class, int n_engines, int n_execs,
  * Description: Test close fd
  * Run type: FULL
  *
- * SUBTEST: close-engines-close-fd
- * Description: Test close engines close fd
+ * SUBTEST: close-execqueues-close-fd
+ * Description: Test close exec_queues close fd
  * Run type: FULL
  */
 
 static void
 test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
-		 int n_engines, int n_execs, unsigned int flags)
+		 int n_exec_queues, int n_execs, unsigned int flags)
 {
 	uint32_t vm;
 	uint64_t addr = 0x1a0000;
@@ -358,8 +358,8 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXECQUEUES];
+	uint32_t syncobjs[MAX_N_EXECQUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -370,7 +370,7 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 	} *data;
 	int i, b;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXECQUEUES);
 
 	if (flags & CLOSE_FD)
 		fd = drm_open_driver(DRIVER_XE);
@@ -384,27 +384,27 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 				visible_vram_if_possible(fd, eci->gt_id));
 	data = xe_bo_map(fd, bo, bo_size);
 
-	for (i = 0; i < n_engines; i++) {
-		struct drm_xe_ext_engine_set_property job_timeout = {
+	for (i = 0; i < n_exec_queues; i++) {
+		struct drm_xe_ext_exec_queue_set_property job_timeout = {
 			.base.next_extension = 0,
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_JOB_TIMEOUT,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_JOB_TIMEOUT,
 			.value = 50,
 		};
-		struct drm_xe_ext_engine_set_property preempt_timeout = {
+		struct drm_xe_ext_exec_queue_set_property preempt_timeout = {
 			.base.next_extension = 0,
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_PREEMPTION_TIMEOUT,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
 			.value = 1000,
 		};
 		uint64_t ext = 0;
 
 		if (flags & CANCEL)
 			ext = to_user_pointer(&job_timeout);
-		else if (flags & ENGINE_RESET)
+		else if (flags & EXEC_QUEUE_RESET)
 			ext = to_user_pointer(&preempt_timeout);
 
-		engines[i] = xe_engine_create(fd, vm, eci, ext);
+		exec_queues[i] = xe_exec_queue_create(fd, vm, eci, ext);
 		syncobjs[i] = syncobj_create(fd, 0);
 	};
 
@@ -421,7 +421,7 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = base_addr + sdi_offset;
 		uint64_t exec_addr;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		if (!i) {
 			xe_spin_init(&data[i].spin, spin_addr, false);
@@ -442,7 +442,7 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = exec_addr;
 		if (e != i)
 			 syncobj_reset(fd, &syncobjs[e], 1);
@@ -453,9 +453,9 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		xe_force_gt_reset(fd, eci->gt_id);
 
 	if (flags & CLOSE_FD) {
-		if (flags & CLOSE_ENGINES) {
-			for (i = 0; i < n_engines; i++)
-				xe_engine_destroy(fd, engines[i]);
+		if (flags & CLOSE_EXEC_QUEUES) {
+			for (i = 0; i < n_exec_queues; i++)
+				xe_exec_queue_destroy(fd, exec_queues[i]);
 		}
 		drm_close_driver(fd);
 		/* FIXME: wait for idle */
@@ -463,7 +463,7 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		return;
 	}
 
-	for (i = 0; i < n_engines && n_execs; i++)
+	for (i = 0; i < n_exec_queues && n_execs; i++)
 		igt_assert(syncobj_wait(fd, &syncobjs[i], 1, INT64_MAX, 0,
 					NULL));
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
@@ -476,9 +476,9 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		igt_assert_eq(data[i].data, 0xc0ffee);
 
 	syncobj_destroy(fd, sync[0].handle);
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 	}
 
 	munmap(data, bo_size);
@@ -487,8 +487,8 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 }
 
 /**
- * SUBTEST: cm-engine-reset
- * Description: Test compute mode engine reset
+ * SUBTEST: cm-execqueue-reset
+ * Description: Test compute mode exec_queue reset
  * Run type: FULL
  *
  * SUBTEST: cm-cat-error
@@ -507,14 +507,14 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
  * Description: Test compute mode close fd
  * Run type: FULL
  *
- * SUBTEST: cm-close-engines-close-fd
- * Description: Test compute mode close engines close fd
+ * SUBTEST: cm-close-execqueues-close-fd
+ * Description: Test compute mode close exec_queues close fd
  * Run type: FULL
  */
 
 static void
 test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
-		  int n_engines, int n_execs, unsigned int flags)
+		  int n_exec_queues, int n_execs, unsigned int flags)
 {
 	uint32_t vm;
 	uint64_t addr = 0x1a0000;
@@ -528,7 +528,7 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		.num_syncs = 1,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXECQUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -541,7 +541,7 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 	} *data;
 	int i, b;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXECQUEUES);
 
 	if (flags & CLOSE_FD)
 		fd = drm_open_driver(DRIVER_XE);
@@ -557,27 +557,27 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 	data = xe_bo_map(fd, bo, bo_size);
 	memset(data, 0, bo_size);
 
-	for (i = 0; i < n_engines; i++) {
-		struct drm_xe_ext_engine_set_property compute = {
+	for (i = 0; i < n_exec_queues; i++) {
+		struct drm_xe_ext_exec_queue_set_property compute = {
 			.base.next_extension = 0,
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_COMPUTE_MODE,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
 			.value = 1,
 		};
-		struct drm_xe_ext_engine_set_property preempt_timeout = {
+		struct drm_xe_ext_exec_queue_set_property preempt_timeout = {
 			.base.next_extension = to_user_pointer(&compute),
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_PREEMPTION_TIMEOUT,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
 			.value = 1000,
 		};
 		uint64_t ext = 0;
 
-		if (flags & ENGINE_RESET)
+		if (flags & EXEC_QUEUE_RESET)
 			ext = to_user_pointer(&preempt_timeout);
 		else
 			ext = to_user_pointer(&compute);
 
-		engines[i] = xe_engine_create(fd, vm, eci, ext);
+		exec_queues[i] = xe_exec_queue_create(fd, vm, eci, ext);
 	};
 
 	sync[0].addr = to_user_pointer(&data[0].vm_sync);
@@ -597,7 +597,7 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = base_addr + sdi_offset;
 		uint64_t exec_addr;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		if (!i) {
 			xe_spin_init(&data[i].spin, spin_addr, false);
@@ -617,7 +617,7 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		sync[0].addr = base_addr +
 			(char *)&data[i].exec_sync - (char *)data;
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = exec_addr;
 		xe_exec(fd, &exec);
 	}
@@ -626,9 +626,9 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		xe_force_gt_reset(fd, eci->gt_id);
 
 	if (flags & CLOSE_FD) {
-		if (flags & CLOSE_ENGINES) {
-			for (i = 0; i < n_engines; i++)
-				xe_engine_destroy(fd, engines[i]);
+		if (flags & CLOSE_EXEC_QUEUES) {
+			for (i = 0; i < n_exec_queues; i++)
+				xe_exec_queue_destroy(fd, exec_queues[i]);
 		}
 		drm_close_driver(fd);
 		/* FIXME: wait for idle */
@@ -647,8 +647,8 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 	for (i = 1; i < n_execs; i++)
 		igt_assert_eq(data[i].data, 0xc0ffee);
 
-	for (i = 0; i < n_engines; i++)
-		xe_engine_destroy(fd, engines[i]);
+	for (i = 0; i < n_exec_queues; i++)
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 
 	munmap(data, bo_size);
 	gem_close(fd, bo);
@@ -697,7 +697,7 @@ static void submit_jobs(struct gt_thread_data *t)
 			.engine_instance = 0,
 			.gt_id = 0,
 		};
-		struct drm_xe_engine_create create = {
+		struct drm_xe_exec_queue_create create = {
 			.vm_id = vm,
 			.width = 1,
 			.num_placements = 1,
@@ -707,15 +707,15 @@ static void submit_jobs(struct gt_thread_data *t)
 		int ret;
 
 		/* GuC IDs can get exhausted */
-		ret = igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE, &create);
+		ret = igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE, &create);
 		if (ret)
 			continue;
 
-		exec.engine_id = create.engine_id;
+		exec.exec_queue_id = create.exec_queue_id;
 		exec.address = addr;
 		exec.num_batch_buffer = 1;
 		xe_exec(fd, &exec);
-		xe_engine_destroy(fd, create.engine_id);
+		xe_exec_queue_destroy(fd, create.exec_queue_id);
 	}
 
 	munmap(data, bo_size);
@@ -817,9 +817,9 @@ igt_main
 		xe_for_each_hw_engine(fd, hwe)
 			test_legacy_mode(fd, hwe, 1, 1, CANCEL);
 
-	igt_subtest("engine-reset")
+	igt_subtest("execqueue-reset")
 		xe_for_each_hw_engine(fd, hwe)
-			test_legacy_mode(fd, hwe, 2, 2, ENGINE_RESET);
+			test_legacy_mode(fd, hwe, 2, 2, EXEC_QUEUE_RESET);
 
 	igt_subtest("cat-error")
 		xe_for_each_hw_engine(fd, hwe)
@@ -837,14 +837,14 @@ igt_main
 		xe_for_each_hw_engine(fd, hwe)
 			test_legacy_mode(-1, hwe, 16, 256, CLOSE_FD);
 
-	igt_subtest("close-engines-close-fd")
+	igt_subtest("close-execqueues-close-fd")
 		xe_for_each_hw_engine(fd, hwe)
 			test_legacy_mode(-1, hwe, 16, 256, CLOSE_FD |
-					 CLOSE_ENGINES);
+					 CLOSE_EXEC_QUEUES);
 
-	igt_subtest("cm-engine-reset")
+	igt_subtest("cm-execqueue-reset")
 		xe_for_each_hw_engine(fd, hwe)
-			test_compute_mode(fd, hwe, 2, 2, ENGINE_RESET);
+			test_compute_mode(fd, hwe, 2, 2, EXEC_QUEUE_RESET);
 
 	igt_subtest("cm-cat-error")
 		xe_for_each_hw_engine(fd, hwe)
@@ -862,10 +862,10 @@ igt_main
 		xe_for_each_hw_engine(fd, hwe)
 			test_compute_mode(-1, hwe, 16, 256, CLOSE_FD);
 
-	igt_subtest("cm-close-engines-close-fd")
+	igt_subtest("cm-close-execqueues-close-fd")
 		xe_for_each_hw_engine(fd, hwe)
 			test_compute_mode(-1, hwe, 16, 256, CLOSE_FD |
-					  CLOSE_ENGINES);
+					  CLOSE_EXEC_QUEUES);
 
 	for (const struct section *s = sections; s->name; s++) {
 		igt_subtest_f("%s-cancel", s->name)
@@ -874,12 +874,12 @@ igt_main
 					test_balancer(fd, gt, class, 1, 1,
 						      CANCEL | s->flags);
 
-		igt_subtest_f("%s-engine-reset", s->name)
+		igt_subtest_f("%s-execqueue-reset", s->name)
 			xe_for_each_gt(fd, gt)
 				xe_for_each_hw_engine_class(class)
 					test_balancer(fd, gt, class, MAX_INSTANCE + 1,
 						      MAX_INSTANCE + 1,
-						      ENGINE_RESET | s->flags);
+						      EXEC_QUEUE_RESET | s->flags);
 
 		igt_subtest_f("%s-cat-error", s->name)
 			xe_for_each_gt(fd, gt)
@@ -907,11 +907,11 @@ igt_main
 					test_balancer(-1, gt, class, 16, 256,
 						      CLOSE_FD | s->flags);
 
-		igt_subtest_f("%s-close-engines-close-fd", s->name)
+		igt_subtest_f("%s-close-execqueues-close-fd", s->name)
 			xe_for_each_gt(fd, gt)
 				xe_for_each_hw_engine_class(class)
 					test_balancer(-1, gt, class, 16, 256, CLOSE_FD |
-						      CLOSE_ENGINES | s->flags);
+						      CLOSE_EXEC_QUEUES | s->flags);
 	}
 
 	igt_subtest("gt-reset-stress")

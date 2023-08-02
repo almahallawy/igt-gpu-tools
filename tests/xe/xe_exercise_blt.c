@@ -273,15 +273,15 @@ static void fast_copy_test(int xe,
 
 		for_each_variation_r(regions, 2, set) {
 			uint32_t region1, region2;
-			uint32_t vm, engine;
+			uint32_t vm, exec_queue;
 			char *regtxt, *test_name;
 
 			region1 = igt_collection_get_value(regions, 0);
 			region2 = igt_collection_get_value(regions, 1);
 
 			vm = xe_vm_create(xe, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-			engine = xe_engine_create(xe, vm, &inst, 0);
-			ctx = intel_ctx_xe(xe, vm, engine, 0, 0, 0);
+			exec_queue = xe_exec_queue_create(xe, vm, &inst, 0);
+			ctx = intel_ctx_xe(xe, vm, exec_queue, 0, 0, 0);
 
 			copy_func = (func == FAST_COPY) ? fast_copy : fast_copy_emit;
 			regtxt = xe_memregion_dynamic_subtest_name(xe, regions);
@@ -295,7 +295,7 @@ static void fast_copy_test(int xe,
 
 			free(regtxt);
 			free(test_name);
-			xe_engine_destroy(xe, engine);
+			xe_exec_queue_destroy(xe, exec_queue);
 			xe_vm_destroy(xe, vm);
 			free(ctx);
 		}

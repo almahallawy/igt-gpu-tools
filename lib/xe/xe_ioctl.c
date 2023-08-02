@@ -62,16 +62,16 @@ uint32_t xe_vm_create(int fd, uint32_t flags, uint64_t ext)
 	return create.vm_id;
 }
 
-void xe_vm_unbind_all_async(int fd, uint32_t vm, uint32_t engine,
+void xe_vm_unbind_all_async(int fd, uint32_t vm, uint32_t exec_queue,
 			    uint32_t bo, struct drm_xe_sync *sync,
 			    uint32_t num_syncs)
 {
-	__xe_vm_bind_assert(fd, vm, engine, bo, 0, 0, 0,
+	__xe_vm_bind_assert(fd, vm, exec_queue, bo, 0, 0, 0,
 			    XE_VM_BIND_OP_UNMAP_ALL | XE_VM_BIND_FLAG_ASYNC,
 			    sync, num_syncs, 0, 0);
 }
 
-void xe_vm_bind_array(int fd, uint32_t vm, uint32_t engine,
+void xe_vm_bind_array(int fd, uint32_t vm, uint32_t exec_queue,
 		      struct drm_xe_vm_bind_op *bind_ops,
 		      uint32_t num_bind, struct drm_xe_sync *sync,
 		      uint32_t num_syncs)
@@ -82,14 +82,14 @@ void xe_vm_bind_array(int fd, uint32_t vm, uint32_t engine,
 		.vector_of_binds = (uintptr_t)bind_ops,
 		.num_syncs = num_syncs,
 		.syncs = (uintptr_t)sync,
-		.engine_id = engine,
+		.exec_queue_id = exec_queue,
 	};
 
 	igt_assert(num_bind > 1);
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_VM_BIND, &bind), 0);
 }
 
-int  __xe_vm_bind(int fd, uint32_t vm, uint32_t engine, uint32_t bo,
+int  __xe_vm_bind(int fd, uint32_t vm, uint32_t exec_queue, uint32_t bo,
 		  uint64_t offset, uint64_t addr, uint64_t size, uint32_t op,
 		  struct drm_xe_sync *sync, uint32_t num_syncs, uint32_t region,
 		  uint64_t ext)
@@ -106,7 +106,7 @@ int  __xe_vm_bind(int fd, uint32_t vm, uint32_t engine, uint32_t bo,
 		.bind.region = region,
 		.num_syncs = num_syncs,
 		.syncs = (uintptr_t)sync,
-		.engine_id = engine,
+		.exec_queue_id = exec_queue,
 	};
 
 	if (igt_ioctl(fd, DRM_IOCTL_XE_VM_BIND, &bind))
@@ -115,12 +115,12 @@ int  __xe_vm_bind(int fd, uint32_t vm, uint32_t engine, uint32_t bo,
 	return 0;
 }
 
-void  __xe_vm_bind_assert(int fd, uint32_t vm, uint32_t engine, uint32_t bo,
+void  __xe_vm_bind_assert(int fd, uint32_t vm, uint32_t exec_queue, uint32_t bo,
 			  uint64_t offset, uint64_t addr, uint64_t size,
 			  uint32_t op, struct drm_xe_sync *sync,
 			  uint32_t num_syncs, uint32_t region, uint64_t ext)
 {
-	igt_assert_eq(__xe_vm_bind(fd, vm, engine, bo, offset, addr, size,
+	igt_assert_eq(__xe_vm_bind(fd, vm, exec_queue, bo, offset, addr, size,
 				   op, sync, num_syncs, region, ext), 0);
 }
 
@@ -140,59 +140,59 @@ void xe_vm_unbind(int fd, uint32_t vm, uint64_t offset,
 			    XE_VM_BIND_OP_UNMAP, sync, num_syncs, 0, 0);
 }
 
-void xe_vm_prefetch_async(int fd, uint32_t vm, uint32_t engine, uint64_t offset,
+void xe_vm_prefetch_async(int fd, uint32_t vm, uint32_t exec_queue, uint64_t offset,
 			  uint64_t addr, uint64_t size,
 			  struct drm_xe_sync *sync, uint32_t num_syncs,
 			  uint32_t region)
 {
-	__xe_vm_bind_assert(fd, vm, engine, 0, offset, addr, size,
+	__xe_vm_bind_assert(fd, vm, exec_queue, 0, offset, addr, size,
 			    XE_VM_BIND_OP_PREFETCH | XE_VM_BIND_FLAG_ASYNC,
 			    sync, num_syncs, region, 0);
 }
 
-void xe_vm_bind_async(int fd, uint32_t vm, uint32_t engine, uint32_t bo,
+void xe_vm_bind_async(int fd, uint32_t vm, uint32_t exec_queue, uint32_t bo,
 		      uint64_t offset, uint64_t addr, uint64_t size,
 		      struct drm_xe_sync *sync, uint32_t num_syncs)
 {
-	__xe_vm_bind_assert(fd, vm, engine, bo, offset, addr, size,
+	__xe_vm_bind_assert(fd, vm, exec_queue, bo, offset, addr, size,
 			    XE_VM_BIND_OP_MAP | XE_VM_BIND_FLAG_ASYNC, sync,
 			    num_syncs, 0, 0);
 }
 
-void xe_vm_bind_async_flags(int fd, uint32_t vm, uint32_t engine, uint32_t bo,
+void xe_vm_bind_async_flags(int fd, uint32_t vm, uint32_t exec_queue, uint32_t bo,
 			    uint64_t offset, uint64_t addr, uint64_t size,
 			    struct drm_xe_sync *sync, uint32_t num_syncs,
 			    uint32_t flags)
 {
-	__xe_vm_bind_assert(fd, vm, engine, bo, offset, addr, size,
+	__xe_vm_bind_assert(fd, vm, exec_queue, bo, offset, addr, size,
 			    XE_VM_BIND_OP_MAP | XE_VM_BIND_FLAG_ASYNC | flags,
 			    sync, num_syncs, 0, 0);
 }
 
-void xe_vm_bind_userptr_async(int fd, uint32_t vm, uint32_t engine,
+void xe_vm_bind_userptr_async(int fd, uint32_t vm, uint32_t exec_queue,
 			      uint64_t userptr, uint64_t addr, uint64_t size,
 			      struct drm_xe_sync *sync, uint32_t num_syncs)
 {
-	__xe_vm_bind_assert(fd, vm, engine, 0, userptr, addr, size,
+	__xe_vm_bind_assert(fd, vm, exec_queue, 0, userptr, addr, size,
 			    XE_VM_BIND_OP_MAP_USERPTR | XE_VM_BIND_FLAG_ASYNC,
 			    sync, num_syncs, 0, 0);
 }
 
-void xe_vm_bind_userptr_async_flags(int fd, uint32_t vm, uint32_t engine,
+void xe_vm_bind_userptr_async_flags(int fd, uint32_t vm, uint32_t exec_queue,
 				    uint64_t userptr, uint64_t addr,
 				    uint64_t size, struct drm_xe_sync *sync,
 				    uint32_t num_syncs, uint32_t flags)
 {
-	__xe_vm_bind_assert(fd, vm, engine, 0, userptr, addr, size,
+	__xe_vm_bind_assert(fd, vm, exec_queue, 0, userptr, addr, size,
 			    XE_VM_BIND_OP_MAP_USERPTR | XE_VM_BIND_FLAG_ASYNC |
 			    flags, sync, num_syncs, 0, 0);
 }
 
-void xe_vm_unbind_async(int fd, uint32_t vm, uint32_t engine,
+void xe_vm_unbind_async(int fd, uint32_t vm, uint32_t exec_queue,
 			uint64_t offset, uint64_t addr, uint64_t size,
 			struct drm_xe_sync *sync, uint32_t num_syncs)
 {
-	__xe_vm_bind_assert(fd, vm, engine, 0, offset, addr, size,
+	__xe_vm_bind_assert(fd, vm, exec_queue, 0, offset, addr, size,
 			    XE_VM_BIND_OP_UNMAP | XE_VM_BIND_FLAG_ASYNC, sync,
 			    num_syncs, 0, 0);
 }
@@ -275,12 +275,12 @@ uint32_t xe_bo_create(int fd, int gt, uint32_t vm, uint64_t size)
 	return create.handle;
 }
 
-uint32_t xe_bind_engine_create(int fd, uint32_t vm, uint64_t ext)
+uint32_t xe_bind_exec_queue_create(int fd, uint32_t vm, uint64_t ext)
 {
 	struct drm_xe_engine_class_instance instance = {
 		.engine_class = DRM_XE_ENGINE_CLASS_VM_BIND,
 	};
-	struct drm_xe_engine_create create = {
+	struct drm_xe_exec_queue_create create = {
 		.extensions = ext,
 		.vm_id = vm,
 		.width = 1,
@@ -288,16 +288,16 @@ uint32_t xe_bind_engine_create(int fd, uint32_t vm, uint64_t ext)
 		.instances = to_user_pointer(&instance),
 	};
 
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE, &create), 0);
+	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE, &create), 0);
 
-	return create.engine_id;
+	return create.exec_queue_id;
 }
 
-uint32_t xe_engine_create(int fd, uint32_t vm,
+uint32_t xe_exec_queue_create(int fd, uint32_t vm,
 			  struct drm_xe_engine_class_instance *instance,
 			  uint64_t ext)
 {
-	struct drm_xe_engine_create create = {
+	struct drm_xe_exec_queue_create create = {
 		.extensions = ext,
 		.vm_id = vm,
 		.width = 1,
@@ -305,37 +305,37 @@ uint32_t xe_engine_create(int fd, uint32_t vm,
 		.instances = to_user_pointer(instance),
 	};
 
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE, &create), 0);
+	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE, &create), 0);
 
-	return create.engine_id;
+	return create.exec_queue_id;
 }
 
-uint32_t xe_engine_create_class(int fd, uint32_t vm, uint16_t class)
+uint32_t xe_exec_queue_create_class(int fd, uint32_t vm, uint16_t class)
 {
 	struct drm_xe_engine_class_instance instance = {
 		.engine_class = class,
 		.engine_instance = 0,
 		.gt_id = 0,
 	};
-	struct drm_xe_engine_create create = {
+	struct drm_xe_exec_queue_create create = {
 		.vm_id = vm,
 		.width = 1,
 		.num_placements = 1,
 		.instances = to_user_pointer(&instance),
 	};
 
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE, &create), 0);
+	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE, &create), 0);
 
-	return create.engine_id;
+	return create.exec_queue_id;
 }
 
-void xe_engine_destroy(int fd, uint32_t engine)
+void xe_exec_queue_destroy(int fd, uint32_t exec_queue)
 {
-	struct drm_xe_engine_destroy destroy = {
-		.engine_id = engine,
+	struct drm_xe_exec_queue_destroy destroy = {
+		.exec_queue_id = exec_queue,
 	};
 
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_DESTROY, &destroy), 0);
+	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_DESTROY, &destroy), 0);
 }
 
 uint64_t xe_bo_mmap_offset(int fd, uint32_t bo)
@@ -388,11 +388,11 @@ void xe_exec(int fd, struct drm_xe_exec *exec)
 	igt_assert_eq(__xe_exec(fd, exec), 0);
 }
 
-void xe_exec_sync(int fd, uint32_t engine, uint64_t addr,
+void xe_exec_sync(int fd, uint32_t exec_queue, uint64_t addr,
 		  struct drm_xe_sync *sync, uint32_t num_syncs)
 {
 	struct drm_xe_exec exec = {
-		.engine_id = engine,
+		.exec_queue_id = exec_queue,
 		.syncs = (uintptr_t)sync,
 		.num_syncs = num_syncs,
 		.address = addr,
@@ -402,14 +402,14 @@ void xe_exec_sync(int fd, uint32_t engine, uint64_t addr,
 	igt_assert_eq(__xe_exec(fd, &exec), 0);
 }
 
-void xe_exec_wait(int fd, uint32_t engine, uint64_t addr)
+void xe_exec_wait(int fd, uint32_t exec_queue, uint64_t addr)
 {
 	struct drm_xe_sync sync = {
 		.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL,
 		.handle = syncobj_create(fd, 0),
 	};
 
-	xe_exec_sync(fd, engine, addr, &sync, 1);
+	xe_exec_sync(fd, exec_queue, addr, &sync, 1);
 
 	igt_assert(syncobj_wait(fd, &sync.handle, 1, INT64_MAX, 0, NULL));
 	syncobj_destroy(fd, sync.handle);

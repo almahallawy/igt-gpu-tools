@@ -2881,7 +2881,7 @@ static void blitcopy(const struct igt_fb *dst_fb,
 							  mem_region) == 0);
 	} else if (is_xe) {
 		vm = xe_vm_create(dst_fb->fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-		engine = xe_engine_create(dst_fb->fd, vm, &inst, 0);
+		engine = xe_exec_queue_create(dst_fb->fd, vm, &inst, 0);
 		xe_ctx = intel_ctx_xe(dst_fb->fd, vm, engine, 0, 0, 0);
 		mem_region = vram_if_possible(dst_fb->fd, 0);
 
@@ -3007,7 +3007,7 @@ static void blitcopy(const struct igt_fb *dst_fb,
 
 	if(is_xe) {
 		gem_close(dst_fb->fd, xe_bb);
-		xe_engine_destroy(dst_fb->fd, engine);
+		xe_exec_queue_destroy(dst_fb->fd, engine);
 		xe_vm_destroy(dst_fb->fd, vm);
 		free(xe_ctx);
 	}

@@ -88,17 +88,17 @@ static void create_invalid_size(int fd)
 	xe_vm_destroy(fd, vm);
 }
 
-enum engine_destroy {
+enum exec_queue_destroy {
 	NOLEAK,
 	LEAK
 };
 
-static uint32_t __xe_engine_create(int fd, uint32_t vm,
+static uint32_t __xe_exec_queue_create(int fd, uint32_t vm,
 				   struct drm_xe_engine_class_instance *instance,
 				   uint64_t ext,
-				   uint32_t *enginep)
+				   uint32_t *exec_queuep)
 {
-	struct drm_xe_engine_create create = {
+	struct drm_xe_exec_queue_create create = {
 		.extensions = ext,
 		.vm_id = vm,
 		.width = 1,
@@ -107,10 +107,10 @@ static uint32_t __xe_engine_create(int fd, uint32_t vm,
 	};
 	int err = 0;
 
-	if (igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE, &create) == 0) {
-		*enginep = create.engine_id;
+	if (igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE, &create) == 0) {
+		*exec_queuep = create.exec_queue_id;
 	} else {
-		igt_warn("Can't create engine, errno: %d\n", errno);
+		igt_warn("Can't create exec_queue, errno: %d\n", errno);
 		err = -errno;
 		igt_assume(err);
 	}
@@ -119,58 +119,58 @@ static uint32_t __xe_engine_create(int fd, uint32_t vm,
 	return err;
 }
 
-#define MAXENGINES 2048
+#define MAXEXECQUEUES 2048
 #define MAXTIME 5
 
 /**
- * SUBTEST: create-engines-%s
- * Description: Check process ability of multiple engines creation
+ * SUBTEST: create-execqueues-%s
+ * Description: Check process ability of multiple exec_queues creation
  * Run type: FULL
  *
  * arg[1]:
  *
- * @noleak:				destroy engines in the code
- * @leak:				destroy engines in close() path
+ * @noleak:				destroy exec_queues in the code
+ * @leak:				destroy exec_queues in close() path
  */
-static void create_engines(int fd, enum engine_destroy ed)
+static void create_execqueues(int fd, enum exec_queue_destroy ed)
 {
 	struct timespec tv = { };
-	uint32_t num_engines, engines_per_process, vm;
+	uint32_t num_engines, exec_queues_per_process, vm;
 	int nproc = sysconf(_SC_NPROCESSORS_ONLN), seconds;
 
 	fd = drm_reopen_driver(fd);
 	num_engines = xe_number_hw_engines(fd);
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
 
-	engines_per_process = max_t(uint32_t, 1, MAXENGINES / nproc);
-	igt_debug("nproc: %u, engines per process: %u\n", nproc, engines_per_process);
+	exec_queues_per_process = max_t(uint32_t, 1, MAXEXECQUEUES / nproc);
+	igt_debug("nproc: %u, exec_queues per process: %u\n", nproc, exec_queues_per_process);
 
 	igt_nsec_elapsed(&tv);
 
 	igt_fork(n, nproc) {
 		struct drm_xe_engine_class_instance *hwe;
-		uint32_t engine, engines[engines_per_process];
+		uint32_t exec_queue, exec_queues[exec_queues_per_process];
 		int idx, err, i;
 
 		srandom(n);
 
-		for (i = 0; i < engines_per_process; i++) {
+		for (i = 0; i < exec_queues_per_process; i++) {
 			idx = rand() % num_engines;
 			hwe = xe_hw_engine(fd, idx);
-			err = __xe_engine_create(fd, vm, hwe, 0, &engine);
-			igt_debug("[%2d] Create engine: err=%d, engine=%u [idx = %d]\n",
-				  n, err, engine, i);
+			err = __xe_exec_queue_create(fd, vm, hwe, 0, &exec_queue);
+			igt_debug("[%2d] Create exec_queue: err=%d, exec_queue=%u [idx = %d]\n",
+				  n, err, exec_queue, i);
 			if (err)
 				break;
 
 			if (ed == NOLEAK)
-				engines[i] = engine;
+				exec_queues[i] = exec_queue;
 		}
 
 		if (ed == NOLEAK) {
 			while (--i >= 0) {
-				igt_debug("[%2d] Destroy engine: %u\n", n, engines[i]);
-				xe_engine_destroy(fd, engines[i]);
+				igt_debug("[%2d] Destroy exec_queue: %u\n", n, exec_queues[i]);
+				xe_exec_queue_destroy(fd, exec_queues[i]);
 			}
 		}
 	}
@@ -181,8 +181,8 @@ static void create_engines(int fd, enum engine_destroy ed)
 
 	seconds = igt_seconds_elapsed(&tv);
 	igt_assert_f(seconds < MAXTIME,
-		     "Creating %d engines tooks too long: %d [limit: %d]\n",
-		     MAXENGINES, seconds, MAXTIME);
+		     "Creating %d exec_queues tooks too long: %d [limit: %d]\n",
+		     MAXEXECQUEUES, seconds, MAXTIME);
 }
 
 /**
@@ -216,11 +216,11 @@ igt_main
 		create_invalid_size(xe);
 	}
 
-	igt_subtest("create-engines-noleak")
-		create_engines(xe, NOLEAK);
+	igt_subtest("create-execqueues-noleak")
+		create_execqueues(xe, NOLEAK);
 
-	igt_subtest("create-engines-leak")
-		create_engines(xe, LEAK);
+	igt_subtest("create-execqueues-leak")
+		create_execqueues(xe, LEAK);
 
 	igt_subtest("create-massive-size") {
 		create_massive_size(xe);

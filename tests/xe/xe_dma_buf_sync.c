@@ -98,7 +98,7 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 	int dma_buf_fd[MAX_N_BO];
 	uint32_t import_bo[MAX_N_BO];
 	uint32_t vm[N_FD];
-	uint32_t engine[N_FD];
+	uint32_t exec_queue[N_FD];
 	size_t bo_size;
 	struct {
 		struct xe_spin spin;
@@ -113,7 +113,7 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 	for (i = 0; i < N_FD; ++i) {
 		fd[i] = drm_open_driver(DRIVER_XE);
 		vm[i] = xe_vm_create(fd[i], 0, 0);
-		engine[i] = xe_engine_create(fd[i], vm[i], !i ? hwe0 : hwe1, 0);
+		exec_queue[i] = xe_exec_queue_create(fd[i], vm[i], !i ? hwe0 : hwe1, 0);
 	}
 
 	bo_size = sizeof(*data[0]) * N_FD;
@@ -159,7 +159,7 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 
 		/* Write spinner on FD[0] */
 		xe_spin_init(&data[i]->spin, spin_addr, true);
-		exec.engine_id = engine[0];
+		exec.exec_queue_id = exec_queue[0];
 		exec.address = spin_addr;
 		xe_exec(fd[0], &exec);
 
@@ -187,7 +187,7 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 		igt_assert(b <= ARRAY_SIZE(data[i]->batch));
 		sync[0].handle = syncobj;
 		sync[1].handle = syncobj_create(fd[1], 0);
-		exec.engine_id = engine[1];
+		exec.exec_queue_id = exec_queue[1];
 		exec.address = batch_addr;
 		exec.num_syncs = 2;
 		xe_exec(fd[1], &exec);

@@ -4,10 +4,10 @@
  */
 
 /**
- * TEST: Basic tests for execbuf functionality for virtual and parallel engines
+ * TEST: Basic tests for execbuf functionality for virtual and parallel exec_queues
  * Category: Hardware building block
  * Sub-category: execbuf
- * Functionality: virtual and parallel engines
+ * Functionality: virtual and parallel exec_queues
  * Test category: functionality test
  */
 
@@ -28,7 +28,7 @@
 /**
  * SUBTEST: virtual-all-active
  * Description:
- * 	Run a test to check if virtual engines can be running on all instances
+ * 	Run a test to check if virtual exec_queues can be running on all instances
  *	of a class simultaneously
  * Run type: FULL
  */
@@ -45,7 +45,7 @@ static void test_all_active(int fd, int gt, int class)
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_INSTANCE];
+	uint32_t exec_queues[MAX_INSTANCE];
 	uint32_t syncobjs[MAX_INSTANCE];
 	size_t bo_size;
 	uint32_t bo = 0;
@@ -73,16 +73,16 @@ static void test_all_active(int fd, int gt, int class)
 	data = xe_bo_map(fd, bo, bo_size);
 
 	for (i = 0; i < num_placements; i++) {
-		struct drm_xe_engine_create create = {
+		struct drm_xe_exec_queue_create create = {
 			.vm_id = vm,
 			.width = 1,
 			.num_placements = num_placements,
 			.instances = to_user_pointer(eci),
 		};
 
-		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE,
+		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE,
 					&create), 0);
-		engines[i] = create.engine_id;
+		exec_queues[i] = create.exec_queue_id;
 		syncobjs[i] = syncobj_create(fd, 0);
 	};
 
@@ -98,7 +98,7 @@ static void test_all_active(int fd, int gt, int class)
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[i];
 
-		exec.engine_id = engines[i];
+		exec.exec_queue_id = exec_queues[i];
 		exec.address = spin_addr;
 		xe_exec(fd, &exec);
 		xe_spin_wait_started(&data[i].spin);
@@ -118,7 +118,7 @@ static void test_all_active(int fd, int gt, int class)
 	syncobj_destroy(fd, sync[0].handle);
 	for (i = 0; i < num_placements; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 	}
 
 	munmap(data, bo_size);
@@ -126,8 +126,8 @@ static void test_all_active(int fd, int gt, int class)
 	xe_vm_destroy(fd, vm);
 }
 
-#define MAX_N_ENGINES 16
-#define USERPTR		(0x1 << 0)
+#define MAX_N_EXEC_QUEUES	16
+#define USERPTR				(0x1 << 0)
 #define REBIND		(0x1 << 1)
 #define INVALIDATE	(0x1 << 2)
 #define RACE		(0x1 << 3)
@@ -143,8 +143,8 @@ static void test_all_active(int fd, int gt, int class)
  * Description: Run %arg[1] test many times
  * Run type: FULL
  *
- * SUBTEST: many-engines-%s
- * Description: Run %arg[1] test on many engines
+ * SUBTEST: many-execqueues-%s
+ * Description: Run %arg[1] test on many exec_queues
  * Run type: FULL
  *
  * SUBTEST: twice-%s
@@ -171,7 +171,7 @@ static void test_all_active(int fd, int gt, int class)
  * @parallel-userptr-invalidate-race:	parallel userptr invalidate racy
  */
 static void
-test_exec(int fd, int gt, int class, int n_engines, int n_execs,
+test_exec(int fd, int gt, int class, int n_exec_queues, int n_execs,
 	  unsigned int flags)
 {
 	uint32_t vm;
@@ -184,8 +184,8 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
 		.num_syncs = 2,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
-	uint32_t syncobjs[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
+	uint32_t syncobjs[MAX_N_EXEC_QUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -197,7 +197,7 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
 	struct drm_xe_engine_class_instance eci[MAX_INSTANCE];
 	int i, j, b, num_placements = 0;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 
 	xe_for_each_hw_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
@@ -229,17 +229,17 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
 		data = xe_bo_map(fd, bo, bo_size);
 	}
 
-	for (i = 0; i < n_engines; i++) {
-		struct drm_xe_engine_create create = {
+	for (i = 0; i < n_exec_queues; i++) {
+		struct drm_xe_exec_queue_create create = {
 			.vm_id = vm,
 			.width = flags & PARALLEL ? num_placements : 1,
 			.num_placements = flags & PARALLEL ? 1 : num_placements,
 			.instances = to_user_pointer(eci),
 		};
 
-		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE,
+		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE,
 					&create), 0);
-		engines[i] = create.engine_id;
+		exec_queues[i] = create.exec_queue_id;
 		syncobjs[i] = syncobj_create(fd, 0);
 	};
 	exec.num_batch_buffer = flags & PARALLEL ? num_placements : 1;
@@ -257,7 +257,7 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
 		uint64_t batches[MAX_INSTANCE];
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		for (j = 0; j < num_placements && flags & PARALLEL; ++j)
 			batches[j] = batch_addr;
@@ -274,7 +274,7 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = flags & PARALLEL ?
 			to_user_pointer(batches) : batch_addr;
 		if (e != i)
@@ -325,7 +325,7 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
 		}
 	}
 
-	for (i = 0; i < n_engines && n_execs; i++)
+	for (i = 0; i < n_exec_queues && n_execs; i++)
 		igt_assert(syncobj_wait(fd, &syncobjs[i], 1, INT64_MAX, 0,
 					NULL));
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
@@ -339,9 +339,9 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
 		igt_assert_eq(data[i].data, 0xc0ffee);
 
 	syncobj_destroy(fd, sync[0].handle);
-	for (i = 0; i < n_engines; i++) {
+	for (i = 0; i < n_exec_queues; i++) {
 		syncobj_destroy(fd, syncobjs[i]);
-		xe_engine_destroy(fd, engines[i]);
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 	}
 
 	if (bo) {
@@ -355,25 +355,25 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
 
 /**
  * SUBTEST: once-cm-%s
- * Description: Run compute mode virtual engine arg[1] test only once
+ * Description: Run compute mode virtual exec_queue arg[1] test only once
  *
  * Run type: FULL
  *
  * SUBTEST: twice-cm-%s
- * Description: Run compute mode virtual engine arg[1] test twice
+ * Description: Run compute mode virtual exec_queue arg[1] test twice
  * Run type: BAT
  *
  * SUBTEST: many-cm-%s
- * Description: Run compute mode virtual engine arg[1] test many times
+ * Description: Run compute mode virtual exec_queue arg[1] test many times
  * Run type: FULL
  *
- * SUBTEST: many-engines-cm-%s
- * Description: Run compute mode virtual engine arg[1] test on many engines
+ * SUBTEST: many-execqueues-cm-%s
+ * Description: Run compute mode virtual exec_queue arg[1] test on many exec_queues
  * Run type: FULL
  *
  *
  * SUBTEST: no-exec-cm-%s
- * Description: Run compute mode virtual engine arg[1] no-exec test
+ * Description: Run compute mode virtual exec_queue arg[1] no-exec test
  * Run type: BAT
  *
  * arg[1]:
@@ -387,7 +387,7 @@ test_exec(int fd, int gt, int class, int n_engines, int n_execs,
  */
 
 static void
-test_cm(int fd, int gt, int class, int n_engines, int n_execs,
+test_cm(int fd, int gt, int class, int n_exec_queues, int n_execs,
 	unsigned int flags)
 {
 	uint32_t vm;
@@ -402,7 +402,7 @@ test_cm(int fd, int gt, int class, int n_engines, int n_execs,
 		.num_syncs = 1,
 		.syncs = to_user_pointer(sync),
 	};
-	uint32_t engines[MAX_N_ENGINES];
+	uint32_t exec_queues[MAX_N_EXEC_QUEUES];
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct {
@@ -417,7 +417,7 @@ test_cm(int fd, int gt, int class, int n_engines, int n_execs,
 	int i, j, b, num_placements = 0;
 	int map_fd = -1;
 
-	igt_assert(n_engines <= MAX_N_ENGINES);
+	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 
 	xe_for_each_hw_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
@@ -452,14 +452,14 @@ test_cm(int fd, int gt, int class, int n_engines, int n_execs,
 	}
 	memset(data, 0, bo_size);
 
-	for (i = 0; i < n_engines; i++) {
-		struct drm_xe_ext_engine_set_property ext = {
+	for (i = 0; i < n_exec_queues; i++) {
+		struct drm_xe_ext_exec_queue_set_property ext = {
 			.base.next_extension = 0,
-			.base.name = XE_ENGINE_EXTENSION_SET_PROPERTY,
-			.property = XE_ENGINE_SET_PROPERTY_COMPUTE_MODE,
+			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
 			.value = 1,
 		};
-		struct drm_xe_engine_create create = {
+		struct drm_xe_exec_queue_create create = {
 			.vm_id = vm,
 			.width = 1,
 			.num_placements = num_placements,
@@ -467,9 +467,9 @@ test_cm(int fd, int gt, int class, int n_engines, int n_execs,
 			.extensions = to_user_pointer(&ext),
 		};
 
-		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_ENGINE_CREATE,
+		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE,
 					&create), 0);
-		engines[i] = create.engine_id;
+		exec_queues[i] = create.exec_queue_id;
 	}
 
 	sync[0].addr = to_user_pointer(&data[0].vm_sync);
@@ -488,7 +488,7 @@ test_cm(int fd, int gt, int class, int n_engines, int n_execs,
 		uint64_t batch_addr = addr + batch_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
-		int e = i % n_engines;
+		int e = i % n_exec_queues;
 
 		b = 0;
 		data[i].batch[b++] = MI_STORE_DWORD_IMM_GEN4;
@@ -500,7 +500,7 @@ test_cm(int fd, int gt, int class, int n_engines, int n_execs,
 
 		sync[0].addr = addr + (char *)&data[i].exec_sync - (char *)data;
 
-		exec.engine_id = engines[e];
+		exec.exec_queue_id = exec_queues[e];
 		exec.address = batch_addr;
 		xe_exec(fd, &exec);
 
@@ -578,8 +578,8 @@ test_cm(int fd, int gt, int class, int n_engines, int n_execs,
 	     i < n_execs; i++)
 		igt_assert_eq(data[i].data, 0xc0ffee);
 
-	for (i = 0; i < n_engines; i++)
-		xe_engine_destroy(fd, engines[i]);
+	for (i = 0; i < n_exec_queues; i++)
+		xe_exec_queue_destroy(fd, exec_queues[i]);
 
 	if (bo) {
 		munmap(data, bo_size);
@@ -648,7 +648,7 @@ igt_main
 						  64 : 1024,
 						  s->flags);
 
-		igt_subtest_f("many-engines-%s", s->name)
+		igt_subtest_f("many-execqueues-%s", s->name)
 			xe_for_each_gt(fd, gt)
 				xe_for_each_hw_engine_class(class)
 					test_exec(fd, gt, class, 16,
@@ -683,7 +683,7 @@ igt_main
 						64 : 1024,
 						s->flags);
 
-		igt_subtest_f("many-engines-cm-%s", s->name)
+		igt_subtest_f("many-execqueues-cm-%s", s->name)
 			xe_for_each_gt(fd, gt)
 				xe_for_each_hw_engine_class(class)
 					test_cm(fd, gt, class, 16,

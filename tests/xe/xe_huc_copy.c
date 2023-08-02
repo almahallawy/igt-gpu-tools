@@ -107,7 +107,7 @@ gen12_create_batch_huc_copy(uint32_t *batch,
 static void
 test_huc_copy(int fd)
 {
-	uint32_t vm, engine;
+	uint32_t vm, exec_queue;
 	char *dinput;
 	struct drm_xe_sync sync = { 0 };
 
@@ -119,7 +119,7 @@ test_huc_copy(int fd)
 	};
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-	engine = xe_engine_create_class(fd, vm, DRM_XE_ENGINE_CLASS_VIDEO_DECODE);
+	exec_queue = xe_exec_queue_create_class(fd, vm, DRM_XE_ENGINE_CLASS_VIDEO_DECODE);
 	sync.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL;
 	sync.handle = syncobj_create(fd, 0);
 
@@ -136,7 +136,7 @@ test_huc_copy(int fd)
 	}
 	gen12_create_batch_huc_copy(bo_dict[2].data, bo_dict[0].addr, bo_dict[1].addr);
 
-	xe_exec_wait(fd, engine, ADDR_BATCH);
+	xe_exec_wait(fd, exec_queue, ADDR_BATCH);
 	for(int i = 0; i < SIZE_DATA; i++) {
 		igt_assert(((char*) bo_dict[1].data)[i] == ((char*) bo_dict[0].data)[i]);
 	}
@@ -148,7 +148,7 @@ test_huc_copy(int fd)
 	}
 
 	syncobj_destroy(fd, sync.handle);
-	xe_engine_destroy(fd, engine);
+	xe_exec_queue_destroy(fd, exec_queue);
 	xe_vm_destroy(fd, vm);
 }
 
