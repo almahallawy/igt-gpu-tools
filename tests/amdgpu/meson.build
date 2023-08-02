@@ -26,6 +26,7 @@ if libdrm_amdgpu.found()
 			  'amd_plane',
 			  'amd_prime',
 			  'amd_psr',
+			  'amd_ras',
 			  'amd_security',
 			  'amd_uvd_dec',
 			  'amd_uvd_enc',
