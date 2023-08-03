@@ -282,6 +282,7 @@ xe_progs = [
 	'xe_huc_copy',
 	'xe_intel_bb',
 	'xe_live_ktest',
+	'xe_media_fill',
 	'xe_mmap',
 	'xe_mmio',
 	'xe_module_load',
