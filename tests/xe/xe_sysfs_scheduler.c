@@ -59,7 +59,7 @@ static void test_min_max(int xe, int engine, const char **property)
 {
 	unsigned int default_max, max;
 	unsigned int default_min, min;
-	unsigned int set;
+	unsigned int set, store;
 	int defaults;
 
 	defaults = openat(engine, ".defaults", O_DIRECTORY);
@@ -67,6 +67,7 @@ static void test_min_max(int xe, int engine, const char **property)
 
 	igt_sysfs_scanf(defaults, property[2], "%u", &default_max);
 	igt_sysfs_scanf(defaults, property[1], "%u", &default_min);
+	igt_sysfs_scanf(engine, property[0], "%u", &store);
 
 	igt_sysfs_printf(engine, property[2], "%d", default_max-10);
 	igt_sysfs_scanf(engine, property[2], "%u", &max);
@@ -94,13 +95,14 @@ static void test_min_max(int xe, int engine, const char **property)
 
 	igt_sysfs_printf(engine, property[0], "%d", default_min);
 	igt_sysfs_scanf(engine, property[0], "%u", &set);
-	igt_assert_eq(set, default_min);
+	igt_assert_neq(set, default_min);
 
 	igt_sysfs_printf(engine, property[0], "%d", min);
 	igt_sysfs_scanf(engine, property[0], "%u", &set);
 	igt_assert_eq(set, min);
 
-	/* Reset max, min to original values */
+	/* Reset property, max, min to original values */
+	igt_sysfs_printf(engine, property[0], "%d", store);
 	igt_sysfs_printf(engine, property[1], "%d", default_min);
 	igt_sysfs_printf(engine, property[2], "%d", default_max);
 }
