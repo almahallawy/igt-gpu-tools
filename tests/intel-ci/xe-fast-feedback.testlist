@@ -164,6 +164,13 @@ igt@xe_query@query-invalid-query
 igt@xe_query@query-invalid-size
 igt@xe_spin_batch@spin-basic
 igt@xe_spin_batch@spin-batch
+igt@xe_sysfs_defaults@engine-defaults
+igt@xe_sysfs_scheduler@preempt_timeout_us-invalid
+igt@xe_sysfs_scheduler@preempt_timeout_us-min-max
+igt@xe_sysfs_scheduler@timeslice_duration_us-invalid
+igt@xe_sysfs_scheduler@timeslice_duration_us-min-max
+igt@xe_sysfs_scheduler@job_timeout_ms-invalid
+igt@xe_sysfs_scheduler@job_timeout_ms-min-max
 #igt@xe_vm@bind-once
 #igt@xe_vm@scratch
 igt@xe_vm@shared-pte-page
