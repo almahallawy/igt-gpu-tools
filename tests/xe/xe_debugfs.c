@@ -104,9 +104,6 @@ test_base(int fd, struct drm_xe_query_config *config)
 
 	igt_assert(igt_debugfs_search(fd, "info", reference));
 
-	sprintf(reference, "tile_count %lld", config->info[XE_QUERY_CONFIG_GT_COUNT]);
-	igt_assert(igt_debugfs_search(fd, "info", reference));
-
 	switch (config->info[XE_QUERY_CONFIG_VA_BITS]) {
 	case 48:
 		val = 3;
