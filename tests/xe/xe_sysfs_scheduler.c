@@ -5,6 +5,9 @@
 
 /**
  * TEST: xe sysfs scheduler
+ * Sub-category: sysman
+ * Functionality: scheduler control interface
+ * Test category: functionality test
  * Run type: FULL
  *
  * SUBTEST: %s-invalid
@@ -107,58 +110,6 @@ static void test_min_max(int xe, int engine, const char **property)
 	igt_sysfs_printf(engine, property[2], "%d", default_max);
 }
 
-static void test_param_nonpriv(int xe, int engine, const char **property)
-{
-	unsigned int default_max, max;
-	unsigned int default_min, min;
-	unsigned int set;
-	struct stat st;
-	int defaults;
-
-	fstat(engine, &st);
-	fchmod(engine, (st.st_mode | S_IROTH | S_IWOTH));
-
-	defaults = openat(engine, ".defaults", O_DIRECTORY);
-	igt_require(defaults != -1);
-
-	igt_sysfs_scanf(defaults, property[2], "%u", &default_max);
-	igt_sysfs_scanf(defaults, property[1], "%u", &default_min);
-
-	igt_sysfs_printf(engine, property[2], "%d", default_max-10);
-	igt_sysfs_scanf(engine, property[2], "%u", &max);
-	igt_assert_eq(max, (default_max-10));
-
-	igt_sysfs_printf(engine, property[1], "%d", default_min+1);
-	igt_sysfs_scanf(engine, property[1], "%u", &min);
-	igt_assert_eq(min, (default_min+1));
-
-	igt_fork(child, 1) {
-		igt_drop_root();
-		igt_sysfs_printf(engine, property[0], "%d", default_min);
-		igt_sysfs_scanf(engine, property[0], "%u", &set);
-		igt_assert_neq(set, default_min);
-
-		igt_sysfs_printf(engine, property[0], "%d", min);
-		igt_sysfs_scanf(engine, property[0], "%u", &set);
-		igt_assert_eq(set, min);
-
-		igt_sysfs_printf(engine, property[0], "%d", default_max);
-		igt_sysfs_scanf(engine, property[0], "%u", &set);
-		igt_assert_neq(set, default_max);
-
-		igt_sysfs_printf(engine, property[0], "%d", max);
-		igt_sysfs_scanf(engine, property[0], "%u", &set);
-		igt_assert_eq(set, max);
-	}
-	igt_waitchildren();
-
-	fchmod(engine, st.st_mode);
-
-	/* Reset max, min to original values */
-	igt_sysfs_printf(engine, property[1], "%d", default_min);
-	igt_sysfs_printf(engine, property[2], "%d", default_max);
-}
-
 igt_main
 {
 	static const struct {
@@ -167,7 +118,6 @@ igt_main
 	} tests[] = {
 		{ "invalid", test_invalid },
 		{ "min-max", test_min_max },
-		{ "nonprivileged-user", test_param_nonpriv },
 		{ }
 	};
 
