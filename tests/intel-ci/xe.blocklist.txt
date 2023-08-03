@@ -21,7 +21,8 @@ igt@gen.*
 igt@perf.*
 igt@sysfs_.*
 ##################################################################
-# Exclude kselftest
+# Exclude mock DRM KUnit from IGT, as those already run at build
+# time on Intel CI
 #################################################################
 igt@dmabuf.*
 igt@drm_buddy
