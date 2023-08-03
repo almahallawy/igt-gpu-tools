@@ -184,6 +184,7 @@ igt_main
 
 		sys_fd = igt_sysfs_open(xe);
 		igt_require(sys_fd != -1);
+		close(sys_fd);
 	}
 
 	for (int i = 0; i < count; i++) {
@@ -191,20 +192,21 @@ igt_main
 			igt_subtest_with_dynamic_f("%s-%s", property[i][0], t->name) {
 				xe_for_each_gt(xe, gt) {
 					int engines_fd = -1;
-					char buf[100];
+					int gt_fd = -1;
 
-					sprintf(buf, "device/gt%d/engines", gt);
-					engines_fd = openat(sys_fd, buf, O_RDONLY);
+					gt_fd = xe_sysfs_gt_open(xe, gt);
+					igt_require(gt_fd != -1);
+					engines_fd = openat(gt_fd, "engines", O_RDONLY);
 					igt_require(engines_fd != -1);
 
 					igt_sysfs_engines(xe, engines_fd, property[i], t->fn);
 					close(engines_fd);
+					close(gt_fd);
 				}
 			}
 		}
 	}
 	igt_fixture {
-		close(sys_fd);
 		xe_device_put(xe);
 		close(xe);
 	}
