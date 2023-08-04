@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "xe/xe_ioctl.h"
+#include "xe/xe_query.h"
 
 enum operations {
 	PAGE_FLIP,
@@ -144,6 +145,9 @@ static struct intel_buf *create_buf_from_fb(data_t *data,
 {
 	uint32_t name, handle, tiling, stride, width, height, bpp, size;
 	struct intel_buf *buf;
+	enum intel_driver driver = buf_ops_get_driver(data->bops);
+	uint64_t region = (driver == INTEL_DRIVER_XE) ?
+				vram_if_possible(data->drm_fd, 0) : -1;
 
 	igt_assert_eq(fb->offsets[0], 0);
 
@@ -159,8 +163,8 @@ static struct intel_buf *create_buf_from_fb(data_t *data,
 
 	name = gem_flink(data->drm_fd, fb->gem_handle);
 	handle = gem_open(data->drm_fd, name);
-	buf = intel_buf_create_using_handle(data->bops, handle,
-					    width, height, bpp, 0, tiling, 0);
+	buf = intel_buf_create_full(data->bops, handle, width, height,
+				    bpp, 0, tiling, 0, size, stride, region);
 	intel_buf_set_ownership(buf, true);
 
 	return buf;
