@@ -52,6 +52,7 @@
 
 /* amdgpu DM interface entries */
 #define DEBUGFS_DM_VISUAL_CONFIRM "amdgpu_dm_visual_confirm"
+#define DEBUGFS_DM_CAPABILITIES "amdgpu_dm_capabilities"
 
 enum amd_dsc_clock_force {
 	DSC_AUTOMATIC = 0,
@@ -194,4 +195,6 @@ void igt_amd_allow_edp_hotplug_detect(int drm_fd, char *connector_name, bool ena
 bool igt_amd_has_visual_confirm(int drm_fd);
 int  igt_amd_get_visual_confirm(int drm_fd);
 bool igt_amd_set_visual_confirm(int drm_fd, enum amdgpu_debug_visual_confirm option);
+
+bool igt_amd_is_mall_capable(int drm_fd);
 #endif /* IGT_AMD_H */

@@ -1144,6 +1144,57 @@ void igt_amd_allow_edp_hotplug_detect(int drm_fd, char *connector_name, bool ena
 	close(hpd_fd);
 }
 
+static bool get_dm_capabilites(int drm_fd, char *buf, size_t size) {
+	int ret, fd;
+	bool has_capablities = amd_has_debugfs(drm_fd, DEBUGFS_DM_CAPABILITIES);
+
+	if (!has_capablities)
+		return false;
+
+	fd = igt_debugfs_dir(drm_fd);
+	if (fd < 0) {
+		igt_warn("Couldn't open debugfs directory\n");
+		return -1;
+	}
+
+	ret = igt_debugfs_simple_read(fd, DEBUGFS_DM_CAPABILITIES, buf, (int) size);
+	igt_assert_f(ret >= 0, "Reading %s failed.\n", DEBUGFS_DM_CAPABILITIES);
+
+	close(fd);
+
+	if (ret < 0)
+		return false;
+
+	return true;
+}
+
+/**
+ * @brief check if AMDGPU mall_capable interface entry exist and defined
+ *
+ * @param drm_fd DRM file descriptor
+ * @return true if mall_capable debugfs interface exists and defined
+ * @return false otherwise
+ */
+bool igt_amd_is_mall_capable(int drm_fd)
+{
+	char buf[1024], mall_read[10];
+	char *mall_loc;
+
+	if (!get_dm_capabilites(drm_fd, buf, 1024))
+		return false;
+
+	mall_loc = strstr(buf,"mall: ");
+	if (!mall_loc)
+		return false;
+
+	sscanf(mall_loc, "mall: %s", mall_read);
+
+	if (!strcmp(mall_read, "yes"))
+		return true;
+
+	return false;
+}
+
 /**
  * @brief check if AMDGPU DM visual confirm debugfs interface entry exist and defined
  *
