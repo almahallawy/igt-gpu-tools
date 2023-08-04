@@ -476,6 +476,195 @@ test_query_invalid_extension(int fd)
 	do_ioctl_err(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query, EINVAL);
 }
 
+static bool
+query_engine_cycles_supported(int fd)
+{
+	struct drm_xe_device_query query = {
+		.extensions = 0,
+		.query = DRM_XE_DEVICE_QUERY_ENGINE_CYCLES,
+		.size = 0,
+		.data = 0,
+	};
+
+	return igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query) == 0;
+}
+
+static void
+query_engine_cycles(int fd, struct drm_xe_query_engine_cycles *resp)
+{
+	struct drm_xe_device_query query = {
+		.extensions = 0,
+		.query = DRM_XE_DEVICE_QUERY_ENGINE_CYCLES,
+		.size = sizeof(*resp),
+		.data = to_user_pointer(resp),
+	};
+
+	do_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query);
+	igt_assert(query.size);
+}
+
+static void
+__engine_cycles(int fd, struct drm_xe_engine_class_instance *hwe)
+{
+	struct drm_xe_query_engine_cycles ts1 = {};
+	struct drm_xe_query_engine_cycles ts2 = {};
+	uint64_t delta_cpu, delta_cs, delta_delta;
+	unsigned int exec_queue;
+	int i, usable = 0;
+	igt_spin_t *spin;
+	uint64_t ahnd;
+	uint32_t vm;
+	struct {
+		int32_t id;
+		const char *name;
+	} clock[] = {
+		{ CLOCK_MONOTONIC, "CLOCK_MONOTONIC" },
+		{ CLOCK_MONOTONIC_RAW, "CLOCK_MONOTONIC_RAW" },
+		{ CLOCK_REALTIME, "CLOCK_REALTIME" },
+		{ CLOCK_BOOTTIME, "CLOCK_BOOTTIME" },
+		{ CLOCK_TAI, "CLOCK_TAI" },
+	};
+
+	igt_debug("engine[%u:%u]\n",
+		  hwe->engine_class,
+		  hwe->engine_instance);
+
+	vm = xe_vm_create(fd, 0, 0);
+	exec_queue = xe_exec_queue_create(fd, vm, hwe, 0);
+	ahnd = intel_allocator_open(fd, 0, INTEL_ALLOCATOR_RELOC);
+	spin = igt_spin_new(fd, .ahnd = ahnd, .engine = exec_queue, .vm = vm);
+
+	/* Try a new clock every 10 iterations. */
+#define NUM_SNAPSHOTS 10
+	for (i = 0; i < NUM_SNAPSHOTS * ARRAY_SIZE(clock); i++) {
+		int index = i / NUM_SNAPSHOTS;
+
+		ts1.eci = *hwe;
+		ts1.clockid = clock[index].id;
+
+		ts2.eci = *hwe;
+		ts2.clockid = clock[index].id;
+
+		query_engine_cycles(fd, &ts1);
+		query_engine_cycles(fd, &ts2);
+
+		igt_debug("[1] cpu_ts before %llu, reg read time %llu\n",
+			  ts1.cpu_timestamp,
+			  ts1.cpu_delta);
+		igt_debug("[1] engine_ts %llu, freq %llu Hz, width %u\n",
+			  ts1.engine_cycles, ts1.engine_frequency, ts1.width);
+
+		igt_debug("[2] cpu_ts before %llu, reg read time %llu\n",
+			  ts2.cpu_timestamp,
+			  ts2.cpu_delta);
+		igt_debug("[2] engine_ts %llu, freq %llu Hz, width %u\n",
+			  ts2.engine_cycles, ts2.engine_frequency, ts2.width);
+
+		delta_cpu = ts2.cpu_timestamp - ts1.cpu_timestamp;
+
+		if (ts2.engine_cycles >= ts1.engine_cycles)
+			delta_cs = (ts2.engine_cycles - ts1.engine_cycles) *
+				   NSEC_PER_SEC / ts1.engine_frequency;
+		else
+			delta_cs = (((1 << ts2.width) - ts2.engine_cycles) + ts1.engine_cycles) *
+				   NSEC_PER_SEC / ts1.engine_frequency;
+
+		igt_debug("delta_cpu[%lu], delta_cs[%lu]\n",
+			  delta_cpu, delta_cs);
+
+		delta_delta = delta_cpu > delta_cs ?
+			       delta_cpu - delta_cs :
+			       delta_cs - delta_cpu;
+		igt_debug("delta_delta %lu\n", delta_delta);
+
+		if (delta_delta < 5000)
+			usable++;
+
+		/*
+		 * User needs few good snapshots of the timestamps to
+		 * synchronize cpu time with cs time. Check if we have enough
+		 * usable values before moving to the next clockid.
+		 */
+		if (!((i + 1) % NUM_SNAPSHOTS)) {
+			igt_debug("clock %s\n", clock[index].name);
+			igt_debug("usable %d\n", usable);
+			igt_assert(usable > 2);
+			usable = 0;
+		}
+	}
+
+	igt_spin_free(fd, spin);
+	xe_exec_queue_destroy(fd, exec_queue);
+	xe_vm_destroy(fd, vm);
+	put_ahnd(ahnd);
+}
+
+/**
+ * SUBTEST: query-cs-cycles
+ * Description: Query CPU-GPU timestamp correlation
+ */
+static void test_query_engine_cycles(int fd)
+{
+	struct drm_xe_engine_class_instance *hwe;
+
+	igt_require(query_engine_cycles_supported(fd));
+
+	xe_for_each_hw_engine(fd, hwe) {
+		igt_assert(hwe);
+		__engine_cycles(fd, hwe);
+	}
+}
+
+/**
+ * SUBTEST: query-invalid-cs-cycles
+ * Description: Check query with invalid arguments returns expected error code.
+ */
+static void test_engine_cycles_invalid(int fd)
+{
+	struct drm_xe_engine_class_instance *hwe;
+	struct drm_xe_query_engine_cycles ts = {};
+	struct drm_xe_device_query query = {
+		.extensions = 0,
+		.query = DRM_XE_DEVICE_QUERY_ENGINE_CYCLES,
+		.size = sizeof(ts),
+		.data = to_user_pointer(&ts),
+	};
+
+	igt_require(query_engine_cycles_supported(fd));
+
+	/* get one engine */
+	xe_for_each_hw_engine(fd, hwe)
+		break;
+
+	/* sanity check engine selection is valid */
+	ts.eci = *hwe;
+	query_engine_cycles(fd, &ts);
+
+	/* bad instance */
+	ts.eci = *hwe;
+	ts.eci.engine_instance = 0xffff;
+	do_ioctl_err(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query, EINVAL);
+	ts.eci = *hwe;
+
+	/* bad class */
+	ts.eci.engine_class = 0xffff;
+	do_ioctl_err(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query, EINVAL);
+	ts.eci = *hwe;
+
+	/* bad gt */
+	ts.eci.gt_id = 0xffff;
+	do_ioctl_err(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query, EINVAL);
+	ts.eci = *hwe;
+
+	/* bad clockid */
+	ts.clockid = -1;
+	do_ioctl_err(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query, EINVAL);
+	ts.clockid = 0;
+
+	/* sanity check */
+	query_engine_cycles(fd, &ts);
+}
+
 igt_main
 {
 	int xe;
@@ -500,6 +689,12 @@ igt_main
 
 	igt_subtest("query-topology")
 		test_query_gt_topology(xe);
+
+	igt_subtest("query-cs-cycles")
+		test_query_engine_cycles(xe);
+
+	igt_subtest("query-invalid-cs-cycles")
+		test_engine_cycles_invalid(xe);
 
 	igt_subtest("query-invalid-query")
 		test_query_invalid_query(xe);
