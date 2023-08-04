@@ -34,6 +34,7 @@ if libdrm_amdgpu.found()
 			  'amd_vcn',
 			  'amd_vm',
 			  'amd_vrr_range',
+			  'amd_mall',
 			]
 	amdgpu_deps += libdrm_amdgpu
 endif
