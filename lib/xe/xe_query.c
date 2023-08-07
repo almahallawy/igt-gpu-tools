@@ -630,6 +630,41 @@ uint64_t xe_visible_vram_size(int fd, int gt)
 
 	return visible_size;
 }
+/**
+ * xe_vram_available:
+ * @fd: xe device fd
+ * @gt: gt
+ *
+ * Returns available vram of xe device @fd and @gt.
+ */
+uint64_t xe_vram_available(int fd, int gt)
+{
+	struct xe_device *xe_dev;
+	int region_idx;
+	struct drm_xe_query_mem_region *mem_region;
+	struct drm_xe_query_mem_usage *mem_usage;
+
+	xe_dev = find_in_cache(fd);
+	igt_assert(xe_dev);
+
+	region_idx = ffs(native_region_for_gt(xe_dev->gts, gt)) - 1;
+	mem_region = &xe_dev->mem_usage->regions[region_idx];
+
+	if (XE_IS_CLASS_VRAM(mem_region)) {
+		uint64_t available_vram;
+
+		mem_usage = xe_query_mem_usage_new(fd);
+		pthread_mutex_lock(&cache.cache_mutex);
+		mem_region->used = mem_usage->regions[region_idx].used;
+		available_vram = mem_region->total_size - mem_region->used;
+		pthread_mutex_unlock(&cache.cache_mutex);
+		free(mem_usage);
+
+		return available_vram;
+	}
+
+	return 0;
+}
 
 /**
  * xe_get_default_alignment:
