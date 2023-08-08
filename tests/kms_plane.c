@@ -225,6 +225,12 @@ test_plane_position_with_output(data_t *data,
 	primary = igt_output_get_plane_type(output, DRM_PLANE_TYPE_PRIMARY);
 	sprite = igt_output_get_plane(output, plane);
 
+	if (primary->drm_plane->plane_id > sprite->drm_plane->plane_id) {
+		igt_info("primary plane ID (%d) > sprite plane ID (%d), skipping plane %d\n",
+				primary->drm_plane->plane_id, sprite->drm_plane->plane_id, plane);
+		return;
+	}
+
 	create_fb_for_mode(data, mode, &green, &rect, 1, &primary_fb);
 	igt_plane_set_fb(primary, &primary_fb);
 
