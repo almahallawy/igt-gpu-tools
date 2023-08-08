@@ -469,6 +469,10 @@ static void set_legacy_lut(data_t *data, enum pipe pipe,
 	lut_size = crtc->gamma_size;
 	drmModeFreeCrtc(crtc);
 
+	/* Skip if legacy LUT is not supported: */
+	if (!lut_size)
+		return;
+
 	lut = malloc(sizeof(uint16_t) * lut_size);
 
 	for (i = 0; i < lut_size; i++)
