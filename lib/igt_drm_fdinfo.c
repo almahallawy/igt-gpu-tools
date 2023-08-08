@@ -191,6 +191,19 @@ out:
 	return found;
 }
 
+#define UPDATE_REGION(idx, region, val)					\
+	do {								\
+		if (idx >= 0) {						\
+			info->region_mem[idx].region = val;		\
+			if (!regions_found[idx]) {			\
+				info->num_regions++;			\
+				regions_found[idx] = true;		\
+				if (idx > info->last_region_index)	\
+					info->last_region_index = idx;	\
+			}						\
+		}							\
+	} while (0)
+
 unsigned int
 __igt_parse_drm_fdinfo(int dir, const char *fd, struct drm_client_fdinfo *info,
 		       const char **name_map, unsigned int map_entries,
@@ -245,63 +258,24 @@ __igt_parse_drm_fdinfo(int dir, const char *fd, struct drm_client_fdinfo *info,
 		} else if (!strncmp(l, "drm-total-", 10)) {
 			idx = parse_region(l, info, strlen("drm-total-"),
 					   region_map, region_entries, &val);
-			if (idx >= 0) {
-				info->region_mem[idx].total = val;
-				if (!regions_found[idx]) {
-					info->num_regions++;
-					regions_found[idx] = true;
-					if (idx > info->last_region_index)
-						info->last_region_index = idx;
-				}
-			}
+			UPDATE_REGION(idx, total, val);
 		} else if (!strncmp(l, "drm-shared-", 11)) {
 			idx = parse_region(l, info, strlen("drm-shared-"),
 					   region_map, region_entries, &val);
-			if (idx >= 0) {
-				info->region_mem[idx].shared = val;
-				if (!regions_found[idx]) {
-					info->num_regions++;
-					regions_found[idx] = true;
-					if (idx > info->last_region_index)
-						info->last_region_index = idx;
-				}
-			}
+			UPDATE_REGION(idx, shared, val);
+
 		} else if (!strncmp(l, "drm-resident-", 13)) {
 			idx = parse_region(l, info, strlen("drm-resident-"),
 					   region_map, region_entries, &val);
-			if (idx >= 0) {
-				info->region_mem[idx].resident = val;
-				if (!regions_found[idx]) {
-					info->num_regions++;
-					regions_found[idx] = true;
-					if (idx > info->last_region_index)
-						info->last_region_index = idx;
-				}
-			}
+			UPDATE_REGION(idx, resident, val);
 		} else if (!strncmp(l, "drm-purgeable-", 14)) {
 			idx = parse_region(l, info, strlen("drm-purgeable-"),
 					   region_map, region_entries, &val);
-			if (idx >= 0) {
-				info->region_mem[idx].purgeable = val;
-				if (!regions_found[idx]) {
-					info->num_regions++;
-					regions_found[idx] = true;
-					if (idx > info->last_region_index)
-						info->last_region_index = idx;
-				}
-			}
+			UPDATE_REGION(idx, purgeable, val);
 		} else if (!strncmp(l, "drm-active-", 11)) {
 			idx = parse_region(l, info, strlen("drm-active-"),
 					   region_map, region_entries, &val);
-			if (idx >= 0) {
-				info->region_mem[idx].active = val;
-				if (!regions_found[idx]) {
-					info->num_regions++;
-					regions_found[idx] = true;
-					if (idx > info->last_region_index)
-						info->last_region_index = idx;
-				}
-			}
+			UPDATE_REGION(idx, active, val);
 		}
 	}
 
