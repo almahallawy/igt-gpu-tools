@@ -166,11 +166,11 @@ print_client(struct igt_drm_client *c, struct igt_drm_client **prevc,
 	len = printf("%*s ", c->clients->max_pid_len, c->pid_str);
 
 	if (c->regions->num_regions) {
-		for (sz = 0, i = 0; i < c->regions->max_region_id; i++)
+		for (sz = 0, i = 0; i <= c->regions->max_region_id; i++)
 			sz += c->memory[i].total;
 		len += print_size(sz);
 
-		for (sz = 0, i = 0; i < c->regions->max_region_id; i++)
+		for (sz = 0, i = 0; i <= c->regions->max_region_id; i++)
 			sz += c->memory[i].resident;
 		len += print_size(sz);
 	}
