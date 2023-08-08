@@ -1011,6 +1011,11 @@ static bool test_format_plane(data_t *data, enum pipe pipe,
 		    f.modifier != DRM_FORMAT_MOD_LINEAR)
 			continue;
 
+		/* igt doesn't know how to sw generate UBWC: */
+		if (is_msm_device(data->drm_fd) &&
+		    f.modifier == DRM_FORMAT_MOD_QCOM_COMPRESSED)
+			continue;
+
 		if (f.format == ref.format &&
 		    f.modifier == ref.modifier)
 			continue;
