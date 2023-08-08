@@ -133,13 +133,14 @@ static bool is_dsc_output_format_supported_by_platform(int disp_ver, enum dsc_ou
 bool is_dsc_output_format_supported(int drmfd, int disp_ver, igt_output_t *output,
 				    enum dsc_output_format output_format)
 {
-	if (!(igt_is_dsc_output_format_supported_by_sink(drmfd, output->name, output_format)) &&
-	     (is_dsc_output_format_supported_by_platform(disp_ver, output_format))) {
-		    igt_debug("DSC %s output format not supported on connector %s\n",
-			       kmstest_dsc_output_format_str(output_format),
-			       output->name);
-			return false;
-		}
+	if (!is_dsc_output_format_supported_by_platform(disp_ver, output_format))
+		return false;
+
+	if (!igt_is_dsc_output_format_supported_by_sink(drmfd, output->name, output_format)) {
+		igt_debug("DSC %s output format not supported on connector %s\n",
+			  kmstest_dsc_output_format_str(output_format), output->name);
+		return false;
+	}
 
 	return true;
 }
