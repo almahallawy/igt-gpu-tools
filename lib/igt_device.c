@@ -23,6 +23,7 @@
  */
 #include <sys/types.h>
 #include <fcntl.h>
+#include <limits.h>
 
 #include <sys/stat.h>
 #ifdef __linux__
@@ -286,4 +287,24 @@ igt_device_get_pci_root_port(int fd)
 		  prev->domain, prev->bus, prev->dev, prev->func);
 
 	return prev;
+}
+
+/**
+ * igt_device_get_pci_slot_name:
+ * @fd: the device.
+ * @pci_slot_name: pci slot name
+ *
+ * Looks up the graphics pci device using libpciaccess
+ * and gets the slot name
+ */
+void igt_device_get_pci_slot_name(int fd, char *pci_slot_name)
+{
+	struct pci_device *pci_dev;
+
+	pci_dev = __igt_device_get_pci_device(fd, 0);
+	igt_require(pci_dev);
+
+	igt_assert(pci_slot_name);
+	snprintf(pci_slot_name, NAME_MAX, "%04x:%02x:%02x.%01x",
+		 pci_dev->domain, pci_dev->bus, pci_dev->dev, pci_dev->func);
 }
