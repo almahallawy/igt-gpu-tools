@@ -36,6 +36,7 @@ typedef struct {
 	int fd_xe;
 	struct pci_device *pci_xe;
 	struct pci_device *pci_root;
+	char pci_slot_name[NAME_MAX];
 } device_t;
 
 uint64_t orig_threshold;
@@ -47,37 +48,6 @@ static bool runtime_usage_available(struct pci_device *pci)
 	snprintf(name, PATH_MAX, "/sys/bus/pci/devices/%04x:%02x:%02x.%01x/runtime_usage",
 		 pci->domain, pci->bus, pci->dev, pci->func);
 	return access(name, F_OK) == 0;
-}
-
-static int open_d3cold_allowed(struct pci_device *pci)
-{
-	char name[PATH_MAX];
-	int fd;
-
-	snprintf(name, PATH_MAX, "/sys/bus/pci/devices/%04x:%02x:%02x.%01x/d3cold_allowed",
-		 pci->domain, pci->bus, pci->dev, pci->func);
-
-	fd = open(name, O_RDWR);
-	igt_assert_f(fd >= 0, "Can't open %s\n", name);
-
-	return fd;
-}
-
-static void get_d3cold_allowed(struct pci_device *pci, char *d3cold_allowed)
-{
-	int fd = open_d3cold_allowed(pci);
-
-	igt_assert(read(fd, d3cold_allowed, 2));
-	close(fd);
-}
-
-static void set_d3cold_allowed(struct pci_device *pci,
-			       const char *d3cold_allowed)
-{
-	int fd = open_d3cold_allowed(pci);
-
-	igt_assert(write(fd, d3cold_allowed, 2));
-	close(fd);
 }
 
 static uint64_t get_vram_d3cold_threshold(int sysfs)
@@ -129,10 +99,10 @@ static bool setup_d3(device_t device, enum igt_acpi_d_state state)
 	case IGT_ACPI_D3Cold:
 		igt_require(igt_pm_acpi_d3cold_supported(device.pci_root));
 		igt_pm_enable_pci_card_runtime_pm(device.pci_root, NULL);
-		set_d3cold_allowed(device.pci_xe, "1\n");
+		igt_pm_set_d3cold_allowed(device.pci_slot_name, 1);
 		return true;
 	case IGT_ACPI_D3Hot:
-		set_d3cold_allowed(device.pci_xe, "0\n");
+		igt_pm_set_d3cold_allowed(device.pci_slot_name, 0);
 		return true;
 	default:
 		igt_debug("Invalid D3 Selection\n");
@@ -472,8 +442,9 @@ igt_main
 {
 	struct drm_xe_engine_class_instance *hwe;
 	device_t device;
-	char d3cold_allowed[2];
+	uint32_t d3cold_allowed;
 	int sysfs_fd;
+
 	const struct s_state {
 		const char *name;
 		enum igt_suspend_state state;
@@ -497,12 +468,13 @@ igt_main
 		device.fd_xe = drm_open_driver(DRIVER_XE);
 		device.pci_xe = igt_device_get_pci_device(device.fd_xe);
 		device.pci_root = igt_device_get_pci_root_port(device.fd_xe);
+		igt_device_get_pci_slot_name(device.fd_xe, device.pci_slot_name);
 
 		/* Always perform initial once-basic exec checking for health */
 		xe_for_each_hw_engine(device.fd_xe, hwe)
 			test_exec(device, hwe, 1, 1, NO_SUSPEND, NO_RPM);
 
-		get_d3cold_allowed(device.pci_xe, d3cold_allowed);
+		igt_pm_get_d3cold_allowed(device.pci_slot_name, &d3cold_allowed);
 		igt_assert(igt_setup_runtime_pm(device.fd_xe));
 		sysfs_fd = igt_sysfs_open(device.fd_xe);
 	}
@@ -573,7 +545,7 @@ igt_main
 
 	igt_fixture {
 		close(sysfs_fd);
-		set_d3cold_allowed(device.pci_xe, d3cold_allowed);
+		igt_pm_set_d3cold_allowed(device.pci_slot_name, d3cold_allowed);
 		igt_restore_runtime_pm();
 		drm_close_driver(device.fd_xe);
 	}
