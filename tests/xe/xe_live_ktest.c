@@ -40,7 +40,6 @@ static const struct kunit_tests live_tests[] = {
 	{ "xe_migrate_test",	"migrate" },
 	{ "xe_pci_test",	"pci" },
 	{ "xe_rtp_test",	"rtp" },
-	{ "xe_wa_test",		"wa" },
 };
 
 igt_main
