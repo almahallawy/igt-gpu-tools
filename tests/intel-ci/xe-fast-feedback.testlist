@@ -147,7 +147,7 @@ igt@xe_pm_residency@gt-c6-on-idle
 igt@xe_prime_self_import@basic-with_one_bo
 igt@xe_prime_self_import@basic-with_fd_dup
 #igt@xe_prime_self_import@basic-llseek-size
-igt@xe_query@query-execqueues
+igt@xe_query@query-engines
 igt@xe_query@query-mem-usage
 igt@xe_query@query-gts
 igt@xe_query@query-config
