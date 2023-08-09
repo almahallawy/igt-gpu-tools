@@ -283,7 +283,7 @@ static void
 test_suspend_without_i915(int state)
 {
 	struct igt_device_card card;
-	char d3cold_allowed[2];
+	uint32_t d3cold_allowed;
 	int fd;
 
 	fd = __drm_open_driver(DRIVER_INTEL);
@@ -297,8 +297,8 @@ test_suspend_without_i915(int state)
 	 */
 	if (state == SUSPEND_STATE_FREEZE &&
 	    igt_device_find_first_i915_discrete_card(&card)) {
-		igt_pm_get_d3cold_allowed(&card, d3cold_allowed);
-		igt_pm_set_d3cold_allowed(&card, "0\n");
+		igt_pm_get_d3cold_allowed(card.pci_slot_name, &d3cold_allowed);
+		igt_pm_set_d3cold_allowed(card.pci_slot_name, 0);
 	}
 	drm_close_driver(fd);
 
@@ -308,7 +308,7 @@ test_suspend_without_i915(int state)
 	igt_system_suspend_autoresume(state, SUSPEND_TEST_NONE);
 
 	if (state == SUSPEND_STATE_FREEZE && strlen(card.card))
-		igt_pm_set_d3cold_allowed(&card, d3cold_allowed);
+		igt_pm_set_d3cold_allowed(card.pci_slot_name, d3cold_allowed);
 
 	igt_kmsg(KMSG_INFO "Re-loading i915 \n");
 	igt_assert_eq(igt_i915_driver_load(NULL), 0);

@@ -1200,47 +1200,47 @@ void igt_pm_setup_pci_card_runtime_pm(struct pci_device *pci_dev)
 
 /**
  * igt_pm_get_d3cold_allowed:
- * @igt_device_card: device card
- * @val: value to be read into
+ * @pci_slot_name: slot name of the pci device
+ * @value: value to be read into
  *
  * Reads the value of d3cold_allowed attribute
  * of the pci device
  */
-void igt_pm_get_d3cold_allowed(struct igt_device_card *card, char *val)
+void igt_pm_get_d3cold_allowed(const char *pci_slot_name, uint32_t *value)
 {
 	char name[PATH_MAX];
 	int fd;
 
 	snprintf(name, PATH_MAX, "/sys/bus/pci/devices/%s",
-		 card->pci_slot_name);
+		 pci_slot_name);
 
 	fd = open(name, O_RDONLY);
 	igt_assert_f(fd >= 0, "Can't open %s\n", name);
 
-	igt_sysfs_read(fd, "d3cold_allowed", val, sizeof(val));
+	__igt_sysfs_get_u32(fd, "d3cold_allowed", value);
 
 	close(fd);
 }
 
 /**
- * igt_pm_get_d3cold_allowed:
- * @igt_device_card: device card
- * @val: value to be written
+ * igt_pm_set_d3cold_allowed:
+ * @pci_slot_name: slot name of pci device
+ * @value: value to be written
  *
  * writes the value to d3cold_allowed attribute of pci device
  */
-void igt_pm_set_d3cold_allowed(struct igt_device_card *card, const char *val)
+void igt_pm_set_d3cold_allowed(const char *pci_slot_name, uint32_t value)
 {
 	char name[PATH_MAX];
 	int fd;
 
 	snprintf(name, PATH_MAX, "/sys/bus/pci/devices/%s",
-		 card->pci_slot_name);
+		 pci_slot_name);
 
 	fd = open(name, O_RDONLY);
 	igt_assert_f(fd >= 0, "Can't open %s\n", name);
 
-	igt_sysfs_write(fd, "d3cold_allowed", val, sizeof(val));
+	__igt_sysfs_set_u32(fd, "d3cold_allowed", value);
 	close(fd);
 }
 
