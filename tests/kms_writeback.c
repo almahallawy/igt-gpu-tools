@@ -45,6 +45,8 @@ typedef struct {
 	bool custom_mode;
 	bool list_modes;
 	bool dump_check;
+	bool wb_fmt;
+	uint32_t format;
 	int mode_index;
 	drmModeModeInfo user_mode;
 } data_t;
@@ -404,8 +406,10 @@ static void commit_and_dump_fb(igt_display_t *display, igt_output_t *output, igt
 
 	path_name = getenv("IGT_FRAME_DUMP_PATH");
 	file_name = getenv("FRAME_PNG_FILE_NAME");
-	fb_id = igt_create_fb(display->drm_fd, mode->hdisplay, mode->vdisplay, DRM_FORMAT_XRGB8888,
-				igt_fb_mod_to_tiling(0), &output_fb);
+
+	fb_id = igt_create_fb(display->drm_fd, mode->hdisplay, mode->vdisplay,
+			      data.wb_fmt ? data.format : DRM_FORMAT_XRGB8888,
+			      igt_fb_mod_to_tiling(0), &output_fb);
 	igt_require(fb_id > 0);
 
 	do_single_commit(output, plane, input_fb, &output_fb);
@@ -454,6 +458,11 @@ static int opt_handler(int option, int option_index, void *_data)
 	case 'd':
 		data.dump_check = true;
 		break;
+	case 'f':
+		data.wb_fmt = true;
+		data.format = igt_drm_format_str_to_format(optarg);
+		igt_info("writeback format = %s\n", igt_format_str(data.format));
+		break;
 	default:
 		return IGT_OPT_HANDLER_ERROR;
 	}
@@ -462,6 +471,8 @@ static int opt_handler(int option, int option_index, void *_data)
 
 const char *help_str =
 	" --list-modes | -l List of writeback connector modes\n"
+	" --writeback-format | -f Test yuv output format for writeback with dump option\n"
+	" <name of the fourcc format as documented in the format_desc of igt_fb>\n"
 	" --built-in | -b Commits a built-in mode\n"
 	" --custom | -c Commits a custom mode inputted by user"
 	" <clock MHz>,<hdisp>,<hsync-start>,<hsync-end>,<htotal>,"
@@ -475,10 +486,11 @@ static const struct option long_options[] = {
 	{ .name = "built-in", .has_arg = true, .val = 'b', },
 	{ .name = "custom", .has_arg = true, .val = 'c', },
 	{ .name = "dump", .has_arg = false, .val = 'd', },
+	{ .name = "writeback-format", .has_arg = true, .val = 'f', },
 	{}
 };
 
-igt_main_args("b:c:dl", long_options, help_str, opt_handler, NULL)
+igt_main_args("b:c:f:dl", long_options, help_str, opt_handler, NULL)
 {
 	igt_display_t display;
 	igt_output_t *output;
