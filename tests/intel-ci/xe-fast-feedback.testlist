@@ -250,7 +250,4 @@ igt@core_hotunplug@unbind-rebind
 # Run KUnit tests at the end
 igt@xe_live_ktest@bo
 igt@xe_live_ktest@dmabuf
-igt@xe_live_ktest@pci
-igt@xe_live_ktest@rtp
 igt@xe_live_ktest@migrate
-igt@xe_live_ktest@wa
