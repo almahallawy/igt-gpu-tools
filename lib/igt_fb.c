@@ -384,6 +384,18 @@ static const struct format_desc_struct *lookup_drm_format(uint32_t drm_format)
 	return NULL;
 }
 
+static const struct format_desc_struct *lookup_drm_format_str(const char *name)
+{
+	const struct format_desc_struct *format;
+
+	for_each_format(format) {
+		if (!strcmp(format->name, name))
+			return format;
+	}
+
+	return NULL;
+}
+
 /**
  * igt_format_is_yuv_semiplanar:
  * @format: drm fourcc pixel format code
@@ -4655,6 +4667,22 @@ const char *igt_format_str(uint32_t drm_format)
 	const struct format_desc_struct *f = lookup_drm_format(drm_format);
 
 	return f ? f->name : "invalid";
+}
+
+/**
+ * igt_drm_format_str_to_format:
+ * @drm_format: name string of drm_format in format_desc[] table
+ *
+ * Returns:
+ * The drm_id for the format string from the format_desc[] table.
+ */
+uint32_t igt_drm_format_str_to_format(const char *drm_format)
+{
+	const struct format_desc_struct *f = lookup_drm_format_str(drm_format);
+
+	igt_assert_f(f, "can't find a DRM format for (%s)\n", drm_format);
+
+	return f->drm_id;
 }
 
 /**
