@@ -18,15 +18,6 @@
  *
  * SUBTEST: migrate
  * Functionality: migrate
- *
- * SUBTEST: pci
- * Functionality: pci
- *
- * SUBTEST: rtp
- * Functionality: rtp
- *
- * SUBTEST: wa
- * Functionality: workarounds
  */
 
 struct kunit_tests {
