@@ -5,6 +5,7 @@
     "fields": {
         "Category": {
             "_properties_": {
+                "mandatory": true,
                 "description": "Contains the major group for the tested functionality, being hardware, software or firmware"
             },
             "Mega feature": {
@@ -13,10 +14,12 @@
                 },
                 "Sub-category": {
                     "_properties_": {
+                        "mandatory": true,
                         "description": "Contains the the technical feature/functionality"
                     },
                     "Functionality": {
                         "_properties_": {
+                            "mandatory": true,
                             "description": "Groups page table tests on buckets containg more detailed functionality"
                         },
                         "Feature": {
@@ -27,6 +30,7 @@
                     },
                     "Run type": {
                         "_properties_": {
+                            "mandatory": true,
                             "description": "Defines what category of testlist it belongs",
                             "order": [
                                 "boot",
@@ -75,6 +79,7 @@
         },
         "Description" : {
             "_properties_": {
+                "mandatory": true,
                 "description": "Provides a description for the test/subtest."
             }
         }
