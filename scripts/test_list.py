@@ -936,13 +936,27 @@ class TestList:
         if self.filters:
             print("NOTE: test checks are affected by filters")
 
+        mandatory_fields = set()
+        for field, item in self.props.items():
+            if item["_properties_"].get("mandatory"):
+                    mandatory_fields.add(field)
+
         doc_subtests = set()
 
         args_regex = re.compile(r'\<[^\>]+\>')
 
-        for subtest in self.get_subtests()[""]:
+        missing_mandatory_fields = False
+
+        subtests = self.expand_dictionary(True)
+        for subtest, data in sorted(subtests.items()):
             subtest = "@".join(subtest.split("@")[:3])
             subtest = args_regex.sub(r'\\d+', subtest)
+
+            for field in mandatory_fields:
+                if field not in data:
+                    print(f"Warning: {subtest} {field} documentation is missing")
+                    missing_mandatory_fields = True
+
             doc_subtests.add(subtest)
 
         doc_subtests = list(sorted(doc_subtests))
