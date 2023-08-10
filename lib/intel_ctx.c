@@ -398,11 +398,11 @@ unsigned int intel_ctx_engine_class(const intel_ctx_t *ctx, unsigned int engine)
  * intel_ctx_xe:
  * @fd: open i915 drm file descriptor
  * @vm: vm
- * @engine: engine
+ * @exec_queue: exec queue
  *
  * Returns an intel_ctx_t representing the xe context.
  */
-intel_ctx_t *intel_ctx_xe(int fd, uint32_t vm, uint32_t engine,
+intel_ctx_t *intel_ctx_xe(int fd, uint32_t vm, uint32_t exec_queue,
 			  uint32_t sync_in, uint32_t sync_bind, uint32_t sync_out)
 {
 	intel_ctx_t *ctx;
@@ -412,7 +412,7 @@ intel_ctx_t *intel_ctx_xe(int fd, uint32_t vm, uint32_t engine,
 
 	ctx->fd = fd;
 	ctx->vm = vm;
-	ctx->engine = engine;
+	ctx->exec_queue = exec_queue;
 	ctx->sync_in = sync_in;
 	ctx->sync_bind = sync_bind;
 	ctx->sync_out = sync_out;
@@ -427,7 +427,7 @@ int __intel_ctx_xe_exec(const intel_ctx_t *ctx, uint64_t ahnd, uint64_t bb_offse
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
-		.exec_queue_id = ctx->engine,
+		.exec_queue_id = ctx->exec_queue,
 		.syncs = (uintptr_t)syncs,
 		.num_syncs = 2,
 		.address = bb_offset,

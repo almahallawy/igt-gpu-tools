@@ -71,7 +71,7 @@ typedef struct intel_ctx {
 	/* Xe */
 	int fd;
 	uint32_t vm;
-	uint32_t engine;
+	uint32_t exec_queue;
 	uint32_t sync_in;
 	uint32_t sync_bind;
 	uint32_t sync_out;
@@ -89,7 +89,7 @@ void intel_ctx_destroy(int fd, const intel_ctx_t *ctx);
 
 unsigned int intel_ctx_engine_class(const intel_ctx_t *ctx, unsigned int engine);
 
-intel_ctx_t *intel_ctx_xe(int fd, uint32_t vm, uint32_t engine,
+intel_ctx_t *intel_ctx_xe(int fd, uint32_t vm, uint32_t exec_queue,
 			  uint32_t sync_in, uint32_t sync_bind, uint32_t sync_out);
 int __intel_ctx_xe_exec(const intel_ctx_t *ctx, uint64_t ahnd, uint64_t bb_offset);
 void intel_ctx_xe_exec(const intel_ctx_t *ctx, uint64_t ahnd, uint64_t bb_offset);

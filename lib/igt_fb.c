@@ -2852,7 +2852,7 @@ static void blitcopy(const struct igt_fb *dst_fb,
 	uint32_t src_cc = src_fb->modifier == I915_FORMAT_MOD_4_TILED_DG2_RC_CCS_CC ? 1 : 0;
 	uint32_t dst_cc = dst_fb->modifier == I915_FORMAT_MOD_4_TILED_DG2_RC_CCS_CC ? 1 : 0;
 	intel_ctx_t *xe_ctx;
-	uint32_t vm, engine;
+	uint32_t vm, exec_queue;
 	bool is_xe = is_xe_device(dst_fb->fd);
 	bool is_i915 = is_i915_device(dst_fb->fd);
 
@@ -2881,8 +2881,8 @@ static void blitcopy(const struct igt_fb *dst_fb,
 							  mem_region) == 0);
 	} else if (is_xe) {
 		vm = xe_vm_create(dst_fb->fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-		engine = xe_exec_queue_create(dst_fb->fd, vm, &inst, 0);
-		xe_ctx = intel_ctx_xe(dst_fb->fd, vm, engine, 0, 0, 0);
+		exec_queue = xe_exec_queue_create(dst_fb->fd, vm, &inst, 0);
+		xe_ctx = intel_ctx_xe(dst_fb->fd, vm, exec_queue, 0, 0, 0);
 		mem_region = vram_if_possible(dst_fb->fd, 0);
 
 		ahnd = intel_allocator_open_full(dst_fb->fd, xe_ctx->vm, 0, 0,
@@ -3007,7 +3007,7 @@ static void blitcopy(const struct igt_fb *dst_fb,
 
 	if(is_xe) {
 		gem_close(dst_fb->fd, xe_bb);
-		xe_exec_queue_destroy(dst_fb->fd, engine);
+		xe_exec_queue_destroy(dst_fb->fd, exec_queue);
 		xe_vm_destroy(dst_fb->fd, vm);
 		free(xe_ctx);
 	}
