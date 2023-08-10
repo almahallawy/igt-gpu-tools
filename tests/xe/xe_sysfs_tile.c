@@ -6,6 +6,8 @@
 /**
  * TEST: Verify physical_vram_size_bytes of each tiles
  * SUBTEST: physical_vram_size_bytes
+ * Functionality: Vram
+ * Sub-category: Total vram per tile
  * Description:
  *             Read sysfs entry for physical_vram_size_bytes and compare with
  *             vram size. physical_vram_size_bytes should be more than vram size.
