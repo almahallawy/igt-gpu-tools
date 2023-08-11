@@ -1,26 +1,8 @@
-/* SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
+/*
  * Copyright 2014 Advanced Micro Devices, Inc.
  * Copyright 2022 Advanced Micro Devices, Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
- * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- *
- * Based on libdrm/tests/amdgpu/basic_tests.c
+ * Copyright 2023 Advanced Micro Devices, Inc.
  */
 
 #include "lib/amdgpu/amd_memory.h"
@@ -174,7 +156,7 @@ static void amdgpu_semaphore_test(amdgpu_device_handle device)
 	ibs_request[0].ibs = &ib_info[0];
 	ibs_request[0].resources = bo_list[0];
 	ibs_request[0].fence_info.handle = NULL;
-	r = amdgpu_cs_submit(context_handle[0], 0,&ibs_request[0], 1);
+	r = amdgpu_cs_submit(context_handle[0], 0, &ibs_request[0], 1);
 	igt_assert_eq(r, 0);
 	r = amdgpu_cs_signal_semaphore(context_handle[0], AMDGPU_HW_IP_DMA, 0, 0, sem);
 	igt_assert_eq(r, 0);
@@ -192,7 +174,7 @@ static void amdgpu_semaphore_test(amdgpu_device_handle device)
 	ibs_request[1].resources = bo_list[1];
 	ibs_request[1].fence_info.handle = NULL;
 
-	r = amdgpu_cs_submit(context_handle[0], 0,&ibs_request[1], 1);
+	r = amdgpu_cs_submit(context_handle[0], 0, &ibs_request[1], 1);
 	igt_assert_eq(r, 0);
 
 	fence_status.context = context_handle[0];
@@ -215,7 +197,7 @@ static void amdgpu_semaphore_test(amdgpu_device_handle device)
 	ibs_request[0].ibs = &ib_info[0];
 	ibs_request[0].resources = bo_list[0];
 	ibs_request[0].fence_info.handle = NULL;
-	r = amdgpu_cs_submit(context_handle[0], 0,&ibs_request[0], 1);
+	r = amdgpu_cs_submit(context_handle[0], 0, &ibs_request[0], 1);
 	igt_assert_eq(r, 0);
 	r = amdgpu_cs_signal_semaphore(context_handle[0], AMDGPU_HW_IP_GFX, 0, 0, sem);
 	igt_assert_eq(r, 0);
@@ -232,7 +214,7 @@ static void amdgpu_semaphore_test(amdgpu_device_handle device)
 	ibs_request[1].ibs = &ib_info[1];
 	ibs_request[1].resources = bo_list[1];
 	ibs_request[1].fence_info.handle = NULL;
-	r = amdgpu_cs_submit(context_handle[1], 0,&ibs_request[1], 1);
+	r = amdgpu_cs_submit(context_handle[1], 0, &ibs_request[1], 1);
 
 	igt_assert_eq(r, 0);
 
@@ -278,7 +260,8 @@ static void amdgpu_userptr_test(amdgpu_device_handle device)
 	struct amdgpu_ring_context *ring_context;
 	int r;
 
-	const struct amdgpu_ip_block_version * ip_block = get_ip_block(device, AMDGPU_HW_IP_DMA);
+	const struct amdgpu_ip_block_version *ip_block = get_ip_block(device, AMDGPU_HW_IP_DMA);
+
 	igt_assert(ip_block);
 	ring_context = calloc(1, sizeof(*ring_context));
 	igt_assert(ring_context);
@@ -295,12 +278,12 @@ static void amdgpu_userptr_test(amdgpu_device_handle device)
 	r = amdgpu_cs_ctx_create(device, &ring_context->context_handle);
 	igt_assert_eq(r, 0);
 
-	posix_memalign((void**)&ring_context->bo_cpu, sysconf(_SC_PAGE_SIZE), BUFFER_SIZE);
+	posix_memalign((void **)&ring_context->bo_cpu, sysconf(_SC_PAGE_SIZE), BUFFER_SIZE);
 	igt_assert(ring_context->bo_cpu);
-	memset((void*)ring_context->bo_cpu, 0, BUFFER_SIZE);
+	memset((void *)ring_context->bo_cpu, 0, BUFFER_SIZE);
 
 	r = amdgpu_create_bo_from_user_mem(device,
-					   (void*)ring_context->bo_cpu,
+					   (void *)ring_context->bo_cpu,
 					   BUFFER_SIZE, &ring_context->bo);
 	igt_assert_eq(r, 0);
 
@@ -352,7 +335,8 @@ amdgpu_bo_eviction_test(amdgpu_device_handle device_handle)
 
 	uint64_t gtt_flags[2] = {0, AMDGPU_GEM_CREATE_CPU_GTT_USWC};
 
-	const struct amdgpu_ip_block_version * ip_block = get_ip_block(device_handle, AMDGPU_HW_IP_DMA);
+	const struct amdgpu_ip_block_version *ip_block = get_ip_block(device_handle, AMDGPU_HW_IP_DMA);
+
 	igt_assert(ip_block);
 
 	ring_context = calloc(1, sizeof(*ring_context));
@@ -392,31 +376,31 @@ amdgpu_bo_eviction_test(amdgpu_device_handle device_handle)
 
 	loop1 = loop2 = 0;
 	/* run 9 circle to test all mapping combination */
-	while(loop1 < 2) {
-		while(loop2 < 2) {
+	while (loop1 < 2) {
+		while (loop2 < 2) {
 			/* allocate UC bo1for sDMA use */
 			r = amdgpu_bo_alloc_and_map(device_handle,
 						    sdma_write_length, 4096,
 						    AMDGPU_GEM_DOMAIN_GTT,
 						    gtt_flags[loop1],  &ring_context->bo,
-						    (void**)&ring_context->bo_cpu, &ring_context->bo_mc,
+						    (void **)&ring_context->bo_cpu, &ring_context->bo_mc,
 						    &ring_context->va_handle);
 			igt_assert_eq(r, 0);
 
 			/* set bo1 */
-			memset((void*)ring_context->bo_cpu, ip_block->funcs->pattern, ring_context->write_length);
+			memset((void *)ring_context->bo_cpu, ip_block->funcs->pattern, ring_context->write_length);
 
 			/* allocate UC bo2 for sDMA use */
 			r = amdgpu_bo_alloc_and_map(device_handle,
 						    sdma_write_length, 4096,
 						    AMDGPU_GEM_DOMAIN_GTT,
 						    gtt_flags[loop2], &ring_context->bo2,
-						    (void**)&ring_context->bo2_cpu, &ring_context->bo_mc2,
+						    (void **)&ring_context->bo2_cpu, &ring_context->bo_mc2,
 						    &ring_context->va_handle2);
 			igt_assert_eq(r, 0);
 
 			/* clear bo2 */
-			memset((void*)ring_context->bo2_cpu, 0, ring_context->write_length);
+			memset((void *)ring_context->bo2_cpu, 0, ring_context->write_length);
 
 			ring_context->resources[0] = ring_context->bo;
 			ring_context->resources[1] = ring_context->bo2;
@@ -474,8 +458,8 @@ amdgpu_sync_dependency_test(amdgpu_device_handle device_handle)
 	uint32_t size_bytes, code_offset, data_offset;
 	const uint32_t *shader;
 
-	struct amdgpu_cmd_base * base = get_cmd_base();
-	const struct amdgpu_ip_block_version * ip_block = get_ip_block(device_handle, AMD_IP_GFX);
+	struct amdgpu_cmd_base *base = get_cmd_base();
+	const struct amdgpu_ip_block_version *ip_block = get_ip_block(device_handle, AMD_IP_GFX);
 
 	r = amdgpu_cs_ctx_create(device_handle, &context_handle[0]);
 	igt_assert_eq(r, 0);
@@ -513,7 +497,7 @@ amdgpu_sync_dependency_test(amdgpu_device_handle device_handle)
 	base->emit(base, (ib_result_mc_address + code_offset * 4) >> 8);
 	base->emit(base, (ib_result_mc_address + code_offset * 4) >> 40);
 
-	base->emit(base,PACKET3(PKT3_SET_SH_REG, 2));
+	base->emit(base, PACKET3(PKT3_SET_SH_REG, 2));
 	base->emit(base, ip_block->funcs->get_reg_offset(COMPUTE_PGM_RSRC1));
 
 	base->emit(base, 0x002c0040);
@@ -546,7 +530,7 @@ amdgpu_sync_dependency_test(amdgpu_device_handle device_handle)
 	base->emit(base, 0x00000045);
 	base->emit_aligned(base, 7, GFX_COMPUTE_NOP);
 
-	memcpy(base->buf + code_offset , shader, size_bytes);
+	memcpy(base->buf + code_offset, shader, size_bytes);
 
 	memset(&ib_info, 0, sizeof(struct amdgpu_cs_ib_info));
 	ib_info.ib_mc_address = ib_result_mc_address;
@@ -560,7 +544,7 @@ amdgpu_sync_dependency_test(amdgpu_device_handle device_handle)
 	ibs_request.resources = bo_list;
 	ibs_request.fence_info.handle = NULL;
 
-	r = amdgpu_cs_submit(context_handle[1], 0,&ibs_request, 1);
+	r = amdgpu_cs_submit(context_handle[1], 0, &ibs_request, 1);
 	igt_assert_eq(r, 0);
 	seq_no = ibs_request.seq_no;
 
@@ -593,7 +577,7 @@ amdgpu_sync_dependency_test(amdgpu_device_handle device_handle)
 	ibs_request.dependencies[0].ring = 0;
 	ibs_request.dependencies[0].fence = seq_no;
 
-	r = amdgpu_cs_submit(context_handle[0], 0,&ibs_request, 1);
+	r = amdgpu_cs_submit(context_handle[0], 0, &ibs_request, 1);
 	igt_assert_eq(r, 0);
 
 	memset(&fence_status, 0, sizeof(struct amdgpu_cs_fence));
@@ -604,7 +588,7 @@ amdgpu_sync_dependency_test(amdgpu_device_handle device_handle)
 	fence_status.fence = ibs_request.seq_no;
 
 	r = amdgpu_cs_query_fence_status(&fence_status,
-		       AMDGPU_TIMEOUT_INFINITE,0, &expired);
+		       AMDGPU_TIMEOUT_INFINITE, 0, &expired);
 	igt_assert_eq(r, 0);
 
 	/* Expect the second command to wait for shader to complete */
@@ -656,7 +640,7 @@ igt_main
 
 		r = amdgpu_query_gpu_info(device, &gpu_info);
 		igt_assert_eq(r, 0);
-		r = setup_amdgpu_ip_blocks( major, minor,  &gpu_info, device);
+		r = setup_amdgpu_ip_blocks(major, minor,  &gpu_info, device);
 		igt_assert_eq(r, 0);
 
 	}

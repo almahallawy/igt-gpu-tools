@@ -1,27 +1,10 @@
-/* SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
+/*
  * Copyright 2014 Advanced Micro Devices, Inc.
  * Copyright 2022 Advanced Micro Devices, Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
- * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- *
- *
+ * Copyright 2023 Advanced Micro Devices, Inc.
  */
+
 #include <fcntl.h>
 
 #include "amd_memory.h"
@@ -67,7 +50,7 @@ sdma_ring_write_linear(const struct amdgpu_ip_funcs *func,
 		else
 			ring_context->pm4[i++] = ring_context->write_length;
 
-		while(j++ < ring_context->write_length)
+		while (j++ < ring_context->write_length)
 			ring_context->pm4[i++] = func->deadbeaf;
 	} else {
 		memset(ring_context->pm4, 0, ring_context->pm4_size * sizeof(uint32_t));
@@ -90,7 +73,7 @@ sdma_ring_write_linear(const struct amdgpu_ip_funcs *func,
 		ring_context->pm4[i++] = 0x100;
 	}
 
- 	*pm4_dw = i;
+	*pm4_dw = i;
 
 	return 0;
 }
@@ -157,7 +140,7 @@ sdma_ring_copy_linear(const struct amdgpu_ip_funcs *func,
 		context->pm4[i++] = (0xffffffff00000000 & context->bo_mc2) >> 32;
 	}
 
- 	*pm4_dw = i;
+	*pm4_dw = i;
 
 	return 0;
 }
@@ -169,25 +152,24 @@ sdma_ring_copy_linear(const struct amdgpu_ip_funcs *func,
  * - copy_linear
  */
 
-
 static int
 gfx_ring_write_linear(const struct amdgpu_ip_funcs *func,
-		      const struct amdgpu_ring_context *ring_context,
-		      uint32_t *pm4_dw)
- {
- 	uint32_t i, j;
+				const struct amdgpu_ring_context *ring_context,
+				uint32_t *pm4_dw)
+{
+	uint32_t i, j;
 
- 	i = 0;
- 	j = 0;
+	i = 0;
+	j = 0;
 
- 	if (ring_context->secure == false) {
- 		ring_context->pm4[i++] = PACKET3(PACKET3_WRITE_DATA, 2 +  ring_context->write_length);
- 		ring_context->pm4[i++] = WRITE_DATA_DST_SEL(5) | WR_CONFIRM;
- 		ring_context->pm4[i++] = 0xfffffffc & ring_context->bo_mc;
- 		ring_context->pm4[i++] = (0xffffffff00000000 & ring_context->bo_mc) >> 32;
- 		while(j++ < ring_context->write_length)
- 			ring_context->pm4[i++] = func->deadbeaf;
- 	} else {
+	if (ring_context->secure == false) {
+		ring_context->pm4[i++] = PACKET3(PACKET3_WRITE_DATA, 2 +  ring_context->write_length);
+		ring_context->pm4[i++] = WRITE_DATA_DST_SEL(5) | WR_CONFIRM;
+		ring_context->pm4[i++] = 0xfffffffc & ring_context->bo_mc;
+		ring_context->pm4[i++] = (0xffffffff00000000 & ring_context->bo_mc) >> 32;
+		while (j++ < ring_context->write_length)
+			ring_context->pm4[i++] = func->deadbeaf;
+	} else {
 		memset(ring_context->pm4, 0, ring_context->pm4_size * sizeof(uint32_t));
 		ring_context->pm4[i++] = PACKET3(PACKET3_ATOMIC_MEM, 7);
 
@@ -207,21 +189,21 @@ gfx_ring_write_linear(const struct amdgpu_ip_funcs *func,
 		ring_context->pm4[i++] = 0xdeadbeaf;
 		ring_context->pm4[i++] = 0x0;
 		ring_context->pm4[i++] = 0x100;
- 	}
+	}
 
- 	*pm4_dw = i;
+	*pm4_dw = i;
 
- 	return 0;
- }
+	return 0;
+}
 
- static int
- gfx_ring_const_fill(const struct amdgpu_ip_funcs *func,
-		     const struct amdgpu_ring_context *ring_context,
-		     uint32_t *pm4_dw)
- {
- 	uint32_t i;
+static int
+gfx_ring_const_fill(const struct amdgpu_ip_funcs *func,
+				const struct amdgpu_ring_context *ring_context,
+				uint32_t *pm4_dw)
+{
+	uint32_t i;
 
- 	i = 0;
+	i = 0;
 	if (func->family_id == AMDGPU_FAMILY_SI) {
 		ring_context->pm4[i++] = PACKET3(PACKET3_DMA_DATA_SI, 4);
 		ring_context->pm4[i++] = func->deadbeaf;
@@ -244,19 +226,19 @@ gfx_ring_write_linear(const struct amdgpu_ip_funcs *func,
 		ring_context->pm4[i++] = (0xffffffff00000000 & ring_context->bo_mc) >> 32;
 		ring_context->pm4[i++] = ring_context->write_length;
 	}
- 	*pm4_dw = i;
+	*pm4_dw = i;
 
- 	return 0;
- }
+	return 0;
+}
 
 static int
 gfx_ring_copy_linear(const struct amdgpu_ip_funcs *func,
 		     const struct amdgpu_ring_context *context,
 		     uint32_t *pm4_dw)
 {
- 	uint32_t i;
+	uint32_t i;
 
- 	i = 0;
+	i = 0;
 	if (func->family_id == AMDGPU_FAMILY_SI) {
 		context->pm4[i++] = PACKET3(PACKET3_DMA_DATA_SI, 4);
 		context->pm4[i++] = 0xfffffffc & context->bo_mc;
@@ -281,7 +263,7 @@ gfx_ring_copy_linear(const struct amdgpu_ip_funcs *func,
 		context->pm4[i++] = context->write_length;
 	}
 
- 	*pm4_dw = i;
+	*pm4_dw = i;
 
 	return 0;
 }
@@ -295,7 +277,7 @@ x_compare(const struct amdgpu_ip_funcs *func,
 
 	int num_compare = ring_context->write_length/div;
 
-	while(i < num_compare) {
+	while (i < num_compare) {
 		if (ring_context->bo_cpu[i++] != func->deadbeaf) {
 			ret = -1;
 			break;
@@ -312,7 +294,7 @@ x_compare_pattern(const struct amdgpu_ip_funcs *func,
 
 	int num_compare = ring_context->write_length/div;
 
-	while(i < num_compare) {
+	while (i < num_compare) {
 		if (ring_context->bo_cpu[i++] != func->pattern) {
 			ret = -1;
 			break;
@@ -374,9 +356,9 @@ const struct amdgpu_ip_block_version sdma_v3_x_ip_block = {
 };
 
 struct chip_info {
-	  const char *name;
-	  enum radeon_family family;
-	  enum chip_class chip_class;
+	const char *name;
+	enum radeon_family family;
+	enum chip_class chip_class;
 	  amdgpu_device_handle dev;
 };
 
@@ -403,7 +385,7 @@ get_ip_block(amdgpu_device_handle device, enum amd_ip_block_type type)
 	if (g_chip.dev != device)
 		return NULL;
 
-	for(i = 0; i <  amdgpu_ips.num_ip_blocks; i++)
+	for (i = 0; i <  amdgpu_ips.num_ip_blocks; i++)
 		if (amdgpu_ips.ip_blocks[i]->type == type)
 			return amdgpu_ips.ip_blocks[i];
 	return NULL;
@@ -451,14 +433,14 @@ cmd_attach_buf(struct amdgpu_cmd_base  *base, void *ptr, uint32_t size_bytes)
 static void
 cmd_emit(struct amdgpu_cmd_base  *base, uint32_t value)
 {
-	assert(base->cdw <  base->max_dw  );
+	assert(base->cdw <  base->max_dw);
 	base->buf[base->cdw++] = value;
 }
 
 static void
 cmd_emit_aligned(struct amdgpu_cmd_base *base, uint32_t mask, uint32_t cmd)
 {
-	while(base->cdw & mask)
+	while (base->cdw & mask)
 		base->emit(base, cmd);
 }
 static void
@@ -470,7 +452,7 @@ cmd_emit_buf(struct amdgpu_cmd_base  *base, const void *ptr, uint32_t offset_byt
 	assert(size_bytes % 4 == 0); /* no gaps */
 	assert(offset_bytes % 4 == 0);
 	assert(base->cdw + total_offset_dw <  base->max_dw);
-	memcpy(base->buf + base->cdw + offset_dw , ptr, size_bytes);
+	memcpy(base->buf + base->cdw + offset_dw, ptr, size_bytes);
 	base->cdw += total_offset_dw;
 }
 
@@ -494,7 +476,7 @@ cmd_emit_at_offset(struct amdgpu_cmd_base  *base, uint32_t value, uint32_t offse
 struct amdgpu_cmd_base *
 get_cmd_base(void)
 {
-	struct amdgpu_cmd_base *base = calloc(1 ,sizeof(*base));
+	struct amdgpu_cmd_base *base = calloc(1, sizeof(*base));
 
 	base->cdw = 0;
 	base->max_dw = 0;
@@ -504,7 +486,7 @@ get_cmd_base(void)
 	base->allocate_buf = cmd_allocate_buf;
 	base->attach_buf = cmd_attach_buf;
 	base->emit = cmd_emit;
-	base->emit_aligned= cmd_emit_aligned;
+	base->emit_aligned = cmd_emit_aligned;
 	base->emit_repeat = cmd_emit_repeat;
 	base->emit_at_offset = cmd_emit_at_offset;
 	base->emit_buf = cmd_emit_buf;
@@ -513,7 +495,7 @@ get_cmd_base(void)
 }
 
 void
-free_cmd_base(struct amdgpu_cmd_base * base)
+free_cmd_base(struct amdgpu_cmd_base *base)
 {
 	if (base) {
 		if (base->buf && base->is_assigned_buf == false)
@@ -546,11 +528,14 @@ free_cmd_base(struct amdgpu_cmd_base * base)
 int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_info *amdinfo,
 			   amdgpu_device_handle device)
 {
-#define identify_chip2(asic, chipname)			\
-   if (ASICREV_IS(amdinfo->chip_external_rev, asic)) {	\
-      info->family = CHIP_##chipname;			\
-      info->name = #chipname;				\
-   }
+#define identify_chip2(asic, chipname)	\
+	do {\
+		if (ASICREV_IS(amdinfo->chip_external_rev, asic)) {\
+			info->family = CHIP_##chipname;	\
+			info->name = #chipname;	\
+		} \
+	} while (0)
+
 #define identify_chip(chipname) identify_chip2(chipname, chipname)
 
 	const struct chip_class_arr {
@@ -662,7 +647,7 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 	igt_assert_eq(chip_class_arr[info->chip_class].class, info->chip_class);
 	igt_info("amdgpu: chip_class %s\n", chip_class_arr[info->chip_class].name);
 
-	switch(info->chip_class) {
+	switch (info->chip_class) {
 	case GFX6:
 		break;
 	case GFX7: /* tested */
@@ -684,7 +669,7 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 	default:
 		igt_info("amdgpu: GFX or old.\n");
 		return -1;
-	 }
+	}
 	info->dev = device;
 
 	return 0;

@@ -1,27 +1,9 @@
 /* SPDX-License-Identifier: MIT
  * Copyright 2014 Advanced Micro Devices, Inc.
  * Copyright 2022 Advanced Micro Devices, Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
- * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- *
- *
+ * Copyright 2023 Advanced Micro Devices, Inc.
  */
+
 #ifndef AMD_IP_BLOCKS_H
 #define AMD_IP_BLOCKS_H
 
@@ -45,9 +27,9 @@ struct amdgpu_ring_context {
 	int res_cnt; /* num of bo in amdgpu_bo_handle resources[2] */
 
 	uint32_t write_length;  /* length of data */
-	uint32_t *pm4; 		/* data of the packet */
-	uint32_t pm4_size; 	/* max allocated packet size */
-	bool secure; 		/* secure or not */
+	uint32_t *pm4;		/* data of the packet */
+	uint32_t pm4_size;	/* max allocated packet size */
+	bool secure;		/* secure or not */
 
 	uint64_t bo_mc;		/* result from amdgpu_bo_alloc_and_map */
 	uint64_t bo_mc2;	/* result from amdgpu_bo_alloc_and_map */
@@ -128,13 +110,13 @@ struct amdgpu_cmd_base {
 	int (*allocate_buf)(struct amdgpu_cmd_base  *base, uint32_t size);
 	int (*attach_buf)(struct amdgpu_cmd_base  *base, void *ptr, uint32_t size_bytes);
 	void (*emit)(struct amdgpu_cmd_base  *base, uint32_t value);
-	void (*emit_aligned)(struct amdgpu_cmd_base  *base,uint32_t mask, uint32_t value);
+	void (*emit_aligned)(struct amdgpu_cmd_base  *base, uint32_t mask, uint32_t value);
 	void (*emit_repeat)(struct amdgpu_cmd_base  *base, uint32_t value, uint32_t number_of_times);
 	void (*emit_at_offset)(struct amdgpu_cmd_base  *base, uint32_t value, uint32_t offset_dwords);
 	void (*emit_buf)(struct amdgpu_cmd_base  *base, const void *ptr, uint32_t offset_bytes, uint32_t size_bytes);
 };
 
-struct amdgpu_cmd_base* get_cmd_base(void);
+struct amdgpu_cmd_base *get_cmd_base(void);
 
 void free_cmd_base(struct amdgpu_cmd_base *base);
 

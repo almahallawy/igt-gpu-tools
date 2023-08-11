@@ -1,27 +1,9 @@
-/* SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
+/*
  * Copyright 2014 Advanced Micro Devices, Inc.
  * Copyright 2022 Advanced Micro Devices, Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
- * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- *
- *
  */
+
 #include "lib/amdgpu/amd_memory.h"
 #include "lib/amdgpu/amd_sdma.h"
 #include "lib/amdgpu/amd_PM4.h"
@@ -34,7 +16,7 @@
  * submit command stream described in ibs_request and wait for this IB accomplished
  */
 
-void amdgpu_test_exec_cs_helper(amdgpu_device_handle device, unsigned ip_type,
+void amdgpu_test_exec_cs_helper(amdgpu_device_handle device, unsigned int ip_type,
 				struct amdgpu_ring_context *ring_context)
 {
 	int r;
@@ -141,19 +123,19 @@ void amdgpu_command_submission_write_linear_helper(amdgpu_device_handle device,
 
 	for (ring_id = 0; (1 << ring_id) & ring_context->hw_ip_info.available_rings; ring_id++) {
 		loop = 0;
-		while(loop < 2) {
+		while (loop < 2) {
 			/* allocate UC bo for sDMA use */
 			r = amdgpu_bo_alloc_and_map(device,
 						    ring_context->write_length * sizeof(uint32_t),
 						    4096, AMDGPU_GEM_DOMAIN_GTT,
 						    gtt_flags[loop], &ring_context->bo,
-						    (void**)&ring_context->bo_cpu,
+						    (void **)&ring_context->bo_cpu,
 						    &ring_context->bo_mc,
 						    &ring_context->va_handle);
 			igt_assert_eq(r, 0);
 
 			/* clear bo */
-			memset((void*)ring_context->bo_cpu, 0, ring_context->write_length * sizeof(uint32_t));
+			memset((void *)ring_context->bo_cpu, 0, ring_context->write_length * sizeof(uint32_t));
 
 			ring_context->resources[0] = ring_context->bo;
 
@@ -232,17 +214,17 @@ void amdgpu_command_submission_const_fill_helper(amdgpu_device_handle device,
 
 	/* prepare resource */
 	loop = 0;
-	while(loop < 2) {
+	while (loop < 2) {
 		/* allocate UC bo for sDMA use */
 		r = amdgpu_bo_alloc_and_map(device,
 					    ring_context->write_length, 4096,
 					    AMDGPU_GEM_DOMAIN_GTT,
-					    gtt_flags[loop], &ring_context->bo, (void**)&ring_context->bo_cpu,
+					    gtt_flags[loop], &ring_context->bo, (void **)&ring_context->bo_cpu,
 					    &ring_context->bo_mc, &ring_context->va_handle);
 		igt_assert_eq(r, 0);
 
 		/* clear bo */
-		memset((void*)ring_context->bo_cpu, 0, ring_context->write_length);
+		memset((void *)ring_context->bo_cpu, 0, ring_context->write_length);
 
 		ring_context->resources[0] = ring_context->bo;
 
@@ -300,31 +282,31 @@ void amdgpu_command_submission_copy_linear_helper(amdgpu_device_handle device,
 
 	loop1 = loop2 = 0;
 	/* run 9 circle to test all mapping combination */
-	while(loop1 < 2) {
-		while(loop2 < 2) {
+	while (loop1 < 2) {
+		while (loop2 < 2) {
 			/* allocate UC bo1for sDMA use */
 			r = amdgpu_bo_alloc_and_map(device,
 						    ring_context->write_length, 4096,
 						    AMDGPU_GEM_DOMAIN_GTT,
 						    gtt_flags[loop1], &ring_context->bo,
-						    (void**)&ring_context->bo_cpu, &ring_context->bo_mc,
+						    (void **)&ring_context->bo_cpu, &ring_context->bo_mc,
 						    &ring_context->va_handle);
 			igt_assert_eq(r, 0);
 
 			/* set bo_cpu */
-			memset((void*)ring_context->bo_cpu, ip_block->funcs->pattern, ring_context->write_length);
+			memset((void *)ring_context->bo_cpu, ip_block->funcs->pattern, ring_context->write_length);
 
 			/* allocate UC bo2 for sDMA use */
 			r = amdgpu_bo_alloc_and_map(device,
 						    ring_context->write_length, 4096,
 						    AMDGPU_GEM_DOMAIN_GTT,
 						    gtt_flags[loop2], &ring_context->bo2,
-						    (void**)&ring_context->bo2_cpu, &ring_context->bo_mc2,
+						    (void **)&ring_context->bo2_cpu, &ring_context->bo_mc2,
 						    &ring_context->va_handle2);
 			igt_assert_eq(r, 0);
 
 			/* clear bo2_cpu */
-			memset((void*)ring_context->bo2_cpu, 0, ring_context->write_length);
+			memset((void *)ring_context->bo2_cpu, 0, ring_context->write_length);
 
 			ring_context->resources[0] = ring_context->bo;
 			ring_context->resources[1] = ring_context->bo2;
