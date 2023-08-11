@@ -1140,9 +1140,6 @@ igt_pm_setup_pci_card_power_attrs(struct pci_device *pci_dev, bool save_attrs, i
 	ret = pci_device_get_bridge_buses(pci_dev, &primary, &secondary, &subordinate);
 	igt_assert(!ret);
 
-	ret = pci_system_init();
-	igt_assert(!ret);
-
 	match.domain = pci_dev->domain;
 	match.bus = PCI_MATCH_ANY;
 	match.dev = PCI_MATCH_ANY;
@@ -1185,7 +1182,6 @@ void igt_pm_enable_pci_card_runtime_pm(struct pci_device *root,
 		delay = igt_pm_get_autosuspend_delay(i915);
 
 	igt_pm_setup_pci_card_power_attrs(root, false, delay);
-	pci_system_cleanup();
 }
 
 /**
@@ -1289,7 +1285,6 @@ void igt_pm_restore_pci_card_runtime_pm(void)
 	}
 
 	memset(__pci_dev_pwrattr, 0, sizeof(__pci_dev_pwrattr));
-	pci_system_cleanup();
 }
 
 static void igt_pm_print_pci_dev_runtime_status(struct pci_device *pci_dev)
