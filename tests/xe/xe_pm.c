@@ -18,6 +18,7 @@
 #include "igt.h"
 #include "lib/igt_device.h"
 #include "lib/igt_pm.h"
+#include "lib/igt_sysfs.h"
 #include "lib/igt_syncobj.h"
 #include "lib/intel_reg.h"
 
@@ -29,11 +30,15 @@
 #define NO_SUSPEND -1
 #define NO_RPM -1
 
+#define SIZE (4096 * 1024)
+
 typedef struct {
 	int fd_xe;
 	struct pci_device *pci_xe;
 	struct pci_device *pci_root;
 } device_t;
+
+uint64_t orig_threshold;
 
 /* runtime_usage is only available if kernel build CONFIG_PM_ADVANCED_DEBUG */
 static bool runtime_usage_available(struct pci_device *pci)
@@ -72,6 +77,49 @@ static void set_d3cold_allowed(struct pci_device *pci,
 	int fd = open_d3cold_allowed(pci);
 
 	igt_assert(write(fd, d3cold_allowed, 2));
+	close(fd);
+}
+
+static uint64_t get_vram_d3cold_threshold(int sysfs)
+{
+	uint64_t threshold;
+	char path[64];
+	int ret;
+
+	sprintf(path, "device/vram_d3cold_threshold");
+	igt_require_f(!faccessat(sysfs, path, R_OK, 0), "vram_d3cold_threshold is not present\n");
+
+	ret = igt_sysfs_scanf(sysfs, path, "%lu", &threshold);
+	igt_assert(ret > 0);
+
+	return threshold;
+}
+
+static void set_vram_d3cold_threshold(int sysfs, uint64_t threshold)
+{
+	char path[64];
+	int ret;
+
+	sprintf(path, "device/vram_d3cold_threshold");
+
+	if (!faccessat(sysfs, path, R_OK | W_OK, 0))
+		ret = igt_sysfs_printf(sysfs, path, "%lu", threshold);
+	else
+		igt_warn("vram_d3cold_threshold is not present\n");
+
+	igt_assert(ret > 0);
+}
+
+static void vram_d3cold_threshold_restore(int sig)
+{
+	int fd, sysfs_fd;
+
+	fd = drm_open_driver(DRIVER_XE);
+	sysfs_fd = igt_sysfs_open(fd);
+
+	set_vram_d3cold_threshold(sysfs_fd, orig_threshold);
+
+	close(sysfs_fd);
 	close(fd);
 }
 
@@ -346,11 +394,86 @@ NULL));
 		igt_assert(in_d3(device, d_state));
 }
 
+/**
+ * SUBTEST: vram-d3cold-threshold
+ * Description:
+ *	Validate whether card is limited to d3hot while vram used
+ *	is greater than vram_d3cold_threshold.
+ * Run type: FULL
+ */
+static void test_vram_d3cold_threshold(device_t device, int sysfs_fd)
+{
+	struct drm_xe_query_mem_usage *mem_usage;
+	struct drm_xe_device_query query = {
+		.extensions = 0,
+		.query = DRM_XE_DEVICE_QUERY_MEM_USAGE,
+		.size = 0,
+		.data = 0,
+	};
+	uint64_t vram_used_mb = 0, vram_total_mb = 0, threshold;
+	uint32_t bo, flags;
+	int handle, i;
+	bool active;
+	void *map;
+
+	igt_require(xe_has_vram(device.fd_xe));
+
+	flags = vram_memory(device.fd_xe, 0);
+	igt_require_f(flags, "Device doesn't support vram memory region\n");
+
+	igt_assert_eq(igt_ioctl(device.fd_xe, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
+	igt_assert_neq(query.size, 0);
+
+	mem_usage = malloc(query.size);
+	igt_assert(mem_usage);
+
+	query.data = to_user_pointer(mem_usage);
+	igt_assert_eq(igt_ioctl(device.fd_xe, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
+
+	for (i = 0; i < mem_usage->num_regions; i++) {
+		if (mem_usage->regions[i].mem_class == XE_MEM_REGION_CLASS_VRAM) {
+			vram_used_mb +=  (mem_usage->regions[i].used / (1024 * 1024));
+			vram_total_mb += (mem_usage->regions[i].total_size / (1024 * 1024));
+		}
+	}
+
+	threshold = vram_used_mb + (SIZE / 1024 /1024);
+	igt_require(threshold < vram_total_mb);
+
+	bo = xe_bo_create_flags(device.fd_xe, 0, SIZE, flags);
+	map = xe_bo_map(device.fd_xe, bo, SIZE);
+	memset(map, 0, SIZE);
+	munmap(map, SIZE);
+	set_vram_d3cold_threshold(sysfs_fd, threshold);
+
+	/* Setup D3Cold but card should be in D3hot */
+	igt_assert(setup_d3(device, IGT_ACPI_D3Cold));
+	sleep(1);
+	igt_assert(in_d3(device, IGT_ACPI_D3Hot));
+	igt_assert(igt_pm_get_acpi_real_d_state(device.pci_root) == IGT_ACPI_D0);
+	gem_close(device.fd_xe, bo);
+
+	/*
+	 * XXX: Xe gem_close() doesn't get any mem_access ref count to wake
+	 * the device from runtime suspend.
+	 * Therefore open and close fw handle to wake the device.
+	 */
+	handle = igt_debugfs_open(device.fd_xe, "forcewake_all", O_RDONLY);
+	igt_assert(handle >= 0);
+	active = igt_get_runtime_pm_status() == IGT_RUNTIME_PM_STATUS_ACTIVE;
+	close(handle);
+	igt_assert(active);
+
+	/* Test D3Cold again after freeing up the Xe BO */
+	igt_assert(in_d3(device, IGT_ACPI_D3Cold));
+}
+
 igt_main
 {
 	struct drm_xe_engine_class_instance *hwe;
 	device_t device;
 	char d3cold_allowed[2];
+	int sysfs_fd;
 	const struct s_state {
 		const char *name;
 		enum igt_suspend_state state;
@@ -381,6 +504,7 @@ igt_main
 
 		get_d3cold_allowed(device.pci_xe, d3cold_allowed);
 		igt_assert(igt_setup_runtime_pm(device.fd_xe));
+		sysfs_fd = igt_sysfs_open(device.fd_xe);
 	}
 
 	for (const struct s_state *s = s_states; s->name; s++) {
@@ -440,7 +564,15 @@ igt_main
 		}
 	}
 
+	igt_describe("Validate whether card is limited to d3hot, if vram used > vram threshold");
+	igt_subtest("vram-d3cold-threshold") {
+		orig_threshold = get_vram_d3cold_threshold(sysfs_fd);
+		igt_install_exit_handler(vram_d3cold_threshold_restore);
+		test_vram_d3cold_threshold(device, sysfs_fd);
+	}
+
 	igt_fixture {
+		close(sysfs_fd);
 		set_d3cold_allowed(device.pci_xe, d3cold_allowed);
 		igt_restore_runtime_pm();
 		drm_close_driver(device.fd_xe);
