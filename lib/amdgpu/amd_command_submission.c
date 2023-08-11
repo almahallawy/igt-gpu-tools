@@ -2,6 +2,7 @@
 /*
  * Copyright 2014 Advanced Micro Devices, Inc.
  * Copyright 2022 Advanced Micro Devices, Inc.
+ * Copyright 2023 Advanced Micro Devices, Inc.
  */
 
 #include "lib/amdgpu/amd_memory.h"
@@ -123,6 +124,7 @@ void amdgpu_command_submission_write_linear_helper(amdgpu_device_handle device,
 
 	for (ring_id = 0; (1 << ring_id) & ring_context->hw_ip_info.available_rings; ring_id++) {
 		loop = 0;
+		ring_context->ring_id = ring_id;
 		while (loop < 2) {
 			/* allocate UC bo for sDMA use */
 			r = amdgpu_bo_alloc_and_map(device,
@@ -197,7 +199,7 @@ void amdgpu_command_submission_const_fill_helper(amdgpu_device_handle device,
 	const int pm4_dw = 256;
 
 	struct amdgpu_ring_context *ring_context;
-	int r, loop;
+	int r, loop, ring_id;
 
 	uint64_t gtt_flags[2] = {0, AMDGPU_GEM_CREATE_CPU_GTT_USWC};
 
@@ -208,38 +210,42 @@ void amdgpu_command_submission_const_fill_helper(amdgpu_device_handle device,
 	ring_context->pm4_size = pm4_dw;
 	ring_context->res_cnt = 1;
 	igt_assert(ring_context->pm4);
+	r = amdgpu_query_hw_ip_info(device, ip_block->type, 0, &ring_context->hw_ip_info);
+	igt_assert_eq(r, 0);
 
 	r = amdgpu_cs_ctx_create(device, &ring_context->context_handle);
 	igt_assert_eq(r, 0);
-
-	/* prepare resource */
-	loop = 0;
-	while (loop < 2) {
-		/* allocate UC bo for sDMA use */
-		r = amdgpu_bo_alloc_and_map(device,
+	for (ring_id = 0; (1 << ring_id) & ring_context->hw_ip_info.available_rings; ring_id++) {
+		/* prepare resource */
+		loop = 0;
+		ring_context->ring_id = ring_id;
+		while (loop < 2) {
+			/* allocate UC bo for sDMA use */
+			r = amdgpu_bo_alloc_and_map(device,
 					    ring_context->write_length, 4096,
 					    AMDGPU_GEM_DOMAIN_GTT,
 					    gtt_flags[loop], &ring_context->bo, (void **)&ring_context->bo_cpu,
 					    &ring_context->bo_mc, &ring_context->va_handle);
-		igt_assert_eq(r, 0);
+			igt_assert_eq(r, 0);
 
-		/* clear bo */
-		memset((void *)ring_context->bo_cpu, 0, ring_context->write_length);
+			/* clear bo */
+			memset((void *)ring_context->bo_cpu, 0, ring_context->write_length);
 
-		ring_context->resources[0] = ring_context->bo;
+			ring_context->resources[0] = ring_context->bo;
 
-		/* fulfill PM4: test DMA const fill */
-		ip_block->funcs->const_fill(ip_block->funcs, ring_context, &ring_context->pm4_dw);
+			/* fulfill PM4: test DMA const fill */
+			ip_block->funcs->const_fill(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 
-		amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+			amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
 
-		/* verify if SDMA test result meets with expected */
-		r = ip_block->funcs->compare(ip_block->funcs, ring_context, 4);
-		igt_assert_eq(r, 0);
+			/* verify if SDMA test result meets with expected */
+			r = ip_block->funcs->compare(ip_block->funcs, ring_context, 4);
+			igt_assert_eq(r, 0);
 
-		amdgpu_bo_unmap_and_free(ring_context->bo, ring_context->va_handle, ring_context->bo_mc,
+			amdgpu_bo_unmap_and_free(ring_context->bo, ring_context->va_handle, ring_context->bo_mc,
 					 ring_context->write_length);
-		loop++;
+			loop++;
+		}
 	}
 	/* clean resources */
 	free(ring_context->pm4);
@@ -262,7 +268,7 @@ void amdgpu_command_submission_copy_linear_helper(amdgpu_device_handle device,
 	const int pm4_dw = 256;
 
 	struct amdgpu_ring_context *ring_context;
-	int r, loop1, loop2;
+	int r, loop1, loop2, ring_id;
 
 	uint64_t gtt_flags[2] = {0, AMDGPU_GEM_CREATE_CPU_GTT_USWC};
 
@@ -274,58 +280,62 @@ void amdgpu_command_submission_copy_linear_helper(amdgpu_device_handle device,
 	ring_context->pm4_size = pm4_dw;
 	ring_context->res_cnt = 2;
 	igt_assert(ring_context->pm4);
+	r = amdgpu_query_hw_ip_info(device, ip_block->type, 0, &ring_context->hw_ip_info);
+	igt_assert_eq(r, 0);
 
 
 	r = amdgpu_cs_ctx_create(device, &ring_context->context_handle);
 	igt_assert_eq(r, 0);
 
-
-	loop1 = loop2 = 0;
+	for (ring_id = 0; (1 << ring_id) & ring_context->hw_ip_info.available_rings; ring_id++) {
+		loop1 = loop2 = 0;
+		ring_context->ring_id = ring_id;
 	/* run 9 circle to test all mapping combination */
-	while (loop1 < 2) {
-		while (loop2 < 2) {
+		while (loop1 < 2) {
+			while (loop2 < 2) {
 			/* allocate UC bo1for sDMA use */
-			r = amdgpu_bo_alloc_and_map(device,
+				r = amdgpu_bo_alloc_and_map(device,
 						    ring_context->write_length, 4096,
 						    AMDGPU_GEM_DOMAIN_GTT,
 						    gtt_flags[loop1], &ring_context->bo,
 						    (void **)&ring_context->bo_cpu, &ring_context->bo_mc,
 						    &ring_context->va_handle);
-			igt_assert_eq(r, 0);
+				igt_assert_eq(r, 0);
 
-			/* set bo_cpu */
-			memset((void *)ring_context->bo_cpu, ip_block->funcs->pattern, ring_context->write_length);
+				/* set bo_cpu */
+				memset((void *)ring_context->bo_cpu, ip_block->funcs->pattern, ring_context->write_length);
 
-			/* allocate UC bo2 for sDMA use */
-			r = amdgpu_bo_alloc_and_map(device,
+				/* allocate UC bo2 for sDMA use */
+				r = amdgpu_bo_alloc_and_map(device,
 						    ring_context->write_length, 4096,
 						    AMDGPU_GEM_DOMAIN_GTT,
 						    gtt_flags[loop2], &ring_context->bo2,
 						    (void **)&ring_context->bo2_cpu, &ring_context->bo_mc2,
 						    &ring_context->va_handle2);
-			igt_assert_eq(r, 0);
+				igt_assert_eq(r, 0);
 
-			/* clear bo2_cpu */
-			memset((void *)ring_context->bo2_cpu, 0, ring_context->write_length);
+				/* clear bo2_cpu */
+				memset((void *)ring_context->bo2_cpu, 0, ring_context->write_length);
 
-			ring_context->resources[0] = ring_context->bo;
-			ring_context->resources[1] = ring_context->bo2;
+				ring_context->resources[0] = ring_context->bo;
+				ring_context->resources[1] = ring_context->bo2;
 
-			ip_block->funcs->copy_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
+				ip_block->funcs->copy_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 
-			amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
 
-			/* verify if SDMA test result meets with expected */
-			r = ip_block->funcs->compare_pattern(ip_block->funcs, ring_context, 4);
-			igt_assert_eq(r, 0);
+				/* verify if SDMA test result meets with expected */
+				r = ip_block->funcs->compare_pattern(ip_block->funcs, ring_context, 4);
+				igt_assert_eq(r, 0);
 
-			amdgpu_bo_unmap_and_free(ring_context->bo, ring_context->va_handle, ring_context->bo_mc,
+				amdgpu_bo_unmap_and_free(ring_context->bo, ring_context->va_handle, ring_context->bo_mc,
 						 ring_context->write_length);
-			amdgpu_bo_unmap_and_free(ring_context->bo2, ring_context->va_handle2, ring_context->bo_mc2,
+				amdgpu_bo_unmap_and_free(ring_context->bo2, ring_context->va_handle2, ring_context->bo_mc2,
 						 ring_context->write_length);
-			loop2++;
+				loop2++;
+			}
+			loop1++;
 		}
-		loop1++;
 	}
 	/* clean resources */
 	free(ring_context->pm4);

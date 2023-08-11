@@ -152,10 +152,11 @@ sdma_ring_copy_linear(const struct amdgpu_ip_funcs *func,
  * - copy_linear
  */
 
+
 static int
 gfx_ring_write_linear(const struct amdgpu_ip_funcs *func,
-				const struct amdgpu_ring_context *ring_context,
-				uint32_t *pm4_dw)
+		      const struct amdgpu_ring_context *ring_context,
+		      uint32_t *pm4_dw)
 {
 	uint32_t i, j;
 
@@ -198,8 +199,8 @@ gfx_ring_write_linear(const struct amdgpu_ip_funcs *func,
 
 static int
 gfx_ring_const_fill(const struct amdgpu_ip_funcs *func,
-				const struct amdgpu_ring_context *ring_context,
-				uint32_t *pm4_dw)
+		     const struct amdgpu_ring_context *ring_context,
+		     uint32_t *pm4_dw)
 {
 	uint32_t i;
 
@@ -744,3 +745,47 @@ amdgpu_open_devices(bool open_render_node, int  max_cards_supported, int drm_amd
 	drmFreeDevices(devices, drm_count);
 	return amd_index;
 }
+
+/**
+ * is_rings_available:
+ * @device handle: handle to driver internal information
+ * @mask: number of rings we are interested in checking the availability and readiness
+ * @type the type of IP, for example GFX, COMPUTE, etc.
+ *
+ * Check whether the given ring number is ready to accept jobs
+ * hw_ip_info.available_rings represents a bit vector of available rings are
+ * ready to work.
+ */
+static bool
+is_rings_available(amdgpu_device_handle device_handle, uint32_t mask,
+		enum amd_ip_block_type type)
+{
+	struct drm_amdgpu_info_hw_ip hw_ip_info = {0};
+	int r;
+
+	r = amdgpu_query_hw_ip_info(device_handle, type, 0, &hw_ip_info);
+	igt_assert_eq(r, 0);
+
+	return  hw_ip_info.available_rings & mask;
+}
+
+/**
+ * asic_rings_readness:
+ * @device handle: handle to driver internal information
+ * @mask: number of rings we are interested in checking the availability and readiness
+ * @arr array all possible IP ring readiness for the given mask
+ *
+ * Enumerate all possible IPs by checking their readiness for the given mask.
+ */
+
+void
+asic_rings_readness(amdgpu_device_handle device_handle, uint32_t mask,
+				bool arr[AMD_IP_MAX])
+{
+	enum amd_ip_block_type ip;
+	int i;
+
+	for (i = 0, ip = AMD_IP_GFX; ip < AMD_IP_MAX; ip++)
+		arr[i++] = is_rings_available(device_handle, mask, ip);
+}
+

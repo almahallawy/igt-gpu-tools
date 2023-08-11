@@ -625,6 +625,7 @@ igt_main
 	struct amdgpu_gpu_info gpu_info = {0};
 	int fd = -1;
 	int r;
+	bool arr_cap[AMD_IP_MAX] = {0};
 
 	igt_fixture {
 		uint32_t major, minor;
@@ -642,41 +643,91 @@ igt_main
 		igt_assert_eq(r, 0);
 		r = setup_amdgpu_ip_blocks(major, minor,  &gpu_info, device);
 		igt_assert_eq(r, 0);
-
+		asic_rings_readness(device, 1, arr_cap);
 	}
-
+	igt_describe("Check-alloc-free-VRAM-visible-non-visible-GART-write-combined-cached");
 	igt_subtest("memory-alloc")
 		amdgpu_memory_alloc(device);
 
-	igt_subtest("userptr")
-		amdgpu_userptr_test(device);
+	igt_describe("Check-DMA-CS-works-by-setting-the-pattern-and-after-execution-compare-memory-with-the-golden-settings");
+	igt_subtest_with_dynamic("userptr-with-IP-DMA") {
+		if (arr_cap[AMD_IP_DMA]) {
+			igt_dynamic_f("userptr")
+			amdgpu_userptr_test(device);
+		}
+	}
 
-	igt_subtest("cs-gfx")
-		amdgpu_command_submission_gfx(device);
+	igt_describe("Check-GFX-CS-for-every-available-ring-works-for-write-const-fill-and-copy-operation-using-more-than-one-IB-and-shared-IB");
+	igt_subtest_with_dynamic("cs-gfx-with-IP-GFX") {
+		if (arr_cap[AMD_IP_GFX]) {
+			igt_dynamic_f("cs-gfx")
+			amdgpu_command_submission_gfx(device);
+		}
+	}
 
-	igt_subtest("cs-compute")
-		amdgpu_command_submission_compute(device);
+	igt_describe("Check-COMPUTE-CS-for-every-available-ring-works-for-write-const-fill-copy-and-nop-operation");
+	igt_subtest_with_dynamic("cs-compute-with-IP-COMPUTE") {
+		if (arr_cap[AMD_IP_COMPUTE]) {
+			igt_dynamic_f("cs-compute")
+			amdgpu_command_submission_compute(device);
+		}
+	}
 
-	igt_subtest("cs-multi-fence")
+	igt_describe("Check-GFX-CS-for-multi-fence");
+	igt_subtest_with_dynamic("cs-multi-fence-with-IP-GFX") {
+		if (arr_cap[AMD_IP_GFX]) {
+			igt_dynamic_f("cs-multi-fence")
 		amdgpu_command_submission_multi_fence(device);
+		}
+	}
 
-	igt_subtest("cs-sdma")
-		amdgpu_command_submission_sdma(device);
+	igt_describe("Check-DMA-CS-for-every-available-ring-works-for-write-const-fill-copy-operation");
+	igt_subtest_with_dynamic("cs-sdma-with-IP-DMA") {
+		if (arr_cap[AMD_IP_DMA]) {
+			igt_dynamic_f("cs-sdma")
+			amdgpu_command_submission_sdma(device);
+		}
+	}
 
-	igt_subtest("semaphore")
-		amdgpu_semaphore_test(device);
+	igt_describe("Check-signal-semaphore-on-DMA-wait-on-GFX");
+	igt_subtest_with_dynamic("semaphore-with-IP-GFX-and-IP-DMA") {
+		if (arr_cap[AMD_IP_GFX] && arr_cap[AMD_IP_DMA]) {
+			igt_dynamic_f("semaphore")
+			amdgpu_semaphore_test(device);
+		}
+	}
 
-	igt_subtest("eviction_test")
-		amdgpu_bo_eviction_test(device);
+	igt_describe("Check-eviction-using-DMA-max-allocation-size");
+	igt_subtest_with_dynamic("eviction-test-with-IP-DMA") {
+		if (arr_cap[AMD_IP_DMA]) {
+			igt_dynamic_f("eviction_test")
+			amdgpu_bo_eviction_test(device);
+		}
+	}
 
-	igt_subtest("sync_dependency_test")
-		amdgpu_sync_dependency_test(device);
+	igt_describe("Check-sync-dependency-using-GFX-ring");
+	igt_subtest_with_dynamic("sync-dependency-test-with-IP-GFX") {
+		if (arr_cap[AMD_IP_GFX]) {
+			igt_dynamic_f("sync-dependency-test")
+			amdgpu_sync_dependency_test(device);
+		}
+	}
 
-	igt_subtest("amdgpu_gfx_dispatch_test_compute")
-	amdgpu_gfx_dispatch_test_compute(device);
+	igt_describe("Check-dispatch-test-compute-for-each-ring-using-memset-memcpy-shaders-and-validate-after");
+	igt_subtest_with_dynamic("amdgpu-dispatch-test-compute-with-IP-COMPUTE") {
+		if (arr_cap[AMD_IP_COMPUTE]) {
+			igt_dynamic_f("amdgpu-dispatch-test-compute")
+			amdgpu_gfx_dispatch_test_compute(device);
+		}
+	}
 
-	igt_subtest("amdgpu_gfx_dispatch_test_gfx")
-	amdgpu_gfx_dispatch_test_gfx(device);
+	igt_describe("Check-dispatch-test-gfx-for-each-ring-using-memset-memcpy-shaders-and-validate-after");
+	igt_subtest_with_dynamic("amdgpu-dispatch-test-gfx-with-IP-GFX") {
+		if (arr_cap[AMD_IP_GFX]) {
+			igt_dynamic_f("amdgpu-dispatch-test-gfx")
+			amdgpu_gfx_dispatch_test_gfx(device);
+		}
+	}
 
 	igt_fixture {
 		amdgpu_device_deinitialize(device);

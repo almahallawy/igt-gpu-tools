@@ -12,11 +12,15 @@
 #define MAX_CARDS_SUPPORTED 4
 
 enum amd_ip_block_type {
-	AMD_IP_GFX,
+	AMD_IP_GFX = 0,
 	AMD_IP_COMPUTE,
 	AMD_IP_DMA,
 	AMD_IP_UVD,
 	AMD_IP_VCE,
+	AMD_IP_UVD_ENC,
+	AMD_IP_VCN_DEC,
+	AMD_IP_VCN_ENC,
+	AMD_IP_VCN_JPEG,
 	AMD_IP_MAX,
 };
 
@@ -122,5 +126,8 @@ void free_cmd_base(struct amdgpu_cmd_base *base);
 
 int
 amdgpu_open_devices(bool open_render_node, int max_cards_supported, int drm_amdgpu_fds[]);
+
+void
+asic_rings_readness(amdgpu_device_handle device_handle, uint32_t mask, bool arr[AMD_IP_MAX]);
 
 #endif
