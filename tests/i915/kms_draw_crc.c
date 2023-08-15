@@ -22,8 +22,11 @@
  *
  */
 
-/* This program tests whether the igt_draw library actually works. */
-
+/**
+ * TEST: kms draw crc
+ * Category: Display
+ * Description: Tests whether the igt_draw library actually works.
+ */
 #include "i915/gem.h"
 #include "igt.h"
 
@@ -140,6 +143,39 @@ static void get_method_crc(enum igt_draw_method method, uint32_t drm_format,
 	igt_remove_fb(drm_fd, &fb);
 }
 
+/**
+ * SUBTEST: draw-method-%s
+ * Description: Verify that igt draw library works for the %arg[1] method with
+ *              different modifiers & DRM formats.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, tiling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @blt:          Blitter
+ * @mmap-wc:      MMAP-WC
+ * @render:       Render
+ */
+
+/**
+ * SUBTEST: draw-method-%s
+ * Description: Verify that igt draw library works for the %arg[1] method with
+ *              different modifiers & DRM formats.
+ * Driver requirement: i915
+ * Functionality: kms_core, tiling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @mmap-cpu:     MMAP-CPU
+ * @mmap-gtt:     MMAP-GTT
+ * @pwrite:       PWRITE
+ */
 static void draw_method_subtest(enum igt_draw_method method,
 				uint32_t format_index, uint64_t modifier)
 {
@@ -179,6 +215,15 @@ static void get_fill_crc(uint64_t modifier, igt_crc_t *crc)
 	igt_remove_fb(drm_fd, &fb);
 }
 
+/**
+ * SUBTEST: fill-fb
+ * Description: This subtest verifies CRC after filling fb with x-tiling or none.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, tiling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 static void fill_fb_subtest(void)
 {
 	int rc;
