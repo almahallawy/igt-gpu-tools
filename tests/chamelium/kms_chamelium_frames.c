@@ -25,10 +25,10 @@
  */
 
 /**
- * TEST: Tests to capture frames using chamelium
+ * TEST: kms chamelium frames
  * Category: Display
+ * Description: Tests requiring a Chamelium board
  */
-
 #include "igt_eld.h"
 #include "igt_infoframe.h"
 #include "kms_chamelium_helper.h"
@@ -545,16 +545,34 @@ static void prepare_randomized_plane(chamelium_data_t *data,
  * 		a few frames, then check captured frames are correct
  * Test category: functionality test
  * Run type: BAT
- * Functionality: dp
+ * Functionality: chamelium, frame_integrity
  * Mega feature: DP
+ * Driver requirement: i915, xe
  *
  * SUBTEST: hdmi-crc-fast
  * Description: Pick the first mode of the IGT base EDID, display and capture
  * 		a few frames, then check captured frames are correct
  * Test category: functionality test
  * Run type: BAT
- * Functionality: hdmi
+ * Functionality: chamelium, frame_integrity
  * Mega feature: HDMI
+ * Driver requirement: i915, xe
+ */
+
+/**
+ * SUBTEST: hdmi-%s-formats
+ * Description: Pick the first mode of the IGT base EDID, display and capture a
+ *              few frames, then check captured frames are correct
+ * Test category: functionality test
+ * Run type: FULL
+ * Functionality: chamelium, frame_integrity
+ * Mega feature: HDMI
+ * Driver requirement: i915, xe
+ *
+ * arg[1]:
+ *
+ * @crc-nonplanar:     CRC with non planar formats
+ * @cmp-planar:        Compare with planar formats
  */
 static const char test_display_one_mode_desc[] =
 	"Pick the first mode of the IGT base EDID, display and capture a few "
@@ -592,6 +610,39 @@ static void test_display_one_mode(chamelium_data_t *data,
 	drmModeFreeConnector(connector);
 }
 
+/**
+ * SUBTEST: vga-frame-dump
+ * Description: For each mode of the IGT base EDID, display and capture a few
+ *              frames, then check captured frames are correct
+ * Test category: functionality test
+ * Run type: FULL
+ * Functionality: chamelium, frame_integrity
+ * Mega feature: VGA
+ * Driver requirement: i915, xe
+ *
+ * SUBTEST: dp-crc-%s
+ * Description: For each mode of the IGT base EDID, display and capture a %arg[1]
+ *              frame(s), then check captured frame(s) are correct
+ * Test category: functionality test
+ * Run type: FULL
+ * Functionality: chamelium, frame_integrity
+ * Mega feature: DP
+ * Driver requirement: i915, xe
+ *
+ * SUBTEST: hdmi-crc-%s
+ * Description: For each mode of the IGT base EDID, display and capture a %arg[1]
+ *              frame(s), then check captured frame(s) are correct
+ * Test category: functionality test
+ * Run type: FULL
+ * Functionality: chamelium, frame_integrity
+ * Mega feature: HDMI
+ * Driver requirement: i915, xe
+ *
+ * arg[1]:
+ *
+ * @single:    single
+ * @multiple:  multiple
+ */
 static const char test_display_all_modes_desc[] =
 	"For each mode of the IGT base EDID, display and capture a few "
 	"frames, then check captured frames are correct";
@@ -650,6 +701,27 @@ static void test_display_all_modes(chamelium_data_t *data,
 	} while (++i < count_modes);
 }
 
+/**
+ * SUBTEST: dp-frame-dump
+ * Description: For each mode of the IGT base EDID, display and capture a few
+ *              frames, then download the captured frames and compare them
+ *              bit-by-bit to the sent ones
+ * Test category: functionality test
+ * Run type: FULL
+ * Functionality: chamelium, frame_integrity
+ * Mega feature: DP
+ * Driver requirement: i915, xe
+ *
+ * SUBTEST: hdmi-frame-dump
+ * Description: For each mode of the IGT base EDID, display and capture a few
+ *              frames, then download the captured frames and compare them
+ *              bit-by-bit to the sent ones
+ * Test category: functionality test
+ * Run type: BAT
+ * Functionality: chamelium, frame_integrity
+ * Mega feature: HDMI
+ * Driver requirement: i915, xe
+ */
 static const char test_display_frame_dump_desc[] =
 	"For each mode of the IGT base EDID, display and capture a few "
 	"frames, then download the captured frames and compare them "
@@ -718,6 +790,16 @@ static void test_display_frame_dump(chamelium_data_t *data,
 	} while (++i < count_modes);
 }
 
+/**
+ * SUBTEST: hdmi-aspect-ratio
+ * Description: Pick a mode with a picture aspect-ratio, capture AVI InfoFrames
+ *              and check they include the relevant fields
+ * Test category: functionality test
+ * Run type: BAT
+ * Functionality: chamelium, frame_integrity
+ * Mega feature: HDMI
+ * Driver requirement: i915, xe
+ */
 static const char test_display_aspect_ratio_desc[] =
 	"Pick a mode with a picture aspect-ratio, capture AVI InfoFrames and "
 	"check they include the relevant fields";
@@ -798,6 +880,21 @@ static void test_display_aspect_ratio(chamelium_data_t *data,
 	drmModeFreeConnector(connector);
 }
 
+/**
+ * SUBTEST: hdmi-%s-planes-random
+ * Description: Setup a few overlay planes with random parameters, capture the
+ *              frame and check it matches the expected output
+ * Test category: functionality test
+ * Run type: FULL
+ * Functionality: chamelium, frame_integrity
+ * Mega feature: HDMI
+ * Driver requirement: i915, xe
+ *
+ * arg[1]:
+ *
+ * @crc:     CRC check
+ * @cmp:     Compare
+ */
 static const char test_display_planes_random_desc[] =
 	"Setup a few overlay planes with random parameters, capture the frame "
 	"and check it matches the expected output";
