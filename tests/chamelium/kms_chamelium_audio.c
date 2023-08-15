@@ -28,6 +28,12 @@
 #include "igt_infoframe.h"
 #include "kms_chamelium_helper.h"
 
+/**
+ * TEST: kms chamelium audio
+ * Category: Display
+ * Description: Testing Audio with a Chamelium board
+ */
+
 /* Playback parameters control the audio signal we synthesize and send */
 #define PLAYBACK_CHANNELS 2
 #define PLAYBACK_SAMPLES 1024
@@ -669,6 +675,25 @@ static bool check_audio_configuration(struct alsa *alsa,
 	return true;
 }
 
+/**
+ * SUBTEST: dp-audio
+ * Description: Playback various audio signals with various audio formats/rates,
+ *              capture them and check they are correct
+ * Functionality: chamelium, dp_audio
+ * Mega feature: Audio, DP
+ * Run type: FULL
+ * Test category: functionality test
+ * Driver requirement: i915, xe
+ *
+ * SUBTEST: hdmi-audio
+ * Description: Playback various audio signals with various audio formats/rates,
+ *              capture them and check they are correct
+ * Functionality: chamelium, hdmi_audio
+ * Mega feature: Audio, HDMI
+ * Run type: FULL
+ * Test category: functionality test
+ * Driver requirement: i915, xe
+ */
 static const char test_display_audio_desc[] =
 	"Playback various audio signals with various audio formats/rates, "
 	"capture them and check they are correct";
@@ -763,6 +788,25 @@ static void test_display_audio(chamelium_data_t *data,
 	free(alsa);
 }
 
+/**
+ * SUBTEST: dp-audio-edid
+ * Description: Plug a connector with an EDID suitable for audio, check ALSA's
+ *              EDID-Like Data reports the correct audio parameters
+ * Functionality: chamelium, dp_audio
+ * Mega feature: Audio, DP
+ * Run type: FULL
+ * Test category: functionality test
+ * Driver requirement: i915, xe
+ *
+ * SUBTEST: hdmi-audio-edid
+ * Description: Plug a connector with an EDID suitable for audio, check ALSA's
+ *              EDID-Like Data reports the correct audio parameters
+ * Functionality: chamelium, hdmi_audio
+ * Mega feature: Audio, HDMI
+ * Run type: FULL
+ * Test category: functionality test
+ * Driver requirement: i915, xe
+ */
 static const char test_display_audio_edid_desc[] =
 	"Plug a connector with an EDID suitable for audio, check ALSA's "
 	"EDID-Like Data reports the correct audio parameters";
