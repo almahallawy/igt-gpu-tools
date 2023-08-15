@@ -25,6 +25,11 @@
  *
  */
 
+/**
+ * TEST: kms dither
+ * Category: Display
+ * Description: Test Dithering block status
+ */
 #include "igt.h"
 #include <fcntl.h>
 #include <termios.h>
@@ -181,6 +186,23 @@ static bool is_supported(igt_output_t *output)
 		igt_output_get_prop(output, IGT_CONNECTOR_MAX_BPC);
 }
 
+/**
+ * SUBTEST: FB-8BPC-Vs-Panel-6BPC
+ * Description: Framebuffer BPC:8, Panel BPC:6, Expected Dither:Enable
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, kms_gem_interop
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: FB-8BPC-Vs-Panel-8BPC
+ * Description: Framebuffer BPC:8, Panel BPC:8, Expected Dither:Disable
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, kms_gem_interop
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 static void
 run_dither_test(data_t *data, int fb_bpc, int fb_format, int output_bpc)
 {
