@@ -23,6 +23,29 @@
 
 #include "igt.h"
 #include "igt_kmod.h"
+/**
+ * TEST: kms selftest
+ * Category: Display
+ * Description: Basic sanity check of KMS selftests.
+ *
+ * SUBTEST: %s
+ * Description: Basic sanity check of KMS selftest %arg[1].
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @drm_cmdline:            drm cmdline
+ * @drm_damage:             drm damage
+ * @drm_dp_mst:             drm dp mst
+ * @drm_format_helper:      drm format helper
+ * @drm_format:             drm format
+ * @drm_plane:              drm plane
+ * @framebuffer:            framebuffer
+ */
 
 IGT_TEST_DESCRIPTION("Basic sanity check of KMS selftests.");
 
