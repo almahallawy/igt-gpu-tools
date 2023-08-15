@@ -22,9 +22,41 @@
  *
  */
 
+/**
+ * TEST: kms invalid mode
+ * Category: Display
+ * Description: Make sure all modesets are rejected when the requested mode is
+ *              invalid
+ */
 #include "igt.h"
 #include <limits.h>
 #include <stdbool.h>
+
+/**
+ * SUBTEST: %s
+ * Description: Make sure all modesets are rejected when the requested mode
+ *              (%arg[1]) is invalid
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @bad-hsync-end:    Bad hsync_end
+ * @bad-hsync-start:  Bad hsync_start
+ * @bad-htotal:       Bad htotal
+ * @bad-vsync-end:    Bad vsync_end
+ * @bad-vsync-start:  Bad vsync_start
+ * @bad-vtotal:       Bad vtotal
+ * @clock-too-high:   High clock
+ * @int-max-clock:    Clock as INT_MAX
+ * @uint-max-clock:   Clock as UINT_MAX
+ * @zero-clock:       Clock as zero
+ * @zero-hdisplay:    hdisplay as zero
+ * @zero-vdisplay:    vdisplay as zero
+ */
 
 IGT_TEST_DESCRIPTION("Make sure all modesets are rejected when the requested mode is invalid");
 
