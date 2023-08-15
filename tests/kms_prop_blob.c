@@ -26,8 +26,9 @@
  */
 
 /**
- * TEST: Tests behaviour of mass-data 'blob' properties
+ * TEST: kms prop blob
  * Category: Display
+ * Description: Tests behaviour of mass-data 'blob' properties.
  */
 #include "igt.h"
 #include <errno.h>
@@ -122,6 +123,29 @@ destroy_prop(int fd, uint32_t prop_id)
 	return 0;
 }
 
+/**
+ * SUBTEST: blob-multiple
+ * Description: Test validates destroying multiple properties explicitly works as needed.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: blob-prop-%s
+ * Description: Tests validates the %arg[1] of the properties created.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @core:        validity
+ * @lifetime:    lifetime
+ * @validate:    blob size
+ */
 static void
 test_validate(int fd)
 {
@@ -245,8 +269,9 @@ test_core(int fd)
 /**
  * SUBTEST: basic
  * Description: Test to ensure property support exists
+ * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT
+ * Run type: BAT, FULL
  * Functionality: kms_core
  * Mega feature: General Display Features
  */
@@ -260,6 +285,25 @@ test_basic(int fd)
 	igt_assert_eq(destroy_prop(fd, prop_id), 0);
 }
 
+/**
+ * SUBTEST: invalid-%s-%s
+ * Description: Tests error handling when invalid properties are %ar[1] with %arg[2].
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @get:            fetched
+ * @set:            set
+ *
+ * arg[2]:
+ *
+ * @prop:           blob object type
+ * @prop-any:       object of any type
+ */
 static void prop_tests(int fd)
 {
 	struct drm_mode_obj_get_properties get_props = {};
