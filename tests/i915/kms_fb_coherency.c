@@ -5,6 +5,7 @@
 
 /**
  * TEST: kms_fb_coherency
+ * Category: Display
  * Description: Exercise coherency of future scanout buffer objects
  */
 
@@ -244,7 +245,10 @@ igt_main
 	 *		of memset operations on future scanout buffer objects
 	 *		mmapped with different mmap methods and different caching modes.
 	 * Mega feature: General Display Features
-	 * Functionality: gtt
+	 * Functionality: kms_core
+	 * Driver requirement: i915, xe
+	 * Run type: FULL
+	 * Test category: functionality test
 	 */
 	igt_subtest_with_dynamic("memset-crc") {
 		if (gem_has_mappable_ggtt(data.drm_fd)) {
