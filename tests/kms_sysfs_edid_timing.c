@@ -25,6 +25,23 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+/**
+ * TEST: kms sysfs edid timing
+ * Category: Display
+ * Description: Test to check the time it takes to reprobe each connector.
+ *
+ * SUBTEST:
+ * Description: This test checks the time it takes to reprobe each connector and
+ *              fails if either the time it takes for one reprobe is too long or
+ *              if the mean time it takes to reprobe one connector is too long.
+ *              Additionally, make sure that the mean time for all connectors is
+ *              not too long.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 
 #define THRESHOLD_PER_CONNECTOR		150
 #define THRESHOLD_PER_CONNECTOR_MEAN	140
