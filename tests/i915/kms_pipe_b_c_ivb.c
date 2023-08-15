@@ -25,6 +25,58 @@
  */
 
 #include "igt.h"
+/**
+ * TEST: kms pipe b c ivb
+ * Category: Display
+ * Description: Exercise the FDI lane bifurcation code for IVB in the kernel by
+ *              setting different combinations of modes for pipes B and C.
+ *
+ * SUBTEST: disable-pipe-B-enable-pipe-C
+ * Description: Tests pipe-B and pipe-C interactions in IVB by disabling pipe-B
+ *              and then setting mode on pipe-C.
+ * Driver requirement: i915
+ * Functionality: kms_core, obsolete
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: enable-pipe-C-while-B-has-3-lanes
+ * Description: Tests pipe-B and pipe-C interactions in IVB by enabling pipe-C
+ *              while pipe-B has 3-lanes
+ * Driver requirement: i915
+ * Functionality: kms_core, obsolete
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: from-pipe-C-to-B-with-3-lanes
+ * Description: Tests pipe-B and pipe-C interactions in IVB by enabling pipe-B
+ *              with 3 lanes from pipe-C.
+ * Driver requirement: i915
+ * Functionality: kms_core, obsolete
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: pipe-B-double-modeset-then-modeset-pipe-C
+ * Description: Tests pipe-B and pipe-C interactions in IVB by enabling two
+ *              different modes on pipe-B and then a single mode on pipe-C.
+ * Driver requirement: i915
+ * Functionality: kms_core, obsolete
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: pipe-B-dpms-off-modeset-pipe-C
+ * Description: Tests pipe-B and pipe-C interactions in IVB by enabling pipe-B
+ *              with mode that requires 3 lanes and then enabling pipe-c with
+ *              dpms off/on pipe-B.
+ * Driver requirement: i915
+ * Functionality: kms_core, obsolete
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 
 IGT_TEST_DESCRIPTION(
 "Exercise the FDI lane bifurcation code for IVB in the kernel by setting"
