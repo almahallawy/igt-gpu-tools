@@ -23,8 +23,9 @@
  */
 
 /**
- * TEST: Tests behaviour of CRC
+ * TEST: kms pipe crc basic
  * Category: Display
+ * Description: Tests behaviour of CRC
  */
 
 #include "igt.h"
@@ -64,6 +65,15 @@ static bool simulation_constraint(enum pipe pipe)
 	return false;
 }
 
+/**
+ * SUBTEST: bad-source
+ * Description: Tests error handling when the bad source is set.
+ * Driver requirement: i915, xe
+ * Functionality: crc
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 static void test_bad_source(data_t *data)
 {
 	errno = 0;
@@ -88,47 +98,52 @@ enum {
 /**
  * SUBTEST: read-crc
  * Description: Test for pipe CRC reads
+ * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT
+ * Run type: BAT, FULL
  * Functionality: crc
  * Mega feature: General Display Features
  *
  * SUBTEST: read-crc-frame-sequence
  * Description: Tests the pipe CRC read and ensure frame sequence
+ * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT
+ * Run type: BAT, FULL
  * Functionality: crc
  * Mega feature: General Display Features
  *
  * SUBTEST: nonblocking-crc
  * Description: Test for O_NONBLOCK CRC reads
+ * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT
+ * Run type: BAT, FULL
  * Functionality: crc
  * Mega feature: General Display Features
  *
  * SUBTEST: nonblocking-crc-frame-sequence
  * Description: Test for O_NONBLOCK CRC reads and ensure frame sequence
+ * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT
+ * Run type: BAT, FULL
  * Functionality: crc
  * Mega feature: General Display Features
  *
  * SUBTEST: suspend-read-crc
  * Description: Suspend test for pipe CRC reads
+ * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT
- * Functionality: crc
+ * Run type: BAT, FULL
+ * Functionality: crc, suspend
  * Mega feature: General Display Features
  *
  * SUBTEST: hang-read-crc
  * Description: Hang test for pipe CRC read
+ * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT
- * Functionality: crc
+ * Run type: BAT, FULL
+ * Functionality: crc, hang
  * Mega feature: General Display Features
  */
-
 static void test_read_crc(data_t *data, enum pipe pipe,
 			  igt_output_t *output, unsigned flags)
 {
@@ -229,9 +244,10 @@ static void test_read_crc(data_t *data, enum pipe pipe,
 /**
  * SUBTEST: compare-crc-sanitycheck-%s
  * Description: Basic sanity check for CRC mismatches with %arg[1]
+ * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT
- * Functionality: crc
+ * Run type: BAT, FULL
+ * Functionality: crc, pixel_format
  * Mega feature: General Display Features
  *
  * arg[1]:
@@ -305,6 +321,16 @@ static void test_compare_crc(data_t *data, enum pipe pipe, igt_output_t *output,
 	igt_remove_fb(data->drm_fd, &fb1);
 }
 
+/**
+ * SUBTEST: disable-crc-after-crtc
+ * Description: Check that disabling CRCs on a CRTC after having disabled the
+ *              CRTC does not cause issues.
+ * Driver requirement: i915, xe
+ * Functionality: crc
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 static void test_disable_crc_after_crtc(data_t *data, enum pipe pipe,
 					igt_output_t *output)
 {
