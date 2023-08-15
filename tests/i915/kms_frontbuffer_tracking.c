@@ -24,6 +24,11 @@
  *
  */
 
+/**
+ * TEST: kms frontbuffer tracking
+ * Category: Display
+ * Description: Test the Kernel's frontbuffer tracking mechanism and its related features: FBC, PSR and DRRS
+ */
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -1952,6 +1957,66 @@ static void prepare_subtest(const struct test_mode *t,
 	prepare_subtest_screens(t);
 }
 
+/**
+ * SUBTEST: drrs-%dp-rte
+ * Description: Sanity test to enable DRRS with %arg[1] panels.
+ * Driver requirement: i915, xe
+ * Functionality: fbt, drrs
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%dp-rte
+ * Description: Sanity test to enable FBC with %arg[1] panels.
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%dp-rte
+ * Description: Sanity test to enable PSR with %arg[1] panels.
+ * Driver requirement: i915, xe
+ * Functionality: fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-rte
+ * Description: Sanity test to enable FBC & DRRS with %arg[1] panels.
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-rte
+ * Description: Sanity test to enable FBC & PSR with %arg[1] panels.
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%dp-rte
+ * Description: Sanity test to enable PSR & DRRS with %arg[1] panels.
+ * Driver requirement: i915, xe
+ * Functionality: fbt, drrs, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-rte
+ * Description: Sanity test to enable FBC, PSR & DRRS with %arg[1] panels.
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, drrs, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ */
+
 /*
  * rte - the basic sanity test
  *
@@ -2011,6 +2076,688 @@ static bool op_disables_psr(const struct test_mode *t,
 
 	return false;
 }
+
+/**
+ * SUBTEST: drrs-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @indfb:          Individual fb
+ * @shrfb:          Shared fb
+ *
+ * arg[2]:
+ *
+ * @blt:            Blitter
+ * @mmap-wc:        MMAP-WC
+ * @render:         Render
+ */
+
+/**
+ * SUBTEST: drrs-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-1p-offscren-pri-%s-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @indfb:          Individual fb
+ * @shrfb:          Shared fb
+ *
+ * arg[2]:
+ *
+ * @mmap-cpu:       MMAP-CPU
+ * @mmap-gtt:       MMAP-GTT
+ * @pwrite:         PWRITE
+ */
+
+/**
+ * SUBTEST: drrs-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ *
+ * arg[2]:
+ *
+ * @cur:            Cursor plane
+ * @pri:            Primary plane
+ * @spr:            Sprite plane
+ *
+ * arg[3]:
+ *
+ * @mmap-cpu:       MMAP-CPU
+ * @mmap-gtt:       MMAP-GTT
+ * @pwrite:         PWRITE
+ */
+
+/**
+ * SUBTEST: drrs-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ *
+ * arg[2]:
+ *
+ * @cur:            Cursor plane
+ * @pri:            Primary plane
+ * @spr:            Sprite plane
+ *
+ * arg[3]:
+ *
+ * @blt:            Blitter
+ * @mmap-wc:        MMAP-WC
+ * @render:         Render
+ */
+
+/**
+ * SUBTEST: drrs-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ *
+ * arg[2]:
+ *
+ * @blt:            Blitter
+ * @mmap-wc:        MMAP-WC
+ * @render:         Render
+ */
+
+/**
+ * SUBTEST: drrs-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-primscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ *
+ * arg[2]:
+ *
+ * @mmap-cpu:       MMAP-CPU
+ * @mmap-gtt:       MMAP-GTT
+ * @pwrite:         PWRITE
+ */
+
+/**
+ * SUBTEST: drrs-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @cur:            Cursor plane
+ * @pri:            Primary plane
+ * @spr:            Sprite plane
+ *
+ * arg[2]:
+ *
+ * @blt:            Blitter
+ * @mmap-wc:        MMAP-WC
+ * @render:         Render
+ */
+
+/**
+ * SUBTEST: drrs-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @cur:            Cursor plane
+ * @pri:            Primary plane
+ * @spr:            Sprite plane
+ *
+ * arg[2]:
+ *
+ * @mmap-cpu:       MMAP-CPU
+ * @mmap-gtt:       MMAP-GTT
+ * @pwrite:         PWRITE
+ */
+
+/**
+ * SUBTEST: drrs-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @blt:            Blitter
+ * @mmap-wc:        MMAP-WC
+ * @render:         Render
+ */
+
+/**
+ * SUBTEST: drrs-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-2p-scndscrn-pri-shrfb-draw-%s
+ * Description: Draw a set of rectangles on the screen using the provided method
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @mmap-cpu:       MMAP-CPU
+ * @mmap-gtt:       MMAP-GTT
+ * @pwrite:         PWRITE
+ */
 
 /*
  * draw - draw a set of rectangles on the screen using the provided method
@@ -2084,6 +2831,66 @@ static void draw_subtest(const struct test_mode *t)
 		do_assertions(assertions);
 	}
 }
+
+/**
+ * SUBTEST: drrs-%dp-pri-indfb-multidraw
+ * Description: Draw a set of rectangles on the screen using alternated drawing methods
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%dp-pri-indfb-multidraw
+ * Description: Draw a set of rectangles on the screen using alternated drawing methods
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%dp-pri-indfb-multidraw
+ * Description: Draw a set of rectangles on the screen using alternated drawing methods
+ * Driver requirement: i915, xe
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-pri-indfb-multidraw
+ * Description: Draw a set of rectangles on the screen using alternated drawing methods
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-pri-indfb-multidraw
+ * Description: Draw a set of rectangles on the screen using alternated drawing methods
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%dp-pri-indfb-multidraw
+ * Description: Draw a set of rectangles on the screen using alternated drawing methods
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-pri-indfb-multidraw
+ * Description: Draw a set of rectangles on the screen using alternated drawing methods
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ */
 
 /*
  * multidraw - draw a set of rectangles on the screen using alternated drawing
@@ -2233,6 +3040,144 @@ static void badformat_subtest(const struct test_mode *t)
 	do_assertions(assertions);
 }
 
+/**
+ * SUBTEST: drrs-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915, xe
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @rgb101010:      FORMAT_RGB101010
+ * @rgb565:         FORMAT_RGB565
+ *
+ * arg[2]:
+ *
+ * @blt:            Blitter
+ * @mmap-wc:        MMAP-WC
+ * @render:         Render
+ */
+
+/**
+ * SUBTEST: drrs-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%s-draw-%s
+ * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @rgb101010:      FORMAT_RGB101010
+ * @rgb565:         FORMAT_RGB565
+ *
+ * arg[2]:
+ *
+ * @mmap-cpu:       MMAP-CPU
+ * @mmap-gtt:       MMAP-GTT
+ * @pwrite:         PWRITE
+ */
+
 /*
  * format_draw - test pixel formats that are not FORMAT_DEFAULT
  *
@@ -2275,6 +3220,64 @@ static bool tiling_is_valid(int feature_flags, enum tiling_type tiling)
 		return false;
 	}
 }
+
+/**
+ * SUBTEST: drrs-slowdraw
+ * Description: Sleep a little bit between drawing operations with DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-slowdraw
+ * Description: Sleep a little bit between drawing operations with FBC
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-slowdraw
+ * Description: Sleep a little bit between drawing operations with PSR
+ * Driver requirement: i915, xe
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-slowdraw
+ * Description: Sleep a little bit between drawing operations with FBC & DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-slowdraw
+ * Description: Sleep a little bit between drawing operations with FBC & PSR
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-slowdraw
+ * Description: Sleep a little bit between drawing operations with PSR & DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-slowdraw
+ * Description: Sleep a little bit between drawing operations with FBC, PSR & DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 
 /*
  * slow_draw - sleep a little bit between drawing operations
@@ -2382,6 +3385,146 @@ static void page_flip_for_params(struct modeset_params *params,
 	}
 }
 
+/**
+ * SUBTEST: drrs-%dp-primscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%dp-primscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%dp-primscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-primscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-primscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%dp-primscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ *
+ * arg[2]:
+ *
+ * @indfb:          Individual fb
+ * @shrfb:          Shared fb
+ *
+ * arg[3]:
+ *
+ * @ms:             Modeset
+ * @pg:             Page flip
+ * @pl:             Plane change
+ */
+
+/**
+ * SUBTEST: drrs-2p-scndscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-2p-scndscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-2p-scndscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-2p-scndscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-2p-scndscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-2p-scndscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-%sflip-blt
+ * Description: Just exercise page flips with the patterns we have
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @indfb:          Individual fb
+ * @shrfb:          Shared fb
+ *
+ * arg[2]:
+ *
+ * @ms:             Modeset
+ * @pg:             Page flip
+ * @pl:             Plane change
+ */
+
 /*
  * flip - just exercise page flips with the patterns we have
  *
@@ -2442,6 +3585,47 @@ static void flip_subtest(const struct test_mode *t)
 	igt_remove_fb(drm.fd, &fb2);
 }
 
+/**
+ * SUBTEST: fbc-%dp-%s-fliptrack-mmap-gtt
+ * Description: Check if the hardware tracking works after page flips
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-%s-fliptrack-mmap-gtt
+ * Description: Check if the hardware tracking works after page flips
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-%s-fliptrack-mmap-gtt
+ * Description: Check if the hardware tracking works after page flips
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-%s-fliptrack-mmap-gtt
+ * Description: Check if the hardware tracking works after page flips
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ *
+ * arg[2]:
+ *
+ * @indfb:          Individual fb
+ * @shrfb:          Shared fb
+ */
+
 /*
  * fliptrack - check if the hardware tracking works after page flips
  *
@@ -2489,6 +3673,134 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
 
 	igt_remove_fb(drm.fd, &fb2);
 }
+
+/**
+ * SUBTEST: drrs-%dp-primscrn-%s-indfb-move
+ * Description: Just move the %arg[2] around
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%dp-primscrn-%s-indfb-move
+ * Description: Just move the %arg[2] around
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%dp-primscrn-%s-indfb-move
+ * Description: Just move the %arg[2] around
+ * Driver requirement: i915, xe
+ * Functionality: fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-move
+ * Description: Just move the %arg[2] around
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-move
+ * Description: Just move the %arg[2] around
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-move
+ * Description: Just move the %arg[2] around
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-move
+ * Description: Just move the %arg[2] around
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ *
+ * arg[2]:
+ *
+ * @spr:            Sprite plane
+ * @cur:            Cursor plane
+ */
+
+/**
+ * SUBTEST: drrs-2p-scndscrn-%s-indfb-move
+ * Description: Just move the %arg[1] around
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-2p-scndscrn-%s-indfb-move
+ * Description: Just move the %arg[1] around
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-2p-scndscrn-%s-indfb-move
+ * Description: Just move the %arg[1] around
+ * Driver requirement: i915, xe
+ * Functionality: fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-move
+ * Description: Just move the %arg[1] around
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-move
+ * Description: Just move the %arg[1] around
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-move
+ * Description: Just move the %arg[1] around
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-move
+ * Description: Just move the %arg[1] around
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @spr:            Sprite plane
+ * @cur:            Cursor plane
+ */
 
 /*
  * move - just move the sprite or cursor around
@@ -2542,6 +3854,134 @@ static void move_subtest(const struct test_mode *t)
 		}
 	}
 }
+
+/**
+ * SUBTEST: drrs-%dp-primscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[2] a few times
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%dp-primscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[2] a few times
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%dp-primscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[2] a few times
+ * Driver requirement: i915, xe
+ * Functionality: fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[2] a few times
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[2] a few times
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[2] a few times
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[2] a few times
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ *
+ * arg[2]:
+ *
+ * @spr:            Sprite plane
+ * @cur:            Cursor plane
+ */
+
+/**
+ * SUBTEST: drrs-2p-scndscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[1] a few times
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-2p-scndscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[1] a few times
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-2p-scndscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[1] a few times
+ * Driver requirement: i915, xe
+ * Functionality: fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[1] a few times
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[1] a few times
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[1] a few times
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-onoff
+ * Description: Just enable and disable the %arg[1] a few times
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @spr:            Sprite plane
+ * @cur:            Cursor plane
+ */
 
 /*
  * onoff - just enable and disable the sprite or cursor plane a few times
@@ -2601,6 +4041,122 @@ static bool prim_plane_disabled(void)
 	 */
 	return !prim_mode_params.primary.plane->values[IGT_PLANE_FB_ID];
 }
+
+/**
+ * SUBTEST: drrs-%dp-primscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%dp-primscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%dp-primscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%dp-primscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%dp-primscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%dp-primscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%dp-primscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: drrs-2p-scndscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-2p-scndscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-2p-scndscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-2p-scndscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-2p-scndscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-2p-scndscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-2p-scndscrn-spr-indfb-fullscreen
+ * Description: Put a fullscreen plane covering the whole screen
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1].values:   1, 2
+ */
 
 /*
  * fullscreen_plane - put a fullscreen plane covering the whole screen
@@ -2662,6 +4218,69 @@ static void fullscreen_plane_subtest(const struct test_mode *t)
 
 	igt_remove_fb(drm.fd, &fullscreen_fb);
 }
+
+/**
+ * SUBTEST: drrs-%s-scaledprimary
+ * Description: Try different primary plane scaling strategies
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-%s-scaledprimary
+ * Description: Try different primary plane scaling strategies
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-%s-scaledprimary
+ * Description: Try different primary plane scaling strategies
+ * Driver requirement: i915, xe
+ * Functionality: fbt, psr, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-%s-scaledprimary
+ * Description: Try different primary plane scaling strategies
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-%s-scaledprimary
+ * Description: Try different primary plane scaling strategies
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-%s-scaledprimary
+ * Description: Try different primary plane scaling strategies
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, psr, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-%s-scaledprimary
+ * Description: Try different primary plane scaling strategies
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @indfb:          Individual fb
+ * @shrfb:          Shared fb
+ */
 
 /*
  * scaledprimary - try different primary plane scaling strategies
@@ -2768,6 +4387,64 @@ static void scaledprimary_subtest(const struct test_mode *t)
 
 	igt_remove_fb(drm.fd, &new_fb);
 }
+
+/**
+ * SUBTEST: drrs-modesetfrombusy
+ * Description: Modeset from a busy buffer to a non-busy buffer with DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-modesetfrombusy
+ * Description: Modeset from a busy buffer to a non-busy buffer with FBC
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-modesetfrombusy
+ * Description: Modeset from a busy buffer to a non-busy buffer with PSR
+ * Driver requirement: i915, xe
+ * Functionality: fbt, psr, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-modesetfrombusy
+ * Description: Modeset from a busy buffer to a non-busy buffer with FBC & DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-modesetfrombusy
+ * Description: Modeset from a busy buffer to a non-busy buffer with FBC & PSR
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-modesetfrombusy
+ * Description: Modeset from a busy buffer to a non-busy buffer with PSR & DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, psr, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-modesetfrombusy
+ * Description: Modeset from a busy buffer to a non-busy buffer with FBC, PSR & DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr, scaling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ */
+
 /**
  * modesetfrombusy - modeset from a busy buffer to a non-busy buffer
  *
@@ -2812,6 +4489,64 @@ static void modesetfrombusy_subtest(const struct test_mode *t)
 }
 
 /**
+ * SUBTEST: drrs-suspend
+ * Description: Make sure suspend/resume keeps us on the same state of DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, suspend
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-suspend
+ * Description: Make sure suspend/resume keeps us on the same state of FBC
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, suspend
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-suspend
+ * Description: Make sure suspend/resume keeps us on the same state of PSR
+ * Driver requirement: i915, xe
+ * Functionality: fbt, psr, suspend
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-suspend
+ * Description: Make sure suspend/resume keeps us on the same state of FBC & DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, suspend
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-suspend
+ * Description: Make sure suspend/resume keeps us on the same state of FBC & PSR
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr, suspend
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-suspend
+ * Description: Make sure suspend/resume keeps us on the same state of PSR & DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbt, psr, suspend
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-suspend
+ * Description: Make sure suspend/resume keeps us on the same state of FBC, PSR & DRRS
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr, suspend
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
+
+/**
  * suspend - make sure suspend/resume keeps us on the same state
  *
  * METHOD
@@ -2842,6 +4577,64 @@ static void suspend_subtest(const struct test_mode *t)
 	set_mode_for_params(params);
 	do_assertions(0);
 }
+
+/**
+ * SUBTEST: drrs-farfromfence-mmap-gtt
+ * Description: Test drawing as far from the fence start as possible
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbc-farfromfence-mmap-gtt
+ * Description: Test drawing as far from the fence start as possible
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psr-farfromfence-mmap-gtt
+ * Description: Test drawing as far from the fence start as possible
+ * Driver requirement: i915
+ * Functionality: fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-farfromfence-mmap-gtt
+ * Description: Test drawing as far from the fence start as possible
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-farfromfence-mmap-gtt
+ * Description: Test drawing as far from the fence start as possible
+ * Driver requirement: i915
+ * Functionality: fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: psrdrrs-farfromfence-mmap-gtt
+ * Description: Test drawing as far from the fence start as possible
+ * Driver requirement: i915
+ * Functionality: drrs, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-farfromfence-mmap-gtt
+ * Description: Test drawing as far from the fence start as possible
+ * Driver requirement: i915
+ * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 
 /**
  * farfromfence - test drawing as far from the fence start as possible
@@ -2940,6 +4733,40 @@ static void try_invalid_strides(void)
 }
 
 /**
+ * SUBTEST: fbc-badstride
+ * Description: Try to use buffers with strides that are not supported
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-badstride
+ * Description: Try to use buffers with strides that are not supported
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-badstride
+ * Description: Try to use buffers with strides that are not supported
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-badstride
+ * Description: Try to use buffers with strides that are not supported
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
+
+/**
  * badstride - try to use buffers with strides that are not supported
  *
  * METHOD
@@ -3008,6 +4835,40 @@ static void badstride_subtest(const struct test_mode *t)
 }
 
 /**
+ * SUBTEST: fbc-stridechange
+ * Description: Change the frontbuffer stride by doing a modeset
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-stridechange
+ * Description: Change the frontbuffer stride by doing a modeset
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-stridechange
+ * Description: Change the frontbuffer stride by doing a modeset
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-stridechange
+ * Description: Change the frontbuffer stride by doing a modeset
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
+
+/**
  * stridechange - change the frontbuffer stride by doing a modeset
  *
  * METHOD
@@ -3072,6 +4933,50 @@ static void stridechange_subtest(const struct test_mode *t)
 }
 
 /**
+ * SUBTEST: fbc-tiling-%s
+ * Description: Test %arg[1] formats, if the tiling format supports FBC do the
+ *              basic drawing test, else set the mode & test if FBC is disabled
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, tiling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcdrrs-tiling-%s
+ * Description: Test %arg[1] formats, if the tiling format supports FBC do the
+ *              basic drawing test, else set the mode & test if FBC is disabled
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, tiling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsr-tiling-%s
+ * Description: Test %arg[1] formats, if the tiling format supports FBC do the
+ *              basic drawing test, else set the mode & test if FBC is disabled
+ * Driver requirement: i915, xe
+ * Functionality: fbc, fbt, psr, tiling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: fbcpsrdrrs-tiling-%s
+ * Description: Test %arg[1] formats, if the tiling format supports FBC do the
+ *              basic drawing test, else set the mode & test if FBC is disabled
+ * Driver requirement: i915, xe
+ * Functionality: drrs, fbc, fbt, psr, tiling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @4:              4 tiling
+ * @linear:         Linear tiling
+ * @y:              Y tiling
+ */
+
+/**
  * tiling_disable_fbc_subtest - Check if tiling is unsupported by FBC
  *
  * METHOD
@@ -3119,6 +5024,16 @@ static void tiling_disable_fbc_subtest(const struct test_mode *t)
 
 	igt_remove_fb(drm.fd, &new_fb);
 }
+
+/**
+ * SUBTEST: basic
+ * Description: Do some basic operations regardless of which features are enabled
+ * Driver requirement: i915, xe
+ * Functionality: fbt
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 
 /*
  * basic - do some basic operations regardless of which features are enabled
