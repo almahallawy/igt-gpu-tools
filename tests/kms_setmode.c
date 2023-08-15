@@ -31,6 +31,66 @@
 #include <sys/time.h>
 #include <math.h>
 #include "xe/xe_query.h"
+/**
+ * TEST: kms setmode
+ * Category: Display
+ * Description: Tests the mode by iterating through all valid/invalid crtc/connector
+ *              combinations
+ *
+ * SUBTEST: basic
+ * Description: Tests the vblank timing by iterating through all valid crtc/connector
+ *              combinations
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, vblank
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: basic-clone-single-crtc
+ * Description: Tests the mode by cloning the single crtc by iterating through all
+ *              valid crtc/connector combinations
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: clone-exclusive-crtc
+ * Description: Tests the mode by cloning the exclusive crtc by iterating through
+ *              all valid crtc/connector combinations
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: invalid-clone-exclusive-crtc
+ * Description: Tests the mode by cloning the exclusive crtc by iterating through
+ *              all invalid crtc/connector combinations
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: invalid-clone-single-crtc
+ * Description: Tests the mode by cloning the single crtc by iterating through all
+ *              invalid crtc/connector combinations
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: invalid-clone-single-crtc-stealing
+ * Description: Tests the stealing mode by cloning the single crtc by iterating
+ *              through all invalid crtc/connector combinations
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 
 #define MAX_CONNECTORS  10
 #define MAX_CRTCS       6
