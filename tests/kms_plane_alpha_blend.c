@@ -24,6 +24,11 @@
  *   Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
  */
 
+/**
+ * TEST: kms plane alpha blend
+ * Category: Display
+ * Description: Test plane alpha and blending mode properties
+ */
 #include "igt.h"
 
 IGT_TEST_DESCRIPTION("Test plane alpha and blending mode properties");
@@ -477,6 +482,56 @@ static void coverage_premult_constant(data_t *data, enum pipe pipe, igt_plane_t 
 	igt_pipe_crc_stop(data->pipe_crc);
 }
 
+/**
+ * SUBTEST: alpha-%s
+ * Description: Test to %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @7efc:                validate alpha values 0x7e and 0xfc are swappable on
+ *                       pre-multiplied blend mode.
+ * @basic:               basic plane alpha properties.
+ * @opaque-fb:           alpha properties with opaque fb.
+ * @transparent-fb:      alpha property with transparent fb.
+ */
+
+/**
+ * SUBTEST: coverage-vs-premult-vs-constant
+ * Description: Tests pipe coverage blending properties.
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: coverage-7efc
+ * Description: Uses alpha values 0x7e and 0xfc to validate fg.alpha and
+ *              plane_alpha are swappable on coverage blend mode.
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: constant-alpha-%s
+ * Description: Tests plane alpha and blending properties with %arg[1].
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @max:            maximum alpha value
+ * @mid:            medium  alpha value
+ * @min:            minimum alpha value
+ */
 static void run_test_on_pipe_planes(data_t *data, enum pipe pipe, igt_output_t *output,
 				    bool blend, bool must_multiply,
 				    void(*test)(data_t *, enum pipe, igt_plane_t *))
