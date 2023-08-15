@@ -24,6 +24,11 @@
  *  Karthik B S <karthik.b.s@intel.com>
  */
 
+/**
+ * TEST: kms big joiner
+ * Category: Display
+ * Description: Test big joiner
+ */
 #include "igt.h"
 
 #define MAX_HDISPLAY_PER_PIPE 5120
@@ -40,6 +45,16 @@ typedef struct {
 	uint32_t big_joiner_output[2];
 } data_t;
 
+/**
+ * SUBTEST: invalid-modeset
+ * Description: Verify if the modeset on the adjoining pipe is rejected when
+ *              the pipe is active with a big joiner modeset
+ * Driver requirement: i915, xe
+ * Functionality: 2p1p
+ * Mega feature: Bigjoiner
+ * Run type: FULL
+ * Test category: functionality test
+ */
 static void test_invalid_modeset(data_t *data)
 {
 	igt_output_t *output;
@@ -80,6 +95,15 @@ static void test_invalid_modeset(data_t *data)
 	igt_assert_lt(ret, 0);
 }
 
+/**
+ * SUBTEST: basic
+ * Description: Verify the basic modeset on big joiner mode on all pipes
+ * Driver requirement: i915, xe
+ * Functionality: 2p1p
+ * Mega feature: Bigjoiner
+ * Run type: FULL
+ * Test category: functionality test
+ */
 static void test_basic_modeset(data_t *data)
 {
 	drmModeModeInfo *mode;
@@ -118,6 +142,15 @@ static void test_basic_modeset(data_t *data)
 	igt_display_commit2(display, COMMIT_ATOMIC);
 }
 
+/**
+ * SUBTEST: 2x-modeset
+ * Description: Verify simultaneous modeset on 2 big joiner outputs
+ * Driver requirement: i915, xe
+ * Functionality: 2p1p
+ * Mega feature: Bigjoiner
+ * Run type: FULL
+ * Test category: functionality test
+ */
 static void test_dual_display(data_t *data)
 {
 	drmModeModeInfo *mode;
