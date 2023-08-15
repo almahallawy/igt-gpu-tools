@@ -28,6 +28,74 @@
 #include <string.h>
 #include <fcntl.h>
 
+/**
+ * TEST: kms universal plane
+ * Category: Display
+ * Description: Check pageflip & modeset on universal plane
+ *
+ * SUBTEST: cursor-fb-leak-pipe-%s
+ * Description: Check for cursor leaks after performing cursor operations on %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: cursor, plane
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: disable-primary-vs-flip-pipe-%s
+ * Description: Check pageflips while primary plane is disabled before IOCTL or
+ *              between IOCTL and pageflip execution on %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: universal-plane-pageflip-windowed-pipe-%s
+ * Description: Check if pageflip succeeds in windowed setting on %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @A:    pipe A
+ * @B:    pipe B
+ * @C:    pipe C
+ * @D:    pipe D
+ * @E:    pipe E
+ * @F:    pipe F
+ * @G:    pipe G
+ * @H:    pipe H
+ */
+
+/**
+ * SUBTEST: universal-plane-pipe-%s-%s
+ * Description: Check %arg[2] on %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @A:    pipe A
+ * @B:    pipe B
+ * @C:    pipe C
+ * @D:    pipe D
+ * @E:    pipe E
+ * @F:    pipe F
+ * @G:    pipe G
+ * @H:    pipe H
+ *
+ * arg[2]:
+ *
+ * @functional: the switching between different primary plane fbs with CRTC off
+ * @sanity:     for scale-up or scale-down using universal plane API without
+ *              covering CRTC
+ */
 
 typedef struct {
 	int drm_fd;
