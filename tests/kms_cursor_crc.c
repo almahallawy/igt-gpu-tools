@@ -29,6 +29,19 @@
 #include <stdio.h>
 #include <string.h>
 
+/**
+ * TEST: kms cursor crc
+ * Category: Display
+ * Description: Use the display CRC support to validate cursor plane functionality.
+ *              The test will position the cursor plane either fully onscreen,
+ *              partially onscreen, or fully offscreen, using either a fully
+ *              opaque or fully transparent surface. In each case, it enables
+ *              the cursor plane and then reads the PF CRC (hardware test) and
+ *              compares it with the CRC value obtained when the cursor plane
+ *              was disabled and its drawing is directly inserted on the PF by
+ *              software.
+ */
+
 IGT_TEST_DESCRIPTION(
    "Use the display CRC support to validate cursor plane functionality. "
    "The test will position the cursor plane either fully onscreen, "
@@ -641,6 +654,41 @@ static bool require_cursor_size(data_t *data, int w, int h)
 	return !!ret;
 }
 
+/**
+ * SUBTEST: cursor-dpms
+ * Description: Check random placement of a cursor with DPMS.
+ * Driver requirement: i915, xe
+ * Functionality: cursor, dpms
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: cursor-suspend
+ * Description: Check random placement of a cursor with suspend.
+ * Driver requirement: i915, xe
+ * Functionality: cursor, suspend
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: cursor-%s
+ * Description: %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: cursor
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @alpha-opaque:       Validates the composition of a fully opaque cursor plane,
+ *                      i.e., alpha channel equal to 1.0.
+ * @alpha-transparent:  Validates the composition of a fully transparent cursor
+ *                      plane, i.e., alpha channel equal to 0.0.
+ * @size-change:        Create a maximum size cursor, then change the size in
+ *                      flight to smaller ones to see that the size is applied
+ *                      correctly.
+ */
 static void run_test(data_t *data, void (*testfunc)(data_t *), int cursor_w, int cursor_h)
 {
 	prepare_crtc(data, cursor_w, cursor_h);
@@ -738,6 +786,37 @@ static bool execution_constraint(enum pipe pipe)
 }
 
 
+/**
+ * SUBTEST: cursor-%s-%s
+ * Description: Check if a %arg[2] cursor is %arg[1].
+ * Driver requirement: i915, xe
+ * Functionality: cursor
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @offscreen:             well-positioned outside the screen
+ * @onscreen:              well-positioned inside the screen
+ * @random:                randomly placed
+ * @rapid-movement:        rapidly udates for movements
+ * @sliding:               smooth for horizontal, vertical & diagonal movements
+ *
+ * arg[2]:
+ *
+ * @128x128:               128x128 size
+ * @128x42:                128x42 size
+ * @256x256:               256x256 size
+ * @256x85:                256x85 size
+ * @32x10:                 32x10 size
+ * @32x32:                 32x32 size
+ * @512x170:               512x170 size
+ * @512x512:               512x512 size
+ * @64x21:                 64x21 size
+ * @64x64:                 64x64 size
+ * @max-size:              Max supported size
+ */
 static void run_size_tests(data_t *data, int w, int h)
 {
 	enum pipe pipe;
