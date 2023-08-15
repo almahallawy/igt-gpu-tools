@@ -37,6 +37,20 @@
 #include "intel_chipset.h"
 #include "ioctl_wrappers.h"
 #include "igt_aux.h"
+/**
+ * TEST: kms mmap write crc
+ * Category: Display
+ * Description: Use the display CRC support to validate mmap write to an already
+ *              uncached future scanout buffer.
+ *
+ * SUBTEST: main
+ * Description: Tests that caching mode has become UC/WT and flushed using mmap write
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, kms_gem_interop
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 
 IGT_TEST_DESCRIPTION(
    "Use the display CRC support to validate mmap write to an already uncached future scanout buffer.");
