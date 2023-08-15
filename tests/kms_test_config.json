@@ -6,21 +6,21 @@
         "Category": {
             "_properties_": {
                 "description": "Contains the major group for the tested functionality 'Display'"
-            }
-        },
-        "Mega feature": {
-            "_properties_": {
-                "description": "Contains the mega feature for end to end use case, e.g. the 'PSR' feature."
             },
-            "Functionality": {
+            "Mega feature": {
                 "_properties_": {
-                    "description": "Groups tests on buckets containg more detailed functionality"
+                    "description": "Contains the mega feature for end to end use case, e.g. the 'PSR' feature."
+                },
+                "Functionality": {
+                    "_properties_": {
+                        "description": "Groups tests on buckets containg more detailed functionality"
+                    }
                 }
-            }
-        },
-        "Run type": {
-            "_properties_": {
-                "description": "Defines what category of testlist it belongs"
+            },
+            "Run type": {
+                "_properties_": {
+                    "description": "Defines what category of testlist it belongs"
+                }
             }
         },
         "Test category": {
