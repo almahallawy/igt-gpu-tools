@@ -30,6 +30,19 @@
 #include <string.h>
 
 #include "igt.h"
+/**
+ * TEST: kms flip tiling
+ * Category: Display
+ * Description: Test page flips and tiling scenarios
+ *
+ * SUBTEST: flip-change-tiling
+ * Description: Check pageflip between modifiers
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ */
 
 IGT_TEST_DESCRIPTION("Test page flips and tiling scenarios");
 
