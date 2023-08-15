@@ -20,6 +20,11 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/**
+ * TEST: kms hdr
+ * Category: Display
+ * Description: Test HDR metadata interfaces and bpc switch
+ */
 #include "igt.h"
 #include <fcntl.h>
 #include <termios.h>
@@ -208,6 +213,31 @@ static bool has_max_bpc(igt_output_t *output)
 	       igt_output_get_prop(output, IGT_CONNECTOR_MAX_BPC);
 }
 
+/**
+ * SUBTEST: bpc-switch
+ * Description: Tests switching between different display output bpc modes
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, hdr
+ * Mega feature: HDR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: bpc-switch-dpms
+ * Description: Tests switching between different display output bpc modes with dpms
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, dpms, hdr
+ * Mega feature: HDR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: bpc-switch-suspend
+ * Description: Tests switching between different display output bpc modes with suspend
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, hdr, suspend
+ * Mega feature: HDR
+ * Run type: FULL
+ * Test category: functionality test
+ */
 static void test_bpc_switch(data_t *data, uint32_t flags)
 {
 	igt_display_t *display = &data->display;
@@ -561,6 +591,52 @@ static bool has_hdr(igt_output_t *output)
 	return igt_output_has_prop(output, IGT_CONNECTOR_HDR_OUTPUT_METADATA);
 }
 
+/**
+ * SUBTEST: invalid-hdr
+ * Description: Test to ensure HDR is not enabled on non-HDR panel
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, hdr
+ * Mega feature: HDR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: invalid-metadata-sizes
+ * Description: Tests invalid HDR metadata sizes
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, hdr
+ * Mega feature: HDR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: static-toggle-dpms
+ * Description: Tests static toggle with dpms
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, dpms, hdr
+ * Mega feature: HDR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: static-toggle-suspend
+ * Description: Tests static toggle with suspend
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, hdr, suspend
+ * Mega feature: HDR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: static-%s
+ * Description: Tests %arg[1].
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, hdr
+ * Mega feature: HDR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @swap:                    swapping static HDR metadata
+ * @toggle:                  entering and exiting HDR mode
+ */
 static void test_hdr(data_t *data, uint32_t flags)
 {
 	igt_display_t *display = &data->display;
