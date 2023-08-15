@@ -30,6 +30,91 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+/**
+ * TEST: kms psr2 sf
+ * Category: Display
+ * Description: Tests to varify PSR2 selective fetch by sending multiple damaged
+ *              areas
+ *
+ * SUBTEST: %s-plane-move-continuous-%s
+ * Description: Test that selective fetch works on moving %arg[1] plane %arg[2]
+ *              visible area (no update)
+ * Driver requirement: i915, xe
+ * Functionality: plane, psr2, selective_fetch
+ * Mega feature: PSR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @cursor:               Cursor
+ * @overlay:              Overlay
+ *
+ * arg[2]:
+ *
+ * @exceed-fully-sf:      exceeding fully
+ * @exceed-sf:            exceeding paritally
+ * @sf:                   default
+ */
+
+/**
+ * SUBTEST: cursor-plane-update-sf
+ * Description: Test that selective fetch works on cursor plane
+ * Driver requirement: i915, xe
+ * Functionality: cursor, psr2, selective_fetch
+ * Mega feature: PSR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: overlay-plane-update-continuous-sf
+ * Description: Test that selective fetch works on overlay plane
+ * Driver requirement: i915, xe
+ * Functionality: plane, psr2, selective_fetch
+ * Mega feature: PSR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: overlay-plane-update-sf-dmg-area
+ * Description: Test that selective fetch works on overlay plane
+ * Driver requirement: i915, xe
+ * Functionality: plane, psr2, selective_fetch
+ * Mega feature: PSR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: overlay-primary-update-sf-dmg-area
+ * Description: Test that selective fetch works on primary plane with blended
+ *              overlay plane
+ * Driver requirement: i915, xe
+ * Functionality: plane, psr2, selective_fetch
+ * Mega feature: PSR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: plane-move-sf-dmg-area
+ * Description: Test that selective fetch works on moving overlay plane
+ * Driver requirement: i915, xe
+ * Functionality: plane, psr2, selective_fetch
+ * Mega feature: PSR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: primary-plane-update-sf-dmg-area
+ * Description: Test that selective fetch works on primary plane
+ * Driver requirement: i915, xe
+ * Functionality: plane, psr2, selective_fetch
+ * Mega feature: PSR
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: primary-plane-update-sf-dmg-area-big-fb
+ * Description: Test that selective fetch works on primary plane with big fb
+ * Driver requirement: i915, xe
+ * Functionality: plane, psr2, selective_fetch
+ * Mega feature: PSR
+ * Run type: FULL
+ * Test category: functionality test
+ */
 
 IGT_TEST_DESCRIPTION("Tests to varify PSR2 selective fetch by sending multiple"
 		     " damaged areas");
