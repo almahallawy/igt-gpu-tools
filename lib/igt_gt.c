@@ -44,6 +44,7 @@
 #include "intel_reg.h"
 #include "intel_chipset.h"
 #include "igt_dummyload.h"
+#include "xe/xe_gt.h"
 
 /**
  * SECTION:igt_gt
@@ -179,6 +180,12 @@ igt_hang_t igt_allow_hang(int fd, unsigned ctx, unsigned flags)
 	 */
 	if (!igt_check_boolean_env_var("IGT_HANG", true))
 		igt_skip("hang injection disabled by user [IGT_HANG=0]\n");
+
+	if (is_xe_device(fd)) {
+		igt_require(has_gpu_reset(fd));
+		return (struct igt_hang){ 0, ctx, 0, flags };
+	}
+
 	gem_context_require_bannable(fd);
 
 	if (flags & HANG_WANT_ENGINE_RESET)
@@ -215,6 +222,9 @@ igt_hang_t igt_allow_hang(int fd, unsigned ctx, unsigned flags)
 
 void igt_disallow_hang(int fd, igt_hang_t arg)
 {
+	if (is_xe_device(fd))
+		return;
+
 	context_set_ban(fd, arg.ctx, arg.ban);
 
 	if ((arg.flags & HANG_ALLOW_CAPTURE) == 0) {
@@ -269,8 +279,8 @@ static bool has_ctx_exec(int fd, unsigned ring, uint32_t ctx)
 
 /**
  * igt_hang_ring_ctx:
- * @fd: open i915 drm file descriptor
- * @ctx: the contxt specifier
+ * @fd: open i915/xe drm file descriptor
+ * @ctx: the context specifier
  * @ring: execbuf ring flag
  * @flags: set of flags to control execution
  * @offset: The resultant gtt offset of the exec obj
@@ -289,6 +299,9 @@ static igt_hang_t __igt_hang_ctx(int fd, uint64_t ahnd, uint32_t ctx, int ring,
 	struct drm_i915_gem_context_param param;
 	igt_spin_t *spin;
 	unsigned ban;
+
+	if (is_xe_device(fd))
+		return xe_hang_ring(fd, ahnd, ctx, ring, flags);
 
 	igt_require_hang_ring(fd, ctx, ring);
 
@@ -334,7 +347,7 @@ igt_hang_t igt_hang_ctx_with_ahnd(int fd, uint64_t ahnd, uint32_t ctx, int ring,
 
 /**
  * igt_hang_ring:
- * @fd: open i915 drm file descriptor
+ * @fd: open i915/xe drm file descriptor
  * @ring: execbuf ring flag
  *
  * This helper function injects a hanging batch into @ring. It returns a
@@ -357,7 +370,7 @@ igt_hang_t igt_hang_ring_with_ahnd(int fd, int ring, uint64_t ahnd)
 
 /**
  * igt_post_hang_ring:
- * @fd: open i915 drm file descriptor
+ * @fd: open i915/xe drm file descriptor
  * @arg: hang state from igt_hang_ring()
  *
  * This function does the necessary post-processing after a gpu hang injected
@@ -367,6 +380,11 @@ void igt_post_hang_ring(int fd, igt_hang_t arg)
 {
 	if (!arg.spin)
 		return;
+
+	if (is_xe_device(fd)) {
+		igt_spin_free(fd, arg.spin);
+		xe_post_hang_ring(fd, arg);
+	}
 
 	gem_sync(fd, arg.spin->handle); /* Wait until it hangs */
 	igt_spin_free(fd, arg.spin);
@@ -398,6 +416,9 @@ void igt_force_gpu_reset(int drm_fd)
 	int dir, wedged;
 
 	igt_debug("Triggering GPU reset\n");
+
+	if (is_xe_device(drm_fd))
+		xe_force_gt_reset_all(drm_fd);
 
 	dir = igt_debugfs_dir(drm_fd);
 
