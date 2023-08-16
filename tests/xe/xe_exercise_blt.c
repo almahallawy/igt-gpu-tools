@@ -14,8 +14,10 @@
 
 /**
  * TEST: xe exercise blt
+ * Category: Software building block
+ * Sub-category: IGT Lib
+ * Functionality: blitter
  * Description: Exercise blitter commands on Xe
- * Feature: blitter
  * Run type: FULL
  * Test category: functionality test
  *
