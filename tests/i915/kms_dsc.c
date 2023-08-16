@@ -30,7 +30,32 @@
  *
  */
 
+/**
+ * TEST: kms dsc
+ * Category: Display
+ * Description: Test to validate display stream compression
+ */
 #include "kms_dsc_helper.h"
+
+/**
+ * SUBTEST: dsc-%s
+ * Description: Tests Display Stream Compression functionality if supported by a
+ *              connector by forcing %arg[1] on all connectors that support it
+ * Driver requirement: i915, xe
+ * Functionality: dsc
+ * Mega feature: VDSC
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @basic:                        DSC with default parameters
+ * @with-bpc:                     DSC with certain input BPC for the connector
+ * @with-bpc-formats:             DSC with certain input BPC for the connector and diff formats
+ * @with-formats:                 DSC with default parameters and creating fb with diff formats
+ * @with-output-formats:          DSC and output format
+ * @with-output-formats-with-bpc: DSC and output format with certain input BPC for the connector
+ */
 
 IGT_TEST_DESCRIPTION("Test to validate display stream compression");
 
