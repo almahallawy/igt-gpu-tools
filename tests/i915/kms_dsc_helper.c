@@ -120,7 +120,7 @@ void force_dsc_output_format(int drmfd, igt_output_t *output,
 }
 
 /* YCbCr420 DSC is supported on display version 14+ with DSC1.2a */
-static bool is_dsc_output_format_supported_by_platform(int disp_ver, enum dsc_output_format output_format)
+static bool is_dsc_output_format_supported_by_source(int disp_ver, enum dsc_output_format output_format)
 {
 	if (disp_ver < 14 && output_format == DSC_FORMAT_YCBCR420) {
 		igt_debug("Output format DSC YCBCR420 not supported on D13 and older platforms\n");
@@ -133,7 +133,7 @@ static bool is_dsc_output_format_supported_by_platform(int disp_ver, enum dsc_ou
 bool is_dsc_output_format_supported(int drmfd, int disp_ver, igt_output_t *output,
 				    enum dsc_output_format output_format)
 {
-	if (!is_dsc_output_format_supported_by_platform(disp_ver, output_format))
+	if (!is_dsc_output_format_supported_by_source(disp_ver, output_format))
 		return false;
 
 	if (!igt_is_dsc_output_format_supported_by_sink(drmfd, output->name, output_format)) {
