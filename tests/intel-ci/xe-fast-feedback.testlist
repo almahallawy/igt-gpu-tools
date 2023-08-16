@@ -207,15 +207,6 @@ igt@kms_addfb_basic@unused-handle
 igt@kms_addfb_basic@unused-modifier
 igt@kms_addfb_basic@unused-offsets
 igt@kms_addfb_basic@unused-pitches
-igt@kms_chamelium_edid@dp-edid-read
-igt@kms_chamelium_edid@hdmi-edid-read
-igt@kms_chamelium_edid@vga-edid-read
-igt@kms_chamelium_frames@dp-crc-fast
-igt@kms_chamelium_frames@hdmi-crc-fast
-igt@kms_chamelium_hpd@common-hpd-after-suspend
-igt@kms_chamelium_hpd@dp-hpd-fast
-igt@kms_chamelium_hpd@hdmi-hpd-fast
-igt@kms_chamelium_hpd@vga-hpd-fast
 igt@kms_cursor_legacy@basic-flip-after-cursor-atomic
 igt@kms_cursor_legacy@basic-flip-after-cursor-legacy
 igt@kms_cursor_legacy@basic-flip-after-cursor-varying-size

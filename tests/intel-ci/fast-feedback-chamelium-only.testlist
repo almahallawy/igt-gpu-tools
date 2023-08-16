@@ -1,0 +1,15 @@
+# Should be the first test
+igt@i915_module_load@load
+
+# Keep alphabetically sorted by default
+igt@kms_chamelium_edid@dp-edid-read
+igt@kms_chamelium_edid@hdmi-edid-read
+igt@kms_chamelium_edid@vga-edid-read
+igt@kms_chamelium_frames@dp-crc-fast
+igt@kms_chamelium_frames@hdmi-crc-fast
+igt@kms_chamelium_hpd@dp-hpd-fast
+igt@kms_chamelium_hpd@hdmi-hpd-fast
+igt@kms_chamelium_hpd@vga-hpd-fast
+
+# System wide suspend tests in the end
+igt@kms_chamelium_hpd@common-hpd-after-suspend
