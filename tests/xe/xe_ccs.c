@@ -18,6 +18,9 @@
 #include "xe/xe_util.h"
 /**
  * TEST: xe ccs
+ * Category: Software building block
+ * Sub-category: IGT Lib
+ * Functionality: blitter
  * Description: Exercise gen12 blitter with and without flatccs compression on Xe
  * Run type: FULL
  *
