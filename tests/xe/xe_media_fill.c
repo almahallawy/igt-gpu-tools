@@ -27,6 +27,9 @@
 
 /**
  * TEST: xe media fill
+ * Category: Hardware building block
+ * Sub-category: Media
+ * Functionality: fill surface with media block
  * Description: Basic test for the media_fill() function,
  *              a very simple workload for the Media pipeline.
  * Feature: media
