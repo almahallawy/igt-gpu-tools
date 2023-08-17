@@ -102,22 +102,15 @@ typedef struct data {
 /* Common test setup. */
 static void test_init(data_t *data, enum pipe pipe_id, igt_output_t *output)
 {
-	igt_display_t *display = &data->display;
-
 	data->pipe_id = pipe_id;
 	data->pipe = &data->display.pipes[data->pipe_id];
 	data->output = output;
-
-	igt_display_reset(display);
 
 	data->mode = igt_output_get_mode(data->output);
 
 	data->primary = igt_pipe_get_plane_type(data->pipe, DRM_PLANE_TYPE_PRIMARY);
 	data->overlay = igt_pipe_get_plane_type(data->pipe, DRM_PLANE_TYPE_OVERLAY);
 	data->cursor = igt_pipe_get_plane_type(data->pipe, DRM_PLANE_TYPE_CURSOR);
-
-	igt_output_set_pipe(data->output, data->pipe_id);
-	igt_require(i915_pipe_output_combo_valid(display));
 
 	igt_info("Using (pipe %s + %s) to run the subtest.\n",
 		 kmstest_pipe_name(data->pipe_id), igt_output_name(data->output));
@@ -300,6 +293,7 @@ igt_main
 	data_t data = { .max_curw = 64, .max_curh = 64 };
 	enum pipe pipe;
 	igt_output_t *output;
+	igt_display_t *display;
 	int i, j;
 	struct {
 		const char *name;
@@ -330,6 +324,7 @@ igt_main
 		igt_display_require(&data.display, data.drm_fd);
 		igt_require(data.display.is_atomic);
 		igt_display_require_output(&data.display);
+		display = &data.display;
 	}
 
 	for (i = 0; i < ARRAY_SIZE(tests); i++) {
@@ -339,6 +334,12 @@ igt_main
 				if ((tests[i].flags & TEST_OVERLAY) &&
 				    !igt_pipe_get_plane_type(&data.display.pipes[pipe],
 							     DRM_PLANE_TYPE_OVERLAY))
+					continue;
+
+				igt_display_reset(display);
+
+				igt_output_set_pipe(output, pipe);
+				if (!i915_pipe_output_combo_valid(display))
 					continue;
 
 				test_init(&data, pipe, output);
