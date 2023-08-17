@@ -49,6 +49,11 @@ Documentation is built using
 
     $ ninja -C build igt-gpu-tools-doc
 
+Please notice that some drivers and test sets may require that all
+tests to be properly documented via testplan. By default, build
+will fail if one forgets to document or update the documentation.
+This is currently enabled for the Xe, i915 drivers and for KMS tests.
+See docs/test_documentation.md for more details.
 
 Running Tests
 -------------
@@ -164,7 +169,7 @@ was used to generate them.
 Imported i915_drm.h uapi headers from airlied's drm-next branch.
 
 In some cases updating a single uapi file is needed as our history
-shows. So in this case, it should be done by:
+shows. In this case, it should be done by:
 
     # From the kernel dir with a drm/drm-next commit checked out:
     $ make INSTALL_HDR_PATH=<dest-dir> headers_install
