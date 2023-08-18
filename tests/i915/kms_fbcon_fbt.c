@@ -103,7 +103,8 @@ static bool fbc_supported_on_chipset(int device, int debugfs_fd)
 	if (ret < 0)
 		return false;
 
-	return !strstr(buf, "FBC unsupported on this chipset\n");
+	return !strstr(buf, "FBC unsupported on this chipset\n") &&
+		!strstr(buf, "stolen memory not initialised\n");
 }
 
 static bool connector_can_fbc(drmModeConnectorPtr connector)

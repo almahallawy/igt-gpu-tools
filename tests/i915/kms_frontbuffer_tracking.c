@@ -1444,7 +1444,8 @@ static bool fbc_supported_on_chipset(void)
 	if (*buf == '\0')
 		return false;
 
-	return !strstr(buf, "FBC unsupported on this chipset\n");
+	return !strstr(buf, "FBC unsupported on this chipset\n") &&
+		!strstr(buf, "stolen memory not initialised\n");
 }
 
 static void setup_fbc(void)
