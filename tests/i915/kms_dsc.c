@@ -101,7 +101,7 @@ typedef struct {
 
 static int output_format_list[] = {DSC_FORMAT_YCBCR420, DSC_FORMAT_YCBCR444};
 static int format_list[] = {DRM_FORMAT_XYUV8888, DRM_FORMAT_XRGB2101010, DRM_FORMAT_XRGB16161616F, DRM_FORMAT_YUYV};
-static uint32_t bpc_list[] = {12, 10, 8};
+static uint32_t bpc_list[] = {8, 10, 12};
 
 static inline void manual(const char *expected)
 {
