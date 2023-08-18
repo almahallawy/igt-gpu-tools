@@ -45,44 +45,60 @@
  * Feature: SMI, core
  *
  * SUBTEST: hotrebind
+ * Category: Software building block
+ * Sub-category: driver
+ * Functionality: device hotplug
  * Description:
  *   Check if the driver can be cleanly rebound to a device with a still open hot unbound driver
  *   instance
- * Functionality: device hotplug
  * Run type: FULL
- * Test category: SysMan
  *
  * SUBTEST: hotrebind-lateclose
- * Description: Check if a hot unbound driver instance still open after hot rebind can be cleanly released
+ * Category: Software building block
+ * Sub-category: driver
  * Functionality: device hotplug
+ * Description: Check if a hot unbound driver instance still open after hot rebind can be cleanly released
  * Run type: FULL
- * Test category: SysMan
  *
  * SUBTEST: hotreplug
+ * Category: Software building block
+ * Sub-category: driver
+ * Functionality: device hotplug
  * Description: Check if a hot unplugged and still open device can be cleanly restored
  * Run type: FULL
  *
  * SUBTEST: hotreplug-lateclose
+ * Category: Software building block
+ * Sub-category: driver
+ * Functionality: device hotplug
  * Description: Check if an instance of a still open while hot replugged device can be cleanly released
  * Run type: FULL
  *
  * SUBTEST: hotunbind-rebind
- * Description: Check if the driver can be cleanly unbound from an open device, then released and rebound
+ * Category: Software building block
+ * Sub-category: driver
  * Functionality: device hotplug
+ * Description: Check if the driver can be cleanly unbound from an open device, then released and rebound
  * Run type: FULL
- * Test category: SysMan
  *
  * SUBTEST: hotunplug-rescan
+ * Category: Software building block
+ * Sub-category: driver
+ * Functionality: device hotplug
  * Description: Check if an open device can be cleanly unplugged, then released and restored
  * Run type: FULL
  *
  * SUBTEST: unbind-rebind
- * Description: Check if the driver can be cleanly unbound from a device believed to be closed, then rebound
+ * Category: Software building block
+ * Sub-category: driver
  * Functionality: device hotplug
+ * Description: Check if the driver can be cleanly unbound from a device believed to be closed, then rebound
  * Run type: BAT
- * Test category: SysMan
  *
  * SUBTEST: unplug-rescan
+ * Category: Software building block
+ * Sub-category: driver
+ * Functionality: device hotplug
  * Description: Check if a device believed to be closed can be cleanly unplugged, then restored
  * Run type: FULL
  */
