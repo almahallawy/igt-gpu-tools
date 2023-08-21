@@ -54,6 +54,9 @@
 #define DEBUGFS_DM_VISUAL_CONFIRM "amdgpu_dm_visual_confirm"
 #define DEBUGFS_DM_CAPABILITIES "amdgpu_dm_capabilities"
 
+/* ODM Combine */
+#define DEBUGFS_ODM_COMBINE_SEG "odm_combine_segments"
+
 enum amd_dsc_clock_force {
 	DSC_AUTOMATIC = 0,
 	DSC_FORCE_ON,
@@ -197,4 +200,5 @@ int  igt_amd_get_visual_confirm(int drm_fd);
 bool igt_amd_set_visual_confirm(int drm_fd, enum amdgpu_debug_visual_confirm option);
 
 bool igt_amd_is_mall_capable(int drm_fd);
+bool igt_amd_output_has_odm_combine_segments(int drm_fd, char *connector_name);
 #endif /* IGT_AMD_H */

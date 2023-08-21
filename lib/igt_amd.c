@@ -326,6 +326,16 @@ static bool igt_amd_output_has_dsc(int drm_fd, char *connector_name)
 }
 
 /**
+ * igt_amd_output_has_odm_combine_segments: check if connector has dsc debugfs entry
+ * @drm_fd: DRM file descriptor
+ * @connector_name: The connector's name, on which we're reading the status
+ */
+bool igt_amd_output_has_odm_combine_segments(int drm_fd, char *connector_name)
+{
+	return igt_amd_output_has_debugfs(drm_fd, connector_name, DEBUGFS_ODM_COMBINE_SEG);
+}
+
+/**
  * is_dp_dsc_supported: Checks if connector is DSC capable
  * @display: A pointer to an #igt_display_t structure
  * @drm_fd: DRM file descriptor
