@@ -5,7 +5,6 @@
 
 #include <fcntl.h>
 #include <stdio.h>
-#include <xf86drmMode.h>
 
 #include "igt.h"
 #include "igt_amd.h"
