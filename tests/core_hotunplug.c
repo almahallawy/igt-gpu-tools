@@ -501,6 +501,9 @@ static void node_healthcheck(struct hotunplug *priv, unsigned flags)
 
 static bool healthcheck(struct hotunplug *priv, bool recover)
 {
+	/* give udev some time to recreate device nodes before we continue */
+	sleep(1);
+
 	/* device name may have changed, rebuild IGT device list */
 	igt_devices_scan(true);
 
