@@ -117,6 +117,7 @@ static void test_mall_ss(data_t *data)
 	igt_fb_t rfb;
 	int exec_ret;
 	struct line_check line = {0};
+	igt_crc_t test_crc, ref_crc;
 
 	test_init(data);
 
@@ -124,6 +125,7 @@ static void test_mall_ss(data_t *data)
 	igt_plane_set_fb(data->primary, &rfb);
 	igt_display_commit_atomic(display, DRM_MODE_ATOMIC_ALLOW_MODESET, NULL);
 
+	igt_pipe_crc_collect_crc(data->pipe_crc, &ref_crc);
 	sleep(MALL_SETTLE_DELAY);
 
 	igt_system_cmd(exec_ret, "umr -O bits -r *.*.HUBP0_HUBP_MALL_STATUS | grep MALL_IN_USE");
@@ -134,6 +136,10 @@ static void test_mall_ss(data_t *data)
 	igt_log_buffer_inspect(check_cmd_output, &line);
 
 	igt_assert_eq(line.found, 1);
+
+	igt_pipe_crc_collect_crc(data->pipe_crc, &test_crc);
+
+	igt_assert_crc_equal(&ref_crc, &test_crc);
 
 	igt_remove_fb(data->fd, &rfb);
 	test_fini(data);
