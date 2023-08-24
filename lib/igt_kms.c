@@ -6050,3 +6050,36 @@ bool igt_check_output_is_dp_mst(igt_output_t *output)
 {
 	return !!output->config.connector_path;
 }
+
+static int parse_path_connector(char *connector_path)
+{
+	int connector_id;
+	char *encoder;
+
+	encoder = strtok(connector_path, ":");
+	igt_assert_f(!strcmp(encoder, "mst"), "PATH connector property expected to have 'mst'\n");
+
+	connector_id = atoi(strtok(NULL, "-"));
+
+	return connector_id;
+}
+
+/**
+ * igt_get_dp_mst_connector_id
+ * @output: Target output
+ *
+ * Returns: connector id if output is dp-mst, else -EINVAL.
+ */
+int igt_get_dp_mst_connector_id(igt_output_t *output)
+{
+	int connector_id;
+	char *connector_path;
+
+	if (!igt_check_output_is_dp_mst(output))
+		return -EINVAL;
+
+	connector_path = output->config.connector_path;
+	connector_id = parse_path_connector(connector_path);
+
+	return connector_id;
+}
