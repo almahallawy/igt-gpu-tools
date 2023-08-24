@@ -6039,3 +6039,14 @@ bool i915_pipe_output_combo_valid(igt_display_t *display)
 	 */
 	return igt_check_bigjoiner_support(display);
 }
+
+/**
+ * igt_check_output_is_dp_mst
+ * @output: Target output
+ *
+ * Returns: true if output is dp-mst, else false.
+ */
+bool igt_check_output_is_dp_mst(igt_output_t *output)
+{
+	return !!output->config.connector_path;
+}
