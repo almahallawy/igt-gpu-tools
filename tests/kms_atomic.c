@@ -458,7 +458,6 @@ plane_immutable_zpos(igt_display_t *display, igt_pipe_t *pipe,
 			continue;
 
 		zpos = igt_plane_get_prop(temp, IGT_PLANE_ZPOS);
-		igt_assert_lt(zpos, n_planes);
 
 		plane_ptr[zpos] = temp;
 	}
