@@ -1154,7 +1154,8 @@ void igt_amd_allow_edp_hotplug_detect(int drm_fd, char *connector_name, bool ena
 	close(hpd_fd);
 }
 
-static bool get_dm_capabilites(int drm_fd, char *buf, size_t size) {
+static bool get_dm_capabilities(int drm_fd, char *buf, size_t size)
+{
 	int ret, fd;
 	bool has_capablities = amd_has_debugfs(drm_fd, DEBUGFS_DM_CAPABILITIES);
 
@@ -1183,7 +1184,7 @@ static bool get_dm_capabilites(int drm_fd, char *buf, size_t size) {
  *
  * @param drm_fd DRM file descriptor
  * @return true if dm capabilities interface exists and MALL is supported
- * @return false if capabilites could not be read.
+ * @return false if capabilities could not be read.
  */
 void igt_amd_get_mall_status(int drm_fd, bool *supported, bool *enabled)
 {
@@ -1193,7 +1194,7 @@ void igt_amd_get_mall_status(int drm_fd, bool *supported, bool *enabled)
 	*supported = false;
 	*enabled = false;
 
-	if (!get_dm_capabilites(drm_fd, buf, 1024))
+	if (!get_dm_capabilities(drm_fd, buf, 1024))
 		return;
 
 	mall_loc = strstr(buf, "mall supported: yes");
