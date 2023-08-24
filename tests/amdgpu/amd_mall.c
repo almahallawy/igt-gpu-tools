@@ -58,6 +58,7 @@ static void test_init(data_t *data)
 {
 	igt_display_t *display = &data->display;
 	bool mall_capable = false;
+	bool mall_en = false;
 
 	/* It doesn't matter which pipe we choose on amdpgu. */
 	data->pipe_id = PIPE_A;
@@ -65,7 +66,7 @@ static void test_init(data_t *data)
 
 	igt_display_reset(display);
 
-	mall_capable =  igt_amd_is_mall_capable(data->fd);
+	igt_amd_get_mall_status(data->fd, &mall_capable, &mall_en);
 	igt_require_f(mall_capable, "Requires hardware that supports MALL cache\n");
 
 	/* find a connected output */
@@ -101,44 +102,26 @@ static void test_fini(data_t *data)
 	igt_display_commit_atomic(&data->display, DRM_MODE_ATOMIC_ALLOW_MODESET, 0);
 }
 
-static bool check_cmd_output(const char *line, void *data)
-{
-	struct line_check *check = data;
-
-	if (strstr(line, check->substr)) {
-		check->found++;
-	}
-
-	return false;
-}
 static void test_mall_ss(data_t *data)
 {
 	igt_display_t *display = &data->display;
 	igt_fb_t rfb;
-	int exec_ret;
-	struct line_check line = {0};
 	igt_crc_t test_crc, ref_crc;
+	bool mall_supp, mall_en;
 
 	test_init(data);
 
 	igt_create_pattern_fb(data->fd, data->w, data->h, DRM_FORMAT_XRGB8888, 0, &rfb);
 	igt_plane_set_fb(data->primary, &rfb);
 	igt_display_commit_atomic(display, DRM_MODE_ATOMIC_ALLOW_MODESET, NULL);
-
 	igt_pipe_crc_collect_crc(data->pipe_crc, &ref_crc);
+
 	sleep(MALL_SETTLE_DELAY);
 
-	igt_system_cmd(exec_ret, "umr -O bits -r *.*.HUBP0_HUBP_MALL_STATUS | grep MALL_IN_USE");
-
-	igt_skip_on_f(exec_ret != IGT_EXIT_SUCCESS, "Error running UMR\n");
-
-	line.substr = "1 (0x00000001)";
-	igt_log_buffer_inspect(check_cmd_output, &line);
-
-	igt_assert_eq(line.found, 1);
+	igt_amd_get_mall_status(data->fd, &mall_supp, &mall_en);
+	igt_fail_on_f(!(mall_supp && mall_en), "MALL did not get enabled\n");
 
 	igt_pipe_crc_collect_crc(data->pipe_crc, &test_crc);
-
 	igt_assert_crc_equal(&ref_crc, &test_crc);
 
 	igt_remove_fb(data->fd, &rfb);

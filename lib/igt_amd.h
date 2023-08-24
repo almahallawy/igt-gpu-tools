@@ -199,6 +199,6 @@ bool igt_amd_has_visual_confirm(int drm_fd);
 int  igt_amd_get_visual_confirm(int drm_fd);
 bool igt_amd_set_visual_confirm(int drm_fd, enum amdgpu_debug_visual_confirm option);
 
-bool igt_amd_is_mall_capable(int drm_fd);
+void igt_amd_get_mall_status(int drm_fd, bool *supported, bool *enabled);
 bool igt_amd_output_has_odm_combine_segments(int drm_fd, char *connector_name);
 #endif /* IGT_AMD_H */

@@ -1182,27 +1182,27 @@ static bool get_dm_capabilites(int drm_fd, char *buf, size_t size) {
  * @brief check if AMDGPU mall_capable interface entry exist and defined
  *
  * @param drm_fd DRM file descriptor
- * @return true if mall_capable debugfs interface exists and defined
- * @return false otherwise
+ * @return true if dm capabilities interface exists and MALL is supported
+ * @return false if capabilites could not be read.
  */
-bool igt_amd_is_mall_capable(int drm_fd)
+void igt_amd_get_mall_status(int drm_fd, bool *supported, bool *enabled)
 {
-	char buf[1024], mall_read[10];
+	char buf[1024];
 	char *mall_loc;
 
+	*supported = false;
+	*enabled = false;
+
 	if (!get_dm_capabilites(drm_fd, buf, 1024))
-		return false;
+		return;
 
-	mall_loc = strstr(buf,"mall: ");
-	if (!mall_loc)
-		return false;
+	mall_loc = strstr(buf, "mall supported: yes");
+	if (mall_loc)
+		*supported = true;
 
-	sscanf(mall_loc, "mall: %s", mall_read);
-
-	if (!strcmp(mall_read, "yes"))
-		return true;
-
-	return false;
+	mall_loc = strstr(buf, "enabled: yes");
+	if (mall_loc && *supported)
+		*enabled = true;
 }
 
 /**
