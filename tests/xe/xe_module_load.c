@@ -93,6 +93,7 @@ static void load_and_check_xe(const char *opts)
 static const char * const unwanted_drivers[] = {
 	"xe",
 	"i915",
+	"snd_hda_intel",
 	NULL
 };
 
