@@ -82,45 +82,14 @@ static drmModeModeInfo *get_mode(igt_output_t *output)
 	return required_mode;
 }
 
-static int parse_path_blob(char *blob_data)
-{
-	int connector_id;
-	char *encoder;
-
-	encoder = strtok(blob_data, ":");
-	igt_assert_f(!strcmp(encoder, "mst"), "PATH connector property expected to have 'mst'\n");
-
-	connector_id = atoi(strtok(NULL, "-"));
-
-	return connector_id;
-}
-
 static bool output_is_dp_mst(data_t *data, igt_output_t *output, int i)
 {
-	drmModePropertyBlobPtr path_blob = NULL;
-	uint64_t path_blob_id;
-	drmModeConnector *connector = output->config.connector;
-	struct kmstest_connector_config config;
-	const char *encoder;
 	int connector_id;
 	static int prev_connector_id;
 
-	kmstest_get_connector_config(data->drm_fd, output->config.connector->connector_id,
-				     -1, &config);
-	encoder = kmstest_encoder_type_str(config.encoder->encoder_type);
-
-	if (strcmp(encoder, "DP MST"))
+	connector_id = igt_get_dp_mst_connector_id(output);
+	if (connector_id < 0)
 		return false;
-
-	igt_assert(kmstest_get_property(data->drm_fd, connector->connector_id,
-		   DRM_MODE_OBJECT_CONNECTOR, "PATH", NULL,
-		   &path_blob_id, NULL));
-
-	igt_assert(path_blob = drmModeGetPropertyBlob(data->drm_fd, path_blob_id));
-
-	connector_id = parse_path_blob((char *) path_blob->data);
-
-	drmModeFreePropertyBlob(path_blob);
 
 	/*
 	 * Discarding outputs of other DP MST topology.
