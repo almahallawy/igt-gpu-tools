@@ -57,7 +57,7 @@ igt@kms_draw_crc@draw-method-(mmap-cpu|mmap-gtt|pwrite)
 igt@kms_pipe_b_c_ivb@.*
 igt@kms_pwrite_crc
 igt@kms_ccs@.*
-igt@kms_frontbuffer_tracking@.*
+igt@kms_frontbuffer_tracking@.*-(cpu|gtt|pwrite)
 igt@kms_fbcon_fbt@(fbc|psr)(-suspend)
 igt@kms_fence_pin_leak
 igt@kms_busy@.*
