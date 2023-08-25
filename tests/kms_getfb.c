@@ -48,6 +48,7 @@
 #include "i915/gem_create.h"
 #include "igt_device.h"
 #include "xe/xe_query.h"
+#include "xe/xe_ioctl.h"
 
 IGT_TEST_DESCRIPTION("Tests GETFB and GETFB2 ioctls.");
 
@@ -145,7 +146,10 @@ static void get_ccs_fb(int fd, struct drm_mode_fb_cmd2 *ret)
 		size += add.pitches[1] * ALIGN(ALIGN(add.height, 16) / 16, 32);
 	}
 
-	add.handles[0] = gem_buffer_create_fb_obj(fd, size);
+	if (is_i915_device(fd))
+		add.handles[0] = gem_buffer_create_fb_obj(fd, size);
+	else
+		add.handles[0] = xe_bo_create_flags(fd, 0, size, vram_if_possible(fd, 0));
 	igt_require(add.handles[0] != 0);
 
 	if (!HAS_FLATCCS(devid))
@@ -315,7 +319,7 @@ static void test_duplicate_handles(int fd)
 		struct drm_mode_fb_cmd2 add_ccs = { };
 		struct drm_mode_fb_cmd get = { };
 
-		igt_require_i915(fd);
+		igt_require_intel(fd);
 		igt_require_f(!HAS_FLATCCS(intel_get_drm_devid(fd)),
 			      "skip because flat ccs has only one buffer.\n");
 
@@ -421,7 +425,7 @@ static void test_getfb2(int fd)
 		struct drm_mode_fb_cmd2 get = { };
 		int i;
 
-		igt_require_i915(fd);
+		igt_require_intel(fd);
 		get_ccs_fb(fd, &add_ccs);
 		igt_require(add_ccs.fb_id != 0);
 		get.fb_id = add_ccs.fb_id;
