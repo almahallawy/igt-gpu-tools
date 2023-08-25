@@ -977,10 +977,6 @@ static void test_multi_plane_rotation(data_t *data, enum pipe pipe)
 		igt_pipe_crc_start(data->pipe_crc);
 
 		for (i = 0; i < ARRAY_SIZE(planeconfigs); i++) {
-			if (is_xe_device(data->gfx_fd) &&
-			    planeconfigs[i].modifier != DRM_FORMAT_MOD_LINEAR)
-				continue;
-
 			p[0].fbinfo = &planeconfigs[i];
 			pointlocation(data, p, mode, 0);
 
@@ -1351,7 +1347,7 @@ igt_main_args("", long_opts, help_str, opt_handler, &data)
 	igt_describe("Tiling and Rotation test for gen 10+ for primary plane");
 	for (reflect_x = reflect_x_subtests; reflect_x->modifier; reflect_x++) {
 		igt_fixture
-			igt_require_i915(data.gfx_fd);
+			igt_require_intel(data.gfx_fd);
 
 		igt_subtest_f("primary-%s-reflect-x-%s",
 			      modifier_test_str(reflect_x->modifier),
@@ -1412,7 +1408,7 @@ igt_main_args("", long_opts, help_str, opt_handler, &data)
 		enum pipe pipe;
 		igt_output_t *output;
 
-		igt_require_i915(data.gfx_fd);
+		igt_require_intel(data.gfx_fd);
 		igt_display_require_output(&data.display);
 
 		for_each_pipe_with_valid_output(&data.display, pipe, output) {
