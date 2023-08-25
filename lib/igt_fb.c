@@ -494,7 +494,7 @@ void igt_get_fb_tile_size(int fd, uint64_t modifier, int fb_bpp,
 		break;
 	case I915_FORMAT_MOD_Yf_TILED:
 	case I915_FORMAT_MOD_Yf_TILED_CCS:
-		igt_require_i915(fd);
+		igt_require_intel(fd);
 		switch (fb_bpp) {
 		case 8:
 			*width_ret = 64;
@@ -767,7 +767,7 @@ static uint32_t calc_plane_stride(struct igt_fb *fb, int plane)
 		(fb->plane_bpp[plane] / 8);
 
 	if (fb->modifier != DRM_FORMAT_MOD_LINEAR &&
-	    is_i915_device(fb->fd) &&
+	    is_intel_device(fb->fd) &&
 	    intel_display_ver(intel_get_drm_devid(fb->fd)) <= 3) {
 		uint32_t stride;
 
@@ -836,7 +836,7 @@ static uint32_t calc_plane_stride(struct igt_fb *fb, int plane)
 static uint64_t calc_plane_size(struct igt_fb *fb, int plane)
 {
 	if (fb->modifier != DRM_FORMAT_MOD_LINEAR &&
-	    is_i915_device(fb->fd) &&
+	    is_intel_device(fb->fd) &&
 	    intel_display_ver(intel_get_drm_devid(fb->fd)) <= 3) {
 		uint64_t size = (uint64_t) fb->strides[plane] *
 			fb->plane_height[plane];
@@ -913,7 +913,7 @@ static unsigned int get_plane_alignment(struct igt_fb *fb, int color_plane)
 	unsigned int tile_row_size;
 	unsigned int alignment;
 
-	if (!(is_i915_device(fb->fd) &&
+	if (!(is_intel_device(fb->fd) &&
 	      is_gen12_ccs_modifier(fb->modifier) &&
 	      is_yuv_semiplanar_plane(fb, color_plane)))
 		return 0;

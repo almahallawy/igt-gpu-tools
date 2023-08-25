@@ -927,7 +927,8 @@ static void __intel_buf_init(struct buf_ops *bops,
 	/* Store gem bo size */
 	buf->bo_size = size;
 
-	set_hw_tiled(bops, buf);
+	if (bops->driver == INTEL_DRIVER_I915)
+		set_hw_tiled(bops, buf);
 }
 
 /**
@@ -1502,14 +1503,18 @@ static struct buf_ops *__buf_ops_create(int fd, bool check_idempotency)
 		  bops->intel_gen, bops->supported_tiles,
 		  bops->driver == INTEL_DRIVER_I915 ? "i915" : "xe");
 
-	/* No tiling support in XE. */
 	if (bops->driver == INTEL_DRIVER_XE) {
-		bops->supported_hw_tiles = TILE_NONE;
-
 		bops->linear_to_x = copy_linear_to_x;
 		bops->x_to_linear = copy_x_to_linear;
 		bops->linear_to_y = copy_linear_to_y;
 		bops->y_to_linear = copy_y_to_linear;
+		bops->linear_to_tile4 = copy_linear_to_tile4;
+		bops->tile4_to_linear = copy_tile4_to_linear;
+
+		bops->linear_to_yf = NULL;
+		bops->yf_to_linear = NULL;
+		bops->linear_to_ys = NULL;
+		bops->ys_to_linear = NULL;
 
 		return bops;
 	}
