@@ -1111,10 +1111,6 @@ igt_main
 	for (int i = 1; i < ARRAY_SIZE(modifiers); i++) {
 		igt_subtest_f("%s-addfb-size-overflow",
 			      modifiers[i].name) {
-			/* No tiling support in XE. */
-			igt_skip_on(is_xe_device(data.drm_fd) &&
-				    modifiers[i].modifier != DRM_FORMAT_MOD_LINEAR);
-
 			data.modifier = modifiers[i].modifier;
 			test_size_overflow(&data);
 		}
@@ -1124,10 +1120,6 @@ igt_main
 	for (int i = 1; i < ARRAY_SIZE(modifiers); i++) {
 		igt_subtest_f("%s-addfb-size-offset-overflow",
 			      modifiers[i].name) {
-			/* No tiling support in XE. */
-			igt_skip_on(is_xe_device(data.drm_fd) &&
-				    modifiers[i].modifier != DRM_FORMAT_MOD_LINEAR);
-
 			data.modifier = modifiers[i].modifier;
 			test_size_offset_overflow(&data);
 		}
@@ -1136,10 +1128,6 @@ igt_main
 	igt_describe("Sanity check if addfb ioctl works correctly for given size and strides of fb");
 	for (int i = 0; i < ARRAY_SIZE(modifiers); i++) {
 		igt_subtest_f("%s-addfb", modifiers[i].name) {
-			/* No tiling support in XE. */
-			igt_skip_on(is_xe_device(data.drm_fd) &&
-				    modifiers[i].modifier != DRM_FORMAT_MOD_LINEAR);
-
 			data.modifier = modifiers[i].modifier;
 			test_addfb(&data);
 		}
@@ -1157,13 +1145,8 @@ igt_main
 				igt_describe("Sanity check if addfb ioctl works correctly for given "
 						"combination of modifier formats and rotation");
 				igt_subtest_f("%s-%dbpp-rotate-%d", modifiers[i].name,
-					      formats[j].bpp, rotations[k].angle) {
-					/* No tiling support in XE. */
-					igt_skip_on(is_xe_device(data.drm_fd) &&
-						    data.modifier != DRM_FORMAT_MOD_LINEAR);
-
+					      formats[j].bpp, rotations[k].angle)
 					test_scanout(&data);
-				}
 			}
 
 			igt_fixture
@@ -1204,10 +1187,6 @@ igt_main
 						formats[j].bpp, rotations[k].angle, fliptab[l].flipname) {
 						igt_require(intel_display_ver(intel_get_drm_devid(data.drm_fd)) >= 5);
 						data.max_hw_fb_width = min(data.hw_stride / (formats[j].bpp >> 3), data.max_fb_width);
-
-						/* No tiling support in XE. */
-						igt_skip_on(is_xe_device(data.drm_fd) &&
-							    modifiers[i].modifier != DRM_FORMAT_MOD_LINEAR);
 
 						test_scanout(&data);
 					}
