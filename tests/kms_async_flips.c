@@ -254,7 +254,7 @@ static void test_async_flip(data_t *data)
 			 * in order to change the watermark levels as per the optimization. Hence the
 			 * subsequent async flips will actually do the asynchronous flips.
 			 */
-			if (is_i915_device(data->drm_fd)) {
+			if (is_intel_device(data->drm_fd)) {
 				uint32_t devid = intel_get_drm_devid(data->drm_fd);
 
 				if (IS_GEN9(devid) || IS_GEN10(devid) || AT_LEAST_GEN(devid, 12)) {
@@ -663,13 +663,7 @@ igt_main
 	int i;
 
 	igt_fixture {
-		/*
-		 * FIXME: As of now, Async flips won't work with linear buffers
-		 * on Intel hardware, hence don't run tests on XE device as XE
-		 * won't support tiling.
-		 * Once Kernel changes got landed, please update this logic.
-		 */
-		data.drm_fd = drm_open_driver_master(DRIVER_ANY & ~DRIVER_XE);
+		data.drm_fd = drm_open_driver_master(DRIVER_ANY);
 		kmstest_set_vt_graphics_mode();
 		igt_display_require(&data.display, data.drm_fd);
 		igt_display_require_output(&data.display);
@@ -717,7 +711,7 @@ igt_main
 	igt_describe("Negative case to verify if changes in fb are rejected from kernel as expected");
 	igt_subtest_with_dynamic("invalid-async-flip") {
 		/* TODO: support more vendors */
-		igt_require(is_i915_device(data.drm_fd));
+		igt_require(is_intel_device(data.drm_fd));
 		igt_require(igt_display_has_format_mod(&data.display, DRM_FORMAT_XRGB8888,
 						       I915_FORMAT_MOD_Y_TILED));
 
