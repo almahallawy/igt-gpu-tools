@@ -21,6 +21,7 @@ ignore_headers = [
 	'media_fill_gen9.h',
 	'gen9_render.h',
 	'version.h',
+	'xe_pciids.h',
 ]
 
 test_groups = [

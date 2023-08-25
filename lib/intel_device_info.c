@@ -1,6 +1,7 @@
 #include "intel_chipset.h"
 #include "i915_pciids.h"
 #include "i915_pciids_local.h"
+#include "xe_pciids.h"
 
 #include <strings.h> /* ffs() */
 
