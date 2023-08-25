@@ -12,6 +12,8 @@
 #include "igt_power.h"
 #include "igt_sysfs.h"
 
+#include "xe/xe_query.h"
+
 static const char *rapl_domains[] = { "cpu", "gpu", "pkg", "ram" };
 
 static int rapl_parse(struct rapl *r, const char *str)
@@ -99,11 +101,13 @@ static inline void rapl_close(struct rapl *r)
 int igt_power_open(int fd, struct igt_power *p, const char *domain)
 {
 	int i;
+	bool is_dgfx;
 
 	p->hwmon_fd = -1;
 	p->rapl.fd = -1;
 
-	if (gem_has_lmem(fd)) {
+	is_dgfx = is_xe_device(fd) ? xe_has_vram(fd) : gem_has_lmem(fd);
+	if (is_dgfx) {
 		if (strncmp(domain, "gpu", strlen("gpu")) == 0) {
 			p->hwmon_fd = igt_hwmon_open(fd);
 			if (p->hwmon_fd >= 0)
