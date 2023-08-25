@@ -661,12 +661,22 @@ max_hw_stride_async_flip_test(data_t *data)
  */
 
 /**
+ * SUBTEST: %s-max-hw-stride-%dbpp-rotate-%d-hflip
+ * Description: Test maximum hardware supported stride length for given combination
+ *              of %arg[1] modifier with max hardware stride length, %arg[2]-bpp,
+ *              and %arg[3]-rotation with H-flip mode
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, rotation, tiling
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
  * SUBTEST: %s-max-hw-stride-%dbpp-rotate-%d-%s
  * Description: Test maximum hardware supported stride length for given combination
  *              of %arg[1] modifier with max hardware stride length, %arg[2]-bpp,
  *              and %arg[3]-rotation with %arg[4] mode
  * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, rotation, tiling
+ * Functionality: async_flips, big_fbs, kms_gem_interop, rotation, tiling
  * Mega feature: General Display Features
  * Run type: FULL
  * Test category: functionality test
@@ -684,7 +694,6 @@ max_hw_stride_async_flip_test(data_t *data)
  * arg[4]:
  *
  * @async-flip:         Async flip
- * @hflip:              H-flip
  * @hflip-async-flip:   Async & H-flip
  */
 static void test_scanout(data_t *data)
