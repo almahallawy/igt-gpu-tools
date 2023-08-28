@@ -761,7 +761,11 @@ static void commit_display(data_t *data, unsigned event_mask, bool nonblocking)
 	if (nonblocking)
 		flags |= DRM_MODE_ATOMIC_NONBLOCK;
 
-	igt_display_commit_atomic(&data->display, flags, NULL);
+	do {
+		ret = igt_display_try_commit_atomic(&data->display, flags, NULL);
+	} while (ret == -EBUSY);
+
+	igt_assert_eq(ret, 0);
 
 	igt_debug("Event mask: %x, waiting for %i events\n", event_mask, num_events);
 
