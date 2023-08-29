@@ -557,6 +557,7 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 		{"GFX9",				GFX9},
 		{"GFX10",				GFX10},
 		{"GFX10_3",				GFX10_3},
+		{"GFX11",				GFX11},
 		{},
 	};
 	struct chip_info *info = &g_chip;
@@ -619,6 +620,15 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 	case FAMILY_YC:
 		identify_chip(YELLOW_CARP);
 		break;
+	case FAMILY_GFX1100:
+		identify_chip(GFX1100);
+		identify_chip(GFX1101);
+		identify_chip(GFX1102);
+		break;
+	case FAMILY_GFX1103:
+		identify_chip(GFX1103_R1);
+		identify_chip(GFX1103_R2);
+		break;
 	}
 	if (!info->name) {
 		igt_info("amdgpu: unknown (family_id, chip_external_rev): (%u, %u)\n",
@@ -629,7 +639,9 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 				info->name, amdinfo->family_id, amdinfo->chip_external_rev);
 	}
 
-	if (info->family >= CHIP_SIENNA_CICHLID) {
+	if (info->family >= CHIP_GFX1100) {
+		info->chip_class = GFX11;
+	} else if (info->family >= CHIP_SIENNA_CICHLID) {
 		info->chip_class = GFX10_3;
 	} else if (info->family >= CHIP_NAVI10) {
 		info->chip_class = GFX10;
@@ -668,7 +680,7 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 		igt_assert_eq(sdma_v3_x_ip_block.funcs->family_id, FAMILY_VI);
 		break;
 	default:
-		igt_info("amdgpu: GFX or old.\n");
+		igt_info("amdgpu: GFX11 or old.\n");
 		return -1;
 	}
 	info->dev = device;
