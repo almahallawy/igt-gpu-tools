@@ -1,30 +1,8 @@
-/**
-***********************************************************************************************************************
-* SPDX-License-Identifier: MIT
-* Copyright © 2007-2021 Advanced Micro Devices, Inc.
-* Copyright 2022 Advanced Micro Devices, Inc.
-* All Rights Reserved.
-*
-* Permission is hereby granted, free of charge, to any person obtaining a
-* copy of this software and associated documentation files (the "Software"),
-* to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense,
-* and/or sell copies of the Software, and to permit persons to whom the
-* Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-* THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-* OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-* ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-* OTHER DEALINGS IN THE SOFTWARE
-*
-***********************************************************************************************************************
-*/
+/* SPDX-License-Identifier: MIT
+ * Copyright © 2007-2021 Advanced Micro Devices, Inc.
+ * Copyright 2022 Advanced Micro Devices, Inc.
+ * Copyright 2023 Advanced Micro Devices, Inc.
+ */
 
 #ifndef _AMDGPU_ASIC_ADDR_H
 #define _AMDGPU_ASIC_ADDR_H
@@ -65,52 +43,52 @@
 
 #define AMDGPU_UNKNOWN          0xFF
 
-#define AMDGPU_TAHITI_RANGE     0x05, 0x14
-#define AMDGPU_PITCAIRN_RANGE   0x15, 0x28
-#define AMDGPU_CAPEVERDE_RANGE  0x29, 0x3C
-#define AMDGPU_OLAND_RANGE      0x3C, 0x46
-#define AMDGPU_HAINAN_RANGE     0x46, 0xFF
+#define AMDGPU_TAHITI_RANGE      0x05, 0x14
+#define AMDGPU_PITCAIRN_RANGE    0x15, 0x28
+#define AMDGPU_CAPEVERDE_RANGE   0x29, 0x3C
+#define AMDGPU_OLAND_RANGE       0x3C, 0x46
+#define AMDGPU_HAINAN_RANGE      0x46, 0xFF
 
-#define AMDGPU_BONAIRE_RANGE    0x14, 0x28
-#define AMDGPU_HAWAII_RANGE     0x28, 0x3C
+#define AMDGPU_BONAIRE_RANGE     0x14, 0x28
+#define AMDGPU_HAWAII_RANGE      0x28, 0x3C
 
-#define AMDGPU_SPECTRE_RANGE    0x01, 0x41
-#define AMDGPU_SPOOKY_RANGE     0x41, 0x81
-#define AMDGPU_KALINDI_RANGE    0x81, 0xA1
-#define AMDGPU_GODAVARI_RANGE   0xA1, 0xFF
+#define AMDGPU_SPECTRE_RANGE     0x01, 0x41
+#define AMDGPU_SPOOKY_RANGE      0x41, 0x81
+#define AMDGPU_KALINDI_RANGE     0x81, 0xA1
+#define AMDGPU_GODAVARI_RANGE    0xA1, 0xFF
 
-#define AMDGPU_ICELAND_RANGE    0x01, 0x14
-#define AMDGPU_TONGA_RANGE      0x14, 0x28
-#define AMDGPU_FIJI_RANGE       0x3C, 0x50
-#define AMDGPU_POLARIS10_RANGE  0x50, 0x5A
-#define AMDGPU_POLARIS11_RANGE  0x5A, 0x64
-#define AMDGPU_POLARIS12_RANGE  0x64, 0x6E
-#define AMDGPU_VEGAM_RANGE      0x6E, 0xFF
+#define AMDGPU_ICELAND_RANGE     0x01, 0x14
+#define AMDGPU_TONGA_RANGE       0x14, 0x28
+#define AMDGPU_FIJI_RANGE        0x3C, 0x50
+#define AMDGPU_POLARIS10_RANGE   0x50, 0x5A
+#define AMDGPU_POLARIS11_RANGE   0x5A, 0x64
+#define AMDGPU_POLARIS12_RANGE   0x64, 0x6E
+#define AMDGPU_VEGAM_RANGE       0x6E, 0xFF
 
-#define AMDGPU_CARRIZO_RANGE    0x01, 0x21
-#define AMDGPU_STONEY_RANGE     0x61, 0xFF
+#define AMDGPU_CARRIZO_RANGE     0x01, 0x21
+#define AMDGPU_STONEY_RANGE      0x61, 0xFF
 
-#define AMDGPU_VEGA10_RANGE     0x01, 0x14
-#define AMDGPU_VEGA12_RANGE     0x14, 0x28
-#define AMDGPU_VEGA20_RANGE     0x28, 0x32
-#define AMDGPU_ARCTURUS_RANGE   0x32, 0x3C
-#define AMDGPU_ALDEBARAN_RANGE  0x3C, 0xFF
+#define AMDGPU_VEGA10_RANGE      0x01, 0x14
+#define AMDGPU_VEGA12_RANGE      0x14, 0x28
+#define AMDGPU_VEGA20_RANGE      0x28, 0x32
+#define AMDGPU_ARCTURUS_RANGE    0x32, 0x3C
+#define AMDGPU_ALDEBARAN_RANGE   0x3C, 0xFF
 
-#define AMDGPU_RAVEN_RANGE      0x01, 0x81
-#define AMDGPU_RAVEN2_RANGE     0x81, 0x91
-#define AMDGPU_RENOIR_RANGE     0x91, 0xFF
+#define AMDGPU_RAVEN_RANGE       0x01, 0x81
+#define AMDGPU_RAVEN2_RANGE      0x81, 0x91
+#define AMDGPU_RENOIR_RANGE      0x91, 0xFF
 
-#define AMDGPU_NAVI10_RANGE     0x01, 0x0A
-#define AMDGPU_NAVI12_RANGE     0x0A, 0x14
-#define AMDGPU_NAVI14_RANGE     0x14, 0x28
-#define AMDGPU_SIENNA_CICHLID_RANGE     0x28, 0x32
-#define AMDGPU_NAVY_FLOUNDER_RANGE      0x32, 0x3C
-#define AMDGPU_DIMGREY_CAVEFISH_RANGE   0x3C, 0x46
-#define AMDGPU_BEIGE_GOBY_RANGE         0x46, 0x50
+#define AMDGPU_NAVI10_RANGE      0x01, 0x0A
+#define AMDGPU_NAVI12_RANGE      0x0A, 0x14
+#define AMDGPU_NAVI14_RANGE      0x14, 0x28
+#define AMDGPU_SIENNA_CICHLID_RANGE      0x28, 0x32
+#define AMDGPU_NAVY_FLOUNDER_RANGE       0x32, 0x3C
+#define AMDGPU_DIMGREY_CAVEFISH_RANGE    0x3C, 0x46
+#define AMDGPU_BEIGE_GOBY_RANGE          0x46, 0x50
 
-#define AMDGPU_VANGOGH_RANGE    0x01, 0xFF
+#define AMDGPU_VANGOGH_RANGE      0x01, 0xFF
 
-#define AMDGPU_YELLOW_CARP_RANGE 0x01, 0xFF
+#define AMDGPU_YELLOW_CARP_RANGE  0x01, 0xFF
 
 #define AMDGPU_EXPAND_FIX(x) x
 #define AMDGPU_RANGE_HELPER(val, min, max) ((val >= min) && (val < max))
