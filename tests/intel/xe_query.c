@@ -228,9 +228,8 @@ test_query_mem_usage(int fd)
 			mem_usage->regions[i].used,
 			mem_usage->regions[i].total_size
 		);
-		igt_info("min_page_size=0x%x, max_page_size=0x%x\n",
-		       mem_usage->regions[i].min_page_size,
-		       mem_usage->regions[i].max_page_size);
+		igt_info("min_page_size=0x%x\n",
+		       mem_usage->regions[i].min_page_size);
 
 		igt_info("visible size=%lluMiB\n",
 			 mem_usage->regions[i].cpu_visible_size >> 20);
@@ -375,8 +374,8 @@ test_query_config(int fd)
 	igt_info("  XE_QUERY_CONFIG_FLAGS_HAS_VRAM\t%s\n",
 		config->info[XE_QUERY_CONFIG_FLAGS] &
 		XE_QUERY_CONFIG_FLAGS_HAS_VRAM ? "ON":"OFF");
-	igt_info("XE_QUERY_CONFIG_MIN_ALIGNEMENT\t\t%#llx\n",
-		config->info[XE_QUERY_CONFIG_MIN_ALIGNEMENT]);
+	igt_info("XE_QUERY_CONFIG_MIN_ALIGNMENT\t\t%#llx\n",
+		config->info[XE_QUERY_CONFIG_MIN_ALIGNMENT]);
 	igt_info("XE_QUERY_CONFIG_VA_BITS\t\t\t%llu\n",
 		config->info[XE_QUERY_CONFIG_VA_BITS]);
 	igt_info("XE_QUERY_CONFIG_GT_COUNT\t\t%llu\n",
