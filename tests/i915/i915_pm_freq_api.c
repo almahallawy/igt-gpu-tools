@@ -125,7 +125,7 @@ static void test_suspend(int i915, int dirfd, int gt)
 		igt_assert_eq(req_freq, rpn);
 
 	/* Manually trigger a suspend */
-	igt_system_suspend_autoresume(SUSPEND_STATE_S3,
+	igt_system_suspend_autoresume(SUSPEND_STATE_FREEZE,
 				      SUSPEND_TEST_NONE);
 
 	req_freq = get_freq(dirfd, RPS_CUR_FREQ_MHZ);
