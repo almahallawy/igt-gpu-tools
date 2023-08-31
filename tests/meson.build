@@ -82,8 +82,11 @@ test_progs = [
 	'vgem_slow',
 ]
 
-intel_progs = [
+intel_i915_xe_progs = [
 	'api_intel_allocator',
+]
+
+intel_i915_progs = [
 	'api_intel_bb',
 	'debugfs_test',
 	'drm_fdinfo',
@@ -230,6 +233,18 @@ intel_progs = [
 	'i915_query',
 	'i915_selftest',
 	'i915_suspend',
+	'prime_busy',
+	'prime_mmap',
+	'prime_mmap_coherency',
+	'prime_mmap_kms',
+	'prime_self_import',
+	'sysfs_defaults',
+	'sysfs_heartbeat_interval',
+	'sysfs_preempt_timeout',
+	'sysfs_timeslice_duration',
+]
+
+intel_kms_progs = [
 	'kms_big_fb',
 	'kms_big_joiner' ,
 	'kms_busy',
@@ -252,18 +267,9 @@ intel_progs = [
 	'kms_psr2_su',
 	'kms_psr_stress_test',
 	'kms_pwrite_crc',
-	'prime_busy',
-	'prime_mmap',
-	'prime_mmap_coherency',
-	'prime_mmap_kms',
-	'prime_self_import',
-	'sysfs_defaults',
-	'sysfs_heartbeat_interval',
-	'sysfs_preempt_timeout',
-	'sysfs_timeslice_duration',
 ]
 
-xe_progs = [
+intel_xe_progs = [
 	'xe_ccs',
 	'xe_create',
 	'xe_compute',
@@ -383,6 +389,13 @@ foreach prog : test_progs
 		     output : name + '.testlist')
 endforeach
 
+intel_progs = intel_i915_xe_progs
+intel_progs += intel_i915_progs + intel_kms_progs
+if build_xe
+	build_info += 'Xe **experimental** tests enabled.'
+	intel_progs += intel_xe_progs
+endif
+
 foreach prog : intel_progs
 	testexe = executable(prog,
 		   [join_paths('intel', prog + '.c')] + extra_sources.get(prog, []),
@@ -399,26 +412,6 @@ foreach prog : intel_progs
 		     capture : true,
 		     output : name + '.testlist')
 endforeach
-
-if build_xe
-	foreach prog : xe_progs
-		testexe = executable(prog,
-			   [join_paths('intel', prog + '.c')] + extra_sources.get(prog, []),
-			   dependencies : test_deps + extra_dependencies.get(prog, []),
-			   install_dir : libexecdir,
-			   install_rpath : libexecdir_rpathdir,
-			   install : true)
-		test_list += prog
-		test_executables += testexe
-		name = prog.split('/').get(-1)
-		testlist_files += custom_target(name + '.testlist',
-			     build_by_default : true,
-			     command : [testexe, '--show-testlist'],
-			     capture : true,
-			     output : name + '.testlist')
-	endforeach
-	build_info += 'Xe **experimental** tests enabled.'
-endif
 
 foreach prog : msm_progs
 	test_executables += executable(prog, join_paths('msm', prog + '.c'),
