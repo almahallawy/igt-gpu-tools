@@ -311,6 +311,7 @@ msm_progs = [
 
 chamelium_progs = [
 	'kms_chamelium_audio',
+	'kms_chamelium_color',
 	'kms_chamelium_edid',
 	'kms_chamelium_frames',
 	'kms_chamelium_hpd',
@@ -334,6 +335,11 @@ extra_sources = {
 	'dumb_buffer': ['dumb_buffer.c' ],
 	'testdisplay': [ 'testdisplay_hotplug.c' ],
 	'kms_color':  [ 'kms_color_helper.c' ],
+	'kms_chamelium_audio': [ join_paths ('chamelium', 'kms_chamelium_helper.c') ],
+	'kms_chamelium_color':  [ 'kms_color_helper.c' ],
+	'kms_chamelium_edid': [ join_paths ('chamelium', 'kms_chamelium_helper.c') ],
+	'kms_chamelium_frames': [ join_paths ('chamelium', 'kms_chamelium_helper.c') ],
+	'kms_chamelium_hpd': [ join_paths ('chamelium', 'kms_chamelium_helper.c') ],
 	'kms_dsc': [ join_paths ('i915', 'kms_dsc_helper.c') ],
 	'kms_psr2_sf':  [ join_paths ('i915', 'kms_dsc_helper.c') ],
 }
@@ -426,9 +432,8 @@ endforeach
 if chamelium.found()
 	foreach prog : chamelium_progs
 		testexe = executable(prog,
-				 [join_paths('chamelium', prog + '.c'),
-					join_paths('chamelium', 'kms_chamelium_helper.c')],
-				 dependencies : test_deps,
+				 [join_paths('chamelium', prog + '.c')] + extra_sources.get(prog, []),
+				 dependencies : test_deps + extra_dependencies.get(prog, []),
 				 install_dir : libexecdir,
 				 install_rpath : libexecdir_rpathdir,
 				 install : true)
@@ -442,21 +447,6 @@ if chamelium.found()
 			     output : name + '.testlist')
 	endforeach
 	test_deps += chamelium
-
-	name = 'kms_chamelium_color'
-	testexe = executable('kms_chamelium_color',
-				[ 'chamelium/kms_chamelium_color.c', 'kms_color_helper.c' ],
-				dependencies : test_deps + [ chamelium ],
-				install_dir : libexecdir,
-				install_rpath : libexecdir_rpathdir,
-				install : true)
-	test_list += name
-	test_executables += testexe
-	testlist_files += custom_target(name + '.testlist',
-		     build_by_default : true,
-		     command : [testexe, '--show-testlist'],
-		     capture : true,
-		     output : name + '.testlist')
 endif
 
 subdir('amdgpu')
