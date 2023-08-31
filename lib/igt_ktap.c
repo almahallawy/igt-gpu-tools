@@ -66,9 +66,6 @@ static int log_to_end(enum igt_log_level level, int fd,
 				return -2;
 			}
 
-			if (errno == EINTR)
-				continue;
-
 			if (errno == EPIPE) {
 				igt_warn("kmsg truncated: too many messages. You may want to increase log_buf_len in kmcdline\n");
 				return -2;
@@ -188,9 +185,6 @@ static int find_next_tap_subtest(int fd, char *record, char *test_name, bool is_
 				return -2;
 			}
 
-			if (errno == EINTR)
-				continue;
-
 			if (errno == EPIPE) {
 				igt_warn("kmsg truncated: too many messages. You may want to increase log_buf_len in kmcdline\n");
 				return -2;
@@ -231,9 +225,6 @@ static int find_next_tap_subtest(int fd, char *record, char *test_name, bool is_
 				igt_warn("ktap parser stopped\n");
 				return -2;
 			}
-
-			if (errno == EINTR)
-				continue;
 
 			if (errno == EPIPE) {
 				igt_warn("kmsg truncated: too many messages. You may want to increase log_buf_len in kmcdline\n");
@@ -387,9 +378,6 @@ static int parse_tap_level(int fd, char *base_test_name, int test_count, bool *f
 				return -1;
 			}
 
-			if (errno == EINTR)
-				continue;
-
 			if (errno == EAGAIN)
 				/* No records available */
 				continue;
@@ -538,9 +526,6 @@ igt_ktap_parser_start:
 
 		if (errno == EAGAIN)
 			/* No records available */
-			continue;
-
-		if (errno == EINTR)
 			continue;
 
 		if (errno == EPIPE) {
