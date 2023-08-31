@@ -914,8 +914,12 @@ class TestList:
         """ Return a list of tests as reported by --list-subtests """
         tests = []
         for name in self.filenames:
-            fname = re.sub(r"\.c$", ".testlist", name.split('/')[-1])
-            fname = os.path.join(self.igt_build_path, "tests", fname)
+            testlist = re.sub(r"\.c$", ".testlist", name.split('/')[-1])
+            fname = os.path.join(self.igt_build_path, "tests", testlist)
+
+            if not os.path.isfile(fname):
+                print(f"{testlist}: Testlist file not found.")
+                continue
 
             with open(fname, 'r', encoding='utf8') as handle:
                 for line in handle:
