@@ -7,7 +7,7 @@ rst2pdf = find_program('rst2pdf', required: false)
 stylesheet = join_paths(meson.current_source_dir(), 'testplan.css')
 
 xe_test_config = join_paths(source_root, 'tests', 'xe', 'xe_test_config.json')
-kms_test_config = join_paths(source_root, 'tests', 'kms_test_config.json')
+kms_test_config = join_paths(source_root, 'tests', 'i915', 'kms_test_config.json')
 i915_test_config = join_paths(source_root, 'tests', 'i915', 'i915_test_config.json')
 
 check_testlist = []
