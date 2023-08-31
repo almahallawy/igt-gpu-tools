@@ -6,7 +6,6 @@ test_progs = [
 	'core_hotunplug',
 	'core_setmaster',
 	'core_setmaster_vs_auth',
-	'debugfs_test',
 	'dmabuf',
 	'dmabuf_sync_file',
 	'device_reset',
@@ -70,11 +69,6 @@ test_progs = [
 	'panfrost_gem_new',
 	'panfrost_prime',
 	'panfrost_submit',
-	'prime_busy',
-	'prime_mmap',
-	'prime_mmap_coherency',
-	'prime_mmap_kms',
-	'prime_self_import',
 	'prime_udl',
 	'prime_vgem',
 	'syncobj_basic',
@@ -88,9 +82,10 @@ test_progs = [
 	'vgem_slow',
 ]
 
-i915_progs = [
+intel_progs = [
 	'api_intel_allocator',
 	'api_intel_bb',
+	'debugfs_test',
 	'drm_fdinfo',
 	'gen3_mixed_blits',
 	'gen3_render_linear_blits',
@@ -257,6 +252,11 @@ i915_progs = [
 	'kms_psr2_su',
 	'kms_psr_stress_test',
 	'kms_pwrite_crc',
+	'prime_busy',
+	'prime_mmap',
+	'prime_mmap_coherency',
+	'prime_mmap_kms',
+	'prime_self_import',
 	'sysfs_defaults',
 	'sysfs_heartbeat_interval',
 	'sysfs_preempt_timeout',
@@ -340,8 +340,8 @@ extra_sources = {
 	'kms_chamelium_edid': [ join_paths ('chamelium', 'kms_chamelium_helper.c') ],
 	'kms_chamelium_frames': [ join_paths ('chamelium', 'kms_chamelium_helper.c') ],
 	'kms_chamelium_hpd': [ join_paths ('chamelium', 'kms_chamelium_helper.c') ],
-	'kms_dsc': [ join_paths ('i915', 'kms_dsc_helper.c') ],
-	'kms_psr2_sf':  [ join_paths ('i915', 'kms_dsc_helper.c') ],
+	'kms_dsc': [ join_paths ('intel', 'kms_dsc_helper.c') ],
+	'kms_psr2_sf':  [ join_paths ('intel', 'kms_dsc_helper.c') ],
 }
 
 # Extra dependencies used on core and Intel drivers
@@ -383,9 +383,9 @@ foreach prog : test_progs
 		     output : name + '.testlist')
 endforeach
 
-foreach prog : i915_progs
+foreach prog : intel_progs
 	testexe = executable(prog,
-		   [join_paths('i915', prog + '.c')] + extra_sources.get(prog, []),
+		   [join_paths('intel', prog + '.c')] + extra_sources.get(prog, []),
 		   dependencies : test_deps + extra_dependencies.get(prog, []),
 		   install_dir : libexecdir,
 		   install_rpath : libexecdir_rpathdir,
@@ -403,7 +403,7 @@ endforeach
 if build_xe
 	foreach prog : xe_progs
 		testexe = executable(prog,
-			   [join_paths('xe', prog + '.c')] + extra_sources.get(prog, []),
+			   [join_paths('intel', prog + '.c')] + extra_sources.get(prog, []),
 			   dependencies : test_deps + extra_dependencies.get(prog, []),
 			   install_dir : libexecdir,
 			   install_rpath : libexecdir_rpathdir,
@@ -464,7 +464,7 @@ test_list_target = custom_target('testlist',
 	      install : true,
 	      install_dir : libexecdir)
 
-test_executables += executable('gem_concurrent_all', 'i915/gem_concurrent_all.c',
+test_executables += executable('gem_concurrent_all', 'intel/gem_concurrent_all.c',
 	   dependencies : test_deps + [ libatomic ],
 	   install_dir : libexecdir,
 	   install_rpath : libexecdir_rpathdir,
@@ -482,7 +482,7 @@ foreach prog : test_list
 	test('testcase check ' + prog, test_script, args : prog)
 endforeach
 
-testexe = executable('gem_stress', 'i915/gem_stress.c',
+testexe = executable('gem_stress', 'intel/gem_stress.c',
 	   install : true,
 	   install_dir : libexecdir,
 	   install_rpath : libexecdir_rpathdir,
