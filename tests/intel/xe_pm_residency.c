@@ -10,18 +10,22 @@
  * Functionality: GT C States
  * Test category: functionality test
  */
+#include <fcntl.h>
 #include <limits.h>
 
 #include "igt.h"
 #include "igt_device.h"
+#include "igt_power.h"
 #include "igt_sysfs.h"
 
 #include "xe/xe_query.h"
 #include "xe/xe_util.h"
 
+#define NUM_REPS 16 /* No of Repetitions */
 #define SLEEP_DURATION 3000 /* in milliseconds */
 
 const double tolerance = 0.1;
+int fw_handle = -1;
 
 #define assert_within_epsilon(x, ref, tol) \
 	igt_assert_f((double)(x) <= (1.0 + (tol)) * (double)(ref) && \
@@ -50,8 +54,19 @@ enum test_type {
  * Description: Validate idle residency measured over suspend(s2idle)
  *              is greater than suspend time or within tolerance
  * Run type: FULL
+ *
+ * SUBTEST: toggle-gt-c6
+ * Description: toggles GT C states by acquiring/releasing forcewake,
+ *		also validates power consumed by GPU in GT C6 is lesser than that of GT C0.
+ * Run type: FULL
  */
 IGT_TEST_DESCRIPTION("Tests for gtidle properties");
+
+static void close_fw_handle(int sig)
+{
+	if (fw_handle >= 0)
+		close(fw_handle);
+}
 
 static unsigned int measured_usleep(unsigned int usec)
 {
@@ -117,6 +132,54 @@ static void test_idle_residency(int fd, int gt, enum test_type flag)
 	assert_within_epsilon(residency_end - residency_start, elapsed_ms, tolerance);
 }
 
+static void measure_power(struct igt_power *gpu, double *power)
+{
+	struct power_sample power_sample[2];
+
+	igt_power_get_energy(gpu, &power_sample[0]);
+	measured_usleep(SLEEP_DURATION * 1000);
+	igt_power_get_energy(gpu, &power_sample[1]);
+	*power = igt_power_get_mW(gpu, &power_sample[0], &power_sample[1]);
+}
+
+static void toggle_gt_c6(int fd, int n)
+{
+	double gt_c0_power, gt_c6_power;
+	int gt;
+	struct igt_power gpu;
+
+	igt_power_open(fd, &gpu, "gpu");
+
+	do {
+		fw_handle = igt_debugfs_open(fd, "forcewake_all", O_RDONLY);
+		igt_assert(fw_handle >= 0);
+		/* check if all gts are in C0 after forcewake is acquired */
+		xe_for_each_gt(fd, gt)
+			igt_assert_f(!xe_is_gt_in_c6(fd, gt),
+				     "Forcewake acquired, GT should be in C0\n");
+
+		if (n == NUM_REPS)
+			measure_power(&gpu, &gt_c0_power);
+
+		close(fw_handle);
+		/* check if all gts are in C6 after forcewake is released */
+		xe_for_each_gt(fd, gt)
+			igt_assert_f(igt_wait(xe_is_gt_in_c6(fd, gt), 1000, 1),
+				     "Forcewake released, GT should be in C6\n");
+
+		if (n == NUM_REPS)
+			measure_power(&gpu, &gt_c6_power);
+	} while (n--);
+
+	igt_power_close(&gpu);
+	igt_info("GPU consumed %fmW in GT C6 and %fmW in GT C0\n", gt_c6_power, gt_c0_power);
+
+	/* FIXME: Remove dgfx check after hwmon is added */
+	if (!xe_has_vram(fd))
+		igt_assert_f(gt_c6_power < gt_c0_power,
+			     "Power consumed in GT C6 should be lower than GT C0\n");
+}
+
 igt_main
 {
 	uint32_t d3cold_allowed;
@@ -151,6 +214,12 @@ igt_main
 	igt_subtest("idle-residency")
 		xe_for_each_gt(fd, gt)
 			test_idle_residency(fd, gt, TEST_IDLE);
+
+	igt_describe("Toggle GT C states by acquiring/releasing forcewake and validate power measured");
+	igt_subtest("toggle-gt-c6") {
+		igt_install_exit_handler(close_fw_handle);
+		toggle_gt_c6(fd, NUM_REPS);
+	}
 
 	igt_fixture {
 		close(fd);
