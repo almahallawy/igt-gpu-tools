@@ -37,6 +37,19 @@
 IGT_TEST_DESCRIPTION(
    "Efficiently sharing CPU and GPU buffers");
 
+/**
+ * TEST: prime mmap kms
+ * Category: Infrastructure
+ * Feature: prime
+ * Functionality: memory management
+ * Run type: FULL
+ * Sub-category: DRM
+ * Test category: GEM_Legacy
+ *
+ * SUBTEST: buffer-sharing
+ * Description: Test efficiently sharing CPU and GPU buffers
+ */
+
 /*
  * render_process_t:
  *
