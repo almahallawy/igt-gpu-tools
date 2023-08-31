@@ -758,7 +758,6 @@ static void __igt_kunit(const char *module_name, const char *opts)
 {
 	struct igt_ktest tst;
 	struct kmod_module *kunit_kmod;
-	FILE *f;
 	bool is_builtin;
 	int ret;
 	struct ktap_test_results *results;
@@ -774,7 +773,6 @@ static void __igt_kunit(const char *module_name, const char *opts)
 
 	if (igt_ktest_begin(&tst) != 0) {
 		igt_warn("Unable to begin ktest for %s\n", module_name);
-
 		igt_ktest_fini(&tst);
 		igt_fail(IGT_EXIT_ABORT);
 	}
@@ -787,14 +785,6 @@ static void __igt_kunit(const char *module_name, const char *opts)
 
 	if (lseek(tst.kmsg, 0, SEEK_END)) {
 		igt_warn("Could not seek the end of /dev/kmsg\n");
-		fail = true;
-		goto unload;
-	}
-
-	f = fdopen(tst.kmsg, "r");
-
-	if (f == NULL) {
-		igt_warn("Could not turn /dev/kmsg file descriptor into a FILE pointer\n");
 		fail = true;
 		goto unload;
 	}
@@ -814,7 +804,7 @@ static void __igt_kunit(const char *module_name, const char *opts)
 
 	is_builtin = kmod_module_get_initstate(kunit_kmod) == KMOD_MODULE_BUILTIN;
 
-	results = ktap_parser_start(f, is_builtin);
+	results = ktap_parser_start(tst.kmsg, is_builtin);
 
 	ret = igt_kmod_load(module_name, opts);
 	if (ret) {

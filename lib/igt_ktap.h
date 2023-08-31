@@ -44,7 +44,7 @@ struct ktap_test_results {
 
 
 
-struct ktap_test_results *ktap_parser_start(FILE *fp, bool is_builtin);
+struct ktap_test_results *ktap_parser_start(int fd, bool is_builtin);
 int ktap_parser_stop(void);
 
 #endif /* IGT_KTAP_H */
