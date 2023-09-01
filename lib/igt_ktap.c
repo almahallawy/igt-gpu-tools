@@ -579,9 +579,7 @@ igt_ktap_parser_start:
 igt_ktap_parser_end:
 	results.still_running = false;
 
-	if (failed_tests || !found_tests)
-		ktap_args.ret = IGT_EXIT_FAILURE;
-	else
+	if (found_tests && !failed_tests)
 		ktap_args.ret = IGT_EXIT_SUCCESS;
 
 	return NULL;
@@ -598,6 +596,7 @@ struct ktap_test_results *ktap_parser_start(int fd, bool is_builtin)
 	ktap_args.fd = fd;
 	ktap_args.is_builtin = is_builtin;
 	ktap_args.is_running = true;
+	ktap_args.ret = IGT_EXIT_FAILURE;
 	pthread_create(&ktap_parser_thread, NULL, igt_ktap_parser, NULL);
 
 	return &results;
