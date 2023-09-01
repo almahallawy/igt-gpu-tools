@@ -587,6 +587,12 @@ struct ktap_test_results *ktap_parser_start(int fd, bool is_builtin)
 	return &results;
 }
 
+void ktap_parser_cancel(void)
+{
+	ktap_args.is_running = false;
+	pthread_cancel(ktap_parser_thread);
+}
+
 int ktap_parser_stop(void)
 {
 	ktap_args.is_running = false;

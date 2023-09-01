@@ -773,6 +773,7 @@ static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 	results = ktap_parser_start(tst->kmsg, is_builtin);
 
 	if (igt_debug_on(igt_kmod_load(tst->module_name, opts) < 0)) {
+		ktap_parser_cancel();
 		igt_ignore_warn(ktap_parser_stop());
 		igt_skip("Unable to load %s module\n", tst->module_name);
 	}
