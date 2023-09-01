@@ -382,11 +382,13 @@ foreach prog : test_progs
 	test_executables += testexe
 	test_list += prog
 	name = prog.split('/').get(-1)
-	testlist_files += custom_target(name + '.testlist',
-		     build_by_default : true,
-		     command : [testexe, '--show-testlist'],
-		     capture : true,
-		     output : name + '.testlist')
+	if not meson.is_cross_build()
+		testlist_files += custom_target(name + '.testlist',
+			    build_by_default : true,
+			    command : [testexe, '--show-testlist'],
+			    capture : true,
+			    output : name + '.testlist')
+	endif
 endforeach
 
 intel_progs = intel_i915_xe_progs
@@ -406,11 +408,13 @@ foreach prog : intel_progs
 	test_executables += testexe
 	test_list += prog
 	name = prog.split('/').get(-1)
-	testlist_files += custom_target(name + '.testlist',
-		     build_by_default : true,
-		     command : [testexe, '--show-testlist'],
-		     capture : true,
-		     output : name + '.testlist')
+	if not meson.is_cross_build()
+		testlist_files += custom_target(name + '.testlist',
+			    build_by_default : true,
+			    command : [testexe, '--show-testlist'],
+			    capture : true,
+			    output : name + '.testlist')
+	endif
 endforeach
 
 foreach prog : msm_progs
@@ -433,11 +437,13 @@ if chamelium.found()
 		test_list += prog
 		test_executables += testexe
 		name = prog.split('/').get(-1)
-		testlist_files += custom_target(name + '.testlist',
-			     build_by_default : true,
-			     command : [testexe, '--show-testlist'],
-			     capture : true,
-			     output : name + '.testlist')
+		if not meson.is_cross_build()
+			testlist_files += custom_target(name + '.testlist',
+				    build_by_default : true,
+				    command : [testexe, '--show-testlist'],
+				    capture : true,
+				    output : name + '.testlist')
+		endif
 	endforeach
 	test_deps += chamelium
 endif
@@ -451,11 +457,13 @@ subdir('vc4')
 subdir('vmwgfx')
 
 gen_testlist = find_program('generate_testlist.sh')
-test_list_target = custom_target('testlist',
-	      output : 'test-list.txt',
-	      command : [ gen_testlist, '@OUTPUT@', test_list ],
-	      install : true,
-	      install_dir : libexecdir)
+if not meson.is_cross_build()
+	test_list_target = custom_target('testlist',
+		    output : 'test-list.txt',
+		    command : [ gen_testlist, '@OUTPUT@', test_list ],
+		    install : true,
+		    install_dir : libexecdir)
+endif
 
 test_executables += executable('gem_concurrent_all', 'intel/gem_concurrent_all.c',
 	   dependencies : test_deps + [ libatomic ],
@@ -464,11 +472,13 @@ test_executables += executable('gem_concurrent_all', 'intel/gem_concurrent_all.c
 	   install : true)
 test_list += 'gem_concurrent_all'
 
-test_list_full_target = custom_target('testlist-full',
-	      output : 'test-list-full.txt',
-	      command : [ gen_testlist, '@OUTPUT@', test_list ],
-	      install : true,
-	      install_dir : libexecdir)
+if not meson.is_cross_build()
+	test_list_full_target = custom_target('testlist-full',
+		    output : 'test-list-full.txt',
+		    command : [ gen_testlist, '@OUTPUT@', test_list ],
+		    install : true,
+		    install_dir : libexecdir)
+endif
 
 test_script = find_program('igt_command_line.sh')
 foreach prog : test_list
@@ -480,11 +490,13 @@ testexe = executable('gem_stress', 'intel/gem_stress.c',
 	   install_dir : libexecdir,
 	   install_rpath : libexecdir_rpathdir,
 	   dependencies : igt_deps)
-testlist_files += custom_target('gem_stress.testlist',
-                build_by_default : true,
-                command : [testexe, '--show-testlist'],
-                capture : true,
-                output : 'gem_stress.testlist')
+if not meson.is_cross_build()
+	testlist_files += custom_target('gem_stress.testlist',
+			build_by_default : true,
+			command : [testexe, '--show-testlist'],
+			capture : true,
+			output : 'gem_stress.testlist')
+endif
 
 image_files = [
   '1080p-left.png',
