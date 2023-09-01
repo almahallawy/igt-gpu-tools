@@ -18,7 +18,6 @@
 struct ktap_parser_args {
 	int fd;
 	bool is_builtin;
-	volatile bool is_running;
 	int ret;
 } ktap_args;
 
@@ -61,11 +60,6 @@ static int log_to_end(enum igt_log_level level, int fd,
 		igt_log(IGT_LOG_DOMAIN, level, "%s", record);
 
 		while (read(fd, record, BUF_LEN) < 0) {
-			if (!READ_ONCE(ktap_args.is_running)) {
-				igt_warn("ktap parser stopped\n");
-				return -2;
-			}
-
 			if (errno == EPIPE) {
 				igt_warn("kmsg truncated: too many messages. You may want to increase log_buf_len in kmcdline\n");
 				return -2;
@@ -180,11 +174,6 @@ static int find_next_tap_subtest(int fd, char *record, char *test_name, bool is_
 
 	if (is_builtin) {
 		while (read(fd, record, BUF_LEN) < 0) {
-			if (!READ_ONCE(ktap_args.is_running)) {
-				igt_warn("ktap parser stopped\n");
-				return -2;
-			}
-
 			if (errno == EPIPE) {
 				igt_warn("kmsg truncated: too many messages. You may want to increase log_buf_len in kmcdline\n");
 				return -2;
@@ -221,11 +210,6 @@ static int find_next_tap_subtest(int fd, char *record, char *test_name, bool is_
 			cutoff[0] = '\0';
 
 		while (read(fd, record, BUF_LEN) < 0) {
-			if (!READ_ONCE(ktap_args.is_running)) {
-				igt_warn("ktap parser stopped\n");
-				return -2;
-			}
-
 			if (errno == EPIPE) {
 				igt_warn("kmsg truncated: too many messages. You may want to increase log_buf_len in kmcdline\n");
 				return -2;
@@ -373,11 +357,6 @@ static int parse_tap_level(int fd, char *base_test_name, int test_count, bool *f
 
 	for (int i = 0; i < test_count; i++) {
 		while (read(fd, record, BUF_LEN) < 0) {
-			if (!READ_ONCE(ktap_args.is_running)) {
-				igt_warn("ktap parser stopped\n");
-				return -1;
-			}
-
 			if (errno == EAGAIN)
 				/* No records available */
 				continue;
@@ -511,19 +490,11 @@ void *igt_ktap_parser(void *unused)
 	failed_tests = false;
 	found_tests = false;
 
-	if (!READ_ONCE(ktap_args.is_running))
-		goto igt_ktap_parser_end;
-
 igt_ktap_parser_start:
 	test_name[0] = '\0';
 	test_name[BUF_LEN] = '\0';
 
 	while (read(fd, record, BUF_LEN) < 0) {
-		if (!READ_ONCE(ktap_args.is_running)) {
-			igt_warn("ktap parser stopped\n");
-			goto igt_ktap_parser_end;
-		}
-
 		if (errno == EAGAIN)
 			/* No records available */
 			continue;
@@ -580,7 +551,6 @@ struct ktap_test_results *ktap_parser_start(int fd, bool is_builtin)
 
 	ktap_args.fd = fd;
 	ktap_args.is_builtin = is_builtin;
-	ktap_args.is_running = true;
 	ktap_args.ret = IGT_EXIT_FAILURE;
 	pthread_create(&ktap_parser_thread, NULL, igt_ktap_parser, NULL);
 
@@ -589,13 +559,11 @@ struct ktap_test_results *ktap_parser_start(int fd, bool is_builtin)
 
 void ktap_parser_cancel(void)
 {
-	ktap_args.is_running = false;
 	pthread_cancel(ktap_parser_thread);
 }
 
 int ktap_parser_stop(void)
 {
-	ktap_args.is_running = false;
 	pthread_join(ktap_parser_thread, NULL);
 	return ktap_args.ret;
 }
