@@ -28,16 +28,18 @@
 
 #include <pthread.h>
 
+#include "igt_list.h"
+
 void *igt_ktap_parser(void *unused);
 
 typedef struct ktap_test_results_element {
 	char test_name[BUF_LEN + 1];
 	bool passed;
-	struct ktap_test_results_element *next;
+	struct igt_list_head link;
 } ktap_test_results_element;
 
 struct ktap_test_results {
-	ktap_test_results_element *head;
+	struct igt_list_head list;
 	pthread_mutex_t mutex;
 	bool still_running;
 };

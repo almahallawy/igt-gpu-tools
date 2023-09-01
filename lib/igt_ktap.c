@@ -12,6 +12,7 @@
 #include "igt_aux.h"
 #include "igt_core.h"
 #include "igt_ktap.h"
+#include "igt_list.h"
 
 #define DELIMITER "-"
 
@@ -335,7 +336,7 @@ static int parse_tap_level(int fd, char *base_test_name, int test_count, bool *f
 			   bool *found_tests, bool is_builtin)
 {
 	char record[BUF_LEN + 1];
-	struct ktap_test_results_element *r, *temp;
+	struct ktap_test_results_element *r;
 	int internal_test_count;
 	char test_name[BUF_LEN + 1];
 	char base_test_name_for_next_level[BUF_LEN + 1];
@@ -403,17 +404,9 @@ static int parse_tap_level(int fd, char *base_test_name, int test_count, bool *f
 			r->test_name[BUF_LEN] = '\0';
 
 			r->passed = false;
-			r->next = NULL;
 
 			pthread_mutex_lock(&results.mutex);
-			if (results.head == NULL) {
-				results.head = r;
-			} else {
-				temp = results.head;
-				while (temp->next != NULL)
-					temp = temp->next;
-				temp->next = r;
-			}
+			igt_list_add_tail(&r->link, &results.list);
 			pthread_mutex_unlock(&results.mutex);
 
 			test_name[0] = '\0';
@@ -431,17 +424,9 @@ static int parse_tap_level(int fd, char *base_test_name, int test_count, bool *f
 			r->test_name[BUF_LEN] = '\0';
 
 			r->passed = true;
-			r->next = NULL;
 
 			pthread_mutex_lock(&results.mutex);
-			if (results.head == NULL) {
-				results.head = r;
-			} else {
-				temp = results.head;
-				while (temp->next != NULL)
-					temp = temp->next;
-				temp->next = r;
-			}
+			igt_list_add_tail(&r->link, &results.list);
 			pthread_mutex_unlock(&results.mutex);
 
 			test_name[0] = '\0';
@@ -523,7 +508,7 @@ static pthread_t ktap_parser_thread;
 
 struct ktap_test_results *ktap_parser_start(int fd, bool is_builtin)
 {
-	results.head = NULL;
+	IGT_INIT_LIST_HEAD(&results.list);
 	pthread_mutex_init(&results.mutex, NULL);
 	results.still_running = true;
 

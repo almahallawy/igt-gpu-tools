@@ -760,7 +760,6 @@ static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 	struct kmod_module *kunit_kmod;
 	bool is_builtin;
 	struct ktap_test_results *results;
-	struct ktap_test_results_element *temp;
 	unsigned long taints;
 	int flags, ret;
 
@@ -784,28 +783,33 @@ static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 		igt_skip("Unable to load %s module\n", tst->module_name);
 	}
 
-	while (READ_ONCE(results->still_running) || READ_ONCE(results->head) != NULL)
+	while (READ_ONCE(results->still_running) || !igt_list_empty(&results->list))
 	{
+		struct ktap_test_results_element *result;
+
 		if (igt_kernel_tainted(&taints)) {
 			ktap_parser_cancel();
 			break;
 		}
 
-		if (READ_ONCE(results->head) != NULL) {
-			pthread_mutex_lock(&results->mutex);
-
-			igt_dynamic(results->head->test_name) {
-				igt_assert(READ_ONCE(results->head->passed));
-
-				igt_fail_on(igt_kernel_tainted(&taints));
-			}
-
-			temp = results->head;
-			results->head = results->head->next;
-			free(temp);
-
+		pthread_mutex_lock(&results->mutex);
+		if (igt_list_empty(&results->list)) {
 			pthread_mutex_unlock(&results->mutex);
+			continue;
 		}
+
+		result = igt_list_first_entry(&results->list, result, link);
+
+		igt_list_del(&result->link);
+		pthread_mutex_unlock(&results->mutex);
+
+		igt_dynamic(result->test_name) {
+			igt_assert(READ_ONCE(result->passed));
+
+			igt_fail_on(igt_kernel_tainted(&taints));
+		}
+
+		free(result);
 	}
 
 	ret = ktap_parser_stop();
