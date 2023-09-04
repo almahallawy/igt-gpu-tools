@@ -2557,7 +2557,8 @@ static bool use_blitter(const struct igt_fb *fb)
 	return fb->modifier == I915_FORMAT_MOD_4_TILED ||
 	       fb->modifier == I915_FORMAT_MOD_Y_TILED ||
 	       fb->modifier == I915_FORMAT_MOD_Yf_TILED ||
-	       (is_i915_device(fb->fd) && !gem_has_mappable_ggtt(fb->fd));
+	       (is_i915_device(fb->fd) && !gem_has_mappable_ggtt(fb->fd)) ||
+	       is_xe_device(fb->fd);
 }
 
 static void init_buf_ccs(struct intel_buf *buf, int ccs_idx,
