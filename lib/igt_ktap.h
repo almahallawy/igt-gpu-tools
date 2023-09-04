@@ -1,5 +1,6 @@
 /*
  * Copyright © 2022 Isabella Basso do Amaral <isabbasso@riseup.net>
+ * Copyright © 2023 Intel Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -29,6 +30,20 @@
 #include <pthread.h>
 
 #include "igt_list.h"
+
+struct igt_ktap_result {
+	struct igt_list_head link;
+	char *suite_name;
+	char *case_name;
+	char *msg;
+	int code;
+};
+
+struct igt_ktap_results;
+
+struct igt_ktap_results *igt_ktap_alloc(struct igt_list_head *results);
+int igt_ktap_parse(const char *buf, struct igt_ktap_results *ktap);
+void igt_ktap_free(struct igt_ktap_results *ktap);
 
 void *igt_ktap_parser(void *unused);
 
