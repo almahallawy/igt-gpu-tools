@@ -127,29 +127,6 @@ static uint32_t __i915_get_drm_devid(int fd)
 	return devid;
 }
 
-static uint32_t __xe_get_drm_devid(int fd)
-{
-	struct drm_xe_query_config *config;
-	struct drm_xe_device_query query = {
-		.extensions = 0,
-		.query = DRM_XE_DEVICE_QUERY_CONFIG,
-		.size = 0,
-		.data = 0,
-	};
-
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
-
-	config = malloc(query.size);
-	igt_assert(config);
-
-	query.data = to_user_pointer(config);
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
-
-	igt_assert(config->num_params > 0);
-
-	return config->info[XE_QUERY_CONFIG_REV_AND_DEVICE_ID] & 0xffff;
-}
-
 /**
  * intel_get_drm_devid:
  * @fd: open i915/xe drm file descriptor
@@ -174,7 +151,7 @@ intel_get_drm_devid(int fd)
 	if (is_i915_device(fd))
 		return __i915_get_drm_devid(fd);
 	else
-		return __xe_get_drm_devid(fd);
+		return xe_dev_id(fd);
 }
 
 /**
