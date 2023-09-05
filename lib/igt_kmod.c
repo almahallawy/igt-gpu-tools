@@ -761,6 +761,7 @@ static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 	bool is_builtin;
 	struct ktap_test_results *results;
 	struct ktap_test_results_element *temp;
+	unsigned long taints;
 	int flags, ret;
 
 	igt_skip_on_f(tst->kmsg < 0, "Could not open /dev/kmsg\n");
@@ -785,11 +786,19 @@ static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 
 	while (READ_ONCE(results->still_running) || READ_ONCE(results->head) != NULL)
 	{
+		if (igt_kernel_tainted(&taints)) {
+			ktap_parser_cancel();
+			break;
+		}
+
 		if (READ_ONCE(results->head) != NULL) {
 			pthread_mutex_lock(&results->mutex);
 
-			igt_dynamic(results->head->test_name)
+			igt_dynamic(results->head->test_name) {
 				igt_assert(READ_ONCE(results->head->passed));
+
+				igt_fail_on(igt_kernel_tainted(&taints));
+			}
 
 			temp = results->head;
 			results->head = results->head->next;
@@ -801,6 +810,7 @@ static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 
 	ret = ktap_parser_stop();
 
+	igt_skip_on(igt_kernel_tainted(&taints));
 	igt_skip_on_f(ret, "KTAP parser failed\n");
 }
 
