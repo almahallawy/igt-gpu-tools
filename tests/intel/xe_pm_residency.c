@@ -96,7 +96,7 @@ static void test_idle_residency(int fd, int gt, enum test_type flag)
 {
 	unsigned long elapsed_ms, residency_start, residency_end;
 
-	igt_assert_f(igt_wait(xe_is_gt_in_c6(fd, gt), 1000, 1), "GT not in C6\n");
+	igt_assert_f(igt_wait(xe_is_gt_in_c6(fd, gt), 1000, 1), "GT %d not in C6\n", gt);
 
 	if (flag == TEST_S2IDLE) {
 		/*
@@ -152,7 +152,7 @@ static void toggle_gt_c6(int fd, int n)
 		/* check if all gts are in C0 after forcewake is acquired */
 		xe_for_each_gt(fd, gt)
 			igt_assert_f(!xe_is_gt_in_c6(fd, gt),
-				     "Forcewake acquired, GT should be in C0\n");
+				     "Forcewake acquired, GT %d should be in C0\n", gt);
 
 		if (n == NUM_REPS)
 			measure_power(&gpu, &gt_c0_power);
@@ -161,7 +161,7 @@ static void toggle_gt_c6(int fd, int n)
 		/* check if all gts are in C6 after forcewake is released */
 		xe_for_each_gt(fd, gt)
 			igt_assert_f(igt_wait(xe_is_gt_in_c6(fd, gt), 1000, 1),
-				     "Forcewake released, GT should be in C6\n");
+				     "Forcewake released, GT %d should be in C6\n", gt);
 
 		if (n == NUM_REPS)
 			measure_power(&gpu, &gt_c6_power);
@@ -190,7 +190,7 @@ igt_main
 	igt_describe("Validate GT C6 on idle");
 	igt_subtest("gt-c6-on-idle")
 		xe_for_each_gt(fd, gt)
-			igt_assert_f(igt_wait(xe_is_gt_in_c6(fd, gt), 1000, 1), "GT not in C6\n");
+			igt_assert_f(igt_wait(xe_is_gt_in_c6(fd, gt), 1000, 1), "GT %d not in C6\n", gt);
 
 	igt_describe("Validate idle residency measured over suspend cycle is within the tolerance");
 	igt_subtest("gt-c6-freeze") {
