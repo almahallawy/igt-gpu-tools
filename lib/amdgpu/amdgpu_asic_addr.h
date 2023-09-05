@@ -28,6 +28,8 @@
 #define FAMILY_GFX1100 0x91
 #define FAMILY_YC      0x92
 #define FAMILY_GFX1103 0x94
+#define FAMILY_GFX1036 0x95
+#define FAMILY_GFX1037 0x97
 
 // AMDGPU_FAMILY_IS(familyId, familyName)
 #define FAMILY_IS(f, fn)     (f == FAMILY_##fn)
@@ -42,6 +44,8 @@
 #define FAMILY_IS_RV(f)      FAMILY_IS(f, RV)
 #define FAMILY_IS_NV(f)      FAMILY_IS(f, NV)
 #define FAMILY_IS_YC(f)      FAMILY_IS(f, YC)
+#define FAMILY_IS_GFX1036(f) FAMILY_IS(f, GFX1036)
+#define FAMILY_IS_GFX1037(f) FAMILY_IS(f, GFX1037)
 #define FAMILY_IS_GFX1100(f) FAMILY_IS(f, GFX1100)
 
 #define AMDGPU_UNKNOWN          0xFF
@@ -91,6 +95,8 @@
 #define AMDGPU_BEIGE_GOBY_RANGE          0x46, 0x50
 #define AMDGPU_VANGOGH_RANGE      0x01, 0xFF
 #define AMDGPU_YELLOW_CARP_RANGE  0x01, 0xFF
+#define AMDGPU_GFX1036_RANGE  0x01, 0xFF
+#define AMDGPU_GFX1037_RANGE  0x01, 0xFF
 
 
 #define AMDGPU_GFX1100_RANGE     0x01, 0x10 //# 01 <= x < 16
@@ -153,6 +159,8 @@
 
 #define ASICREV_IS_VANGOGH(r)          ASICREV_IS(r, VANGOGH)
 #define ASICREV_IS_YELLOW_CARP(r)      ASICREV_IS(r, YELLOW_CARP)
+#define ASICREV_IS_GFX1036(r)          ASICREV_IS(r, GFX1036)
+#define ASICREV_IS_GFX1037(r)          ASICREV_IS(r, GFX1037)
 
 #define ASICREV_IS_GFX1100(r)          ASICREV_IS(r, GFX1100)
 #define ASICREV_IS_GFX1101(r)          ASICREV_IS(r, GFX1101)

@@ -620,6 +620,12 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 	case FAMILY_YC:
 		identify_chip(YELLOW_CARP);
 		break;
+	case FAMILY_GFX1036:
+		identify_chip(GFX1036);
+		break;
+	case FAMILY_GFX1037:
+		identify_chip(GFX1037);
+		break;
 	case FAMILY_GFX1100:
 		identify_chip(GFX1100);
 		identify_chip(GFX1101);
