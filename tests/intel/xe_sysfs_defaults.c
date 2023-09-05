@@ -7,7 +7,6 @@
  * TEST: xe sysfs defaults
  * Category: Infrastructure
  * Functionality: sysman defaults
- * Run type: FULL
  * Sub-category: sysman
  * Test category: functionality test
  * SUBTEST: engine-defaults

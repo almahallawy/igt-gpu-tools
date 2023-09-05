@@ -100,27 +100,21 @@ static const char * const unwanted_drivers[] = {
 /**
  * SUBTEST: force-load
  * Description: Load the Xe driver passing ``force_probe=*`` parameter
- * Run type: BAT, boot
  *
  * SUBTEST: load
  * Description: Load the Xe driver
- * Run type: FULL
  *
  * SUBTEST: unload
  * Description: Unload the Xe driver
- * Run type: FULL
  *
  * SUBTEST: reload
  * Description: Reload the Xe driver
- * Run type: FULL
  *
  * SUBTEST: reload-no-display
  * Description: Reload the Xe driver passing ``enable_display=0`` parameter
- * Run type: FULL
  *
  * SUBTEST: many-reload
  * Description: Reload the Xe driver many times
- * Run type: FULL
  */
 igt_main
 {

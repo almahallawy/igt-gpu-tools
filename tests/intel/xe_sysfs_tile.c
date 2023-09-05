@@ -9,7 +9,6 @@
  * SUBTEST: physical_vram_size_bytes
  * Functionality: Vram
  * Sub-category: Total vram per tile
- * Run type: FULL
  * Test category: functionality test
  * Description:
  *             Read sysfs entry for physical_vram_size_bytes and compare with

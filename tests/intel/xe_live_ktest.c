@@ -8,7 +8,6 @@
  * Sub-category: kunit
  * Functionality: kunit
  * Test category: functionality test
- * Run type: BAT, kunit
  *
  * SUBTEST: bo
  * Functionality: bo

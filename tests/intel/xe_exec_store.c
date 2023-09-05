@@ -51,7 +51,6 @@ static void store_dword_batch(struct data *data, uint64_t addr, int value)
 /**
  * SUBTEST: basic-store
  * Description: Basic test to verify store dword.
- * Run type: BAT
  */
 static void store(int fd)
 {
@@ -109,7 +108,6 @@ static void store(int fd)
 /**
  * SUBTEST: basic-all
  * Description: Test to verify store dword on all available engines.
- * Run type: BAT
  */
 static void store_all(int fd, int gt, int class)
 {

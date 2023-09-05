@@ -27,7 +27,6 @@
  *	This test creates compute vms, binds a couple of bos and an exec_queue each,
  *	thus redying it for execution.
  *
- * Run type: FULL
  */
  /*
   * More dailed test description:

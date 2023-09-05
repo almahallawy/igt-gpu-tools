@@ -8,7 +8,6 @@
  * Category: Software building block
  * Sub-category: mmio
  * Functionality: mmap
- * Run type: BAT
  */
 
 #include "igt.h"

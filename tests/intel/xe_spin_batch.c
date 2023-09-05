@@ -17,7 +17,6 @@
 /**
  * SUBTEST: spin-basic
  * Description: Basic test to submit spin batch submissons on copy engine.
- * Run type: FULL
  */
 
 static void spin_basic(int fd)
@@ -35,7 +34,6 @@ static void spin_basic(int fd)
 /**
  * SUBTEST: spin-batch
  * Description: Create vm and engine of hwe class and run the spinner on it.
- * Run type: FULL
  */
 
 static void spin(int fd, struct drm_xe_engine_class_instance *hwe)
@@ -61,7 +59,6 @@ static void spin(int fd, struct drm_xe_engine_class_instance *hwe)
 /**
  * SUBTEST: spin-basic-all
  * Description: Basic test which validates the functionality of spinner on all hwe.
- * Run type: FULL
  */
 static void spin_basic_all(int fd)
 {
@@ -92,7 +89,6 @@ static void spin_basic_all(int fd)
 /**
  * SUBTEST: spin-all
  * Description: Spinner test to run on all the engines!
- * Run type: FULL
  */
 
 static void spin_all(int fd, int gt, int class)

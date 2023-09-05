@@ -468,7 +468,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * SUBTEST: evict-%s
  * Description:  %arg[1] evict test.
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -483,7 +482,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * SUBTEST: evict-%s
  * Description:  %arg[1] evict test.
  * Test category: stress test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -499,7 +497,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * Description:  %arg[1] evict test.
  * Feature: compute machine
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -515,7 +512,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * Description:  %arg[1] evict test.
  * Feature: compute machine
  * Test category: stress test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -532,7 +528,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * Description:  %arg[1] evict test.
  * Feature: mixted threads
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -552,7 +547,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * Description:  %arg[1] evict test.
  * Feature: mixted threads
  * Test category: stress test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -572,7 +566,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * Description:  %arg[1] evict test.
  * Feature: compute mode threads
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  * @cm-threads-small:		compute mode threads small
@@ -587,7 +580,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * Description:  %arg[1] evict test.
  * Feature: compute mode threads
  * Test category: stress test
- * Run type: FULL
  *
  * arg[1]:
  * @cm-threads-large:		compute mode threads large
@@ -602,7 +594,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * Description:  %arg[1] evict test.
  * Feature: threads
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -619,7 +610,6 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * Description:  %arg[1] evict test.
  * Feature: threads
  * Test category: stress test
- * Run type: FULL
  *
  * arg[1]:
  *

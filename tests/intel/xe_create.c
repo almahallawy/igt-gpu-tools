@@ -7,7 +7,6 @@
  * TEST: Check bo create ioctl
  * Category: Software building block
  * Sub-category: uapi
- * Run type: BAT
  */
 
 #include <string.h>
@@ -127,7 +126,6 @@ static uint32_t __xe_exec_queue_create(int fd, uint32_t vm,
  * Functionality: exequeues creation time
  * Description: Check process ability of multiple exec_queues creation
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *

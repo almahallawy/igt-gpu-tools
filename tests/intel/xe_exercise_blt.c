@@ -18,7 +18,6 @@
  * Sub-category: Blitter
  * Functionality: flat_ccs
  * Description: Exercise blitter commands on Xe
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fast-copy

@@ -34,7 +34,6 @@
  *              a very simple workload for the Media pipeline.
  * Feature: media
  * Test category: functionality test
- * Run type: FULL
  *
  * SUBTEST: media-fill
  */

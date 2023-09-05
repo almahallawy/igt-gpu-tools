@@ -8,7 +8,6 @@
  * Category: Software building block
  * Sub-category: sysman
  * Functionality: scheduler control interface
- * Run type: FULL
  *
  * SUBTEST: %s-invalid
  * Description: Test to check if %s arg[1] schedule parameter rejects any unrepresentable intervals.

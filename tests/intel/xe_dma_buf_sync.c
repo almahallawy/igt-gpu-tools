@@ -72,22 +72,18 @@ static bool sync_file_busy(int sync_file)
  * SUBTEST: export-dma-buf-once
  * Description: Test exporting a sync file from a dma-buf
  * Functionality: export
- * Run type: BAT
  *
  * SUBTEST: export-dma-buf-once-read-sync
  * Description: Test export prime BO as sync file and verify business
  * Functionality: export
- * Run type: BAT
  *
  * SUBTEST: export-dma-buf-many
  * Description: Test exporting many sync files from a dma-buf
  * Functionality: export
- * Run type: FULL
  *
  * SUBTEST: export-dma-buf-many-read-sync
  * Description: Test export many prime BO as sync file and verify business
  * Functionality: export
- * Run type: FULL
  */
 
 static void

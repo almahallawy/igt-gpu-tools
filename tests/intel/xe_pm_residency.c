@@ -43,22 +43,18 @@ enum test_type {
 /**
  * SUBTEST: gt-c6-on-idle
  * Description: Validate GT C6 state on idle
- * Run type: BAT
  *
  * SUBTEST: idle-residency
  * Description: basic residency test to validate idle residency
  *		measured over a time interval is within the tolerance
- * Run type: FULL
  *
  * SUBTEST: gt-c6-freeze
  * Description: Validate idle residency measured over suspend(s2idle)
  *              is greater than suspend time or within tolerance
- * Run type: FULL
  *
  * SUBTEST: toggle-gt-c6
  * Description: toggles GT C states by acquiring/releasing forcewake,
  *		also validates power consumed by GPU in GT C6 is lesser than that of GT C0.
- * Run type: FULL
  */
 IGT_TEST_DESCRIPTION("Tests for gtidle properties");
 

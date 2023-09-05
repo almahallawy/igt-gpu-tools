@@ -93,7 +93,6 @@ check_bo(int fd1, uint32_t handle1, int fd2, uint32_t handle2)
 /**
  * SUBTEST: basic-with_fd_dup
  * Description: basic prime import/export with fd_dup
- * Run type: BAT
  */
 
 static void test_with_fd_dup(void)
@@ -127,7 +126,6 @@ static void test_with_fd_dup(void)
 /**
  * SUBTEST: basic-with_two_bos
  * Description: basic prime import/export with two BOs
- * Run type: FULL
  */
 
 static void test_with_two_bos(void)
@@ -166,7 +164,6 @@ static void test_with_two_bos(void)
 /**
  * SUBTEST: basic-with_one_bo_two_files
  * Description: basic prime import/export with one BO and two files
- * Run type: FULL
  */
 
 static void test_with_one_bo_two_files(void)
@@ -200,7 +197,6 @@ static void test_with_one_bo_two_files(void)
 /**
  * SUBTEST: basic-with_one_bo
  * Description: basic prime import/export with one BO
- * Run type: BAT
  */
 
 static void test_with_one_bo(void)
@@ -272,7 +268,6 @@ static void *thread_fn_reimport_vs_close(void *p)
 /**
  * SUBTEST: reimport-vs-gem_close-race
  * Description: Reimport versus gem_close race
- * Run type: FULL
  */
 
  static void test_reimport_close_race(void)
@@ -370,7 +365,6 @@ static void *thread_fn_export_vs_close(void *p)
 /**
  * SUBTEST: export-vs-gem_close-race
  * Description: Export versus gem_close race test
- * Run type: FULL
  */
 
 static void test_export_close_race(void)
@@ -425,7 +419,6 @@ static void test_export_close_race(void)
 /**
  * SUBTEST: basic-llseek-size
  * Description: basic BO llseek size test
- * Run type: FULL
  */
 
 static void test_llseek_size(void)
@@ -458,7 +451,6 @@ static void test_llseek_size(void)
 /**
  * SUBTEST: basic-llseek-bad
  * Description: basid bad BO llseek size test
- * Run type: FULL
  */
 
 static void test_llseek_bad(void)

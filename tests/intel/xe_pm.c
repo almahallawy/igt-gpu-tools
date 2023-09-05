@@ -8,7 +8,6 @@
  * Category: Software building block
  * Sub-category: power management
  * Test category: functionality test
- * Run type: FULL
  */
 
 #include <limits.h>
@@ -370,7 +369,6 @@ NULL));
  * Description:
  *	Validate whether card is limited to d3hot while vram used
  *	is greater than vram_d3cold_threshold.
- * Run type: FULL
  */
 static void test_vram_d3cold_threshold(device_t device, int sysfs_fd)
 {

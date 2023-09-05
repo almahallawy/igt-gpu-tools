@@ -23,7 +23,6 @@
  * Functionality: flat_ccs
  * Description: Exercise gen12 blitter with and without flatccs compression on Xe
  * Test category: functionality test
- * Run type: FULL
  *
  * SUBTEST: block-copy-compressed
  * Description: Check block-copy flatccs compressed blit

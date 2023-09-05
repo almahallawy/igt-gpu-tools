@@ -84,7 +84,6 @@ write_dwords(int fd, uint32_t vm, int n_dwords, uint64_t *addrs)
  * Description: Test scratch page creation and write
  * Functionality: scratch page
  * Test category: functionality test
- * Run type: FULL
  */
 
 static void
@@ -207,7 +206,6 @@ uint64_t addrs_57b[] = {
  * Description: bind once on one BO
  * Functionality: bind BO
  * Test category: functionality test
- * Run type: FULL
  */
 
 static void
@@ -225,7 +223,6 @@ test_bind_once(int fd)
  * Description: bind many times on one BO
  * Functionality: bind BO
  * Test category: functionality test
- * Run type: FULL
  */
 
 static void
@@ -246,7 +243,6 @@ test_bind_one_bo_many_times(int fd)
  * Description: Test bind many times and many VM on one BO
  * Functionality: bind BO
  * Test category: functionality test
- * Run type: FULL
  */
 
 static void
@@ -265,7 +261,6 @@ test_bind_one_bo_many_times_many_vm(int fd)
  * Description: Test unbind all with %arg[1] VMAs
  * Functionality: unbind
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1].values: 2, 8
  */
@@ -306,7 +301,6 @@ static void unbind_all(int fd, int n_vmas)
  *	and that it is correctly handled.
  * Functionality: userptr
  * Test category: negative test
- * Run type: FULL
  */
 static void userptr_invalid(int fd)
 {
@@ -343,13 +337,11 @@ struct vm_thread_data {
  * Description: Test VM async ops error
  * Functionality: VM
  * Test category: negative test
- * Run type: FULL
  *
  * SUBTEST: vm-async-ops-err-destroy
  * Description: Test VM async ops error destroy
  * Functionality: VM
  * Test category: negative test
- * Run type: FULL
  */
 
 static void *vm_async_ops_err_thread(void *data)
@@ -510,7 +502,6 @@ static void vm_async_ops_err(int fd, bool destroy)
  * SUBTEST: shared-%s-page
  * Description: Test shared arg[1] page
  * Test category: functionality test
- * Run type: BAT
  *
  * Functionality: %arg[1] page
  * arg[1].values: pte, pde, pde2, pde3
@@ -699,13 +690,11 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
  * Description: Test independent bind exec_queues
  * Functionality: bind exec_queues
  * Test category: functionality test
- * Run type: BAT
  *
  * SUBTEST: bind-execqueues-conflict
  * Description: Test conflict bind exec_queues
  * Functionality: bind exec_queues
  * Test category: functionality test
- * Run type: BAT
  */
 
 #define CONFLICT	(0x1 << 0)
@@ -875,25 +864,21 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
  * Description: Test bind array twice
  * Functionality: bind exec_queues
  * Test category: functionality test
- * Run type: FULL
  *
  * SUBTEST: bind-array-many
  * Description: Test bind array many times
  * Functionality: bind exec_queues
  * Test category: functionality test
- * Run type: FULL
  *
  * SUBTEST: bind-array-exec_queue-twice
  * Description: Test bind array exec_queue twice
  * Functionality: bind exec_queues
  * Test category: functionality test
- * Run type: FULL
  *
  * SUBTEST: bind-array-exec_queue-many
  * Description: Test bind array exec_queue many times
  * Functionality: bind exec_queues
  * Test category: functionality test
- * Run type: FULL
  */
 static void
 test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
@@ -1020,7 +1005,6 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
  * Description: Test %arg[1] with %arg[2] bind size
  * Functionality: bind
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -1039,7 +1023,6 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
  * Description: Test %arg[1] with %arg[2] bind size
  * Functionality: userptr bind
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -1059,7 +1042,6 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
  * Description: Test %arg[1] with %arg[2] bind size
  * Functionality: mixed bind
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -1075,7 +1057,6 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
  * Description: Test %arg[1] with %arg[2] bind size
  * Functionality: mixed bind
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -1328,7 +1309,6 @@ static void *hammer_thread(void *tdata)
  * @userptr-front:			userptr front
  * @userptr-inval-end:			userptr inval end
  * @userptr-inval-front:		userptr inval front
- * Run type: BAT
  */
 
 /**
@@ -1336,7 +1316,6 @@ static void *hammer_thread(void *tdata)
  * Description: Test munmap style unbind with %arg[1]
  * Functionality: unbind
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -1650,7 +1629,6 @@ try_again_after_invalidate:
  * Description: Test mmap style unbind with %arg[1]
  * Functionality: bind
  * Test category: functionality test
- * Run type: FULL
  *
  * arg[1]:
  *

@@ -19,7 +19,6 @@
  * Sub-category: waitfence
  * Functionality: waitfence
  * Test category: functionality test
- * Run type: BAT
  * Description: Test waitfences functionality
  */
 

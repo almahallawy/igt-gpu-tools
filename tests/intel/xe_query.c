@@ -8,7 +8,6 @@
  * Category: Software building block
  * Sub-category: uapi
  * Functionality: ioctl
- * Run type: BAT
  * Description: Acquire configuration data for xe device
  */
 

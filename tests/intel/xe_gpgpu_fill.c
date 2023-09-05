@@ -80,7 +80,6 @@ static void buf_check(uint8_t *ptr, int x, int y, uint8_t color)
 /**
  * SUBTEST: basic
  * Description: run gpgpu fill
- * Run type: FULL
  */
 
 static void gpgpu_fill(data_t *data, igt_fillfunc_t fill, uint32_t region)

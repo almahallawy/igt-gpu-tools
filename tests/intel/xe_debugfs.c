@@ -9,7 +9,6 @@
  * Sub-category: uapi
  * Functionality: debugfs
  * Test category: functionality test
- * Run type: BAT
  * Description: Validate debugfs entries
  */
 

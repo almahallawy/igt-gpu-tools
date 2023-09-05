@@ -24,7 +24,6 @@
 /**
  * SUBTEST: spin
  * Description: test spin
- * Run type: FULL
  */
 static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
 {
@@ -105,35 +104,27 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
 /**
  * SUBTEST: %s-cancel
  * Description: Test %arg[1] cancel
- * Run type: FULL
  *
  * SUBTEST: %s-execqueue-reset
  * Description: Test %arg[1] exec_queue reset
- * Run type: FULL
  *
  * SUBTEST: %s-cat-error
  * Description: Test %arg[1] cat error
- * Run type: FULL
  *
  * SUBTEST: %s-gt-reset
  * Description: Test %arg[1] GT reset
- * Run type: FULL
  *
  * SUBTEST: virtual-close-fd-no-exec
  * Description: Test virtual close fd no-exec
- * Run type: BAT
  *
  * SUBTEST: parallel-close-fd-no-exec
  * Description: Test parallel close fd no-exec
- * Run type: FULL
  *
  * SUBTEST: %s-close-fd
  * Description: Test %arg[1] close fd
- * Run type: FULL
  *
  * SUBTEST: %s-close-execqueues-close-fd
  * Description: Test %arg[1] close exec_queues close fd
- * Run type: FULL
  *
  * arg[1]:
  *
@@ -316,31 +307,24 @@ test_balancer(int fd, int gt, int class, int n_exec_queues, int n_execs,
 /**
  * SUBTEST: cancel
  * Description: Test cancel
- * Run type: FULL
  *
  * SUBTEST: execqueue-reset
  * Description: Test exec_queue reset
- * Run type: FULL
  *
  * SUBTEST: cat-error
  * Description: Test cat error
- * Run type: FULL
  *
  * SUBTEST: gt-reset
  * Description: Test GT reset
- * Run type: FULL
  *
  * SUBTEST: close-fd-no-exec
  * Description: Test close fd no-exec
- * Run type: BAT
  *
  * SUBTEST: close-fd
  * Description: Test close fd
- * Run type: FULL
  *
  * SUBTEST: close-execqueues-close-fd
  * Description: Test close exec_queues close fd
- * Run type: FULL
  */
 
 static void
@@ -489,27 +473,21 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 /**
  * SUBTEST: cm-execqueue-reset
  * Description: Test compute mode exec_queue reset
- * Run type: FULL
  *
  * SUBTEST: cm-cat-error
  * Description: Test compute mode cat-error
- * Run type: FULL
  *
  * SUBTEST: cm-gt-reset
  * Description: Test compute mode GT reset
- * Run type: FULL
  *
  * SUBTEST: cm-close-fd-no-exec
  * Description: Test compute mode close fd no-exec
- * Run type: BAT
  *
  * SUBTEST: cm-close-fd
  * Description: Test compute mode close fd
- * Run type: FULL
  *
  * SUBTEST: cm-close-execqueues-close-fd
  * Description: Test compute mode close exec_queues close fd
- * Run type: FULL
  */
 
 static void
@@ -744,7 +722,6 @@ static void *gt_reset_thread(void *data)
  * SUBTEST: gt-reset-stress
  * Description: Stress GT reset
  * Test category: stress test
- * Run type: stress
  *
  */
 static void

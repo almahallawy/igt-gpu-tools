@@ -174,7 +174,6 @@ static uint32_t get_freq(int fd, int gt_id, const char *freq_name)
 /**
  * SUBTEST: freq_basic_api
  * Description: Test basic get and set frequency API
- * Run type: BAT
  */
 
 static void test_freq_basic_api(int fd, int gt_id)
@@ -213,11 +212,9 @@ static void test_freq_basic_api(int fd, int gt_id)
 /**
  * SUBTEST: freq_fixed_idle
  * Description: Test fixed frequency request with exec_queue in idle state
- * Run type: BAT
  *
  * SUBTEST: freq_fixed_exec
  * Description: Test fixed frequency request when exec_queue is doing some work
- * Run type: FULL
  */
 
 static void test_freq_fixed(int fd, int gt_id, bool gt_idle)
@@ -279,11 +276,9 @@ static void test_freq_fixed(int fd, int gt_id, bool gt_idle)
 /**
  * SUBTEST: freq_range_idle
  * Description: Test range frequency request with exec_queue in idle state
- * Run type: BAT
  *
  * SUBTEST: freq_range_exec
  * Description: Test range frequency request when exec_queue is doing some work
- * Run type: FULL
  */
 
 static void test_freq_range(int fd, int gt_id, bool gt_idle)
@@ -314,7 +309,6 @@ static void test_freq_range(int fd, int gt_id, bool gt_idle)
 /**
  * SUBTEST: freq_low_max
  * Description: Test frequency request to minimal and maximum values
- * Run type: FULL
  */
 
 static void test_freq_low_max(int fd, int gt_id)
@@ -336,7 +330,6 @@ static void test_freq_low_max(int fd, int gt_id)
 /**
  * SUBTEST: freq_suspend
  * Description: Check frequency after returning from suspend
- * Run type: FULL
  */
 
 static void test_suspend(int fd, int gt_id)
@@ -358,11 +351,9 @@ static void test_suspend(int fd, int gt_id)
 /**
  * SUBTEST: freq_reset
  * Description: test frequency reset only once
- * Run type: FULL
  *
  * SUBTEST: freq_reset_multiple
  * Description: test frequency reset multiple times
- * Run type: FULL
  */
 
 static void test_reset(int fd, int gt_id, int cycles)

@@ -9,7 +9,6 @@
  * SUBTEST:fake_reset_uevent_listener
  * Functionality: uevent
  * Sub-category: GT reset failure uevent
- * Run type: FULL
  * Test category: functionality test
  * Description:
  *		Test creates uevent listener and causes fake reset failure for gt0

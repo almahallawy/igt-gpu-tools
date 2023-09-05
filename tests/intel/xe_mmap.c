@@ -8,7 +8,6 @@
  * Category: Software building block
  * Sub-category: VMA
  * Functionality: mmap
- * Run type: BAT
  */
 
 #include "igt.h"

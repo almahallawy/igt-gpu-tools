@@ -790,7 +790,6 @@ static void *vm_async_ops_err_thread(void *data)
 /**
  * SUBTEST: threads-%s
  * Description: Run threads %arg[1] test with multi threads
- * Run type: BAT
  *
  * arg[1]:
  *
@@ -810,7 +809,6 @@ static void *vm_async_ops_err_thread(void *data)
 /**
  * SUBTEST: threads-%s
  * Description: Run threads %arg[1] test with multi threads
- * Run type: FULL
  * arg[1]:
  * @basic:
  *	basic

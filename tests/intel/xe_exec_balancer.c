@@ -31,7 +31,6 @@
  * 	Run a test to check if virtual exec_queues can be running on all instances
  *	of a class simultaneously
  * Test category: functionality test
- * Run type: FULL
  */
 static void test_all_active(int fd, int gt, int class)
 {
@@ -139,27 +138,22 @@ static void test_all_active(int fd, int gt, int class)
  * SUBTEST: once-%s
  * Description: Run %arg[1] test only once
  * Test category: functionality test
- * Run type: FULL
  *
  * SUBTEST: many-%s
  * Description: Run %arg[1] test many times
  * Test category: stress test
- * Run type: FULL
  *
  * SUBTEST: many-execqueues-%s
  * Description: Run %arg[1] test on many exec_queues
  * Test category: stress test
- * Run type: FULL
  *
  * SUBTEST: twice-%s
  * Description: Run %arg[1] test twice
  * Test category: functionality test
- * Run type: BAT
  *
  * SUBTEST: no-exec-%s
  * Description: Run no-exec %arg[1] test
  * Test category: functionality test
- * Run type: BAT
  *
  * arg[1]:
  *
@@ -364,28 +358,23 @@ test_exec(int fd, int gt, int class, int n_exec_queues, int n_execs,
  * Description: Run compute mode virtual exec_queue arg[1] test only once
  * Test category: functionality test
  *
- * Run type: FULL
  *
  * SUBTEST: twice-cm-%s
  * Description: Run compute mode virtual exec_queue arg[1] test twice
  * Test category: functionality test
- * Run type: BAT
  *
  * SUBTEST: many-cm-%s
  * Description: Run compute mode virtual exec_queue arg[1] test many times
  * Test category: stress test
- * Run type: FULL
  *
  * SUBTEST: many-execqueues-cm-%s
  * Description: Run compute mode virtual exec_queue arg[1] test on many exec_queues
  * Test category: stress test
- * Run type: FULL
  *
  *
  * SUBTEST: no-exec-cm-%s
  * Description: Run compute mode virtual exec_queue arg[1] no-exec test
  * Test category: functionality test
- * Run type: BAT
  *
  * arg[1]:
  *

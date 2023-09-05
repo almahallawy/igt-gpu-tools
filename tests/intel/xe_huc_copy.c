@@ -98,7 +98,6 @@ gen12_create_batch_huc_copy(uint32_t *batch,
 
 /**
  * SUBTEST: huc_copy
- * Run type: BAT
  * Description:
  *	Loads the HuC copy firmware to copy the content of
  *	the source buffer to the destination buffer. *
