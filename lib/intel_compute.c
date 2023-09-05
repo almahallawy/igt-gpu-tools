@@ -9,11 +9,10 @@
 #include <stdint.h>
 
 #include "igt.h"
-#include "xe_drm.h"
+#include "intel_compute.h"
 #include "lib/igt_syncobj.h"
 #include "lib/intel_reg.h"
-
-#include "xe_compute.h"
+#include "xe_drm.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 
@@ -453,24 +452,24 @@ static const struct {
 	unsigned int ip_ver;
 	void (*compute_exec)(int fd, const unsigned char *kernel,
 			     unsigned int size);
-} xe_compute_batches[] = {
+} intel_compute_batches[] = {
 	{
 		.ip_ver = IP_VER(12, 0),
 		.compute_exec = tgl_compute_exec,
 	},
 };
 
-bool run_xe_compute_kernel(int fd)
+bool run_intel_compute_kernel(int fd)
 {
 	unsigned int ip_ver = intel_graphics_ver(intel_get_drm_devid(fd));
 	unsigned int batch;
-	const struct xe_compute_kernels *kernels = xe_compute_square_kernels;
+	const struct intel_compute_kernels *kernels = intel_compute_square_kernels;
 
-	for (batch = 0; batch < ARRAY_SIZE(xe_compute_batches); batch++) {
-		if (ip_ver == xe_compute_batches[batch].ip_ver)
+	for (batch = 0; batch < ARRAY_SIZE(intel_compute_batches); batch++) {
+		if (ip_ver == intel_compute_batches[batch].ip_ver)
 			break;
 	}
-	if (batch == ARRAY_SIZE(xe_compute_batches))
+	if (batch == ARRAY_SIZE(intel_compute_batches))
 		return false;
 
 	while (kernels->kernel) {
@@ -481,8 +480,8 @@ bool run_xe_compute_kernel(int fd)
 	if (!kernels->kernel)
 		return 1;
 
-	xe_compute_batches[batch].compute_exec(fd, kernels->kernel,
-					       kernels->size);
+	intel_compute_batches[batch].compute_exec(fd, kernels->kernel,
+						  kernels->size);
 
 	return true;
 }

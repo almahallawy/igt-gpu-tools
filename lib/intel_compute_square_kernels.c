@@ -8,7 +8,7 @@
  */
 
 #include "intel_chipset.h"
-#include "lib/xe/xe_compute.h"
+#include "lib/intel_compute.h"
 
 static const unsigned char tgllp_kernel_square_bin[] = {
 	0x61, 0x00, 0x03, 0x80, 0x20, 0x02, 0x05, 0x03, 0x04, 0x00, 0x10, 0x00,
@@ -61,7 +61,7 @@ static const unsigned char tgllp_kernel_square_bin[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-const struct xe_compute_kernels xe_compute_square_kernels[] = {
+const struct intel_compute_kernels intel_compute_square_kernels[] = {
 	{
 		.ip_ver = IP_VER(12, 0),
 		.size = sizeof(tgllp_kernel_square_bin),
