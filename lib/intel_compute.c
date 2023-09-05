@@ -36,6 +36,7 @@ struct bo_dict_entry {
 	uint64_t addr;
 	uint32_t size;
 	void *data;
+	const char *name;
 };
 
 struct bo_execenv {
@@ -91,6 +92,11 @@ static void bo_execenv_bind(struct bo_execenv *execenv,
 						 bo_dict[i].addr, bo_dict[i].size, &sync, 1);
 			syncobj_wait(fd, &sync.handle, 1, INT64_MAX, 0, NULL);
 			memset(bo_dict[i].data, 0, bo_dict[i].size);
+
+			igt_debug("[i: %2d name: %20s] data: %p, addr: %16llx, size: %llx\n",
+				  i, bo_dict[i].name, bo_dict[i].data,
+				  (long long)bo_dict[i].addr,
+				  (long long)bo_dict[i].size);
 		}
 
 		syncobj_destroy(fd, sync.handle);
@@ -479,13 +485,26 @@ static void tgl_compute_exec(int fd, const unsigned char *kernel,
 {
 #define TGL_BO_DICT_ENTRIES 7
 	struct bo_dict_entry bo_dict[TGL_BO_DICT_ENTRIES] = {
-		{ .addr = ADDR_INDIRECT_OBJECT_BASE + OFFSET_KERNEL}, // kernel
-		{ .addr = ADDR_DYNAMIC_STATE_BASE, .size =  0x1000}, // dynamic state
-		{ .addr = ADDR_SURFACE_STATE_BASE, .size =  0x1000}, // surface state
-		{ .addr = ADDR_INDIRECT_OBJECT_BASE + OFFSET_INDIRECT_DATA_START, .size =  0x10000}, // indirect data
-		{ .addr = ADDR_INPUT, .size = SIZE_BUFFER_INPUT }, // input
-		{ .addr = ADDR_OUTPUT, .size = SIZE_BUFFER_OUTPUT }, // output
-		{ .addr = ADDR_BATCH, .size = SIZE_BATCH }, // batch
+		{ .addr = ADDR_INDIRECT_OBJECT_BASE + OFFSET_KERNEL,
+		  .name = "kernel" },
+		{ .addr = ADDR_DYNAMIC_STATE_BASE,
+		  .size =  0x1000,
+		  .name = "dynamic state base" },
+		{ .addr = ADDR_SURFACE_STATE_BASE,
+		  .size =  0x1000,
+		  .name = "surface state base" },
+		{ .addr = ADDR_INDIRECT_OBJECT_BASE + OFFSET_INDIRECT_DATA_START,
+		  .size =  0x10000,
+		  .name = "indirect data start" },
+		{ .addr = ADDR_INPUT,
+		  .size = SIZE_BUFFER_INPUT,
+		  .name = "input" },
+		{ .addr = ADDR_OUTPUT,
+		  .size = SIZE_BUFFER_OUTPUT,
+		  .name = "output" },
+		{ .addr = ADDR_BATCH,
+		  .size = SIZE_BATCH,
+		  .name = "batch" },
 	};
 	struct bo_execenv execenv;
 	float *dinput;
