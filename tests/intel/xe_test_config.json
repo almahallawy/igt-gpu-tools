@@ -32,6 +32,12 @@
                         "_properties_": {
                             "mandatory": true,
                             "description": "Defines what category of testlist it belongs",
+                            "testlists": {
+                                "Xe BAT": "../intel-ci/xe-fast-feedback.testlist"
+                            },
+                            "blocklists": {
+                                "Xe BAT": "../intel-ci/xe.blocklist.txt"
+                            },
                             "order": [
                                 "boot",
                                 "__all__",
