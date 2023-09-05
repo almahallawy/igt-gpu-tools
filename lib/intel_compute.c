@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 
+#include "i915/gem_create.h"
 #include "igt.h"
 #include "intel_compute.h"
 #include "lib/igt_syncobj.h"
@@ -37,6 +38,7 @@ struct bo_dict_entry {
 	uint32_t size;
 	void *data;
 	const char *name;
+	uint32_t handle;
 };
 
 struct bo_execenv {
@@ -46,6 +48,10 @@ struct bo_execenv {
 	/* Xe part */
 	uint32_t vm;
 	uint32_t exec_queue;
+
+	/* i915 part */
+	struct drm_i915_gem_execbuffer2 execbuf;
+	struct drm_i915_gem_exec_object2 *obj;
 };
 
 static void bo_execenv_create(int fd, struct bo_execenv *execenv)
@@ -100,6 +106,33 @@ static void bo_execenv_bind(struct bo_execenv *execenv,
 		}
 
 		syncobj_destroy(fd, sync.handle);
+	} else {
+		struct drm_i915_gem_execbuffer2 *execbuf = &execenv->execbuf;
+		struct drm_i915_gem_exec_object2 *obj;
+
+		obj = calloc(entries, sizeof(*obj));
+		execenv->obj = obj;
+
+		for (int i = 0; i < entries; i++) {
+			bo_dict[i].handle = gem_create(fd, bo_dict[i].size);
+			bo_dict[i].data = gem_mmap__device_coherent(fd, bo_dict[i].handle,
+								    0, bo_dict[i].size,
+								    PROT_READ | PROT_WRITE);
+			igt_debug("[i: %2d name: %20s] handle: %u, data: %p, addr: %16llx, size: %llx\n",
+				  i, bo_dict[i].name,
+				  bo_dict[i].handle, bo_dict[i].data,
+				  (long long)bo_dict[i].addr,
+				  (long long)bo_dict[i].size);
+
+			obj[i].handle = bo_dict[i].handle;
+			obj[i].offset = CANONICAL(bo_dict[i].addr);
+			obj[i].flags = EXEC_OBJECT_PINNED | EXEC_OBJECT_SUPPORTS_48B_ADDRESS;
+			if (bo_dict[i].addr == ADDR_OUTPUT)
+				obj[i].flags |= EXEC_OBJECT_WRITE;
+		}
+
+		execbuf->buffers_ptr = to_user_pointer(obj);
+		execbuf->buffer_count = entries;
 	}
 }
 
@@ -122,6 +155,12 @@ static void bo_execenv_unbind(struct bo_execenv *execenv,
 		}
 
 		syncobj_destroy(fd, sync.handle);
+	} else {
+		for (int i = 0; i < entries; i++) {
+			gem_close(fd, bo_dict[i].handle);
+			munmap(bo_dict[i].data, bo_dict[i].size);
+		}
+		free(execenv->obj);
 	}
 }
 
@@ -129,8 +168,17 @@ static void bo_execenv_exec(struct bo_execenv *execenv, uint64_t start_addr)
 {
 	int fd = execenv->fd;
 
-	if (execenv->driver == INTEL_DRIVER_XE)
+	if (execenv->driver == INTEL_DRIVER_XE) {
 		xe_exec_wait(fd, execenv->exec_queue, start_addr);
+	} else {
+		struct drm_i915_gem_execbuffer2 *execbuf = &execenv->execbuf;
+		struct drm_i915_gem_exec_object2 *obj = execenv->obj;
+		int num_objects = execbuf->buffer_count;
+
+		execbuf->flags = I915_EXEC_RENDER;
+		gem_execbuf(fd, execbuf);
+		gem_sync(fd, obj[num_objects - 1].handle); /* batch handle */
+	}
 }
 
 /*
