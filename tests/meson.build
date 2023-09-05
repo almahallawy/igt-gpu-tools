@@ -105,6 +105,7 @@ intel_i915_progs = [
 	'gem_ccs',
 	'gem_close',
 	'gem_close_race',
+	'gem_compute',
 	'gem_concurrent_blit',
 	'gem_cs_tlb',
 	'gem_ctx_bad_destroy',
