@@ -445,17 +445,27 @@ static void tgl_compute_exec(int fd, const unsigned char *kernel,
 }
 
 /*
- * Generic code
+ * Compatibility flags.
+ *
+ * There will be some time period in which both drivers (i915 and xe)
+ * will support compute runtime tests. Lets define compat flags to allow
+ * the code to be shared between two drivers allowing disabling this in
+ * the future.
  */
+#define COMPAT_DRIVER_FLAG(f) (1 << (f))
+#define COMPAT_DRIVER_I915 COMPAT_DRIVER_FLAG(INTEL_DRIVER_I915)
+#define COMPAT_DRIVER_XE   COMPAT_DRIVER_FLAG(INTEL_DRIVER_XE)
 
 static const struct {
 	unsigned int ip_ver;
 	void (*compute_exec)(int fd, const unsigned char *kernel,
 			     unsigned int size);
+	uint32_t compat;
 } intel_compute_batches[] = {
 	{
 		.ip_ver = IP_VER(12, 0),
 		.compute_exec = tgl_compute_exec,
+		.compat = COMPAT_DRIVER_I915 | COMPAT_DRIVER_XE,
 	},
 };
 
@@ -464,6 +474,7 @@ bool run_intel_compute_kernel(int fd)
 	unsigned int ip_ver = intel_graphics_ver(intel_get_drm_devid(fd));
 	unsigned int batch;
 	const struct intel_compute_kernels *kernels = intel_compute_square_kernels;
+	enum intel_driver driver = get_intel_driver(fd);
 
 	for (batch = 0; batch < ARRAY_SIZE(intel_compute_batches); batch++) {
 		if (ip_ver == intel_compute_batches[batch].ip_ver)
@@ -471,6 +482,13 @@ bool run_intel_compute_kernel(int fd)
 	}
 	if (batch == ARRAY_SIZE(intel_compute_batches))
 		return false;
+
+	if (!(COMPAT_DRIVER_FLAG(driver) & intel_compute_batches[batch].compat)) {
+		igt_debug("Driver is not supported: flags %x & %x\n",
+			  COMPAT_DRIVER_FLAG(driver),
+			  intel_compute_batches[batch].compat);
+		return false;
+	}
 
 	while (kernels->kernel) {
 		if (ip_ver == kernels->ip_ver)
