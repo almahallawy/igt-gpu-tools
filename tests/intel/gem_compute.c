@@ -18,12 +18,11 @@
 
 /**
  * SUBTEST: compute-square
- * GPU requirement: only works on TGL
+ * GPU requirement: TGL, DG2, ATS-M
  * Description:
  *	Run an openCL Kernel that returns output[i] = input[i] * input[i],
  *	for an input dataset..
  * Functionality: compute openCL kernel
- * TODO: extend test to cover other platforms
  */
 static void
 test_compute_square(int fd)
