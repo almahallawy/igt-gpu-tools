@@ -113,6 +113,29 @@
  * SUBTEST: %s
  * Description: Basic test to validate %arg[1]
  * Driver requirement: i915, xe
+ * Functionality: hang, vblank
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * SUBTEST: 2x-%s
+ * Description: Test to validate %arg[1] on a pair of connected displays
+ * Driver requirement: i915, xe
+ * Functionality: hang, vblank
+ * Mega feature: General Display Features
+ * Run type: FULL
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @flip-vs-modeset-vs-hang:      pageflip and modeset by hang injection
+ * @flip-vs-panning-vs-hang:      pageflip with panning by hang injection
+ */
+
+/**
+ * SUBTEST: %s
+ * Description: Basic test to validate %arg[1]
+ * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
  * Run type: FULL
@@ -140,8 +163,6 @@
  * @flip-vs-expired-vblank:       pageflip by checking the vbalnk sequence
  * @flip-vs-absolute-wf_vblank:   pageflip and wait for the absolute vblank
  * @flip-vs-blocking-wf-vblank:   pageflip and wait for the absolute vblank synchronous
- * @flip-vs-modeset-vs-hang:      pageflip and modeset by hang injection
- * @flip-vs-panning-vs-hang:      pageflip with panning by hang injection
  * @nonexisting-fb:               expired framebuffer
  * @modeset-vs-vblank-race:       modeset and check for vblank
  */
