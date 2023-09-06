@@ -384,6 +384,8 @@ void igt_post_hang_ring(int fd, igt_hang_t arg)
 	if (is_xe_device(fd)) {
 		igt_spin_free(fd, arg.spin);
 		xe_post_hang_ring(fd, arg);
+
+		return;
 	}
 
 	gem_sync(fd, arg.spin->handle); /* Wait until it hangs */
