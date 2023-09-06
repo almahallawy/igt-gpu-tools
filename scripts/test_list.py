@@ -484,6 +484,8 @@ class TestList:
             if "testlist" not in self.props[field]["_properties_"]:
                 continue
 
+            default_value = self.props[field]["_properties_"].get("default-testlist")
+
             testname = subtest_dict["_summary_"]
 
             value = subtest_dict.get(field)
@@ -510,10 +512,11 @@ class TestList:
                                 set_full_if_empty = False
                             values.discard(deleted_names)
 
-            if set_full_if_empty and not values:
-                values = set(["FULL"])
+            if default_value and set_full_if_empty and not values:
+                values = set([default_value])
 
-            subtest_dict[field] = ", ".join(sorted(values))
+            if values:
+                subtest_dict[field] = ", ".join(sorted(values))
 
     def expand_subtest(self, fname, test_name, test, allow_inherit, with_lines = False, with_subtest_nr = False):
 

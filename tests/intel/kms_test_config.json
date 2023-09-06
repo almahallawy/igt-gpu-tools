@@ -22,6 +22,7 @@
             "Run type": {
                 "_properties_": {
                     "description": "Defines what category of testlist it belongs",
+                    "default-testlist": "FULL",
                     "testlists": {
                         "i915 BAT": "../intel-ci/fast-feedback.testlist",
                         "i915 BAT chamelium": "../intel-ci/fast-feedback-chamelium-only.testlist",
