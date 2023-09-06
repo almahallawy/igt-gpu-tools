@@ -1042,7 +1042,10 @@ static bool run_test_step(struct test_output *o, unsigned int *events)
 	memset(&hang, 0, sizeof(hang));
 	if (do_flip && (o->flags & TEST_HANG)) {
 		igt_require_intel(drm_fd);
-		ahnd = get_reloc_ahnd(drm_fd, 0);
+
+		ahnd = is_i915_device(drm_fd) ?
+			get_reloc_ahnd(drm_fd, 0) :
+			intel_allocator_open(drm_fd, 0, INTEL_ALLOCATOR_RELOC);
 		hang = hang_gpu(drm_fd, ahnd);
 	}
 
@@ -1847,8 +1850,9 @@ static void run_test(int duration, int flags)
 	if (flags & TEST_BO_TOOBIG && !is_intel_device(drm_fd))
 		return;
 
-	igt_require((flags & TEST_HANG) == 0 ||
-		    (is_i915_device(drm_fd) && !is_wedged(drm_fd)));
+	if ((flags & TEST_HANG) == 0 && is_i915_device(drm_fd))
+		igt_require(!is_wedged(drm_fd));
+
 	igt_require(!(flags & TEST_FENCE_STRESS) ||
 		    (is_i915_device(drm_fd) && gem_available_fences(drm_fd)));
 
@@ -1923,8 +1927,9 @@ static void run_pair(int duration, int flags)
 	if (flags & TEST_BO_TOOBIG && !is_intel_device(drm_fd))
 		return;
 
-	igt_require((flags & TEST_HANG) == 0 ||
-		    (is_i915_device(drm_fd) && !is_wedged(drm_fd)));
+	if ((flags & TEST_HANG) == 0 && is_i915_device(drm_fd))
+		igt_require(!is_wedged(drm_fd));
+
 	igt_require(!(flags & TEST_FENCE_STRESS) ||
 		    (is_i915_device(drm_fd) && gem_available_fences(drm_fd)));
 
