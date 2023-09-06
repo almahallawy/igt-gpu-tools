@@ -1027,6 +1027,8 @@ class TestList:
         if run_missing:
             for test_name in run_missing:
                 print(f'Warning: Missing documentation for {test_name}')
+            print(f'Please refer: docs/test_documentation.md for more details')
+
         if doc_uneeded or run_missing:
             sys.exit(1)
 
