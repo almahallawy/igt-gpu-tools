@@ -247,7 +247,6 @@ igt_main
 	 * Mega feature: General Display Features
 	 * Functionality: kms_core
 	 * Driver requirement: i915, xe
-	 * Run type: FULL
 	 * Test category: functionality test
 	 */
 	igt_subtest_with_dynamic("memset-crc") {

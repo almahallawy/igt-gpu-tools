@@ -43,7 +43,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: basic-clone-single-crtc
@@ -52,7 +51,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: clone-exclusive-crtc
@@ -61,7 +59,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: invalid-clone-exclusive-crtc
@@ -70,7 +67,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: invalid-clone-single-crtc
@@ -79,7 +75,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: invalid-clone-single-crtc-stealing
@@ -88,7 +83,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

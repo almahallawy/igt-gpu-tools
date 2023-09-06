@@ -37,7 +37,6 @@ IGT_TEST_DESCRIPTION("Test Color Features at Pipe level");
  * Driver requirement: i915, xe
  * Functionality: colorspace
  * Mega feature: Color mgmt
- * Run type: FULL
  * Test category: functionality test
  */
 static bool test_pipe_degamma(data_t *data,
@@ -134,7 +133,6 @@ static bool test_pipe_degamma(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: colorspace
  * Mega feature: Color mgmt
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -232,7 +230,6 @@ static bool test_pipe_gamma(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: colorspace
  * Mega feature: Color mgmt
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -355,7 +352,6 @@ static bool test_pipe_legacy_gamma(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: colorspace
  * Mega feature: Color mgmt
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -499,7 +495,6 @@ end:
  * Driver requirement: i915, xe
  * Functionality: colorspace
  * Mega feature: Color mgmt
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -880,7 +875,6 @@ out:
  * Driver requirement: i915, xe
  * Functionality: colorspace
  * Mega feature: Color mgmt
- * Run type: FULL
  * Test category: functionality test
  */
 static void
@@ -990,7 +984,6 @@ run_deep_color_tests_for_pipe(data_t *data, enum pipe p)
  * Driver requirement: i915, xe
  * Functionality: colorspace
  * Mega feature: Color mgmt
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

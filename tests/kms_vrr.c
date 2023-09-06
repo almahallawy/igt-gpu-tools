@@ -35,7 +35,6 @@
  * Driver requirement: i915, xe
  * Functionality: adaptive_sync
  * Mega feature: VRR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-dpms
@@ -44,7 +43,6 @@
  * Driver requirement: i915, xe
  * Functionality: adaptive_sync, dpms
  * Mega feature: VRR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-suspend
@@ -53,7 +51,6 @@
  * Driver requirement: i915, xe
  * Functionality: adaptive_sync, suspend
  * Mega feature: VRR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flipline
@@ -61,7 +58,6 @@
  * Driver requirement: i915, xe
  * Functionality: adaptive_sync
  * Mega feature: VRR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: negative-basic
@@ -69,7 +65,6 @@
  * Driver requirement: i915, xe
  * Functionality: adaptive_sync
  * Mega feature: VRR
- * Run type: FULL
  * Test category: functionality test
  */
 

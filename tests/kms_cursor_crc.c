@@ -660,7 +660,6 @@ static bool require_cursor_size(data_t *data, int w, int h)
  * Driver requirement: i915, xe
  * Functionality: cursor, dpms
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: cursor-suspend
@@ -668,7 +667,6 @@ static bool require_cursor_size(data_t *data, int w, int h)
  * Driver requirement: i915, xe
  * Functionality: cursor, suspend
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: cursor-%s
@@ -676,7 +674,6 @@ static bool require_cursor_size(data_t *data, int w, int h)
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -792,7 +789,6 @@ static bool execution_constraint(enum pipe pipe)
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

@@ -44,7 +44,6 @@
  * Driver requirement: i915, xe
  * Functionality: dsc
  * Mega feature: VDSC
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

@@ -681,7 +681,6 @@ static bool check_audio_configuration(struct alsa *alsa,
  *              capture them and check they are correct
  * Functionality: chamelium, dp_audio
  * Mega feature: Audio, DP
- * Run type: FULL
  * Test category: functionality test
  * Driver requirement: i915, xe
  *
@@ -690,7 +689,6 @@ static bool check_audio_configuration(struct alsa *alsa,
  *              capture them and check they are correct
  * Functionality: chamelium, hdmi_audio
  * Mega feature: Audio, HDMI
- * Run type: FULL
  * Test category: functionality test
  * Driver requirement: i915, xe
  */
@@ -794,7 +792,6 @@ static void test_display_audio(chamelium_data_t *data,
  *              EDID-Like Data reports the correct audio parameters
  * Functionality: chamelium, dp_audio
  * Mega feature: Audio, DP
- * Run type: FULL
  * Test category: functionality test
  * Driver requirement: i915, xe
  *
@@ -803,7 +800,6 @@ static void test_display_audio(chamelium_data_t *data,
  *              EDID-Like Data reports the correct audio parameters
  * Functionality: chamelium, hdmi_audio
  * Mega feature: Audio, HDMI
- * Run type: FULL
  * Test category: functionality test
  * Driver requirement: i915, xe
  */

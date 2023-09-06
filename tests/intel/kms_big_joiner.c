@@ -52,7 +52,6 @@ typedef struct {
  * Driver requirement: i915, xe
  * Functionality: 2p1p
  * Mega feature: Bigjoiner
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_invalid_modeset(data_t *data)
@@ -101,7 +100,6 @@ static void test_invalid_modeset(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: 2p1p
  * Mega feature: Bigjoiner
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_basic_modeset(data_t *data)
@@ -148,7 +146,6 @@ static void test_basic_modeset(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: 2p1p
  * Mega feature: Bigjoiner
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_dual_display(data_t *data)

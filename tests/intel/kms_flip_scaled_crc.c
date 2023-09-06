@@ -36,7 +36,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-64bpp-ytile-to-32bpp-ytilercccs-downscaling
@@ -45,7 +44,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-linear-to-64bpp-linear-%s
@@ -54,7 +52,6 @@
  * Driver requirement: i915, xe
  * Functionality: scaling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-4tile-to-32bpp-4tiledg2rcccs-%s
@@ -63,7 +60,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-4tile-to-64bpp-4tile-%s
@@ -72,7 +68,6 @@
  * Driver requirement: i915, xe
  * Functionality: scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-xtile-to-64bpp-xtile-%s
@@ -81,7 +76,6 @@
  * Driver requirement: i915, xe
  * Functionality: scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-yftile-to-32bpp-yftileccs-%s
@@ -90,7 +84,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-yftile-to-64bpp-yftile-%s
@@ -99,7 +92,6 @@
  * Driver requirement: i915, xe
  * Functionality: scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-yftileccs-to-64bpp-yftile-%s
@@ -108,7 +100,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-ytile-to-32bpp-ytileccs-%s
@@ -117,7 +108,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-ytile-to-32bpp-ytilegen12rcccs-%s
@@ -126,7 +116,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-ytile-to-64bpp-ytile-%s
@@ -135,7 +124,6 @@
  * Driver requirement: i915, xe
  * Functionality: scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-32bpp-ytileccs-to-64bpp-ytile-%s
@@ -144,7 +132,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-64bpp-4tile-to-32bpp-4tiledg2rcccs-%s
@@ -153,7 +140,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -169,7 +155,6 @@
  * Driver requirement: i915, xe
  * Functionality: scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-64bpp-xtile-to-%dbpp-xtile-%s
@@ -178,7 +163,6 @@
  * Driver requirement: i915, xe
  * Functionality: scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-64bpp-yftile-to-%dbpp-yftile-%s
@@ -187,7 +171,6 @@
  * Driver requirement: i915, xe
  * Functionality: scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-64bpp-ytile-to-%dbpp-ytile-%s
@@ -196,7 +179,6 @@
  * Driver requirement: i915, xe
  * Functionality: scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-64bpp-linear-to-%dbpp-linear-%s
@@ -205,7 +187,6 @@
  * Driver requirement: i915, xe
  * Functionality: scaling, tiling, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values: 16, 32

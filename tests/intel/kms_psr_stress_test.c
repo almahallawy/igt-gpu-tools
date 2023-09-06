@@ -17,7 +17,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: invalidate-primary-flip-overlay
@@ -26,7 +25,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  */
 

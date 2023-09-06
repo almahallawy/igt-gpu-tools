@@ -184,7 +184,6 @@ static uint32_t get_any_prop_id(int fd)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -256,7 +255,6 @@ static void test_handle_input(int fd)
  * Driver requirement: i915, xe
  * Functionality: ccs, kms_gem_interop, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: getfb-%s-different-handles
@@ -265,7 +263,6 @@ static void test_handle_input(int fd)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -344,7 +341,6 @@ static void test_duplicate_handles(int fd)
  * Driver requirement: i915, xe
  * Functionality: ccs, kms_gem_interop, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: getfb2-into-addfb2
@@ -352,7 +348,6 @@ static void test_duplicate_handles(int fd)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: getfb2-handle-%s
@@ -360,7 +355,6 @@ static void test_duplicate_handles(int fd)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -483,7 +477,6 @@ static void test_getfb2(int fd)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

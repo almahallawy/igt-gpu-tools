@@ -50,7 +50,6 @@
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: invalid
@@ -58,7 +57,6 @@
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -69,7 +67,6 @@
  * Driver requirement: i915, xe
  * Functionality: dpms, hang, rpm, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -91,7 +88,6 @@
  * Driver requirement: i915, xe
  * Functionality: dpms, hang, suspend, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -113,7 +109,6 @@
  * Driver requirement: i915, xe
  * Functionality: hang, suspend, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -135,7 +130,6 @@
  * Driver requirement: i915, xe
  * Functionality: hang, rpm, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -157,7 +151,6 @@
  * Driver requirement: i915, xe
  * Functionality: hang, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: pipe-%s-%s
@@ -165,7 +158,6 @@
  * Driver requirement: i915, xe
  * Functionality: hang, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: pipe-%s-%s-hang
@@ -173,7 +165,6 @@
  * Driver requirement: i915, xe
  * Functionality: hang, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

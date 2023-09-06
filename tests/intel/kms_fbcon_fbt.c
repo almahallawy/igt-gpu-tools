@@ -44,7 +44,6 @@
  * Driver requirement: i915, xe
  * Functionality: fbc, fbcon, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-suspend
@@ -53,7 +52,6 @@
  * Driver requirement: i915, xe
  * Functionality: fbc, fbcon, fbt, suspend
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr
@@ -62,7 +60,6 @@
  * Driver requirement: i915, xe
  * Functionality: fbcon, fbt, psr
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-suspend
@@ -71,7 +68,6 @@
  * Driver requirement: i915, xe
  * Functionality: fbcon, fbt, psr, suspend
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  */
 

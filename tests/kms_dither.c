@@ -192,7 +192,6 @@ static bool is_supported(igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: colorspace, kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: FB-8BPC-Vs-Panel-8BPC
@@ -200,7 +199,6 @@ static bool is_supported(igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: colorspace, kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void

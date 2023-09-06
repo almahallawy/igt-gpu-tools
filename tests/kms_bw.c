@@ -35,7 +35,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values: 1, 2, 3, 4, 5, 6, 7, 8

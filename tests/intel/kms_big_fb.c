@@ -595,7 +595,6 @@ max_hw_stride_async_flip_test(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop, rotation
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:       8, 16, 32, 64
@@ -609,7 +608,6 @@ max_hw_stride_async_flip_test(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop, rotation, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -631,7 +629,6 @@ max_hw_stride_async_flip_test(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop, rotation
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:       32, 64
@@ -646,7 +643,6 @@ max_hw_stride_async_flip_test(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop, rotation, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -668,7 +664,6 @@ max_hw_stride_async_flip_test(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop, rotation, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: %s-max-hw-stride-%dbpp-rotate-%d-%s
@@ -678,7 +673,6 @@ max_hw_stride_async_flip_test(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: async_flips, big_fbs, kms_gem_interop, rotation, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -748,7 +742,6 @@ static void test_scanout(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: %s-addfb-size-overflow
@@ -757,7 +750,6 @@ static void test_scanout(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -818,7 +810,6 @@ test_size_overflow(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: %s-addfb-size-offset-overflow
@@ -827,7 +818,6 @@ test_size_overflow(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -902,7 +892,6 @@ static int rmfb(int fd, uint32_t id)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: %s-addfb
@@ -911,7 +900,6 @@ static int rmfb(int fd, uint32_t id)
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

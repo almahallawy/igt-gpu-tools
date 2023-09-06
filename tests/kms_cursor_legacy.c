@@ -86,7 +86,6 @@ static void override_output_modes(igt_display_t *display,
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -575,7 +574,6 @@ enum basic_flip_cursor {
  * Description: Cursor test with %arg[1] mode
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: cursor
  * Mega feature: General Display Features
  *
@@ -584,7 +582,6 @@ enum basic_flip_cursor {
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -598,7 +595,6 @@ enum basic_flip_cursor {
  * Description: Cursor test with %arg[1]
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: cursor
  * Mega feature: General Display Features
  *
@@ -606,7 +602,6 @@ enum basic_flip_cursor {
  * Description: Cursor test with %arg[1]
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: cursor
  * Mega feature: General Display Features
  *
@@ -628,7 +623,6 @@ enum basic_flip_cursor {
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -654,7 +648,6 @@ enum basic_flip_cursor {
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -991,7 +984,6 @@ static void flip_vs_cursor(igt_display_t *display, enum flip_test mode, int nloo
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: nonblocking-modeset-vs-cursor-atomic
@@ -1000,7 +992,6 @@ static void flip_vs_cursor(igt_display_t *display, enum flip_test mode, int nloo
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void nonblocking_modeset_vs_cursor(igt_display_t *display, int loops)
@@ -1109,7 +1100,6 @@ static void wait_for_modeset(igt_display_t *display, unsigned flags, int timeout
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1132,7 +1122,6 @@ static void wait_for_modeset(igt_display_t *display, unsigned flags, int timeout
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1334,7 +1323,6 @@ done:
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1473,7 +1461,6 @@ static void cursor_vs_flip(igt_display_t *display, enum flip_test mode, int nloo
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1622,7 +1609,6 @@ static void two_screens_cursor_vs_flip(igt_display_t *display, int nloops, bool 
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1708,7 +1694,6 @@ static void flip_vs_cursor_crc(igt_display_t *display, bool atomic)
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1835,7 +1820,6 @@ static void flip_vs_cursor_busy_crc(igt_display_t *display, bool atomic)
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void modeset_atomic_cursor_hotspot(igt_display_t *display)

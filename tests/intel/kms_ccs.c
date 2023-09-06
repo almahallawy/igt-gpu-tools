@@ -39,7 +39,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -77,7 +76,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -119,7 +117,6 @@
  * Driver requirement: i915, xe
  * Functionality: ccs, rotation, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

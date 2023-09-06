@@ -32,7 +32,6 @@
  * Driver requirement: i915, xe
  * Functionality: cursor, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: primary
@@ -40,7 +39,6 @@
  * Driver requirement: i915, xe
  * Functionality: cursor, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: viewport
@@ -49,7 +47,6 @@
  * Driver requirement: i915, xe
  * Functionality: cursor, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

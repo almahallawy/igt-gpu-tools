@@ -115,7 +115,6 @@ static void try_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Check that we get uevents and updated connector status on
  * 		hotplug and unplug
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: chamelium, hotplug
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -124,7 +123,6 @@ static void try_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Check that we get uevents and updated connector status on
  * 		hotplug and unplug
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: chamelium, hotplug
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -133,7 +131,6 @@ static void try_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Check that we get uevents and updated connector status on
  * 		hotplug and unplug
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: chamelium, hotplug
  * Mega feature: VGA
  * Driver requirement: i915, xe
@@ -142,7 +139,6 @@ static void try_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -151,7 +147,6 @@ static void try_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -160,7 +155,6 @@ static void try_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: VGA
  * Driver requirement: i915, xe
@@ -169,7 +163,6 @@ static void try_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -178,7 +171,6 @@ static void try_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -187,7 +179,6 @@ static void try_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: VGA
  * Driver requirement: i915, xe
@@ -268,7 +259,6 @@ static void test_hotplug(chamelium_data_t *data, struct chamelium_port *port,
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug for each pipe with valid output
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -277,7 +267,6 @@ static void test_hotplug(chamelium_data_t *data, struct chamelium_port *port,
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug for each pipe with valid output
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -286,7 +275,6 @@ static void test_hotplug(chamelium_data_t *data, struct chamelium_port *port,
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug for each pipe with valid output
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: VGA
  * Driver requirement: i915, xe
@@ -341,7 +329,6 @@ static void test_hotplug_for_each_pipe(chamelium_data_t *data,
  * Description: Toggle HPD during Hibernation, check that uevents are sent and
  *              connector status is updated
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug, hibernation
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -350,7 +337,6 @@ static void test_hotplug_for_each_pipe(chamelium_data_t *data,
  * Description: Toggle HPD during Hibernation, check that uevents are sent and
  *              connector status is updated
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug, hibernation
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -359,7 +345,6 @@ static void test_hotplug_for_each_pipe(chamelium_data_t *data,
  * Description: Toggle HPD during Hibernation, check that uevents are sent and
  *              connector status is updated
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug, hibernation
  * Mega feature: VGA
  * Driver requirement: i915, xe
@@ -368,7 +353,6 @@ static void test_hotplug_for_each_pipe(chamelium_data_t *data,
  * Description: Toggle HPD during Suspend, check that uevents are sent and
  *              connector status is updated
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug, suspend
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -377,7 +361,6 @@ static void test_hotplug_for_each_pipe(chamelium_data_t *data,
  * Description: Toggle HPD during Suspend, check that uevents are sent and
  *              connector status is updated
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug, suspend
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -386,7 +369,6 @@ static void test_hotplug_for_each_pipe(chamelium_data_t *data,
  * Description: Toggle HPD during Suspend, check that uevents are sent and
  *              connector status is updated
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug, suspend
  * Mega feature: VGA
  * Driver requirement: i915, xe
@@ -419,7 +401,6 @@ static void test_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Toggle HPD during suspend on all connectors, check that uevents
  * 		are sent and connector status is updated
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: chamelium, hotplug, suspend
  * Mega feature: General Display Features
  * Driver requirement: i915, xe
@@ -428,7 +409,6 @@ static void test_suspend_resume_hpd(chamelium_data_t *data,
  * Description: Toggle HPD during suspend on all connectors, check that uevents
  *              are sent and connector status is updated
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug, hibernation
  * Mega feature: General Display Features
  * Driver requirement: i915, xe
@@ -467,7 +447,6 @@ static void test_suspend_resume_hpd_common(chamelium_data_t *data,
  * Description: Disable DDC on a VGA connector, check we still get a uevent on
  *              hotplug
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: VGA
  * Driver requirement: i915, xe
@@ -504,7 +483,6 @@ static void test_hpd_without_ddc(chamelium_data_t *data,
  *              simulate abad cable, check the kernel falls back to polling
  *              to avoid a hotplug storm
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -514,7 +492,6 @@ static void test_hpd_without_ddc(chamelium_data_t *data,
  *              simulate abad cable, check the kernel falls back to polling
  *              to avoid a hotplug storm
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -558,7 +535,6 @@ static void test_hpd_storm_detect(chamelium_data_t *data,
  * Description: Disable HPD storm detection, trigger a storm and check the
  *              kernel doesn't detect one
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -567,7 +543,6 @@ static void test_hpd_storm_detect(chamelium_data_t *data,
  * Description: Disable HPD storm detection, trigger a storm and check the
  *              kernel doesn't detect one
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hotplug
  * Mega feature: HDMI
  * Driver requirement: i915, xe

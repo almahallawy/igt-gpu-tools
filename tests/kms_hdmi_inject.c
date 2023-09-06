@@ -44,7 +44,6 @@
  * Driver requirement: i915, xe
  * Functionality: force_connector, hdmi_edid
  * Mega feature: HDMI
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: inject-audio
@@ -53,7 +52,6 @@
  * Driver requirement: i915, xe
  * Functionality: audio, force_connector
  * Mega feature: HDMI
- * Run type: FULL
  * Test category: functionality test
  */
 

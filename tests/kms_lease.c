@@ -56,7 +56,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: cursor_implicit_plane
@@ -64,7 +63,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: empty_lease
@@ -72,7 +70,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: implicit-plane-lease
@@ -80,7 +77,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: invalid-create-leases
@@ -89,7 +85,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: lease-uevent
@@ -97,7 +92,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: lease_again
@@ -105,7 +99,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: lease_get
@@ -113,7 +106,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: lease_invalid_connector
@@ -121,7 +113,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: lease_invalid_crtc
@@ -129,7 +120,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: lease_invalid_plane
@@ -137,7 +127,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: lease_revoke
@@ -145,7 +134,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: lease_unleased_connector
@@ -153,7 +141,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: lease_unleased_crtc
@@ -161,7 +148,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: lessee_list
@@ -169,7 +155,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: master-vs-lease
@@ -177,7 +162,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: multimaster-lease
@@ -187,7 +171,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: page_flip_implicit_plane
@@ -195,7 +178,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: possible-crtcs-filtering
@@ -205,7 +187,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: setcrtc_implicit_plane
@@ -213,7 +194,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: simple_lease
@@ -221,7 +201,6 @@
  * Driver requirement: i915, xe
  * Functionality: lease
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

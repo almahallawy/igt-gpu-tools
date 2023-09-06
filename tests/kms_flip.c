@@ -48,7 +48,6 @@
  * Driver requirement: i915
  * Functionality: gtt, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: 2x-flip-vs-fences-interruptible
@@ -57,7 +56,6 @@
  * Driver requirement: i915, xe
  * Functionality: gtt, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-vs-fences
@@ -65,7 +63,6 @@
  * Driver requirement: i915
  * Functionality: gtt, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-vs-fences-interruptible
@@ -73,7 +70,6 @@
  * Driver requirement: i915
  * Functionality: gtt, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: dpms-off-confusion
@@ -81,7 +77,6 @@
  * Driver requirement: i915, xe
  * Functionality: dpms, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: dpms-off-confusion-interruptible
@@ -89,7 +84,6 @@
  * Driver requirement: i915, xe
  * Functionality: dpms, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: bo-too-big
@@ -97,7 +91,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: bo-too-big-interruptible
@@ -105,7 +98,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -115,7 +107,6 @@
  * Driver requirement: i915, xe
  * Functionality: hang, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: 2x-%s
@@ -123,7 +114,6 @@
  * Driver requirement: i915, xe
  * Functionality: hang, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -138,7 +128,6 @@
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: 2x-%s
@@ -146,7 +135,6 @@
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -173,7 +161,6 @@
  * Driver requirement: i915, xe
  * Functionality: suspend, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: 2x-flip-vs-suspend
@@ -182,7 +169,6 @@
  * Driver requirement: i915, xe
  * Functionality: suspend, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: flip-vs-suspend-interruptible
@@ -190,7 +176,6 @@
  * Driver requirement: i915, xe
  * Functionality: suspend, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: 2x-flip-vs-suspend-interruptible
@@ -199,7 +184,6 @@
  * Driver requirement: i915, xe
  * Functionality: suspend, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: %s
@@ -207,7 +191,6 @@
  * Driver requirement: i915, xe
  * Functionality: dpms, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: 2x-%s
@@ -215,7 +198,6 @@
  * Driver requirement: i915, xe
  * Functionality: dpms, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: %s-interruptible
@@ -223,7 +205,6 @@
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: 2x-%s-interruptible
@@ -231,7 +212,6 @@
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -250,7 +230,6 @@
  * Driver requirement: i915, xe
  * Functionality: dpms, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: 2x-%s
@@ -258,7 +237,6 @@
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -274,7 +252,6 @@
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: 2x-%s-interruptible
@@ -283,7 +260,6 @@
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1833,7 +1809,6 @@ static void run_test_on_crtc_set(struct test_output *o, int *crtc_idxs,
  * Description: Basic test to valide pageflip with dpms
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: dpms, vblank
  * Mega feature: General Display Features
  *
@@ -1841,7 +1816,6 @@ static void run_test_on_crtc_set(struct test_output *o, int *crtc_idxs,
  * Description: Basic test to valide pageflip with %arg[1]
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: vblank
  * Mega feature: General Display Features
  *
@@ -1854,7 +1828,6 @@ static void run_test_on_crtc_set(struct test_output *o, int *crtc_idxs,
  * Description: Basic test for validating page flip
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: vblank
  * Mega feature: General Display Features
  */
@@ -2049,7 +2022,6 @@ static void kms_flip_exit_handler(int sig)
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_nonblocking_read(int in)

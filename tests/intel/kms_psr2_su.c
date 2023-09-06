@@ -40,7 +40,6 @@
  * Driver requirement: i915, xe
  * Functionality: fbt, psr2, selective_update
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: page_flip-%s
@@ -48,7 +47,6 @@
  * Driver requirement: i915, xe
  * Functionality: pixel-format, psr2, selective_update
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

@@ -496,7 +496,6 @@ test_fini(igt_output_t *output, enum igt_commit_style s)
  * Driver requirement: i915, xe
  * Functionality: hdcp1.4
  * Mega feature: HDCP
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: content_type_change
@@ -505,7 +504,6 @@ test_fini(igt_output_t *output, enum igt_commit_style s)
  * Driver requirement: i915, xe
  * Functionality: hdcp1.4, hdcp2.2
  * Mega feature: HDCP
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: mei_interface
@@ -514,7 +512,6 @@ test_fini(igt_output_t *output, enum igt_commit_style s)
  * Driver requirement: i915, xe
  * Functionality: hdcp1.4, hdcp2.2
  * Mega feature: HDCP
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: srm
@@ -523,7 +520,6 @@ test_fini(igt_output_t *output, enum igt_commit_style s)
  * Driver requirement: i915, xe
  * Functionality: hdcp1.4
  * Mega feature: HDCP
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: uevent
@@ -532,7 +528,6 @@ test_fini(igt_output_t *output, enum igt_commit_style s)
  * Driver requirement: i915, xe
  * Functionality: hdcp1.4
  * Mega feature: HDCP
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: %s
@@ -540,7 +535,6 @@ test_fini(igt_output_t *output, enum igt_commit_style s)
  * Driver requirement: i915, xe
  * Functionality: hdcp1.4
  * Mega feature: HDCP
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -643,7 +637,6 @@ static void test_cp_lic_on_mst(igt_output_t *mst_outputs[], int valid_outputs, b
  * Driver requirement: i915, xe
  * Functionality: hdcp1.4, mst
  * Mega feature: HDCP
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

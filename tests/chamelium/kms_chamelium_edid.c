@@ -149,7 +149,6 @@ static void check_mode(struct chamelium *chamelium, struct chamelium_port *port,
  * SUBTEST: dp-edid-read
  * Description: Make sure the EDID exposed by KMS is the same as the screen's
  * Test category: functionality test
- * Run type: BAT
  * Functionality: chamelium, dp_edid
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -157,7 +156,6 @@ static void check_mode(struct chamelium *chamelium, struct chamelium_port *port,
  * SUBTEST: hdmi-edid-read
  * Description: Make sure the EDID exposed by KMS is the same as the screen's
  * Test category: functionality test
- * Run type: BAT
  * Functionality: chamelium, hdmi_edid
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -165,7 +163,6 @@ static void check_mode(struct chamelium *chamelium, struct chamelium_port *port,
  * SUBTEST: vga-edid-read
  * Description: Make sure the EDID exposed by KMS is the same as the screen's
  * Test category: functionality test
- * Run type: BAT
  * Functionality: chamelium, vga_edid
  * Mega feature: VGA
  * Driver requirement: i915, xe
@@ -215,7 +212,6 @@ static void igt_custom_edid_type_read(chamelium_data_t *data,
  *              the other, and ensure their validity by check the real screen
  *              resolution vs the advertised mode (%arg[1]) resolution.
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, dp_edid
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -225,7 +221,6 @@ static void igt_custom_edid_type_read(chamelium_data_t *data,
  *              the other, and ensure their validity by check the real screen
  *              resolution vs the advertised mode (%arg[1]) resolution.
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, hdmi_edid
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -310,7 +305,6 @@ static void edid_stress_resolution(chamelium_data_t *data,
  *              them on the screen and check the screen resolution matches the
  *              mode resolution.
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, dp_edid
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -384,7 +378,6 @@ static void edid_resolution_list(chamelium_data_t *data,
  *              plugged during suspend, check that a uevent is sent and
  *              connector status is updated during %arg[1]
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, dp_edid
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -394,7 +387,6 @@ static void edid_resolution_list(chamelium_data_t *data,
  *              plugged during suspend, check that a uevent is sent and
  *              connector status is updated during %arg[1]
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, dp_edid
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -462,7 +454,6 @@ static void test_suspend_resume_edid_change(chamelium_data_t *data,
  *              the mode detected by the Chamelium receiver matches the mode we
  *              set
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, dp_edid
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -472,7 +463,6 @@ static void test_suspend_resume_edid_change(chamelium_data_t *data,
  *              the mode detected by the Chamelium receiver matches the mode we
  *              set
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, dp_edid
  * Mega feature: DP
  * Driver requirement: i915, xe

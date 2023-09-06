@@ -45,7 +45,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: writeback-fb-id
@@ -53,7 +52,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: writeback-invalid-parameters
@@ -63,7 +61,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: writeback-pixel-formats
@@ -71,7 +68,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

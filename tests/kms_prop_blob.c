@@ -129,7 +129,6 @@ destroy_prop(int fd, uint32_t prop_id)
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: blob-prop-%s
@@ -137,7 +136,6 @@ destroy_prop(int fd, uint32_t prop_id)
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -271,7 +269,6 @@ test_core(int fd)
  * Description: Test to ensure property support exists
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_core
  * Mega feature: General Display Features
  */
@@ -291,7 +288,6 @@ test_basic(int fd)
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

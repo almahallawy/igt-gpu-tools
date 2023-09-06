@@ -150,7 +150,6 @@ static void get_method_crc(enum igt_draw_method method, uint32_t drm_format,
  * Driver requirement: i915, xe
  * Functionality: kms_core, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -167,7 +166,6 @@ static void get_method_crc(enum igt_draw_method method, uint32_t drm_format,
  * Driver requirement: i915
  * Functionality: kms_core, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -221,7 +219,6 @@ static void get_fill_crc(uint64_t modifier, igt_crc_t *crc)
  * Driver requirement: i915, xe
  * Functionality: kms_core, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void fill_fb_subtest(void)

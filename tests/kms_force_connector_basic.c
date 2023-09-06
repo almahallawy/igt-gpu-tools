@@ -75,7 +75,6 @@ static void reset_connectors(void)
  * Driver requirement: i915
  * Functionality: force_connector, vga
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void force_load_detect(int drm_fd, drmModeConnectorPtr connector, drmModeRes *res)
@@ -171,7 +170,6 @@ static void force_load_detect(int drm_fd, drmModeConnectorPtr connector, drmMode
  * Description: Test to check the forced connector state
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: force_connector
  * Mega feature: General Display Features
  */
@@ -219,7 +217,6 @@ static void force_connector_state(int drm_fd, drmModeConnectorPtr connector)
  * Description: Test to check the values after forcing edid
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: force_connector
  * Mega feature: General Display Features
  */
@@ -269,7 +266,6 @@ static void force_edid(int drm_fd, drmModeConnectorPtr connector)
  * Description: Tests pruning of stale modes
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: force_connector
  * Mega feature: General Display Features
  */

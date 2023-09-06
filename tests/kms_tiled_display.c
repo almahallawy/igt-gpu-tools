@@ -54,7 +54,6 @@
  * Driver requirement: i915, xe
  * Functionality: tiled_display
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: basic-test-pattern-with-chamelium
@@ -63,7 +62,6 @@
  * Driver requirement: i915, xe
  * Functionality: chamelium, tiled_display
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

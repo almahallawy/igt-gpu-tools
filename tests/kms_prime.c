@@ -40,7 +40,6 @@
  * Driver requirement: i915, xe
  * Functionality: hybrid, kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: basic-modeset-hybrid
@@ -48,7 +47,6 @@
  * Driver requirement: i915, xe
  * Functionality: hybrid, kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: basic-crc-%s
@@ -57,7 +55,6 @@
  * Driver requirement: i915, xe
  * Functionality: crc, hybrid, kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

@@ -1857,7 +1857,6 @@ static void prepare_subtest(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbt, drrs
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%dp-rte
@@ -1865,7 +1864,6 @@ static void prepare_subtest(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%dp-rte
@@ -1873,7 +1871,6 @@ static void prepare_subtest(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-rte
@@ -1881,7 +1878,6 @@ static void prepare_subtest(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-rte
@@ -1889,7 +1885,6 @@ static void prepare_subtest(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%dp-rte
@@ -1897,7 +1892,6 @@ static void prepare_subtest(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbt, drrs, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-rte
@@ -1905,7 +1899,6 @@ static void prepare_subtest(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, drrs, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -1977,7 +1970,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-1p-offscren-pri-%s-draw-%s
@@ -1985,7 +1977,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-1p-offscren-pri-%s-draw-%s
@@ -1993,7 +1984,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-1p-offscren-pri-%s-draw-%s
@@ -2001,7 +1991,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-1p-offscren-pri-%s-draw-%s
@@ -2009,7 +1998,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-1p-offscren-pri-%s-draw-%s
@@ -2017,7 +2005,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-1p-offscren-pri-%s-draw-%s
@@ -2025,7 +2012,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -2046,7 +2032,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-1p-offscren-pri-%s-draw-%s
@@ -2054,7 +2039,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-1p-offscren-pri-%s-draw-%s
@@ -2062,7 +2046,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-1p-offscren-pri-%s-draw-%s
@@ -2070,7 +2053,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-1p-offscren-pri-%s-draw-%s
@@ -2078,7 +2060,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-1p-offscren-pri-%s-draw-%s
@@ -2086,7 +2067,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-1p-offscren-pri-%s-draw-%s
@@ -2094,7 +2074,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -2115,7 +2094,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%dp-primscrn-%s-indfb-draw-%s
@@ -2123,7 +2101,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%dp-primscrn-%s-indfb-draw-%s
@@ -2131,7 +2108,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-draw-%s
@@ -2139,7 +2115,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-draw-%s
@@ -2147,7 +2122,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-draw-%s
@@ -2155,7 +2129,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-draw-%s
@@ -2163,7 +2136,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -2187,7 +2159,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%dp-primscrn-%s-indfb-draw-%s
@@ -2195,7 +2166,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%dp-primscrn-%s-indfb-draw-%s
@@ -2203,7 +2173,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-draw-%s
@@ -2211,7 +2180,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-draw-%s
@@ -2219,7 +2187,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-draw-%s
@@ -2227,7 +2194,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-draw-%s
@@ -2235,7 +2201,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -2259,7 +2224,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%dp-primscrn-pri-shrfb-draw-%s
@@ -2267,7 +2231,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%dp-primscrn-pri-shrfb-draw-%s
@@ -2275,7 +2238,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-pri-shrfb-draw-%s
@@ -2283,7 +2245,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-primscrn-pri-shrfb-draw-%s
@@ -2291,7 +2252,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%dp-primscrn-pri-shrfb-draw-%s
@@ -2299,7 +2259,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-pri-shrfb-draw-%s
@@ -2307,7 +2266,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -2325,7 +2283,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%dp-primscrn-pri-shrfb-draw-%s
@@ -2333,7 +2290,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%dp-primscrn-pri-shrfb-draw-%s
@@ -2341,7 +2297,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-pri-shrfb-draw-%s
@@ -2349,7 +2304,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-primscrn-pri-shrfb-draw-%s
@@ -2357,7 +2311,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%dp-primscrn-pri-shrfb-draw-%s
@@ -2365,7 +2318,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-pri-shrfb-draw-%s
@@ -2373,7 +2325,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -2391,7 +2342,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-2p-scndscrn-%s-indfb-draw-%s
@@ -2399,7 +2349,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-2p-scndscrn-%s-indfb-draw-%s
@@ -2407,7 +2356,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-draw-%s
@@ -2415,7 +2363,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-draw-%s
@@ -2423,7 +2370,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-draw-%s
@@ -2431,7 +2377,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-draw-%s
@@ -2439,7 +2384,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -2461,7 +2405,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-2p-scndscrn-%s-indfb-draw-%s
@@ -2469,7 +2412,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-2p-scndscrn-%s-indfb-draw-%s
@@ -2477,7 +2419,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-draw-%s
@@ -2485,7 +2426,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-draw-%s
@@ -2493,7 +2433,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-draw-%s
@@ -2501,7 +2440,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-draw-%s
@@ -2509,7 +2447,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -2531,7 +2468,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-2p-scndscrn-pri-shrfb-draw-%s
@@ -2539,7 +2475,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-2p-scndscrn-pri-shrfb-draw-%s
@@ -2547,7 +2482,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-pri-shrfb-draw-%s
@@ -2555,7 +2489,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-2p-scndscrn-pri-shrfb-draw-%s
@@ -2563,7 +2496,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-2p-scndscrn-pri-shrfb-draw-%s
@@ -2571,7 +2503,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-pri-shrfb-draw-%s
@@ -2579,7 +2510,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -2595,7 +2525,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-2p-scndscrn-pri-shrfb-draw-%s
@@ -2603,7 +2532,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-2p-scndscrn-pri-shrfb-draw-%s
@@ -2611,7 +2539,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-pri-shrfb-draw-%s
@@ -2619,7 +2546,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-2p-scndscrn-pri-shrfb-draw-%s
@@ -2627,7 +2553,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-2p-scndscrn-pri-shrfb-draw-%s
@@ -2635,7 +2560,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-pri-shrfb-draw-%s
@@ -2643,7 +2567,6 @@ static bool op_disables_psr(const struct test_mode *t,
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -2732,7 +2655,6 @@ static void draw_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%dp-pri-indfb-multidraw
@@ -2740,7 +2662,6 @@ static void draw_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%dp-pri-indfb-multidraw
@@ -2748,7 +2669,6 @@ static void draw_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-pri-indfb-multidraw
@@ -2756,7 +2676,6 @@ static void draw_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-pri-indfb-multidraw
@@ -2764,7 +2683,6 @@ static void draw_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%dp-pri-indfb-multidraw
@@ -2772,7 +2690,6 @@ static void draw_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-pri-indfb-multidraw
@@ -2780,7 +2697,6 @@ static void draw_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -2940,7 +2856,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%s-draw-%s
@@ -2948,7 +2863,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%s-draw-%s
@@ -2956,7 +2870,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%s-draw-%s
@@ -2964,7 +2877,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%s-draw-%s
@@ -2972,7 +2884,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%s-draw-%s
@@ -2980,7 +2891,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%s-draw-%s
@@ -2988,7 +2898,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -3009,7 +2918,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%s-draw-%s
@@ -3017,7 +2925,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%s-draw-%s
@@ -3025,7 +2932,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%s-draw-%s
@@ -3033,7 +2939,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%s-draw-%s
@@ -3041,7 +2946,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%s-draw-%s
@@ -3049,7 +2953,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%s-draw-%s
@@ -3057,7 +2960,6 @@ static void badformat_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -3121,7 +3023,6 @@ static bool tiling_is_valid(int feature_flags, enum tiling_type tiling)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-slowdraw
@@ -3129,7 +3030,6 @@ static bool tiling_is_valid(int feature_flags, enum tiling_type tiling)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-slowdraw
@@ -3137,7 +3037,6 @@ static bool tiling_is_valid(int feature_flags, enum tiling_type tiling)
  * Driver requirement: i915, xe
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-slowdraw
@@ -3145,7 +3044,6 @@ static bool tiling_is_valid(int feature_flags, enum tiling_type tiling)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-slowdraw
@@ -3153,7 +3051,6 @@ static bool tiling_is_valid(int feature_flags, enum tiling_type tiling)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-slowdraw
@@ -3161,7 +3058,6 @@ static bool tiling_is_valid(int feature_flags, enum tiling_type tiling)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-slowdraw
@@ -3169,7 +3065,6 @@ static bool tiling_is_valid(int feature_flags, enum tiling_type tiling)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -3285,7 +3180,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%dp-primscrn-%s-%sflip-blt
@@ -3293,7 +3187,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%dp-primscrn-%s-%sflip-blt
@@ -3301,7 +3194,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-%s-%sflip-blt
@@ -3309,7 +3201,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-primscrn-%s-%sflip-blt
@@ -3317,7 +3208,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%dp-primscrn-%s-%sflip-blt
@@ -3325,7 +3215,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-%sflip-blt
@@ -3333,7 +3222,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -3356,7 +3244,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-2p-scndscrn-%s-%sflip-blt
@@ -3364,7 +3251,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-2p-scndscrn-%s-%sflip-blt
@@ -3372,7 +3258,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-%s-%sflip-blt
@@ -3380,7 +3265,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-2p-scndscrn-%s-%sflip-blt
@@ -3388,7 +3272,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-2p-scndscrn-%s-%sflip-blt
@@ -3396,7 +3279,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-%sflip-blt
@@ -3404,7 +3286,6 @@ static void page_flip_for_params(struct modeset_params *params,
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -3485,7 +3366,6 @@ static void flip_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-%s-fliptrack-mmap-gtt
@@ -3493,7 +3373,6 @@ static void flip_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-%s-fliptrack-mmap-gtt
@@ -3501,7 +3380,6 @@ static void flip_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-%s-fliptrack-mmap-gtt
@@ -3509,7 +3387,6 @@ static void flip_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -3574,7 +3451,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%dp-primscrn-%s-indfb-move
@@ -3582,7 +3458,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%dp-primscrn-%s-indfb-move
@@ -3590,7 +3465,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-move
@@ -3598,7 +3472,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-move
@@ -3606,7 +3479,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-move
@@ -3614,7 +3486,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-move
@@ -3622,7 +3493,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -3639,7 +3509,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-2p-scndscrn-%s-indfb-move
@@ -3647,7 +3516,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-2p-scndscrn-%s-indfb-move
@@ -3655,7 +3523,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-move
@@ -3663,7 +3530,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-move
@@ -3671,7 +3537,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-move
@@ -3679,7 +3544,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-move
@@ -3687,7 +3551,6 @@ static void fliptrack_subtest(const struct test_mode *t, enum flip_type type)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -3755,7 +3618,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%dp-primscrn-%s-indfb-onoff
@@ -3763,7 +3625,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%dp-primscrn-%s-indfb-onoff
@@ -3771,7 +3632,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-onoff
@@ -3779,7 +3639,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-onoff
@@ -3787,7 +3646,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-onoff
@@ -3795,7 +3653,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-onoff
@@ -3803,7 +3660,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -3820,7 +3676,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-2p-scndscrn-%s-indfb-onoff
@@ -3828,7 +3683,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-2p-scndscrn-%s-indfb-onoff
@@ -3836,7 +3690,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-onoff
@@ -3844,7 +3697,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-onoff
@@ -3852,7 +3704,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-onoff
@@ -3860,7 +3711,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-onoff
@@ -3868,7 +3718,6 @@ static void move_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -3942,7 +3791,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%dp-primscrn-spr-indfb-fullscreen
@@ -3950,7 +3798,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%dp-primscrn-spr-indfb-fullscreen
@@ -3958,7 +3805,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-spr-indfb-fullscreen
@@ -3966,7 +3812,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%dp-primscrn-spr-indfb-fullscreen
@@ -3974,7 +3819,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%dp-primscrn-spr-indfb-fullscreen
@@ -3982,7 +3826,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-spr-indfb-fullscreen
@@ -3990,7 +3833,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: drrs-2p-scndscrn-spr-indfb-fullscreen
@@ -3998,7 +3840,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-2p-scndscrn-spr-indfb-fullscreen
@@ -4006,7 +3847,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-2p-scndscrn-spr-indfb-fullscreen
@@ -4014,7 +3854,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-spr-indfb-fullscreen
@@ -4022,7 +3861,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-2p-scndscrn-spr-indfb-fullscreen
@@ -4030,7 +3868,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-2p-scndscrn-spr-indfb-fullscreen
@@ -4038,7 +3875,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-spr-indfb-fullscreen
@@ -4046,7 +3882,6 @@ static bool prim_plane_disabled(void)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1].values:   1, 2
@@ -4119,7 +3954,6 @@ static void fullscreen_plane_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-%s-scaledprimary
@@ -4127,7 +3961,6 @@ static void fullscreen_plane_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-%s-scaledprimary
@@ -4135,7 +3968,6 @@ static void fullscreen_plane_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbt, psr, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-%s-scaledprimary
@@ -4143,7 +3975,6 @@ static void fullscreen_plane_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-%s-scaledprimary
@@ -4151,7 +3982,6 @@ static void fullscreen_plane_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-%s-scaledprimary
@@ -4159,7 +3989,6 @@ static void fullscreen_plane_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, psr, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-%s-scaledprimary
@@ -4167,7 +3996,6 @@ static void fullscreen_plane_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -4288,7 +4116,6 @@ static void scaledprimary_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-modesetfrombusy
@@ -4296,7 +4123,6 @@ static void scaledprimary_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-modesetfrombusy
@@ -4304,7 +4130,6 @@ static void scaledprimary_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbt, psr, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-modesetfrombusy
@@ -4312,7 +4137,6 @@ static void scaledprimary_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-modesetfrombusy
@@ -4320,7 +4144,6 @@ static void scaledprimary_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-modesetfrombusy
@@ -4328,7 +4151,6 @@ static void scaledprimary_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, psr, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-modesetfrombusy
@@ -4336,7 +4158,6 @@ static void scaledprimary_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  */
 
 /**
@@ -4388,7 +4209,6 @@ static void modesetfrombusy_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, suspend
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-suspend
@@ -4396,7 +4216,6 @@ static void modesetfrombusy_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, suspend
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-suspend
@@ -4404,7 +4223,6 @@ static void modesetfrombusy_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbt, psr, suspend
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-suspend
@@ -4412,7 +4230,6 @@ static void modesetfrombusy_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, suspend
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-suspend
@@ -4420,7 +4237,6 @@ static void modesetfrombusy_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr, suspend
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-suspend
@@ -4428,7 +4244,6 @@ static void modesetfrombusy_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbt, psr, suspend
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-suspend
@@ -4436,7 +4251,6 @@ static void modesetfrombusy_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr, suspend
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -4478,7 +4292,6 @@ static void suspend_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbc-farfromfence-mmap-gtt
@@ -4486,7 +4299,6 @@ static void suspend_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr-farfromfence-mmap-gtt
@@ -4494,7 +4306,6 @@ static void suspend_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-farfromfence-mmap-gtt
@@ -4502,7 +4313,6 @@ static void suspend_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-farfromfence-mmap-gtt
@@ -4510,7 +4320,6 @@ static void suspend_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psrdrrs-farfromfence-mmap-gtt
@@ -4518,7 +4327,6 @@ static void suspend_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: drrs, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-farfromfence-mmap-gtt
@@ -4526,7 +4334,6 @@ static void suspend_subtest(const struct test_mode *t)
  * Driver requirement: i915
  * Functionality: drrs, fbc, fbt, kms_core, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -4632,7 +4439,6 @@ static void try_invalid_strides(void)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-badstride
@@ -4640,7 +4446,6 @@ static void try_invalid_strides(void)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-badstride
@@ -4648,7 +4453,6 @@ static void try_invalid_strides(void)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-badstride
@@ -4656,7 +4460,6 @@ static void try_invalid_strides(void)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -4734,7 +4537,6 @@ static void badstride_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-stridechange
@@ -4742,7 +4544,6 @@ static void badstride_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-stridechange
@@ -4750,7 +4551,6 @@ static void badstride_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-stridechange
@@ -4758,7 +4558,6 @@ static void badstride_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -4833,7 +4632,6 @@ static void stridechange_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcdrrs-tiling-%s
@@ -4842,7 +4640,6 @@ static void stridechange_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsr-tiling-%s
@@ -4851,7 +4648,6 @@ static void stridechange_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbc, fbt, psr, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fbcpsrdrrs-tiling-%s
@@ -4860,7 +4656,6 @@ static void stridechange_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: drrs, fbc, fbt, psr, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -4925,7 +4720,6 @@ static void tiling_disable_fbc_subtest(const struct test_mode *t)
  * Driver requirement: i915, xe
  * Functionality: fbt
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

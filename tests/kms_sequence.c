@@ -147,7 +147,6 @@ static int crtc_queue_sequence(int fd, struct drm_crtc_queue_sequence *cqs)
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -164,7 +163,6 @@ static int crtc_queue_sequence(int fd, struct drm_crtc_queue_sequence *cqs)
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

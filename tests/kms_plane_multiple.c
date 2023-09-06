@@ -386,7 +386,6 @@ test_plane_position(data_t *data, enum pipe pipe, igt_output_t *output, uint64_t
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: tiling-%s
@@ -396,7 +395,6 @@ test_plane_position(data_t *data, enum pipe pipe, igt_output_t *output, uint64_t
  * Driver requirement: i915, xe
  * Functionality: plane, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

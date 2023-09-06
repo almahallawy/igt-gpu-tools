@@ -212,7 +212,6 @@ static void run_extendedmode_basic(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void run_extendedmode_test(data_t *data) {
@@ -267,7 +266,6 @@ static void run_extendedmode_test(data_t *data) {
  * Driver requirement: i915, xe
  * Functionality: kms_core, mst
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void run_extendedmode_negative(data_t *data, int pipe1, int pipe2)

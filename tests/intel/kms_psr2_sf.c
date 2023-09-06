@@ -42,7 +42,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr2, selective_fetch
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -63,7 +62,6 @@
  * Driver requirement: i915, xe
  * Functionality: cursor, psr2, selective_fetch
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: overlay-plane-update-continuous-sf
@@ -71,7 +69,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr2, selective_fetch
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: overlay-plane-update-sf-dmg-area
@@ -79,7 +76,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr2, selective_fetch
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: overlay-primary-update-sf-dmg-area
@@ -88,7 +84,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr2, selective_fetch
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: plane-move-sf-dmg-area
@@ -96,7 +91,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr2, selective_fetch
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: primary-plane-update-sf-dmg-area
@@ -104,7 +98,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr2, selective_fetch
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: primary-plane-update-sf-dmg-area-big-fb
@@ -112,7 +105,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr2, selective_fetch
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  */
 

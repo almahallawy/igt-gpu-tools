@@ -39,7 +39,6 @@
  * Driver requirement: i915, xe
  * Functionality: cursor
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

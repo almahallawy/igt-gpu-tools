@@ -37,7 +37,6 @@ IGT_TEST_DESCRIPTION("Test Color Features at Pipe level using Chamelium to verif
  * Description: Verify that degamma LUT transformation works correctly
  * Functionality: chamelium, colorspace
  * Mega feature: Color mgmt
- * Run type: FULL
  * Test category: functionality test
  * Driver requirement: i915, xe
  */
@@ -135,7 +134,6 @@ static bool test_pipe_degamma(data_t *data,
  * Description: Verify that gamma LUT transformation works correctly
  * Functionality: chamelium, colorspace
  * Mega feature: Color mgmt
- * Run type: FULL
  * Test category: functionality test
  * Driver requirement: i915, xe
  */
@@ -494,7 +492,6 @@ run_gamma_degamma_tests_for_pipe(data_t *data, enum pipe p,
  * Description: Check the color transformation %arg[1]
  * Functionality: chamelium, colorspace
  * Mega feature: Color mgmt
- * Run type: FULL
  * Test category: functionality test
  * Driver requirement: i915, xe
  *

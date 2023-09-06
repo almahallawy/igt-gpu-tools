@@ -485,7 +485,6 @@ static bool test_format(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: plane, rotation
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -501,7 +500,6 @@ static bool test_format(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: plane, rotation
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -518,7 +516,6 @@ static bool test_format(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: plane, rotation
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: bad-tiling
@@ -526,7 +523,6 @@ static bool test_format(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: plane, rotation, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -536,7 +532,6 @@ static bool test_format(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: plane, rotation, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -555,7 +550,6 @@ static bool test_format(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: plane, rotation, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -570,7 +564,6 @@ static bool test_format(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: plane, rotation
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_plane_rotation(data_t *data, int plane_type, bool test_bad_format)
@@ -898,7 +891,6 @@ static bool reusecrcfromlastround(planeinfos p[2], int lastroundp1format,
  * Driver requirement: i915, xe
  * Functionality: plane, rotation
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: multiplane-rotation-cropping-%s
@@ -907,7 +899,6 @@ static bool reusecrcfromlastround(planeinfos p[2], int lastroundp1format,
  * Driver requirement: i915, xe
  * Functionality: plane, rotation
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1119,7 +1110,6 @@ static void test_multi_plane_rotation(data_t *data, enum pipe pipe)
  * Driver requirement: i915
  * Functionality: plane, rotation
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_plane_rotation_exhaust_fences(data_t *data,

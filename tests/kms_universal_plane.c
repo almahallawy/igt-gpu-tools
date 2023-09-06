@@ -38,7 +38,6 @@
  * Driver requirement: i915, xe
  * Functionality: cursor, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: disable-primary-vs-flip-pipe-%s
@@ -47,7 +46,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: universal-plane-pageflip-windowed-pipe-%s
@@ -55,7 +53,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -76,7 +73,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

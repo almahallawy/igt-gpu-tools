@@ -535,7 +535,6 @@ static const uint64_t modifiers[] = {
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: plane-scaler-with-clipping-clamping-modifiers
@@ -543,7 +542,6 @@ static const uint64_t modifiers[] = {
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: plane-upscale-with-modifiers-%s
@@ -551,7 +549,6 @@ static const uint64_t modifiers[] = {
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -566,7 +563,6 @@ static const uint64_t modifiers[] = {
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -613,7 +609,6 @@ static void test_scaler_with_modifier_pipe(data_t *d,
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: plane-scaler-with-clipping-clamping-rotation
@@ -621,7 +616,6 @@ static void test_scaler_with_modifier_pipe(data_t *d,
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: plane-upscale-with-rotation-%s
@@ -629,7 +623,6 @@ static void test_scaler_with_modifier_pipe(data_t *d,
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -644,7 +637,6 @@ static void test_scaler_with_modifier_pipe(data_t *d,
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -692,7 +684,6 @@ static void test_scaler_with_rotation_pipe(data_t *d,
  * Driver requirement: i915, xe
  * Functionality: pixel_formats, plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: plane-scaler-with-clipping-clamping-pixel-formats
@@ -700,7 +691,6 @@ static void test_scaler_with_rotation_pipe(data_t *d,
  * Driver requirement: i915, xe
  * Functionality: pixel_formats, plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: plane-upscale-with-pixel-format-%s
@@ -708,7 +698,6 @@ static void test_scaler_with_rotation_pipe(data_t *d,
  * Driver requirement: i915, xe
  * Functionality: pixel_formats, plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -723,7 +712,6 @@ static void test_scaler_with_rotation_pipe(data_t *d,
  * Driver requirement: i915, xe
  * Functionality: pixel_formats, plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -873,7 +861,6 @@ static void setup_fb(int fd, int width, int height, struct igt_fb *fb)
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -889,7 +876,6 @@ static void setup_fb(int fd, int width, int height, struct igt_fb *fb)
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -910,7 +896,6 @@ static void setup_fb(int fd, int width, int height, struct igt_fb *fb)
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: planes-upscale-%s
@@ -918,7 +903,6 @@ static void setup_fb(int fd, int width, int height, struct igt_fb *fb)
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -933,7 +917,6 @@ static void setup_fb(int fd, int width, int height, struct igt_fb *fb)
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1013,7 +996,6 @@ test_planes_scaling_combo(data_t *d, int w1, int h1, int w2, int h2,
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void
@@ -1087,7 +1069,6 @@ test_invalid_num_scalers(data_t *d, enum pipe pipe, igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_scaler_with_multi_pipe_plane(data_t *d)
@@ -1180,7 +1161,6 @@ static void test_scaler_with_multi_pipe_plane(data_t *d)
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void invalid_parameter_tests(data_t *d)
@@ -1269,7 +1249,6 @@ static drmModeModeInfo *find_mode(data_t *data, igt_output_t *output, const uint
  * Driver requirement: i915, xe
  * Functionality: plane, scaling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

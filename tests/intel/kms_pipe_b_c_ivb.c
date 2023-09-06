@@ -37,7 +37,6 @@
  * Driver requirement: i915
  * Functionality: kms_core, obsolete
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: enable-pipe-C-while-B-has-3-lanes
@@ -46,7 +45,6 @@
  * Driver requirement: i915
  * Functionality: kms_core, obsolete
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: from-pipe-C-to-B-with-3-lanes
@@ -55,7 +53,6 @@
  * Driver requirement: i915
  * Functionality: kms_core, obsolete
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: pipe-B-double-modeset-then-modeset-pipe-C
@@ -64,7 +61,6 @@
  * Driver requirement: i915
  * Functionality: kms_core, obsolete
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: pipe-B-dpms-off-modeset-pipe-C
@@ -74,7 +70,6 @@
  * Driver requirement: i915
  * Functionality: kms_core, obsolete
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

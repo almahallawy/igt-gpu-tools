@@ -71,7 +71,6 @@ static int legacy_addfb(int fd, struct drm_mode_fb_cmd *arg)
  * Description: Test that addfb2 call fails correctly for unused %arg[1]
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
  *
@@ -79,7 +78,6 @@ static int legacy_addfb(int fd, struct drm_mode_fb_cmd *arg)
  * Description: Test that addfb2 call fails correctly for unused modifier
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
  *
@@ -88,7 +86,6 @@ static int legacy_addfb(int fd, struct drm_mode_fb_cmd *arg)
  * Driver requirement: i915
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: invalid-smem-bo-on-discrete
@@ -97,7 +94,6 @@ static int legacy_addfb(int fd, struct drm_mode_fb_cmd *arg)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: legacy-format
@@ -105,7 +101,6 @@ static int legacy_addfb(int fd, struct drm_mode_fb_cmd *arg)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -332,7 +327,6 @@ static void invalid_tests(int fd)
  * Description: Test that addfb2 call fails correctly without handle
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
  *
@@ -340,7 +334,6 @@ static void invalid_tests(int fd)
  * Description: Check if addfb2 call works with given handle
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
  *
@@ -348,7 +341,6 @@ static void invalid_tests(int fd)
  * Description: bad-pitch-%arg[1]: Test that addfb2 call fails correctly for bad-pitches
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
  *
@@ -406,7 +398,6 @@ static void pitch_tests(int fd)
  * Description: Check if addfb2 and rmfb call works for basic %arg[1] test
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: FULL
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
  *
@@ -414,7 +405,6 @@ static void pitch_tests(int fd)
  * Description: Check if addfb2 call works for x and y tiling
  * Driver requirement: i915
  * Test category: functionality test
- * Run type: FULL
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
  *
@@ -422,7 +412,6 @@ static void pitch_tests(int fd)
  * Description: Test that addfb2 call fails correctly for pitches mismatch
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: FULL
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
  *
@@ -522,7 +511,6 @@ static void tiling_tests(int fd)
  * Description: Check if addfb2 call works with max size of buffer object
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
  *
@@ -530,7 +518,6 @@ static void tiling_tests(int fd)
  * Description: Test that addfb2 call fails correctly with increased width of fb
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
  *
@@ -538,7 +525,6 @@ static void tiling_tests(int fd)
  * Description: Test that addfb2 call fails correctly with increased height of fb
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
  *
@@ -546,7 +532,6 @@ static void tiling_tests(int fd)
  * Description: Test that addfb2 call fails correctly with small size of buffer object
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
  *
@@ -554,7 +539,6 @@ static void tiling_tests(int fd)
  * Description: Check if addfb2 call works for given height
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
  *
@@ -563,7 +547,6 @@ static void tiling_tests(int fd)
  *              after changing tile
  * Driver requirement: i915
  * Test category: functionality test
- * Run type: FULL
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
  */
@@ -687,7 +670,6 @@ static void size_tests(int fd)
  * Description: Test that addfb2 call fails correctly for x-tiling with given modifier
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
  *
@@ -695,7 +677,6 @@ static void size_tests(int fd)
  * Description: Test that addfb2 call fails correctly for irrelevant modifier
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
  *
@@ -703,7 +684,6 @@ static void size_tests(int fd)
  * Description: Test that addfb2 call fails correctly for irrelevant x-tiling
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: FULL
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
  *
@@ -711,7 +691,6 @@ static void size_tests(int fd)
  * Description: Check if addfb2 call works for x-tiling
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: FULL
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
  *
@@ -719,7 +698,6 @@ static void size_tests(int fd)
  * Description: Check if addfb2 call works for relevant combination of tiling and fbs
  * Driver requirement: i915
  * Test category: functionality test
- * Run type: FULL
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
  */
@@ -814,7 +792,6 @@ static int addfb_expected_ret(igt_display_t *disp, struct drm_mode_fb_cmd2 *f)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: addfb25-yf-tiled-legacy
@@ -822,7 +799,6 @@ static int addfb_expected_ret(igt_display_t *disp, struct drm_mode_fb_cmd2 *f)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -902,7 +878,6 @@ static void addfb25_ytile(int fd)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void addfb25_4tile(int fd)
@@ -948,7 +923,6 @@ static void addfb25_4tile(int fd)
  * Description: Test that %arg[1] ioctl call fails correctly for %arg[2] object
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
  *
@@ -1033,7 +1007,6 @@ static void prop_tests(int fd)
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void master_tests(int fd)

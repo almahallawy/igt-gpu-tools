@@ -296,7 +296,6 @@ static uint32_t plane_get_igt_format(igt_plane_t *plane)
  * Driver requirement: i915, xe
  * Functionality: kms_core, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void
@@ -388,7 +387,6 @@ plane_primary_overlay_mutable_zpos(igt_pipe_t *pipe, igt_output_t *output,
  * Driver requirement: i915, xe
  * Functionality: kms_core, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void
@@ -533,7 +531,6 @@ plane_immutable_zpos(igt_display_t *display, igt_pipe_t *pipe,
  * Driver requirement: i915, xe
  * Functionality: kms_core, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -623,7 +620,6 @@ static void plane_primary(igt_pipe_t *pipe, igt_plane_t *plane, struct igt_fb *f
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -741,7 +737,6 @@ static void plane_cursor(igt_pipe_t *pipe_obj,
  * Driver requirement: i915, xe
  * Functionality: kms_core, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -844,7 +839,6 @@ static void plane_invalid_params_fence(igt_pipe_t *pipe,
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1007,7 +1001,6 @@ static void crtc_invalid_params_fence(igt_pipe_t *pipe,
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -1158,7 +1151,6 @@ static void atomic_invalid_params(igt_pipe_t *pipe,
  * Driver requirement: i915, xe
  * Functionality: kms_core, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void atomic_plane_damage(igt_pipe_t *pipe, igt_plane_t *plane, struct igt_fb *fb)

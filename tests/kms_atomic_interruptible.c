@@ -85,7 +85,6 @@ static drmEventContext drm_events = {
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -100,7 +99,6 @@ static drmEventContext drm_events = {
  * Driver requirement: i915, xe
  * Functionality: cursor, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: legacy-dpms
@@ -108,7 +106,6 @@ static drmEventContext drm_events = {
  * Driver requirement: i915, xe
  * Functionality: dpms, kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: legacy-pageflip
@@ -116,7 +113,6 @@ static drmEventContext drm_events = {
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 
@@ -126,7 +122,6 @@ static drmEventContext drm_events = {
  * Driver requirement: i915, xe
  * Functionality: kms_core, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

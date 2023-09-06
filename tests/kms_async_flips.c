@@ -210,7 +210,6 @@ static void test_init_fbs(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: async_flips, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: async-flip-with-page-flip-events
@@ -219,7 +218,6 @@ static void test_init_fbs(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: async_flips, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_async_flip(data_t *data)
@@ -325,7 +323,6 @@ static void wait_for_vblank(data_t *data, unsigned long *vbl_time, unsigned int 
  * Driver requirement: i915, xe
  * Functionality: async_flips, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_timestamp(data_t *data)
@@ -378,7 +375,6 @@ static void test_timestamp(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: async_flips, cursor, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_cursor(data_t *data)
@@ -539,7 +535,6 @@ static unsigned int clock_ms(void)
  * Driver requirement: i915, xe
  * Functionality: async_flips, crc, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_crc(data_t *data)
@@ -610,7 +605,6 @@ static void test_crc(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: async_flips, vblank
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void run_test(data_t *data, void (*test)(data_t *))

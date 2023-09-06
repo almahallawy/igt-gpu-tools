@@ -44,7 +44,6 @@
  * Driver requirement: i915, xe
  * Functionality: psr
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: %s_%s
@@ -53,7 +52,6 @@
  * Driver requirement: i915
  * Functionality: kms_core, plane, psr
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -75,7 +73,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: %s_%s
@@ -84,7 +81,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core, plane, psr
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -106,7 +102,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core, psr
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -122,7 +117,6 @@
  * Driver requirement: i915, xe
  * Functionality: dpms, psr
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: no_drrs
@@ -130,7 +124,6 @@
  * Driver requirement: i915, xe
  * Functionality: drrs, psr
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: suspend
@@ -139,7 +132,6 @@
  * Driver requirement: i915, xe
  * Functionality: psr, suspend
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr2_dpms
@@ -148,7 +140,6 @@
  * Driver requirement: i915, xe
  * Functionality: dpms, psr, psr2
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr2_no_drrs
@@ -156,7 +147,6 @@
  * Driver requirement: i915, xe
  * Functionality: drrs, psr, psr2
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr2_suspend
@@ -165,7 +155,6 @@
  * Driver requirement: i915, xe
  * Functionality: psr, psr2, suspend
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr2_basic
@@ -173,7 +162,6 @@
  * Driver requirement: i915, xe
  * Functionality: psr, psr2
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr2_%s_%s
@@ -182,7 +170,6 @@
  * Driver requirement: i915
  * Functionality: kms_core, plane, psr, psr2
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -204,7 +191,6 @@
  * Driver requirement: i915, xe
  * Functionality: plane, psr, psr2
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: psr2_primary_%s
@@ -213,7 +199,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core, plane, psr, psr2
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -229,7 +214,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_core, plane, psr, psr2
  * Mega feature: PSR
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -523,7 +507,6 @@ static void fb_dirty_fb_ioctl(data_t *data, struct igt_fb *fb)
  *		cursor planes
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: psr
  * Mega feature: PSR
  *
@@ -532,7 +515,6 @@ static void fb_dirty_fb_ioctl(data_t *data, struct igt_fb *fb)
  *		on primary planes
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: psr
  * Mega feature: PSR
  *
@@ -541,7 +523,6 @@ static void fb_dirty_fb_ioctl(data_t *data, struct igt_fb *fb)
  *		sprite planes
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: psr
  * Mega feature: PSR
  */

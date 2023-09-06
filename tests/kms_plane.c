@@ -290,7 +290,6 @@ test_plane_position_with_output(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: plane-position-hole-dpms
@@ -299,7 +298,6 @@ test_plane_position_with_output(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: dpms, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -421,7 +419,6 @@ test_plane_panning_with_output(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: plane-panning-bottom-right-suspend
@@ -430,7 +427,6 @@ test_plane_panning_with_output(data_t *data,
  * Driver requirement: i915, xe
  * Functionality: plane, suspend
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1169,7 +1165,6 @@ static bool skip_plane(data_t *data, igt_plane_t *plane)
  * Driver requirement: i915, xe
  * Functionality: pixel_format, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1239,7 +1234,6 @@ test_pixel_formats(data_t *data, enum pipe pipe)
  * Driver requirement: i915, xe
  * Functionality: pixel_format, plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_invalid_settings(data_t *data)

@@ -274,7 +274,6 @@ static void test_cleanup(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: tiling-%s
@@ -283,7 +282,6 @@ static void test_cleanup(data_t *data)
  * Driver requirement: i915, xe
  * Functionality: plane, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

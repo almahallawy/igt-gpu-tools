@@ -544,7 +544,6 @@ static void prepare_randomized_plane(chamelium_data_t *data,
  * Description: Pick the first mode of the IGT base EDID, display and capture
  * 		a few frames, then check captured frames are correct
  * Test category: functionality test
- * Run type: BAT
  * Functionality: chamelium, frame_integrity
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -553,7 +552,6 @@ static void prepare_randomized_plane(chamelium_data_t *data,
  * Description: Pick the first mode of the IGT base EDID, display and capture
  * 		a few frames, then check captured frames are correct
  * Test category: functionality test
- * Run type: BAT
  * Functionality: chamelium, frame_integrity
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -564,7 +562,6 @@ static void prepare_randomized_plane(chamelium_data_t *data,
  * Description: Pick the first mode of the IGT base EDID, display and capture a
  *              few frames, then check captured frames are correct
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, frame_integrity
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -615,7 +612,6 @@ static void test_display_one_mode(chamelium_data_t *data,
  * Description: For each mode of the IGT base EDID, display and capture a few
  *              frames, then check captured frames are correct
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, frame_integrity
  * Mega feature: VGA
  * Driver requirement: i915, xe
@@ -624,7 +620,6 @@ static void test_display_one_mode(chamelium_data_t *data,
  * Description: For each mode of the IGT base EDID, display and capture a %arg[1]
  *              frame(s), then check captured frame(s) are correct
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, frame_integrity
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -633,7 +628,6 @@ static void test_display_one_mode(chamelium_data_t *data,
  * Description: For each mode of the IGT base EDID, display and capture a %arg[1]
  *              frame(s), then check captured frame(s) are correct
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, frame_integrity
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -707,7 +701,6 @@ static void test_display_all_modes(chamelium_data_t *data,
  *              frames, then download the captured frames and compare them
  *              bit-by-bit to the sent ones
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, frame_integrity
  * Mega feature: DP
  * Driver requirement: i915, xe
@@ -717,7 +710,6 @@ static void test_display_all_modes(chamelium_data_t *data,
  *              frames, then download the captured frames and compare them
  *              bit-by-bit to the sent ones
  * Test category: functionality test
- * Run type: BAT
  * Functionality: chamelium, frame_integrity
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -795,7 +787,6 @@ static void test_display_frame_dump(chamelium_data_t *data,
  * Description: Pick a mode with a picture aspect-ratio, capture AVI InfoFrames
  *              and check they include the relevant fields
  * Test category: functionality test
- * Run type: BAT
  * Functionality: chamelium, frame_integrity
  * Mega feature: HDMI
  * Driver requirement: i915, xe
@@ -885,7 +876,6 @@ static void test_display_aspect_ratio(chamelium_data_t *data,
  * Description: Setup a few overlay planes with random parameters, capture the
  *              frame and check it matches the expected output
  * Test category: functionality test
- * Run type: FULL
  * Functionality: chamelium, frame_integrity
  * Mega feature: HDMI
  * Driver requirement: i915, xe

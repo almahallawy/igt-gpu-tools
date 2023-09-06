@@ -41,7 +41,6 @@
  * Driver requirement: i915, xe
  * Functionality: dp_aux
  * Mega feature: DP
- * Run type: FULL
  * Test category: functionality test
  */
 

@@ -142,7 +142,6 @@ static void flip_to_fb(igt_display_t *dpy, int pipe,
  * Driver requirement: i915
  * Functionality: kms_core
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: basic-hang
@@ -150,7 +149,6 @@ static void flip_to_fb(igt_display_t *dpy, int pipe,
  * Driver requirement: i915
  * Functionality: kms_core, hang
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_flip(igt_display_t *dpy, int pipe,
@@ -251,7 +249,6 @@ static void test_atomic_commit_hang(igt_display_t *dpy, igt_plane_t *primary,
  * Driver requirement: i915
  * Functionality: kms_core, hang
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -268,7 +265,6 @@ static void test_atomic_commit_hang(igt_display_t *dpy, igt_plane_t *primary,
  * Driver requirement: i915
  * Functionality: kms_core, hang
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -329,7 +325,6 @@ static void test_hang(igt_display_t *dpy,
  * Driver requirement: i915
  * Functionality: kms_core, hang
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void

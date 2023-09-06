@@ -488,7 +488,6 @@ static void coverage_premult_constant(data_t *data, enum pipe pipe, igt_plane_t 
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -506,7 +505,6 @@ static void coverage_premult_constant(data_t *data, enum pipe pipe, igt_plane_t 
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: coverage-7efc
@@ -515,7 +513,6 @@ static void coverage_premult_constant(data_t *data, enum pipe pipe, igt_plane_t 
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: constant-alpha-%s
@@ -523,7 +520,6 @@ static void coverage_premult_constant(data_t *data, enum pipe pipe, igt_plane_t 
  * Driver requirement: i915, xe
  * Functionality: plane
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

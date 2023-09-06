@@ -40,7 +40,6 @@
  * Driver requirement: i915
  * Functionality: kms_core, synchronization
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

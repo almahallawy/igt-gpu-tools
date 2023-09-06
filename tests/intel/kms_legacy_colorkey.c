@@ -34,7 +34,6 @@
  * Driver requirement: i915
  * Functionality: plane, xorg_xv
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: invalid-plane
@@ -42,7 +41,6 @@
  * Driver requirement: i915
  * Functionality: plane, xorg_xv
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

@@ -219,7 +219,6 @@ static bool has_max_bpc(igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: colorspace, hdr
  * Mega feature: HDR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: bpc-switch-dpms
@@ -227,7 +226,6 @@ static bool has_max_bpc(igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: colorspace, dpms, hdr
  * Mega feature: HDR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: bpc-switch-suspend
@@ -235,7 +233,6 @@ static bool has_max_bpc(igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: colorspace, hdr, suspend
  * Mega feature: HDR
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_bpc_switch(data_t *data, uint32_t flags)
@@ -597,7 +594,6 @@ static bool has_hdr(igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: colorspace, hdr
  * Mega feature: HDR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: invalid-metadata-sizes
@@ -605,7 +601,6 @@ static bool has_hdr(igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: colorspace, hdr
  * Mega feature: HDR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: static-toggle-dpms
@@ -613,7 +608,6 @@ static bool has_hdr(igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: colorspace, dpms, hdr
  * Mega feature: HDR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: static-toggle-suspend
@@ -621,7 +615,6 @@ static bool has_hdr(igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: colorspace, hdr, suspend
  * Mega feature: HDR
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: static-%s
@@ -629,7 +622,6 @@ static bool has_hdr(igt_output_t *output)
  * Driver requirement: i915, xe
  * Functionality: colorspace, hdr
  * Mega feature: HDR
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

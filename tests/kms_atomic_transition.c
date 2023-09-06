@@ -68,7 +68,6 @@ int *seqno;
  * Driver requirement: i915, xe
  * Functionality: plane, vblank, watermark
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void
@@ -489,7 +488,6 @@ static void wait_for_transition(data_t *data, enum pipe pipe, bool nonblocking, 
  * Driver requirement: i915, xe
  * Functionality: plane, watermark
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -504,7 +502,6 @@ static void wait_for_transition(data_t *data, enum pipe pipe, bool nonblocking, 
  * Driver requirement: i915, xe
  * Functionality: plane, watermark
  * Mega feature: eDP
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -519,7 +516,6 @@ static void wait_for_transition(data_t *data, enum pipe pipe, bool nonblocking, 
  * Driver requirement: i915, xe
  * Functionality: plane, watermark
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -536,7 +532,6 @@ static void wait_for_transition(data_t *data, enum pipe pipe, bool nonblocking, 
  * Driver requirement: i915, xe
  * Functionality: plane, watermark
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: plane-use-after-nonblocking-%s
@@ -545,7 +540,6 @@ static void wait_for_transition(data_t *data, enum pipe pipe, bool nonblocking, 
  * Driver requirement: i915, xe
  * Functionality: plane, watermark
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:
@@ -1049,7 +1043,6 @@ retry:
  * Driver requirement: i915, xe
  * Functionality: plane, watermark
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  *
  * arg[1]:

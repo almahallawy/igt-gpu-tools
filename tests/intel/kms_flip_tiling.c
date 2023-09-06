@@ -40,7 +40,6 @@
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 

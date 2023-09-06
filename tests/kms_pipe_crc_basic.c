@@ -71,7 +71,6 @@ static bool simulation_constraint(enum pipe pipe)
  * Driver requirement: i915, xe
  * Functionality: crc
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_bad_source(data_t *data)
@@ -100,7 +99,6 @@ enum {
  * Description: Test for pipe CRC reads
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: crc
  * Mega feature: General Display Features
  *
@@ -108,7 +106,6 @@ enum {
  * Description: Tests the pipe CRC read and ensure frame sequence
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: crc
  * Mega feature: General Display Features
  *
@@ -116,7 +113,6 @@ enum {
  * Description: Test for O_NONBLOCK CRC reads
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: crc
  * Mega feature: General Display Features
  *
@@ -124,7 +120,6 @@ enum {
  * Description: Test for O_NONBLOCK CRC reads and ensure frame sequence
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: crc
  * Mega feature: General Display Features
  *
@@ -132,7 +127,6 @@ enum {
  * Description: Suspend test for pipe CRC reads
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: crc, suspend
  * Mega feature: General Display Features
  *
@@ -140,7 +134,6 @@ enum {
  * Description: Hang test for pipe CRC read
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: crc, hang
  * Mega feature: General Display Features
  */
@@ -246,7 +239,6 @@ static void test_read_crc(data_t *data, enum pipe pipe,
  * Description: Basic sanity check for CRC mismatches with %arg[1]
  * Driver requirement: i915, xe
  * Test category: functionality test
- * Run type: BAT, FULL
  * Functionality: crc, pixel_format
  * Mega feature: General Display Features
  *
@@ -328,7 +320,6 @@ static void test_compare_crc(data_t *data, enum pipe pipe, igt_output_t *output,
  * Driver requirement: i915, xe
  * Functionality: crc
  * Mega feature: General Display Features
- * Run type: FULL
  * Test category: functionality test
  */
 static void test_disable_crc_after_crtc(data_t *data, enum pipe pipe,
