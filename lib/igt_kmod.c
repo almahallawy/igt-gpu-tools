@@ -25,6 +25,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <pthread.h>
 #include <sys/utsname.h>
 
 #include "igt_aux.h"
@@ -746,6 +747,21 @@ void igt_kselftest_get_tests(struct kmod_module *kmod,
 	kmod_module_info_free_list(pre);
 }
 
+struct modprobe_data {
+	struct kmod_module *kmod;
+	const char *opts;
+	int err;
+};
+
+static void *modprobe_task(void *arg)
+{
+	struct modprobe_data *data = arg;
+
+	data->err = modprobe(data->kmod, data->opts);
+
+	return NULL;
+}
+
 /**
  * igt_kunit:
  * @module_name: the name of the module
@@ -757,9 +773,11 @@ void igt_kselftest_get_tests(struct kmod_module *kmod,
  */
 static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 {
+	struct modprobe_data modprobe = { tst->kmod, opts, 0, };
 	struct kmod_module *kunit_kmod;
 	bool is_builtin;
 	struct ktap_test_results *results;
+	pthread_t modprobe_thread;
 	unsigned long taints;
 	int flags, ret;
 
@@ -777,18 +795,25 @@ static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 
 	results = ktap_parser_start(tst->kmsg, is_builtin);
 
-	if (igt_debug_on(igt_kmod_load(tst->module_name, opts) < 0)) {
+	if (igt_debug_on(pthread_create(&modprobe_thread, NULL,
+					modprobe_task, &modprobe))) {
 		ktap_parser_cancel();
 		igt_ignore_warn(ktap_parser_stop());
-		igt_skip("Unable to load %s module\n", tst->module_name);
+		igt_skip("Failed to create a modprobe thread\n");
 	}
 
 	while (READ_ONCE(results->still_running) || !igt_list_empty(&results->list))
 	{
 		struct ktap_test_results_element *result;
 
+		if (!pthread_tryjoin_np(modprobe_thread, NULL) && modprobe.err) {
+			ktap_parser_cancel();
+			break;
+		}
+
 		if (igt_kernel_tainted(&taints)) {
 			ktap_parser_cancel();
+			pthread_cancel(modprobe_thread);
 			break;
 		}
 
@@ -806,14 +831,20 @@ static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 		igt_dynamic(result->test_name) {
 			igt_assert(READ_ONCE(result->passed));
 
+			if (!pthread_tryjoin_np(modprobe_thread, NULL))
+				igt_assert_eq(modprobe.err, 0);
+
 			igt_fail_on(igt_kernel_tainted(&taints));
 		}
 
 		free(result);
 	}
 
+	pthread_join(modprobe_thread, NULL);
+
 	ret = ktap_parser_stop();
 
+	igt_skip_on(modprobe.err);
 	igt_skip_on(igt_kernel_tainted(&taints));
 	igt_skip_on_f(ret, "KTAP parser failed\n");
 }
