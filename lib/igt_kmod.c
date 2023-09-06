@@ -814,12 +814,8 @@ static void __igt_kunit(const char *module_name, const char *opts)
 		if (READ_ONCE(results->head) != NULL) {
 			pthread_mutex_lock(&results->mutex);
 
-			igt_dynamic(results->head->test_name) {
-				if (READ_ONCE(results->head->passed))
-					igt_success();
-				else
-					igt_fail(IGT_EXIT_FAILURE);
-			}
+			igt_dynamic(results->head->test_name)
+				igt_assert(READ_ONCE(results->head->passed));
 
 			temp = results->head;
 			results->head = results->head->next;
@@ -834,8 +830,7 @@ unload:
 
 	igt_ktest_fini(&tst);
 
-	if (skip)
-		igt_skip("Skipping test, as probing KUnit module returned %d", skip);
+	igt_skip_on_f(skip, "Skipping test, as probing KUnit module failed\n");
 
 	if (fail)
 		igt_fail(IGT_EXIT_ABORT);
@@ -844,9 +839,6 @@ unload:
 
 	if (ret != 0)
 		igt_fail(IGT_EXIT_ABORT);
-
-	if (ret == 0)
-		igt_success();
 }
 
 void igt_kunit(const char *module_name, const char *name, const char *opts)
