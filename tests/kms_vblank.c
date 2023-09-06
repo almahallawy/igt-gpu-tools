@@ -289,7 +289,10 @@ static void run_test(data_t *data, void (*testfunc)(data_t *, int, int))
 		 igt_output_name(output));
 
 	if (!(data->flags & NOHANG)) {
-		ahnd = get_reloc_ahnd(fd, 0);
+		ahnd = is_i915_device(fd) ?
+			get_reloc_ahnd(fd, 0) :
+			intel_allocator_open(fd, 0, INTEL_ALLOCATOR_RELOC);
+
 		hang = igt_hang_ring_with_ahnd(fd, I915_EXEC_DEFAULT, ahnd);
 	}
 
