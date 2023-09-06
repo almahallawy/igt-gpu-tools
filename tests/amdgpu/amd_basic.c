@@ -411,6 +411,7 @@ amdgpu_bo_eviction_test(amdgpu_device_handle device_handle)
 			amdgpu_test_exec_cs_helper(device_handle, ip_block->type, ring_context);
 			/* fulfill PM4: test DMA copy linear */
 			r = ip_block->funcs->compare_pattern(ip_block->funcs, ring_context, sdma_write_length);
+			igt_assert_eq(r, 0);
 			amdgpu_bo_unmap_and_free(ring_context->bo, ring_context->va_handle, ring_context->bo_mc,
 						 ring_context->write_length);
 			amdgpu_bo_unmap_and_free(ring_context->bo2, ring_context->va_handle2, ring_context->bo_mc2,

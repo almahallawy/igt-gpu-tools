@@ -296,7 +296,7 @@ x_compare_pattern(const struct amdgpu_ip_funcs *func,
 	int num_compare = ring_context->write_length/div;
 
 	while (i < num_compare) {
-		if (ring_context->bo_cpu[i++] != func->pattern) {
+		if (ring_context->bo2_cpu[i++] != func->pattern) {
 			ret = -1;
 			break;
 		}
