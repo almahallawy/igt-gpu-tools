@@ -609,7 +609,7 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 			if (rebind_error_inject == i)
 				__xe_vm_bind_assert(fd, vm, bind_exec_queues[e],
 						    0, 0, addr, bo_size,
-						    XE_VM_BIND_OP_UNMAP |
+						    XE_VM_BIND_OP_UNMAP,
 						    XE_VM_BIND_FLAG_ASYNC |
 						    INJECT_ERROR, sync_all,
 						    n_exec_queues, 0, 0);

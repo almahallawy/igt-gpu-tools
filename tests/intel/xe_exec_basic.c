@@ -170,7 +170,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		if (flags & SPARSE)
 			__xe_vm_bind_assert(fd, vm[i], bind_exec_queues[i],
 					    0, 0, sparse_addr[i], bo_size,
-					    XE_VM_BIND_OP_MAP |
+					    XE_VM_BIND_OP_MAP,
 					    XE_VM_BIND_FLAG_ASYNC |
 					    XE_VM_BIND_FLAG_NULL, sync,
 					    1, 0, 0);

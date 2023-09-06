@@ -1281,7 +1281,8 @@ void intel_bb_destroy(struct intel_bb *ibb)
 }
 
 static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct intel_bb *ibb,
-						   uint32_t op, uint32_t region)
+						   uint32_t op, uint32_t flags,
+						   uint32_t region)
 {
 	struct drm_i915_gem_exec_object2 **objects = ibb->objects;
 	struct drm_xe_vm_bind_op *bind_ops, *ops;
@@ -1298,6 +1299,7 @@ static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct intel_bb *ibb,
 			ops->obj = objects[i]->handle;
 
 		ops->op = op;
+		ops->flags = flags;
 		ops->obj_offset = 0;
 		ops->addr = objects[i]->offset;
 		ops->range = objects[i]->rsvd1;
@@ -1323,9 +1325,10 @@ static void __unbind_xe_objects(struct intel_bb *ibb)
 
 	if (ibb->num_objects > 1) {
 		struct drm_xe_vm_bind_op *bind_ops;
-		uint32_t op = XE_VM_BIND_OP_UNMAP | XE_VM_BIND_FLAG_ASYNC;
+		uint32_t op = XE_VM_BIND_OP_UNMAP;
+		uint32_t flags = XE_VM_BIND_FLAG_ASYNC;
 
-		bind_ops = xe_alloc_bind_ops(ibb, op, 0);
+		bind_ops = xe_alloc_bind_ops(ibb, op, flags, 0);
 		xe_vm_bind_array(ibb->fd, ibb->vm_id, 0, bind_ops,
 				 ibb->num_objects, syncs, 2);
 		free(bind_ops);
@@ -2354,7 +2357,7 @@ __xe_bb_exec(struct intel_bb *ibb, uint64_t flags, bool sync)
 
 	syncs[0].handle = syncobj_create(ibb->fd, 0);
 	if (ibb->num_objects > 1) {
-		bind_ops = xe_alloc_bind_ops(ibb, XE_VM_BIND_OP_MAP | XE_VM_BIND_FLAG_ASYNC, 0);
+		bind_ops = xe_alloc_bind_ops(ibb, XE_VM_BIND_OP_MAP, XE_VM_BIND_FLAG_ASYNC, 0);
 		xe_vm_bind_array(ibb->fd, ibb->vm_id, 0, bind_ops,
 				 ibb->num_objects, syncs, 1);
 		free(bind_ops);
