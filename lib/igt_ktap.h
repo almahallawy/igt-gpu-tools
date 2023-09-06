@@ -27,8 +27,6 @@
 
 #define BUF_LEN 4096
 
-#include <pthread.h>
-
 #include "igt_list.h"
 
 struct igt_ktap_result {
@@ -44,25 +42,5 @@ struct igt_ktap_results;
 struct igt_ktap_results *igt_ktap_alloc(struct igt_list_head *results);
 int igt_ktap_parse(const char *buf, struct igt_ktap_results *ktap);
 void igt_ktap_free(struct igt_ktap_results *ktap);
-
-void *igt_ktap_parser(void *unused);
-
-typedef struct ktap_test_results_element {
-	char test_name[BUF_LEN + 1];
-	bool passed;
-	struct igt_list_head link;
-} ktap_test_results_element;
-
-struct ktap_test_results {
-	struct igt_list_head list;
-	pthread_mutex_t mutex;
-	bool still_running;
-};
-
-
-
-struct ktap_test_results *ktap_parser_start(int fd, bool is_builtin);
-void ktap_parser_cancel(void);
-int ktap_parser_stop(void);
 
 #endif /* IGT_KTAP_H */

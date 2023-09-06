@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016 Intel Corporation
+ * Copyright © 2016-2023 Intel Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -26,7 +26,12 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/utsname.h>
+#include <unistd.h>
+
+#include "assembler/brw_compat.h"	/* [un]likely() */
 
 #include "igt_aux.h"
 #include "igt_core.h"
@@ -751,6 +756,9 @@ struct modprobe_data {
 	struct kmod_module *kmod;
 	const char *opts;
 	int err;
+	pthread_t parent;
+	pthread_mutex_t lock;
+	pthread_t thread;
 };
 
 static void *modprobe_task(void *arg)
@@ -759,16 +767,135 @@ static void *modprobe_task(void *arg)
 
 	data->err = modprobe(data->kmod, data->opts);
 
+	if (igt_debug_on(data->err)) {
+		bool once = false;
+		int err;
+
+		while (err = pthread_mutex_trylock(&data->lock),
+		       err && !igt_debug_on(err != EBUSY)) {
+			igt_debug_on(pthread_kill(data->parent, SIGCHLD) &&
+				     !once);
+			once = true;
+		}
+	} else {
+		/* let main thread use mutex to detect modprobe completion */
+		igt_debug_on(pthread_mutex_lock(&data->lock));
+	}
+
 	return NULL;
+}
+
+static void kunit_sigchld_handler(int signal)
+{
+}
+
+static int kunit_kmsg_result_get(struct igt_list_head *results,
+				 struct modprobe_data *modprobe,
+				 int fd, struct igt_ktap_results *ktap)
+{
+	struct sigaction sigchld = { .sa_handler = kunit_sigchld_handler, },
+			 *saved;
+	char record[BUF_LEN + 1], *buf;
+	unsigned long taints;
+	int ret;
+
+	do {
+		int err;
+
+		if (igt_debug_on(igt_kernel_tainted(&taints)))
+			return -ENOTRECOVERABLE;
+
+		err = igt_debug_on(sigaction(SIGCHLD, &sigchld, saved));
+		if (err == -1)
+			return -errno;
+		else if (unlikely(err))
+			return err;
+
+		err = pthread_mutex_lock(&modprobe->lock);
+		switch (err) {
+		case EOWNERDEAD:
+			/* leave the mutex unrecoverable */
+			igt_debug_on(pthread_mutex_unlock(&modprobe->lock));
+			__attribute__ ((fallthrough));
+		case ENOTRECOVERABLE:
+			igt_debug_on(sigaction(SIGCHLD, saved, NULL));
+			if (igt_debug_on(modprobe->err))
+				return modprobe->err;
+			break;
+		case 0:
+			break;
+		default:
+			igt_debug("pthread_mutex_lock() error: %d\n", err);
+			igt_debug_on(sigaction(SIGCHLD, saved, NULL));
+			return -err;
+		}
+
+		ret = read(fd, record, BUF_LEN);
+
+		if (!err) {	/* pthread_mutex_lock() succeeded */
+			igt_debug_on(pthread_mutex_unlock(&modprobe->lock));
+			igt_debug_on(sigaction(SIGCHLD, saved, NULL));
+		}
+
+		if (igt_debug_on(!ret))
+			return -ENODATA;
+		if (igt_debug_on(ret == -1))
+			return -errno;
+		if (unlikely(igt_debug_on(ret < 0)))
+			break;
+
+		/* skip kmsg continuation lines */
+		if (igt_debug_on(*record == ' '))
+			continue;
+
+		/* NULL-terminate the record */
+		record[ret] = '\0';
+
+		/* detect start of log message, continue if not found */
+		buf = strchrnul(record, ';');
+		if (igt_debug_on(*buf == '\0'))
+			continue;
+		buf++;
+
+		ret = igt_ktap_parse(buf, ktap);
+		if (!ret || igt_debug_on(ret != -EINPROGRESS))
+			break;
+	} while (igt_list_empty(results));
+
+	return ret;
+}
+
+static void kunit_result_free(struct igt_ktap_result **r,
+			      char **suite_name, char **case_name)
+{
+	if (!*r)
+		return;
+
+	igt_list_del(&(*r)->link);
+
+	if ((*r)->suite_name != *suite_name) {
+		free(*suite_name);
+		*suite_name = (*r)->suite_name;
+	}
+
+	if ((*r)->case_name != *case_name) {
+		free(*case_name);
+		*case_name = (*r)->case_name;
+	}
+
+	free((*r)->msg);
+	free(*r);
+	*r = NULL;
 }
 
 static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 {
-	struct modprobe_data modprobe = { tst->kmod, opts, 0, };
-	struct kmod_module *kunit_kmod;
-	bool is_builtin;
-	struct ktap_test_results *results;
-	pthread_t modprobe_thread;
+	struct modprobe_data modprobe = { tst->kmod, opts, 0, pthread_self(), };
+	char *suite_name = NULL, *case_name = NULL;
+	struct igt_ktap_result *r, *rn;
+	struct igt_ktap_results *ktap;
+	pthread_mutexattr_t attr;
+	IGT_LIST_HEAD(results);
 	unsigned long taints;
 	int flags, ret;
 
@@ -780,60 +907,119 @@ static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 
 	igt_skip_on(lseek(tst->kmsg, 0, SEEK_END) < 0);
 
-	igt_skip_on(kmod_module_new_from_name(kmod_ctx(), "kunit", &kunit_kmod));
-	is_builtin = kmod_module_get_initstate(kunit_kmod) == KMOD_MODULE_BUILTIN;
-	kmod_module_unref(kunit_kmod);
+	igt_skip_on(pthread_mutexattr_init(&attr));
+	igt_skip_on(pthread_mutexattr_setrobust(&attr, PTHREAD_MUTEX_ROBUST));
+	igt_skip_on(pthread_mutex_init(&modprobe.lock, &attr));
 
-	results = ktap_parser_start(tst->kmsg, is_builtin);
+	ktap = igt_ktap_alloc(&results);
+	igt_require(ktap);
 
-	if (igt_debug_on(pthread_create(&modprobe_thread, NULL,
+	if (igt_debug_on(pthread_create(&modprobe.thread, NULL,
 					modprobe_task, &modprobe))) {
-		ktap_parser_cancel();
-		igt_ignore_warn(ktap_parser_stop());
+		igt_ktap_free(ktap);
 		igt_skip("Failed to create a modprobe thread\n");
 	}
 
-	while (READ_ONCE(results->still_running) || !igt_list_empty(&results->list))
-	{
-		struct ktap_test_results_element *result;
-
-		if (!pthread_tryjoin_np(modprobe_thread, NULL) && modprobe.err) {
-			ktap_parser_cancel();
+	do {
+		ret = kunit_kmsg_result_get(&results, &modprobe,
+					    tst->kmsg, ktap);
+		if (igt_debug_on(ret && ret != -EINPROGRESS))
 			break;
-		}
 
-		if (igt_kernel_tainted(&taints)) {
-			ktap_parser_cancel();
-			pthread_cancel(modprobe_thread);
+		if (igt_debug_on(igt_list_empty(&results)))
 			break;
-		}
 
-		pthread_mutex_lock(&results->mutex);
-		if (igt_list_empty(&results->list)) {
-			pthread_mutex_unlock(&results->mutex);
-			continue;
-		}
+		r = igt_list_first_entry(&results, r, link);
 
-		result = igt_list_first_entry(&results->list, result, link);
+		igt_dynamic_f("%s-%s", r->suite_name, r->case_name) {
+			if (r->code == IGT_EXIT_INVALID) {
+				/* parametrized test case, get actual result */
+				kunit_result_free(&r, &suite_name, &case_name);
 
-		igt_list_del(&result->link);
-		pthread_mutex_unlock(&results->mutex);
+				igt_assert(igt_list_empty(&results));
 
-		igt_dynamic(result->test_name) {
-			igt_assert(READ_ONCE(result->passed));
+				ret = kunit_kmsg_result_get(&results, &modprobe,
+							    tst->kmsg, ktap);
+				if (ret != -EINPROGRESS)
+					igt_fail_on(ret);
 
-			if (!pthread_tryjoin_np(modprobe_thread, NULL))
+				igt_fail_on(igt_list_empty(&results));
+
+				r = igt_list_first_entry(&results, r, link);
+
+				igt_fail_on_f(strcmp(r->suite_name, suite_name),
+					      "suite_name expected: %s, got: %s\n",
+					      suite_name, r->suite_name);
+				igt_fail_on_f(strcmp(r->case_name, case_name),
+					      "case_name expected: %s, got: %s\n",
+					      case_name, r->case_name);
+			}
+
+			igt_assert_neq(r->code, IGT_EXIT_INVALID);
+
+			if (r->msg && *r->msg) {
+				igt_skip_on_f(r->code == IGT_EXIT_SKIP,
+					      "%s\n", r->msg);
+				igt_fail_on_f(r->code == IGT_EXIT_FAILURE,
+					      "%s\n", r->msg);
+				igt_abort_on_f(r->code == IGT_EXIT_ABORT,
+					      "%s\n", r->msg);
+			} else {
+				igt_skip_on(r->code == IGT_EXIT_SKIP);
+				igt_fail_on(r->code == IGT_EXIT_FAILURE);
+				if (r->code == IGT_EXIT_ABORT)
+					igt_fail(r->code);
+			}
+			igt_assert_eq(r->code, IGT_EXIT_SUCCESS);
+
+			switch (pthread_mutex_lock(&modprobe.lock)) {
+			case 0:
+				igt_debug_on(pthread_mutex_unlock(&modprobe.lock));
+				break;
+			case EOWNERDEAD:
+				/* leave the mutex unrecoverable */
+				igt_debug_on(pthread_mutex_unlock(&modprobe.lock));
+				__attribute__ ((fallthrough));
+			case ENOTRECOVERABLE:
 				igt_assert_eq(modprobe.err, 0);
+				break;
+			default:
+				igt_debug("pthread_mutex_lock() failed\n");
+				break;
+			}
 
 			igt_assert_eq(igt_kernel_tainted(&taints), 0);
 		}
 
-		free(result);
+		kunit_result_free(&r, &suite_name, &case_name);
+
+	} while (ret == -EINPROGRESS);
+
+	igt_list_for_each_entry_safe(r, rn, &results, link)
+		kunit_result_free(&r, &suite_name, &case_name);
+
+	free(case_name);
+	free(suite_name);
+
+	switch (pthread_mutex_lock(&modprobe.lock)) {
+	case 0:
+		igt_debug_on(pthread_cancel(modprobe.thread));
+		igt_debug_on(pthread_mutex_unlock(&modprobe.lock));
+		igt_debug_on(pthread_join(modprobe.thread, NULL));
+		break;
+	case EOWNERDEAD:
+		/* leave the mutex unrecoverable */
+		igt_debug_on(pthread_mutex_unlock(&modprobe.lock));
+		break;
+	case ENOTRECOVERABLE:
+		break;
+	default:
+		igt_debug("pthread_mutex_lock() failed\n");
+		igt_debug_on(pthread_join(modprobe.thread, NULL));
+		break;
 	}
 
-	pthread_join(modprobe_thread, NULL);
-
-	ret = ktap_parser_stop();
+	igt_ktap_free(ktap);
 
 	igt_skip_on(modprobe.err);
 	igt_skip_on(igt_kernel_tainted(&taints));
