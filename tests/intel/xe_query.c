@@ -6,9 +6,8 @@
 /**
  * TEST: Check device configuration query
  * Category: Software building block
- * Sub-category: ioctl
- * Functionality: device
- * Test category: functionality test
+ * Sub-category: uapi
+ * Functionality: ioctl
  * Run type: BAT
  * Description: Acquire configuration data for xe device
  */
@@ -175,6 +174,7 @@ const char *get_topo_name(int value)
 /**
  * SUBTEST: query-engines
  * Description: Display engine classes available for xe device
+ * Test category: functionality test
  */
 static void
 test_query_engines(int fd)
@@ -194,6 +194,7 @@ test_query_engines(int fd)
 
 /**
  * SUBTEST: query-mem-usage
+ * Test category: functionality test
  * Description: Display memory information like memory class, size
  *	and alignment.
  */
@@ -254,6 +255,7 @@ test_query_mem_usage(int fd)
 
 /**
  * SUBTEST: query-gts
+ * Test category: functionality test
  * Description: Display information about available GTs for xe device.
  */
 static void
@@ -293,6 +295,7 @@ test_query_gts(int fd)
 
 /**
  * SUBTEST: query-topology
+ * Test category: functionality test
  * Description: Display topology information of GTs.
  */
 static void
@@ -336,6 +339,7 @@ test_query_gt_topology(int fd)
 
 /**
  * SUBTEST: query-config
+ * Test category: functionality test
  * Description: Display xe device id, revision and configuration.
  */
 static void
@@ -386,6 +390,7 @@ test_query_config(int fd)
 
 /**
  * SUBTEST: query-hwconfig
+ * Test category: functionality test
  * Description: Display hardware configuration of xe device.
  */
 static void
@@ -419,6 +424,7 @@ test_query_hwconfig(int fd)
 
 /**
  * SUBTEST: query-invalid-query
+ * Test category: negative test
  * Description: Check query with invalid arguments returns expected error code.
  */
 static void
@@ -436,6 +442,7 @@ test_query_invalid_query(int fd)
 
 /**
  * SUBTEST: query-invalid-size
+ * Test category: negative test
  * Description: Check query with invalid size returns expected error code.
  */
 static void
@@ -453,6 +460,7 @@ test_query_invalid_size(int fd)
 
 /**
  * SUBTEST: query-invalid-extension
+ * Test category: negative test
  * Description: Check query with invalid extension returns expected error code.
  */
 static void

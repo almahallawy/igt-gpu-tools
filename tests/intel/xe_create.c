@@ -7,8 +7,6 @@
  * TEST: Check bo create ioctl
  * Category: Software building block
  * Sub-category: uapi
- * Functionality: device
- * Test category: functionality test
  * Run type: BAT
  */
 
@@ -44,6 +42,8 @@ static int __create_bo(int fd, uint32_t vm, uint64_t size, uint32_t flags,
 
 /**
  * SUBTEST: create-invalid-size
+ * Functionality: ioctl
+ * Test category: negative test
  * Description: Verifies xe bo create returns expected error code on invalid
  *              buffer sizes.
  */
@@ -124,7 +124,9 @@ static uint32_t __xe_exec_queue_create(int fd, uint32_t vm,
 
 /**
  * SUBTEST: create-execqueues-%s
+ * Functionality: exequeues creation time
  * Description: Check process ability of multiple exec_queues creation
+ * Test category: functionality test
  * Run type: FULL
  *
  * arg[1]:
@@ -187,6 +189,8 @@ static void create_execqueues(int fd, enum exec_queue_destroy ed)
 
 /**
  * SUBTEST: create-massive-size
+ * Functionality: ioctl
+ * Test category: functionality test
  * Description: Verifies xe bo create returns expected error code on massive
  *              buffer sizes.
  */

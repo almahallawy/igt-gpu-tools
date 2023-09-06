@@ -6,9 +6,8 @@
 /**
  * TEST: Test if the driver is capable of doing mmap on different memory regions
  * Category: Software building block
- * Sub-category: mmap
+ * Sub-category: VMA
  * Functionality: mmap
- * Test category: functionality test
  * Run type: BAT
  */
 
@@ -24,6 +23,7 @@
 
 /**
  * SUBTEST: system
+ * Test category: functionality test
  * Description: Test mmap on system memory
  */
 
@@ -31,12 +31,14 @@
  * SUBTEST: small-bar
  * Description: Sanity check mmap behaviour on small-bar systems
  * GPU requirements: GPU needs to have dedicated VRAM and using small-bar
+ * Test category: functionality test
  */
 
 /**
  * SUBTEST: %s
  * Description: Test mmap on %arg[1] memory
  * GPU requirements: GPU needs to have dedicated VRAM
+ * Test category: functionality test
  *
  * arg[1]:
  *
@@ -64,6 +66,7 @@ test_mmap(int fd, uint32_t flags)
 /**
  * SUBTEST: bad-flags
  * Description: Test mmap offset with bad flags.
+ * Test category: negative test
  *
  */
 static void test_bad_flags(int fd)
@@ -82,6 +85,7 @@ static void test_bad_flags(int fd)
 /**
  * SUBTEST: bad-extensions
  * Description: Test mmap offset with bad extensions.
+ * Test category: negative test
  *
  */
 static void test_bad_extensions(int fd)
@@ -103,6 +107,7 @@ static void test_bad_extensions(int fd)
 /**
  * SUBTEST: bad-object
  * Description: Test mmap offset with bad object.
+ * Test category: negative test
  *
  */
 static void test_bad_object(int fd)
@@ -144,6 +149,7 @@ static void trap_sigbus(uint32_t *ptr)
 /**
  * SUBTEST: small-bar
  * Description: Test mmap behaviour on small-bar systems.
+ * Test category: functionality test
  *
  */
 static void test_small_bar(int fd)

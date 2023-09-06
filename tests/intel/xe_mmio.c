@@ -8,7 +8,6 @@
  * Category: Software building block
  * Sub-category: mmio
  * Functionality: mmap
- * Test category: functionality test
  * Run type: BAT
  */
 
@@ -24,6 +23,7 @@
 
 /**
  * SUBTEST: mmio-timestamp
+ * Test category: functionality test
  * Description:
  *	Try to run mmio ioctl with 32 and 64 bits and check it a timestamp
  *	matches
@@ -51,6 +51,7 @@ static void test_xe_mmio_timestamp(int fd)
 
 /**
  * SUBTEST: mmio-invalid
+ * Test category: negative test
  * Description: Try to run mmio ioctl with 8, 16 and 32 and 64 bits mmio
  */
 

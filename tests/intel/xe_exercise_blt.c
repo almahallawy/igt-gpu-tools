@@ -14,9 +14,9 @@
 
 /**
  * TEST: xe exercise blt
- * Category: Software building block
- * Sub-category: IGT Lib
- * Functionality: blitter
+ * Category: Hardware building block
+ * Sub-category: Blitter
+ * Functionality: flat_ccs
  * Description: Exercise blitter commands on Xe
  * Run type: FULL
  * Test category: functionality test

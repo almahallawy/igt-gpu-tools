@@ -8,7 +8,6 @@
  * Category: Hardware building block
  * Sub-category: execbuf
  * Functionality: fault mode
- * Test category: functionality test
  * GPU requirements: GPU needs support for DRM_XE_VM_CREATE_FAULT_MODE
  */
 
@@ -37,18 +36,22 @@
 /**
  * SUBTEST: once-%s
  * Description: Run %arg[1] fault mode test only once
+ * Test category: functionality test
  * Run type: FULL
  *
  * SUBTEST: twice-%s
  * Description: Run %arg[1] fault mode test twice
+ * Test category: functionality test
  * Run type: FULL
  *
  * SUBTEST: many-%s
  * Description: Run %arg[1] fault mode test many times
+ * Test category: stress test
  * Run type: FULL
  *
  * SUBTEST: many-execqueues-%s
  * Description: Run %arg[1] fault mode test on many exec_queues
+ * Test category: stress test
  * Run type: FULL
  *
  * arg[1]:
@@ -324,19 +327,23 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 /**
  * SUBTEST: atomic-once
  * Description: Run atomic fault mode test only once
+ * Test category: functionality test
  * Run type: FULL
  *
  * SUBTEST: atomic-once-wait
  * Description: Run atomic wait fault mode test once
+ * Test category: functionality test
  * Run type: FULL
  *
  * SUBTEST: atomic-many
  * Description: Run atomic fault mode test many times
  * Description: atomic many
+ * Test category: functionality test
  * Run type: FULL
  *
  * SUBTEST: atomic-many-wait
  * Description: Run atomic wait fault mode test many times
+ * Test category: functionality test
  * Run type: FULL
  *
  */

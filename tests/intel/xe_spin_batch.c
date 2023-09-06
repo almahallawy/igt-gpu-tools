@@ -8,7 +8,7 @@
  * TEST: Tests for spin batch submissons.
  * Category: Software building block
  * Sub-category: spin
- * Functionality: intel-bb
+ * Functionality: parallel execution
  * Test category: functionality test
  */
 

@@ -467,6 +467,7 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
 /**
  * SUBTEST: evict-%s
  * Description:  %arg[1] evict test.
+ * Test category: functionality test
  * Run type: FULL
  *
  * arg[1]:
@@ -474,67 +475,160 @@ static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
  * @small:			small
  * @small-external:		small external
  * @small-multi-vm:		small multi VM
- * @large:			large
- * @large-external:		large external
- * @large-multi-vm:		large multi VM
  * @beng-small:			small bind exec_queue
  * @beng-small-external:	small external bind exec_queue
  * @beng-small-multi-vm:	small multi VM bind ending
+ */
+/**
+ * SUBTEST: evict-%s
+ * Description:  %arg[1] evict test.
+ * Test category: stress test
+ * Run type: FULL
+ *
+ * arg[1]:
+ *
+ * @large:			large
+ * @large-external:		large external
+ * @large-multi-vm:		large multi VM
  * @beng-large:			large bind exec_queue
  * @beng-large-external:	large external bind exec_queue
  * @beng-large-multi-vm:	large multi VM bind exec_queue
+ */
+/**
+ * SUBTEST: evict-%s
+ * Description:  %arg[1] evict test.
+ * Feature: compute machine
+ * Test category: functionality test
+ * Run type: FULL
+ *
+ * arg[1]:
  *
  * @small-cm:			small compute machine
  * @small-external-cm:		small external compute machine
  * @small-multi-vm-cm:		small multi VM compute machine
- * @large-cm:			large compute machine
- * @large-external-cm:		large external compute machine
- * @large-multi-vm-cm:		large multi VM compute machine
  * @beng-small-cm:		small bind exec_queue compute machine
  * @beng-small-external-cm:	small external bind exec_queue compute machine
  * @beng-small-multi-vm-cm:	small multi VM bind ending compute machine
+ */
+/**
+ * SUBTEST: evict-%s
+ * Description:  %arg[1] evict test.
+ * Feature: compute machine
+ * Test category: stress test
+ * Run type: FULL
+ *
+ * arg[1]:
+ *
+ * @large-cm:			large compute machine
+ * @large-external-cm:		large external compute machine
+ * @large-multi-vm-cm:		large multi VM compute machine
  * @beng-large-cm:		large bind exec_queue compute machine
  * @beng-large-external-cm:	large external bind exec_queue compute machine
  * @beng-large-multi-vm-cm:	large multi VM bind exec_queue compute machine
+ */
+/**
  *
- * @threads-small:		threads small
- * @cm-threads-small:		compute mode threads small
+ * SUBTEST: evict-%s
+ * Description:  %arg[1] evict test.
+ * Feature: mixted threads
+ * Test category: functionality test
+ * Run type: FULL
+ *
+ * arg[1]:
+ *
  * @mixed-threads-small:	mixed threads small
  * @mixed-many-threads-small:	mixed many threads small
- * @threads-large:		threads large
- * @cm-threads-large:		compute mode threads large
- * @mixed-threads-large:	mixed threads large
- * @mixed-many-threads-large:	mixed many threads large
- * @threads-small-multi-vm:	threads small multi vm
- * @cm-threads-small-multi-vm:	compute mode threads small multi vm
  * @mixed-threads-small-multi-vm:
  * 				mixed threads small multi vm
- * @threads-large-multi-vm:	threads large multi vm
- * @cm-threads-large-multi-vm:	compute mode threads large multi vm
- * @mixed-threads-large-multi-vm:
- *				mixed threads large multi vm
- * @beng-threads-small:		bind exec_queue threads small
- * @beng-cm-threads-small:	bind exec_queue compute mode threads small
  * @beng-mixed-threads-small:	bind exec_queue mixed threads small
  * @beng-mixed-many-threads-small:
  *				bind exec_queue mixed many threads small
- * @beng-threads-large:		bind exec_queue threads large
- * @beng-cm-threads-large:	bind exec_queue compute mode threads large
+ * @beng-mixed-threads-small-multi-vm:
+ *				bind exec_queue mixed threads small multi vm
+ */
+/**
+ *
+ * SUBTEST: evict-%s
+ * Description:  %arg[1] evict test.
+ * Feature: mixted threads
+ * Test category: stress test
+ * Run type: FULL
+ *
+ * arg[1]:
+ *
+ * @beng-mixed-threads-large-multi-vm:
+ *				bind exec_queue mixed threads large multi vm
+ * @mixed-threads-large:	mixed threads large
+ * @mixed-many-threads-large:	mixed many threads large
+ * @mixed-threads-large-multi-vm:
+ *				mixed threads large multi vm
  * @beng-mixed-threads-large:	bind exec_queue mixed threads large
  * @beng-mixed-many-threads-large:
  *				bind exec_queue mixed many threads large
- * @beng-threads-small-multi-vm:
- *				bind exec_queue threads small multi vm
+ */
+/**
+ *
+ * SUBTEST: evict-%s
+ * Description:  %arg[1] evict test.
+ * Feature: compute mode threads
+ * Test category: functionality test
+ * Run type: FULL
+ *
+ * arg[1]:
+ * @cm-threads-small:		compute mode threads small
+ * @cm-threads-small-multi-vm:	compute mode threads small multi vm
+ * @beng-cm-threads-small:	bind exec_queue compute mode threads small
  * @beng-cm-threads-small-multi-vm:
  *				bind exec_queue compute mode threads small multi vm
- * @beng-mixed-threads-small-multi-vm:
- *				bind exec_queue mixed threads small multi vm
- * @beng-threads-large-multi-vm:
- *				bind exec_queue threads large multi vm
+ */
+/**
+ *
+ * SUBTEST: evict-%s
+ * Description:  %arg[1] evict test.
+ * Feature: compute mode threads
+ * Test category: stress test
+ * Run type: FULL
+ *
+ * arg[1]:
+ * @cm-threads-large:		compute mode threads large
+ * @cm-threads-large-multi-vm:	compute mode threads large multi vm
+ * @beng-cm-threads-large:	bind exec_queue compute mode threads large
  * @beng-cm-threads-large-multi-vm:
  *				bind exec_queue compute mode threads large multi vm
- * @beng-mixed-threads-large-multi-vm:
- *				bind exec_queue mixed threads large multi vm
+ */
+/**
+ *
+ * SUBTEST: evict-%s
+ * Description:  %arg[1] evict test.
+ * Feature: threads
+ * Test category: functionality test
+ * Run type: FULL
+ *
+ * arg[1]:
+ *
+ * @threads-small:		threads small
+ * @beng-threads-small:		bind exec_queue threads small
+ * @threads-small-multi-vm:	threads small multi vm
+ * @beng-threads-small-multi-vm:
+ *				bind exec_queue threads small multi vm
+ *
+ */
+/**
+ *
+ * SUBTEST: evict-%s
+ * Description:  %arg[1] evict test.
+ * Feature: threads
+ * Test category: stress test
+ * Run type: FULL
+ *
+ * arg[1]:
+ *
+ * @threads-large:		threads large
+ * @threads-large-multi-vm:	threads large multi vm
+ * @beng-threads-large-multi-vm:
+ *				bind exec_queue threads large multi vm
+ * @beng-threads-large:		bind exec_queue threads large
+ *
  */
 
 /*

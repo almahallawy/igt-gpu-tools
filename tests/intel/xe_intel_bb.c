@@ -25,7 +25,7 @@
 /**
  * TEST: Basic tests for intel-bb xe functionality
  * Category: Software building block
- * Sub-category: xe
+ * Sub-category: IGT Lib
  * Functionality: intel-bb
  * Test category: functionality test
  */

@@ -43,6 +43,7 @@
  * TEST: core hotunplug
  * Description: Examine behavior of a driver on device hot unplug
  * Feature: SMI, core
+ * Test category: functionality test
  *
  * SUBTEST: hotrebind
  * Category: Software building block

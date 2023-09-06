@@ -8,17 +8,19 @@
  * Category: Software building block
  * Sub-category: sysman
  * Functionality: scheduler control interface
- * Test category: functionality test
  * Run type: FULL
  *
  * SUBTEST: %s-invalid
  * Description: Test to check if %s arg[1] schedule parameter rejects any unrepresentable intervals.
+ * Test category: negative test
  *
  * SUBTEST: %s-min-max
  * Description: Test to check if %s arg[1] schedule parameter checks for min max values.
+ * Test category: functionality test
  *
  * SUBTEST: %s-nonprivileged-user
  * Description: Test %s arg[1] schedule parameter for nonprivileged user.
+ * Test category: functionality test
  *
  * arg[1]:
  *

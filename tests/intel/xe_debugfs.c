@@ -6,7 +6,7 @@
 /**
  * TEST: Check debugfs userspace API
  * Category: Software building block
- * Sub-category: debugfs
+ * Sub-category: uapi
  * Functionality: debugfs
  * Test category: functionality test
  * Run type: BAT

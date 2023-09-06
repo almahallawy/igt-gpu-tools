@@ -8,7 +8,6 @@
  * Category: Hardware building block
  * Sub-category: execbuf
  * Functionality: compute machine
- * Test category: functionality test
  */
 
 #include <fcntl.h>
@@ -34,14 +33,17 @@
 /**
  * SUBTEST: twice-%s
  * Description: Run %arg[1] compute machine test twice
+ * Test category: functionality test
  * Run type: BAT
  *
  * SUBTEST: once-%s
  * Description: Run %arg[1] compute machine test only once
+ * Test category: functionality test
  * Run type: FULL
  *
  * SUBTEST: many-%s
  * Description: Run %arg[1] compute machine test many times
+ * Test category: stress test
  * Run type: FULL
  *
  * arg[1]:
@@ -65,6 +67,7 @@
  *
  * SUBTEST: many-execqueues-%s
  * Description: Run %arg[1] compute machine test on many exec_queues
+ * Test category: functionality test
  * Run type: FULL
  *
  * arg[1]:

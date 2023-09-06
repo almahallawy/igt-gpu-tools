@@ -8,7 +8,6 @@
  * Category: Hardware building block
  * Sub-category: execbuf
  * Functionality: exec_queues
- * Test category: functionality test
  */
 
 #include "igt.h"
@@ -33,26 +32,32 @@
 /**
  * SUBTEST: once-%s
  * Description: Run %arg[1] test only once
+ * Test category: functionality test
  * Run type: FULL
  *
  * SUBTEST: many-%s
  * Description: Run %arg[1] test many times
+ * Test category: stress test
  * Run type: FULL
  *
  * SUBTEST: many-execqueues-%s
  * Description: Run %arg[1] test on many exec_queues
+ * Test category: stress test
  * Run type: FULL
  *
  * SUBTEST: many-execqueues-many-vm-%s
  * Description: Run %arg[1] test on many exec_queues and many VMs
+ * Test category: stress test
  * Run type: FULL
  *
  * SUBTEST: twice-%s
  * Description: Run %arg[1] test twice
+ * Test category: functionality test
  * Run type: BAT
  *
  * SUBTEST: no-exec-%s
  * Description: Run no-exec %arg[1] test
+ * Test category: functionality test
  * Run type: BAT
  *
  * arg[1]:
