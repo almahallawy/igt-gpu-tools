@@ -754,59 +754,27 @@ void igt_kselftest_get_tests(struct kmod_module *kmod,
  *
  * Returns: IGT default codes
  */
-static void __igt_kunit(const char *module_name, const char *opts)
+static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 {
-	struct igt_ktest tst;
 	struct kmod_module *kunit_kmod;
 	bool is_builtin;
 	int ret;
 	struct ktap_test_results *results;
 	struct ktap_test_results_element *temp;
-	int skip = 0;
-	bool fail = false;
 
-	/* get normalized module name */
-	if (igt_ktest_init(&tst, module_name) != 0) {
-		igt_warn("Unable to initialize ktest for %s\n", module_name);
-		igt_fail(IGT_EXIT_ABORT);
-	}
+	igt_skip_on_f(tst->kmsg < 0, "Could not open /dev/kmsg\n");
 
-	if (igt_ktest_begin(&tst) != 0) {
-		igt_warn("Unable to begin ktest for %s\n", module_name);
-		igt_ktest_fini(&tst);
-		igt_fail(IGT_EXIT_ABORT);
-	}
+	igt_skip_on(lseek(tst->kmsg, 0, SEEK_END) < 0);
 
-	if (tst.kmsg < 0) {
-		igt_warn("Could not open /dev/kmsg\n");
-		fail = true;
-		goto unload;
-	}
-
-	if (lseek(tst.kmsg, 0, SEEK_END)) {
-		igt_warn("Could not seek the end of /dev/kmsg\n");
-		fail = true;
-		goto unload;
-	}
-
-	ret = kmod_module_new_from_name(kmod_ctx(), "kunit", &kunit_kmod);
-	if (ret) {
-		igt_warn("Unable to load KUnit\n");
-		skip = ret;
-		goto unload;
-	}
-
+	igt_skip_on(kmod_module_new_from_name(kmod_ctx(), "kunit", &kunit_kmod));
 	is_builtin = kmod_module_get_initstate(kunit_kmod) == KMOD_MODULE_BUILTIN;
 	kmod_module_unref(kunit_kmod);
 
-	results = ktap_parser_start(tst.kmsg, is_builtin);
+	results = ktap_parser_start(tst->kmsg, is_builtin);
 
-	ret = igt_kmod_load(module_name, opts);
-	if (ret) {
-		skip = ret;
-		igt_warn("Unable to load %s module\n", module_name);
-		ret = ktap_parser_stop();
-		goto unload;
+	if (igt_debug_on(igt_kmod_load(tst->module_name, opts) < 0)) {
+		igt_ignore_warn(ktap_parser_stop());
+		igt_skip("Unable to load %s module\n", tst->module_name);
 	}
 
 	while (READ_ONCE(results->still_running) || READ_ONCE(results->head) != NULL)
@@ -825,24 +793,21 @@ static void __igt_kunit(const char *module_name, const char *opts)
 		}
 	}
 
-unload:
-	igt_ktest_end(&tst);
-
-	igt_ktest_fini(&tst);
-
-	igt_skip_on_f(skip, "Skipping test, as probing KUnit module failed\n");
-
-	if (fail)
-		igt_fail(IGT_EXIT_ABORT);
-
 	ret = ktap_parser_stop();
 
-	if (ret != 0)
-		igt_fail(IGT_EXIT_ABORT);
+	igt_skip_on_f(ret, "KTAP parser failed\n");
 }
 
 void igt_kunit(const char *module_name, const char *name, const char *opts)
 {
+	struct igt_ktest tst = { .kmsg = -1, };
+
+
+	igt_fixture {
+		igt_skip_on(igt_ktest_init(&tst, module_name));
+		igt_skip_on(igt_ktest_begin(&tst));
+	}
+
 	/*
 	 * We need to use igt_subtest here, as otherwise it may crash with:
 	 *  skipping is allowed only in fixtures, subtests or igt_simple_main
@@ -854,7 +819,12 @@ void igt_kunit(const char *module_name, const char *name, const char *opts)
 		name = module_name;
 
 	igt_subtest_with_dynamic(name)
-		__igt_kunit(module_name, opts);
+		__igt_kunit(&tst, opts);
+
+	igt_fixture
+		igt_ktest_end(&tst);
+
+	igt_ktest_fini(&tst);
 }
 
 static int open_parameters(const char *module_name)
