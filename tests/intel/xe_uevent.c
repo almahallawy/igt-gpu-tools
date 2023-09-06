@@ -6,12 +6,11 @@
 /**
  * TEST: cause fake gt reset failure and listen uevent from KMD
  * Category: Software building block
+ * SUBTEST:fake_reset_uevent_listener
  * Functionality: uevent
  * Sub-category: GT reset failure uevent
- * Test category: functionality test
  * Run type: FULL
- *
- * SUBTEST: fake_reset_uevent_listener
+ * Test category: functionality test
  * Description:
  *		Test creates uevent listener and causes fake reset failure for gt0
  *		and returns success if uevent is sent by driver and listened by listener.

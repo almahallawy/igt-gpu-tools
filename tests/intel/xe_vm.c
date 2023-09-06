@@ -1628,6 +1628,7 @@ try_again_after_invalidate:
 /**
  * SUBTEST: mmap-style-bind-%s
  * Description: Test mmap style unbind with %arg[1]
+ * Functionality: bind
  * Run type: FULL
  * TODO: change ``'Run type' == FULL`` to a better category
  *

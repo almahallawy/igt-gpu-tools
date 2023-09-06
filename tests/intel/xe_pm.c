@@ -366,6 +366,7 @@ NULL));
 
 /**
  * SUBTEST: vram-d3cold-threshold
+ * Functionality: pm - d3cold
  * Description:
  *	Validate whether card is limited to d3hot while vram used
  *	is greater than vram_d3cold_threshold.
