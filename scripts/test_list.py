@@ -759,7 +759,7 @@ class TestList:
         else:
             return out
 
-    def get_spreadsheet(self):
+    def get_spreadsheet(self, expand_fields = {}):
 
         """
         Return a bidimentional array with the test contents.
@@ -768,6 +768,7 @@ class TestList:
         separate python file that would create a workbook's sheet.
         """
 
+        expand_field_name = {}
         sheet = []
         row = 0
         sheet.append([])
@@ -779,6 +780,9 @@ class TestList:
         fields_order = []
         fields = sorted(self.props.items(), key = _sort_per_level)
         for item in fields:
+            if item[0] in expand_fields.keys():
+                expand_field_name[item[0]] = set()
+                continue
             fields_order.append(item[0])
             sheet[row].append(item[0])
 
@@ -799,6 +803,35 @@ class TestList:
                     sheet[row].append(fields[field])
                 else:
                     sheet[row].append('')
+
+            for field in expand_fields.keys():
+                names = fields.get(field)
+                if not names:
+                    continue
+
+                names = set(re.split(r",\s*", names))
+                expand_field_name[field].update(names)
+
+        # Add expanded fields, if any
+        for item in sorted(expand_fields.keys(), key=str.lower):
+            prefix = expand_fields[item]
+
+            for field in sorted(list(expand_field_name[item]), key=str.lower):
+                row = 0
+                sheet[row].append(prefix + field)
+
+                for subtest, fields in subtests:
+                    row += 1
+                    value = ""
+                    names = fields.get(item)
+                    if names:
+                        names = set(re.split(r",\s*", names))
+
+                        if field in names:
+                            value = "Yes"
+
+                    sheet[row].append(value)
+
         return sheet
 
     def print_nested_rest(self, filename = None, return_string = False):
