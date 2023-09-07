@@ -1352,8 +1352,6 @@ class TestList:
 
         """Generate testlists from the test documentation"""
 
-        test_prefix = os.path.commonprefix(self.get_subtests()[""])
-        test_prefix = re.sub(r'^' + self.main_name, '', test_prefix)
 
         # NOTE: currently, it uses a comma for multi-value delimitter
         test_subtests = self.get_subtests(sort_field, ",", with_order = True)
@@ -1374,7 +1372,7 @@ class TestList:
                 fname = testlist
 
             fname = re.sub(r"[^\w\d]+", "-", fname)
-            fname = directory + "/" + test_prefix + fname + ".testlist"
+            fname = directory + "/" + fname + ".testlist"
 
             with open(fname, 'w', encoding='utf8') as handler:
                 for sub in test_subtests[test]:
