@@ -37,45 +37,69 @@
 #include "time.h"
 #include "igt_pm.h"
 /**
- * TEST: i915 pm dc
+ * TEST: kms pm dc
+ * Category: Display
  * Description: Tests to validate display power DC states.
- * Run type: FULL
  *
  * SUBTEST: dc3co-vpb-simulation
- * Description:
- *   In this test we make sure that system enters DC3CO when PSR2 is active and system is in SLEEP
- *   state
- * Feature: dc3co, pm_dc
+ * Description: Make sure that system enters DC3CO when PSR2 is active and system
+ *              is in SLEEP state
+ * Driver requirement: i915
+ * Functionality: dc3co, pm_dc, psr2
+ * Mega feature: Display Power
+ * Run type: FULL
+ * Test category: functionality test
  *
  * SUBTEST: dc5-dpms
- * Description:
- *   This test validates display engine entry to DC5 state while all connectors's DPMS property
- *   set to OFF
- * Feature: pm_dc
+ * Description: Validate display engine entry to DC5 state while all connectors's
+ *              DPMS property set to OFF
+ * Driver requirement: i915
+ * Functionality: dpms, pm_dc
+ * Mega feature: Display Power
+ * Run type: FULL
+ * Test category: functionality test
  *
  * SUBTEST: dc5-dpms-negative
- * Description:
- *   This test validates negative scenario of DC5 display engine entry to DC5 state while all
- *   connectors's DPMS property set to ON
- * Feature: pm_dc
+ * Description: Validate negative scenario of DC5 display engine entry to DC5 state
+ *              while all connectors's DPMS property set to ON
+ * Driver requirement: i915
+ * Functionality: dpms, pm_dc
+ * Mega feature: Display Power
+ * Run type: FULL
+ * Test category: functionality test
  *
  * SUBTEST: dc5-psr
  * Description: This test validates display engine entry to DC5 state while PSR is active
- * Feature: pm_dc
+ * Driver requirement: i915
+ * Functionality: pm_dc, psr
+ * Mega feature: Display Power
+ * Run type: FULL
+ * Test category: functionality test
  *
  * SUBTEST: dc6-dpms
- * Description:
- *   This test validates display engine entry to DC6 state while all connectors's DPMS property
- *   set to OFF
- * Feature: pm_dc
+ * Description: Validate display engine entry to DC6 state while all connectors's
+ *              DPMS property set to OFF
+ * Driver requirement: i915
+ * Functionality: dpms, pm_dc
+ * Mega feature: Display Power
+ * Run type: FULL
+ * Test category: functionality test
  *
  * SUBTEST: dc6-psr
  * Description: This test validates display engine entry to DC6 state while PSR is active
- * Feature: pm_dc
+ * Driver requirement: i915
+ * Functionality: pm_dc, psr
+ * Mega feature: Display Power
+ * Run type: FULL
+ * Test category: functionality test
  *
  * SUBTEST: dc9-dpms
  * Description: This test validates display engine entry to DC9 state
- * Feature: pm_dc
+ * Driver requirement: i915
+ * Functionality: dpms, pm_dc
+ * Mega feature: Display Power
+ * Run type: FULL
+ * Test category: functionality test
  */
 
 /* DC State Flags */
