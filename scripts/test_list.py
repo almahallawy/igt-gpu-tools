@@ -457,6 +457,8 @@ class TestList:
                 if match:
                     test = match.group(1)
                     subtest = match.group(2)
+                    if not subtest.endswith("$"):
+                        subtest += r"(\@.*)?$"
                     testlist[name].append(re.compile(f"{test}{subtest}"))
 
     def __filter_subtest(self, test, subtest, field_not_found_value):
