@@ -48,6 +48,10 @@ for config_file in parse_args.config:
 wb = Workbook()
 ws = None
 
+expand_fields = {
+    "GPU excluded platform": "blocklist "
+}
+
 for row in range(len(tests)):
     test = tests[row]
     sheet_name = test.title
@@ -58,7 +62,7 @@ for row in range(len(tests)):
     else:
         ws = wb.create_sheet(sheet_name)
 
-    sheet = test.get_spreadsheet()
+    sheet = test.get_spreadsheet(expand_fields)
 
     max_length = []
     for col in range(len(sheet[row])):
