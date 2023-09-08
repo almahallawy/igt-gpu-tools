@@ -165,7 +165,8 @@ bool xe_spin_started(struct xe_spin *spin)
  */
 void xe_spin_wait_started(struct xe_spin *spin)
 {
-	while(!xe_spin_started(spin));
+	while (!xe_spin_started(spin))
+		;
 }
 
 void xe_spin_end(struct xe_spin *spin)
