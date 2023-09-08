@@ -43,6 +43,7 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
 	size_t bo_size;
 	uint32_t bo = 0;
 	struct xe_spin *spin;
+	struct xe_spin_opts spin_opts = { .addr = addr, .preempt = false };
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
 	bo_size = sizeof(*spin);
@@ -59,7 +60,7 @@ static void test_spin(int fd, struct drm_xe_engine_class_instance *eci)
 	sync[0].handle = syncobj_create(fd, 0);
 	xe_vm_bind_async(fd, vm, 0, bo, 0, addr, bo_size, sync, 1);
 
-	xe_spin_init(spin, addr, false);
+	xe_spin_init(spin, &spin_opts);
 
 	sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
 	sync[1].flags |= DRM_XE_SYNC_SIGNAL;
@@ -156,6 +157,7 @@ test_balancer(int fd, int gt, int class, int n_exec_queues, int n_execs,
 		uint64_t pad;
 		uint32_t data;
 	} *data;
+	struct xe_spin_opts spin_opts = { .preempt = false };
 	struct drm_xe_engine_class_instance *hwe;
 	struct drm_xe_engine_class_instance eci[MAX_INSTANCE];
 	int i, j, b, num_placements = 0, bad_batches = 1;
@@ -227,7 +229,6 @@ test_balancer(int fd, int gt, int class, int n_exec_queues, int n_execs,
 		uint64_t batch_offset = (char *)&data[i].batch - (char *)data;
 		uint64_t batch_addr = base_addr + batch_offset;
 		uint64_t spin_offset = (char *)&data[i].spin - (char *)data;
-		uint64_t spin_addr = base_addr + spin_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = base_addr + sdi_offset;
 		uint64_t exec_addr;
@@ -238,8 +239,9 @@ test_balancer(int fd, int gt, int class, int n_exec_queues, int n_execs,
 			batches[j] = batch_addr;
 
 		if (i < bad_batches) {
-			xe_spin_init(&data[i].spin, spin_addr, false);
-			exec_addr = spin_addr;
+			spin_opts.addr = base_addr + spin_offset;
+			xe_spin_init(&data[i].spin, &spin_opts);
+			exec_addr = spin_opts.addr;
 		} else {
 			b = 0;
 			data[i].batch[b++] = MI_STORE_DWORD_IMM_GEN4;
@@ -352,6 +354,7 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t pad;
 		uint32_t data;
 	} *data;
+	struct xe_spin_opts spin_opts = { .preempt = false };
 	int i, b;
 
 	igt_assert(n_exec_queues <= MAX_N_EXECQUEUES);
@@ -401,15 +404,15 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t batch_offset = (char *)&data[i].batch - (char *)data;
 		uint64_t batch_addr = base_addr + batch_offset;
 		uint64_t spin_offset = (char *)&data[i].spin - (char *)data;
-		uint64_t spin_addr = base_addr + spin_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = base_addr + sdi_offset;
 		uint64_t exec_addr;
 		int e = i % n_exec_queues;
 
 		if (!i) {
-			xe_spin_init(&data[i].spin, spin_addr, false);
-			exec_addr = spin_addr;
+			spin_opts.addr = base_addr + spin_offset;
+			xe_spin_init(&data[i].spin, &spin_opts);
+			exec_addr = spin_opts.addr;
 		} else {
 			b = 0;
 			data[i].batch[b++] = MI_STORE_DWORD_IMM_GEN4;
@@ -517,6 +520,7 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t exec_sync;
 		uint32_t data;
 	} *data;
+	struct xe_spin_opts spin_opts = { .preempt = false };
 	int i, b;
 
 	igt_assert(n_exec_queues <= MAX_N_EXECQUEUES);
@@ -571,15 +575,15 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		uint64_t batch_offset = (char *)&data[i].batch - (char *)data;
 		uint64_t batch_addr = base_addr + batch_offset;
 		uint64_t spin_offset = (char *)&data[i].spin - (char *)data;
-		uint64_t spin_addr = base_addr + spin_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = base_addr + sdi_offset;
 		uint64_t exec_addr;
 		int e = i % n_exec_queues;
 
 		if (!i) {
-			xe_spin_init(&data[i].spin, spin_addr, false);
-			exec_addr = spin_addr;
+			spin_opts.addr = base_addr + spin_offset;
+			xe_spin_init(&data[i].spin, &spin_opts);
+			exec_addr = spin_opts.addr;
 		} else {
 			b = 0;
 			data[i].batch[b++] = MI_STORE_DWORD_IMM_GEN4;

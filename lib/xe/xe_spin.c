@@ -19,17 +19,13 @@
 /**
  * xe_spin_init:
  * @spin: pointer to mapped bo in which spinner code will be written
- * @addr: offset of spinner within vm
- * @preempt: allow spinner to be preempted or not
+ * @opts: pointer to spinner initialization options
  */
-void xe_spin_init(struct xe_spin *spin, uint64_t addr, bool preempt)
+void xe_spin_init(struct xe_spin *spin, struct xe_spin_opts *opts)
 {
-	uint64_t batch_offset = (char *)&spin->batch - (char *)spin;
-	uint64_t batch_addr = addr + batch_offset;
-	uint64_t start_offset = (char *)&spin->start - (char *)spin;
-	uint64_t start_addr = addr + start_offset;
-	uint64_t end_offset = (char *)&spin->end - (char *)spin;
-	uint64_t end_addr = addr + end_offset;
+	uint64_t loop_addr = opts->addr + offsetof(struct xe_spin, batch);
+	uint64_t start_addr = opts->addr + offsetof(struct xe_spin, start);
+	uint64_t end_addr = opts->addr + offsetof(struct xe_spin, end);
 	int b = 0;
 
 	spin->start = 0;
@@ -40,7 +36,7 @@ void xe_spin_init(struct xe_spin *spin, uint64_t addr, bool preempt)
 	spin->batch[b++] = start_addr >> 32;
 	spin->batch[b++] = 0xc0ffee;
 
-	if (preempt)
+	if (opts->preempt)
 		spin->batch[b++] = (0x5 << 23);
 
 	spin->batch[b++] = MI_COND_BATCH_BUFFER_END | MI_DO_COMPARE | 2;
@@ -49,8 +45,8 @@ void xe_spin_init(struct xe_spin *spin, uint64_t addr, bool preempt)
 	spin->batch[b++] = end_addr >> 32;
 
 	spin->batch[b++] = MI_BATCH_BUFFER_START | 1 << 8 | 1;
-	spin->batch[b++] = batch_addr;
-	spin->batch[b++] = batch_addr >> 32;
+	spin->batch[b++] = loop_addr;
+	spin->batch[b++] = loop_addr >> 32;
 
 	igt_assert(b <= ARRAY_SIZE(spin->batch));
 }
@@ -133,11 +129,7 @@ xe_spin_create(int fd, const struct igt_spin_factory *opt)
 	addr = intel_allocator_alloc_with_strategy(ahnd, spin->handle, bo_size, 0, ALLOC_STRATEGY_LOW_TO_HIGH);
 	xe_vm_bind_sync(fd, spin->vm, spin->handle, 0, addr, bo_size);
 
-	if (!(opt->flags & IGT_SPIN_NO_PREEMPTION))
-		xe_spin_init(xe_spin, addr, true);
-	else
-		xe_spin_init(xe_spin, addr, false);
-
+	xe_spin_init_opts(xe_spin, .addr = addr, .preempt = !(opt->flags & IGT_SPIN_NO_PREEMPTION));
 	exec.exec_queue_id = spin->engine;
 	exec.address = addr;
 	sync.handle = spin->syncobj;
@@ -219,7 +211,7 @@ void xe_cork_init(int fd, struct drm_xe_engine_class_instance *hwe,
 	exec_queue = xe_exec_queue_create(fd, vm, hwe, 0);
 	syncobj = syncobj_create(fd, 0);
 
-	xe_spin_init(spin, addr, true);
+	xe_spin_init_opts(spin, .addr = addr, .preempt = true);
 	exec.exec_queue_id = exec_queue;
 	exec.address = addr;
 	sync.handle = syncobj;

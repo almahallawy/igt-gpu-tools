@@ -143,7 +143,6 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 		uint64_t sdi_offset = (char *)&data[i]->data - (char *)data[i];
 		uint64_t sdi_addr = addr + sdi_offset;
 		uint64_t spin_offset = (char *)&data[i]->spin - (char *)data[i];
-		uint64_t spin_addr = addr + spin_offset;
 		struct drm_xe_sync sync[2] = {
 			{ .flags = DRM_XE_SYNC_SYNCOBJ, },
 			{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
@@ -152,14 +151,15 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 			.num_batch_buffer = 1,
 			.syncs = to_user_pointer(sync),
 		};
+		struct xe_spin_opts spin_opts = { .addr = addr + spin_offset, .preempt = true };
 		uint32_t syncobj;
 		int b = 0;
 		int sync_fd;
 
 		/* Write spinner on FD[0] */
-		xe_spin_init(&data[i]->spin, spin_addr, true);
+		xe_spin_init(&data[i]->spin, &spin_opts);
 		exec.exec_queue_id = exec_queue[0];
-		exec.address = spin_addr;
+		exec.address = spin_opts.addr;
 		xe_exec(fd[0], &exec);
 
 		/* Export prime BO as sync file and veify business */

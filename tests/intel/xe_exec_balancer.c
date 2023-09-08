@@ -52,6 +52,7 @@ static void test_all_active(int fd, int gt, int class)
 	struct {
 		struct xe_spin spin;
 	} *data;
+	struct xe_spin_opts spin_opts = { .preempt = false };
 	struct drm_xe_engine_class_instance *hwe;
 	struct drm_xe_engine_class_instance eci[MAX_INSTANCE];
 	int i, num_placements = 0;
@@ -90,16 +91,14 @@ static void test_all_active(int fd, int gt, int class)
 	xe_vm_bind_async(fd, vm, 0, bo, 0, addr, bo_size, sync, 1);
 
 	for (i = 0; i < num_placements; i++) {
-		uint64_t spin_offset = (char *)&data[i].spin - (char *)data;
-		uint64_t spin_addr = addr + spin_offset;
-
-		xe_spin_init(&data[i].spin, spin_addr, false);
+		spin_opts.addr = addr + (char *)&data[i].spin - (char *)data;
+		xe_spin_init(&data[i].spin, &spin_opts);
 		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
 		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 		sync[1].handle = syncobjs[i];
 
 		exec.exec_queue_id = exec_queues[i];
-		exec.address = spin_addr;
+		exec.address = spin_opts.addr;
 		xe_exec(fd, &exec);
 		xe_spin_wait_started(&data[i].spin);
 	}

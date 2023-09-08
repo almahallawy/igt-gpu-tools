@@ -726,6 +726,7 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
 		uint64_t pad;
 		uint32_t data;
 	} *data;
+	struct xe_spin_opts spin_opts = { .preempt = true };
 	int i, b;
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
@@ -754,14 +755,14 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
 		uint64_t spin_offset = (char *)&data[i].spin - (char *)data;
-		uint64_t spin_addr = addr + spin_offset;
 		int e = i;
 
 		if (i == 0) {
 			/* Cork 1st exec_queue with a spinner */
-			xe_spin_init(&data[i].spin, spin_addr, true);
+			spin_opts.addr = addr + spin_offset;
+			xe_spin_init(&data[i].spin, &spin_opts);
 			exec.exec_queue_id = exec_queues[e];
-			exec.address = spin_addr;
+			exec.address = spin_opts.addr;
 			sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
 			sync[1].flags |= DRM_XE_SYNC_SIGNAL;
 			sync[1].handle = syncobjs[e];

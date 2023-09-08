@@ -486,6 +486,7 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		uint64_t pad;
 		uint32_t data;
 	} *data;
+	struct xe_spin_opts spin_opts = { .preempt = false };
 	int i, j, b, hang_exec_queue = n_exec_queues / 2;
 	bool owns_vm = false, owns_fd = false;
 
@@ -562,15 +563,15 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		uint64_t batch_offset = (char *)&data[i].batch - (char *)data;
 		uint64_t batch_addr = addr + batch_offset;
 		uint64_t spin_offset = (char *)&data[i].spin - (char *)data;
-		uint64_t spin_addr = addr + spin_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
 		uint64_t exec_addr;
 		int e = i % n_exec_queues;
 
 		if (flags & HANG && e == hang_exec_queue && i == e) {
-			xe_spin_init(&data[i].spin, spin_addr, false);
-			exec_addr = spin_addr;
+			spin_opts.addr = addr + spin_offset;
+			xe_spin_init(&data[i].spin, &spin_opts);
+			exec_addr = spin_opts.addr;
 		} else {
 			b = 0;
 			data[i].batch[b++] = MI_STORE_DWORD_IMM_GEN4;
