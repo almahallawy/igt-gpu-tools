@@ -25,6 +25,8 @@ Examples:
 import argparse
 
 from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.styles import Font
 
 from test_list import TestList
 
@@ -70,17 +72,21 @@ for row in range(len(tests)):
 
     for row in range(len(sheet)):
         for col in range(len(sheet[row])):
-            ws.cell(row = row + 1, column = col + 1, value = sheet[row][col])
+            c = ws.cell(row = row + 1, column = col + 1, value = sheet[row][col])
+            if row == 0:
+                c.font = Font(bold=True)
+
             if len(sheet[row][col]) > max_length[col]:
                 max_length[col] = len(sheet[row][col])
 
-    col = 0
-    for c in ws.columns:
-        column = c[0].column_letter
+    # Estimate column length
+    for col in range(len(sheet[0])):
+        column = get_column_letter(col + 1)
 
         adjusted_width = (max_length[col] + 2) * 1.2
         ws.column_dimensions[column].width = adjusted_width
 
-        col += 1
+    # Turn on auto-filter
+    ws.auto_filter.ref = ws.dimensions
 
 wb.save(parse_args.xls)
