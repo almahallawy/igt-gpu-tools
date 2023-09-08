@@ -15,27 +15,33 @@
 #include "xe_query.h"
 #include "lib/igt_dummyload.h"
 
+#define XE_SPIN_MAX_CTX_TICKS (UINT32_MAX - 1000)
+
 /** struct xe_spin_opts
  *
  * @addr: offset of spinner within vm
  * @preempt: allow spinner to be preempted or not
+ * @ctx_ticks: number of ticks after which spinner is stopped, applied if > 0
  *
  * Used to initialize struct xe_spin spinner behavior.
  */
 struct xe_spin_opts {
 	uint64_t addr;
 	bool preempt;
+	uint32_t ctx_ticks;
 };
 
 /* Mapped GPU object */
 struct xe_spin {
-	uint32_t batch[16];
+	uint32_t batch[128];
 	uint64_t pad;
 	uint32_t start;
 	uint32_t end;
+	uint32_t ticks_delta;
 };
 
 igt_spin_t *xe_spin_create(int fd, const struct igt_spin_factory *opt);
+uint32_t duration_to_ctx_ticks(int fd, int gt_id, uint64_t ns);
 void xe_spin_init(struct xe_spin *spin, struct xe_spin_opts *opts);
 
 #define xe_spin_init_opts(fd, ...) \

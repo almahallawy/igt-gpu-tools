@@ -16,6 +16,50 @@
 #include "xe_ioctl.h"
 #include "xe_spin.h"
 
+static uint32_t read_timestamp_frequency(int fd, int gt_id)
+{
+	struct xe_device *dev = xe_device_get(fd);
+
+	igt_assert(dev && dev->gts && dev->gts->num_gt);
+	igt_assert(gt_id >= 0 && gt_id <= dev->gts->num_gt);
+
+	return dev->gts->gts[gt_id].clock_freq;
+}
+
+static uint64_t div64_u64_round_up(const uint64_t x, const uint64_t y)
+{
+	igt_assert(y > 0);
+	igt_assert_lte_u64(x, UINT64_MAX - (y - 1));
+
+	return (x + y - 1) / y;
+}
+
+/**
+ * duration_to_ctx_ticks:
+ * @fd: opened device
+ * @gt_id: tile id
+ * @duration_ns: duration in nanoseconds to be converted to context timestamp ticks
+ * @return: duration converted to context timestamp ticks.
+ */
+uint32_t duration_to_ctx_ticks(int fd, int gt_id, uint64_t duration_ns)
+{
+	uint32_t f = read_timestamp_frequency(fd, gt_id);
+	uint64_t ctx_ticks = div64_u64_round_up(duration_ns * f, NSEC_PER_SEC);
+
+	igt_assert_lt_u64(ctx_ticks, XE_SPIN_MAX_CTX_TICKS);
+
+	return ctx_ticks;
+}
+
+#define MI_SRM_CS_MMIO				(1 << 19)
+#define MI_LRI_CS_MMIO				(1 << 19)
+#define MI_LRR_DST_CS_MMIO			(1 << 19)
+#define MI_LRR_SRC_CS_MMIO			(1 << 18)
+#define CTX_TIMESTAMP 0x3a8
+#define CS_GPR(x) (0x600 + 8 * (x))
+
+enum { START_TS, NOW_TS };
+
 /**
  * xe_spin_init:
  * @spin: pointer to mapped bo in which spinner code will be written
@@ -23,13 +67,28 @@
  */
 void xe_spin_init(struct xe_spin *spin, struct xe_spin_opts *opts)
 {
-	uint64_t loop_addr = opts->addr + offsetof(struct xe_spin, batch);
+	uint64_t loop_addr;
 	uint64_t start_addr = opts->addr + offsetof(struct xe_spin, start);
 	uint64_t end_addr = opts->addr + offsetof(struct xe_spin, end);
+	uint64_t ticks_delta_addr = opts->addr + offsetof(struct xe_spin, ticks_delta);
+	uint64_t pad_addr = opts->addr + offsetof(struct xe_spin, pad);
 	int b = 0;
 
 	spin->start = 0;
 	spin->end = 0xffffffff;
+	spin->ticks_delta = 0;
+
+	if (opts->ctx_ticks) {
+		/* store start timestamp */
+		spin->batch[b++] = MI_LOAD_REGISTER_IMM(1) | MI_LRI_CS_MMIO;
+		spin->batch[b++] = CS_GPR(START_TS) + 4;
+		spin->batch[b++] = 0;
+		spin->batch[b++] = MI_LOAD_REGISTER_REG | MI_LRR_DST_CS_MMIO | MI_LRR_SRC_CS_MMIO;
+		spin->batch[b++] = CTX_TIMESTAMP;
+		spin->batch[b++] = CS_GPR(START_TS);
+	}
+
+	loop_addr = opts->addr + b * sizeof(uint32_t);
 
 	spin->batch[b++] = MI_STORE_DWORD_IMM_GEN4;
 	spin->batch[b++] = start_addr;
@@ -38,6 +97,42 @@ void xe_spin_init(struct xe_spin *spin, struct xe_spin_opts *opts)
 
 	if (opts->preempt)
 		spin->batch[b++] = (0x5 << 23);
+
+	if (opts->ctx_ticks) {
+		spin->batch[b++] = MI_LOAD_REGISTER_IMM(1) | MI_LRI_CS_MMIO;
+		spin->batch[b++] = CS_GPR(NOW_TS) + 4;
+		spin->batch[b++] = 0;
+		spin->batch[b++] = MI_LOAD_REGISTER_REG | MI_LRR_DST_CS_MMIO | MI_LRR_SRC_CS_MMIO;
+		spin->batch[b++] = CTX_TIMESTAMP;
+		spin->batch[b++] = CS_GPR(NOW_TS);
+
+		/* delta = now - start; inverted to match COND_BBE */
+		spin->batch[b++] = MI_MATH(4);
+		spin->batch[b++] = MI_MATH_LOAD(MI_MATH_REG_SRCA, MI_MATH_REG(NOW_TS));
+		spin->batch[b++] = MI_MATH_LOAD(MI_MATH_REG_SRCB, MI_MATH_REG(START_TS));
+		spin->batch[b++] = MI_MATH_SUB;
+		spin->batch[b++] = MI_MATH_STOREINV(MI_MATH_REG(NOW_TS), MI_MATH_REG_ACCU);
+
+		/* Save delta for reading by COND_BBE */
+		spin->batch[b++] = MI_STORE_REGISTER_MEM | MI_SRM_CS_MMIO | 2;
+		spin->batch[b++] = CS_GPR(NOW_TS);
+		spin->batch[b++] = ticks_delta_addr;
+		spin->batch[b++] = ticks_delta_addr >> 32;
+
+		/* Delay between SRM and COND_BBE to post the writes */
+		for (int n = 0; n < 8; n++) {
+			spin->batch[b++] = MI_STORE_DWORD_IMM_GEN4;
+			spin->batch[b++] = pad_addr;
+			spin->batch[b++] = pad_addr >> 32;
+			spin->batch[b++] = 0xc0ffee;
+		}
+
+		/* Break if delta [time elapsed] > ns */
+		spin->batch[b++] = MI_COND_BATCH_BUFFER_END | MI_DO_COMPARE | 2;
+		spin->batch[b++] = ~(opts->ctx_ticks);
+		spin->batch[b++] = ticks_delta_addr;
+		spin->batch[b++] = ticks_delta_addr >> 32;
+	}
 
 	spin->batch[b++] = MI_COND_BATCH_BUFFER_END | MI_DO_COMPARE | 2;
 	spin->batch[b++] = 0;
