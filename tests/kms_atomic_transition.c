@@ -960,7 +960,7 @@ retry:
 		}
 	}
 
-	iter_max = 1 << j;
+	iter_max = (j > 0) ? (j << 1) : 1;
 
 	if (igt_run_in_simulation() && iter_max > 1)
 		iter_max = iter_max >> 1;
