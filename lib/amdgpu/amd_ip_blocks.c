@@ -304,7 +304,7 @@ x_compare_pattern(const struct amdgpu_ip_funcs *func,
 	return ret;
 }
 
-static const struct amdgpu_ip_funcs gfx_v8_x_ip_funcs = {
+static struct amdgpu_ip_funcs gfx_v8_x_ip_funcs = {
 	.family_id = FAMILY_VI,
 	.align_mask = 0xff,
 	.nop = 0x80000000,
@@ -318,7 +318,7 @@ static const struct amdgpu_ip_funcs gfx_v8_x_ip_funcs = {
 	.get_reg_offset = gfx_v8_0_get_reg_offset,
 };
 
-static const struct amdgpu_ip_funcs sdma_v3_x_ip_funcs = {
+static struct amdgpu_ip_funcs sdma_v3_x_ip_funcs = {
 	.family_id = FAMILY_VI,
 	.align_mask = 0xff,
 	.nop = 0x80000000,
@@ -332,7 +332,7 @@ static const struct amdgpu_ip_funcs sdma_v3_x_ip_funcs = {
 	.get_reg_offset = gfx_v8_0_get_reg_offset,
 };
 
-const struct amdgpu_ip_block_version gfx_v8_x_ip_block = {
+struct amdgpu_ip_block_version gfx_v8_x_ip_block = {
 	.type = AMD_IP_GFX,
 	.major = 8,
 	.minor = 0,
@@ -340,7 +340,7 @@ const struct amdgpu_ip_block_version gfx_v8_x_ip_block = {
 	.funcs = &gfx_v8_x_ip_funcs
 };
 
-const struct amdgpu_ip_block_version compute_v8_x_ip_block = {
+struct amdgpu_ip_block_version compute_v8_x_ip_block = {
 	.type = AMD_IP_COMPUTE,
 	.major = 8,
 	.minor = 0,
@@ -348,7 +348,7 @@ const struct amdgpu_ip_block_version compute_v8_x_ip_block = {
 	.funcs = &gfx_v8_x_ip_funcs
 };
 
-const struct amdgpu_ip_block_version sdma_v3_x_ip_block = {
+struct amdgpu_ip_block_version sdma_v3_x_ip_block = {
 	.type = AMD_IP_DMA,
 	.major = 3,
 	.minor = 0,
@@ -368,7 +368,7 @@ struct amdgpu_ip_blocks_device amdgpu_ips;
 struct chip_info g_chip;
 
 static int
-amdgpu_device_ip_block_add(const struct amdgpu_ip_block_version *ip_block_version)
+amdgpu_device_ip_block_add(struct amdgpu_ip_block_version *ip_block_version)
 {
 	if (amdgpu_ips.num_ip_blocks >= AMD_IP_MAX)
 		return -1;
@@ -674,16 +674,29 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 	case GFX9: /* tested */
 	case GFX10:/* tested */
 	case GFX10_3: /* tested */
+	case GFX11: /* tested */
 		amdgpu_device_ip_block_add(&gfx_v8_x_ip_block);
 		amdgpu_device_ip_block_add(&compute_v8_x_ip_block);
 		amdgpu_device_ip_block_add(&sdma_v3_x_ip_block);
+		/*
+		 * The handling of a particular family _id is done into
+		 * each function and as a result the field family_id would be overwritten
+		 * during initialization which matches to actual family_id.
+		 * The initial design assumed that for different GPU families, we may
+		 * have different implementations, but it is not necessary.
+		 * TO DO: move family id as a parameter into IP functions and
+		 * remove it as a field
+		 */
+		for (int i = 0; i <  amdgpu_ips.num_ip_blocks; i++)
+			amdgpu_ips.ip_blocks[i]->funcs->family_id = amdinfo->family_id;
+
 		/* extra precaution if re-factor again */
 		igt_assert_eq(gfx_v8_x_ip_block.major, 8);
 		igt_assert_eq(compute_v8_x_ip_block.major, 8);
 		igt_assert_eq(sdma_v3_x_ip_block.major, 3);
 
-		igt_assert_eq(gfx_v8_x_ip_block.funcs->family_id, FAMILY_VI);
-		igt_assert_eq(sdma_v3_x_ip_block.funcs->family_id, FAMILY_VI);
+		igt_assert_eq(gfx_v8_x_ip_block.funcs->family_id, amdinfo->family_id);
+		igt_assert_eq(sdma_v3_x_ip_block.funcs->family_id, amdinfo->family_id);
 		break;
 	default:
 		igt_info("amdgpu: GFX11 or old.\n");

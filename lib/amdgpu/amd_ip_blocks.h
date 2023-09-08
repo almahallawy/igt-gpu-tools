@@ -85,13 +85,13 @@ struct amdgpu_ip_block_version {
 	const int major;
 	const int minor;
 	const int rev;
-	const struct amdgpu_ip_funcs *funcs;
+	struct amdgpu_ip_funcs *funcs;
 };
 
 /* global holder for the array of in use ip blocks */
 
 struct amdgpu_ip_blocks_device {
-	const struct amdgpu_ip_block_version *ip_blocks[AMD_IP_MAX];
+	struct amdgpu_ip_block_version *ip_blocks[AMD_IP_MAX];
 	int			num_ip_blocks;
 };
 
