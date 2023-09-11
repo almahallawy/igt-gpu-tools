@@ -32,6 +32,7 @@
 #include "igt.h"
 
 #include "i915/gem_create.h"
+#include "xe/xe_ioctl.h"
 
 /**
  * SUBTEST: %s-%s-%s
@@ -310,17 +311,19 @@ static void check_ccs_plane(int drm_fd, igt_fb_t *fb, int plane)
 	ccs_size = fb->strides[plane] * fb->plane_height[plane];
 	igt_assert(ccs_size);
 
-	gem_set_domain(drm_fd, fb->gem_handle, I915_GEM_DOMAIN_CPU, 0);
-
-	map = gem_mmap__cpu(drm_fd, fb->gem_handle, 0, fb->size, PROT_READ);
-
+	if (is_i915_device(drm_fd)) {
+		gem_set_domain(drm_fd, fb->gem_handle, I915_GEM_DOMAIN_CPU, 0);
+		map = gem_mmap__cpu(drm_fd, fb->gem_handle, 0, fb->size, PROT_READ);
+	} else {
+		map = xe_bo_mmap_ext(drm_fd, fb->gem_handle, fb->size, PROT_READ);
+	}
 	ccs_size = fb->strides[plane] * fb->plane_height[plane];
 	ccs_p = map + fb->offsets[plane];
 	for (i = 0; i < ccs_size; i += sizeof(uint32_t))
 		if (*(uint32_t *)(ccs_p + i))
 			break;
 
-	munmap(map, fb->size);
+	igt_assert(gem_munmap(map, fb->size) == 0);
 
 	igt_assert_f(i < ccs_size,
 		     "CCS plane %d (for main plane %d) lacks compression meta-data\n",
@@ -336,9 +339,12 @@ static void check_ccs_cc_plane(int drm_fd, igt_fb_t *fb, int plane, const float 
 	void *map;
 	uint32_t native_color;
 
-	gem_set_domain(drm_fd, fb->gem_handle, I915_GEM_DOMAIN_CPU, 0);
-
-	map = gem_mmap__cpu(drm_fd, fb->gem_handle, 0, fb->size, PROT_READ);
+	if (is_i915_device(drm_fd)) {
+		gem_set_domain(drm_fd, fb->gem_handle, I915_GEM_DOMAIN_CPU, 0);
+		map = gem_mmap__cpu(drm_fd, fb->gem_handle, 0, fb->size, PROT_READ);
+	} else {
+		map = xe_bo_mmap_ext(drm_fd, fb->gem_handle, fb->size, PROT_READ);
+	}
 	cc_p = map + fb->offsets[plane];
 
 	igt_assert(cc_color[0] == cc_p[0].f &&
@@ -353,7 +359,7 @@ static void check_ccs_cc_plane(int drm_fd, igt_fb_t *fb, int plane, const float 
 
 	igt_assert(native_color == cc_p[4].d);
 
-	munmap(map, fb->size);
+	igt_assert(gem_munmap(map, fb->size) == 0);
 };
 
 static void check_all_ccs_planes(int drm_fd, igt_fb_t *fb, const float *cc_color, bool check_cc_plane)
@@ -375,14 +381,17 @@ static void fill_fb_random(int drm_fd, igt_fb_t *fb)
 	uint8_t *p;
 	int i;
 
-	gem_set_domain(drm_fd, fb->gem_handle, I915_GEM_DOMAIN_CPU, I915_GEM_DOMAIN_CPU);
-
-	p = map = gem_mmap__cpu(drm_fd, fb->gem_handle, 0, fb->size, PROT_WRITE);
+	if (is_i915_device(drm_fd)) {
+		gem_set_domain(drm_fd, fb->gem_handle, I915_GEM_DOMAIN_CPU, I915_GEM_DOMAIN_CPU);
+		p = map = gem_mmap__cpu(drm_fd, fb->gem_handle, 0, fb->size, PROT_WRITE);
+	} else {
+		p = map = xe_bo_mmap_ext(drm_fd, fb->gem_handle, fb->size, PROT_WRITE);
+	}
 
 	for (i = 0; i < fb->size; i++)
 		p[i] = rand();
 
-	munmap(map, fb->size);
+	igt_assert(gem_munmap(map, fb->size) == 0);
 }
 
 static void test_bad_ccs_plane(data_t *data, int width, int height, int ccs_plane,
@@ -490,8 +499,9 @@ static void fast_clear_fb(int drm_fd, struct igt_fb *fb, const float *cc_color)
 	struct buf_ops *bops = buf_ops_create(drm_fd);
 	struct intel_buf *dst = igt_fb_create_intel_buf(drm_fd, bops, fb, "fast clear dst");
 
-	gem_set_domain(drm_fd, fb->gem_handle,
-		       I915_GEM_DOMAIN_GTT, I915_GEM_DOMAIN_GTT);
+	if (is_i915_device(drm_fd))
+		gem_set_domain(drm_fd, fb->gem_handle,
+			       I915_GEM_DOMAIN_GTT, I915_GEM_DOMAIN_GTT);
 
 	fast_clear(ibb, dst, 0, 0, fb->width, fb->height, cc_color);
 
@@ -811,7 +821,7 @@ igt_main_args("cs:", NULL, help_str, opt_handler, &data)
 	enum pipe pipe;
 
 	igt_fixture {
-		data.drm_fd = drm_open_driver_master(DRIVER_INTEL);
+		data.drm_fd = drm_open_driver_master(DRIVER_INTEL | DRIVER_XE);
 
 		igt_require(intel_display_ver(intel_get_drm_devid(data.drm_fd)) >= 9);
 		kmstest_set_vt_graphics_mode();
