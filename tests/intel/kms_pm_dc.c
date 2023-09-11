@@ -47,7 +47,6 @@
  * Driver requirement: i915
  * Functionality: dc3co, pm_dc, psr2
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: dc5-dpms
@@ -56,7 +55,6 @@
  * Driver requirement: i915
  * Functionality: dpms, pm_dc
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: dc5-dpms-negative
@@ -65,7 +63,6 @@
  * Driver requirement: i915
  * Functionality: dpms, pm_dc
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: dc5-psr
@@ -73,7 +70,6 @@
  * Driver requirement: i915
  * Functionality: pm_dc, psr
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: dc6-dpms
@@ -82,7 +78,6 @@
  * Driver requirement: i915
  * Functionality: dpms, pm_dc
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: dc6-psr
@@ -90,7 +85,6 @@
  * Driver requirement: i915
  * Functionality: pm_dc, psr
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: dc9-dpms
@@ -98,7 +92,6 @@
  * Driver requirement: i915
  * Functionality: dpms, pm_dc
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  */
 

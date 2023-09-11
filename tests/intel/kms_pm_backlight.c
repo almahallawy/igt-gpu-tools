@@ -46,7 +46,6 @@
  * Driver requirement: i915
  * Functionality: backlight
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: basic-brightness
@@ -54,7 +53,6 @@
  * Driver requirement: i915
  * Functionality: backlight
  * Mega feature: Display Power
- * Run type: BAT
  * Test category: functionality test
  *
  * SUBTEST: fade
@@ -62,7 +60,6 @@
  * Driver requirement: i915
  * Functionality: backlight
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fade-with-dpms
@@ -70,7 +67,6 @@
  * Driver requirement: i915
  * Functionality: dpms, backlight
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: fade-with-suspend
@@ -78,7 +74,6 @@
  * Driver requirement: i915
  * Functionality: backlight, suspend
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  */
 

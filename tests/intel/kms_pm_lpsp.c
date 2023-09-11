@@ -42,7 +42,6 @@
  * Driver requirement: i915
  * Functionality: pm_lpsp
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  *
  * SUBTEST: screens-disabled
@@ -50,7 +49,6 @@
  * Driver requirement: i915
  * Functionality: pm_lpsp
  * Mega feature: Display Power
- * Run type: FULL
  * Test category: functionality test
  */
 
