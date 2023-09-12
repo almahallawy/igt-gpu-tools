@@ -816,6 +816,9 @@ class TestList:
         for item in sorted(expand_fields.keys(), key=str.lower):
             prefix = expand_fields[item]
 
+            if item not in expand_field_name:
+                continue
+
             for field in sorted(list(expand_field_name[item]), key=str.lower):
                 row = 0
                 sheet[row].append(prefix + field)
