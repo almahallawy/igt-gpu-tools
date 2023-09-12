@@ -66,6 +66,13 @@
  * Mega feature: PSR
  * Test category: functionality test
  *
+ * SUBTEST: dp-mst
+ * Description: Make sure that we have DP-MST configuration.
+ * Driver requirement: i915, xe
+ * Functionality: feature_discovery, mst
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
  * arg[1].values: 2, 3, 4
  */
 
@@ -158,6 +165,24 @@ igt_main {
 		igt_describe("Make sure that we have eDP panel with PSR2 support.");
 		igt_subtest("psr2") {
 			igt_require(psr_sink_support(fd, debugfs_fd, PSR_MODE_2));
+		}
+
+		igt_describe("Make sure that we have DP-MST configuration.");
+		igt_subtest("dp-mst") {
+			struct kmstest_connector_config config;
+			igt_output_t *output;
+			const char *encoder;
+			int ret = -1;
+
+			for_each_connected_output(&display, output) {
+				kmstest_get_connector_config(fd, output->config.connector->connector_id, -1, &config);
+				encoder = kmstest_encoder_type_str(config.encoder->encoder_type);
+
+				ret = strcmp(encoder, "DP MST");
+				if (ret == 0)
+					break;
+			}
+			igt_require_f(ret == 0, "No DP-MST configuration found.\n");
 		}
 	}
 }
