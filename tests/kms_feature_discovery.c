@@ -22,6 +22,53 @@
  *
  */
 
+/**
+ * TEST: kms feature discovery
+ * Category: Display
+ * Description: A metatest that checks for \"features\" presence.
+ *		The subtests here should only skip or pass,
+ *		anything else means we have a serious problem.
+ *
+ * SUBTEST: display
+ * Description: Make sure that we have display support with
+ * 		some outputs connected.
+ * Driver requirement: i915, xe
+ * Functionality: feature_discovery
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: display-%dx
+ * Description: Make sure that we have display support with %arg[1]
+ * 		outputs connected.
+ * Driver requirement: i915, xe
+ * Functionality: feature_discovery
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: chamelium
+ * Description: Make sure that Chamelium is configured and reachable.
+ * Driver requirement: i915, xe
+ * Functionality: feature_discovery, chamelium
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: psr1
+ * Description: Make sure that we have eDP panel with PSR1 support.
+ * Driver requirement: i915, xe
+ * Functionality: feature_discovery, psr1, eDP
+ * Mega feature: PSR
+ * Test category: functionality test
+ *
+ * SUBTEST: psr2
+ * Description: Make sure that we have eDP panel with PSR2 support.
+ * Driver requirement: i915, xe
+ * Functionality: feature_discovery, psr2, eDP
+ * Mega feature: PSR
+ * Test category: functionality test
+ *
+ * arg[1].values: 2, 3, 4
+ */
+
 #include "igt.h"
 #ifdef HAVE_CHAMELIUM
 #include "igt_chamelium.h"
@@ -46,7 +93,6 @@ igt_main {
 	}
 
 	igt_subtest_group {
-
 		igt_fixture {
 			igt_display_require(&display, fd);
 		}
