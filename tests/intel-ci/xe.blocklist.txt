@@ -38,7 +38,6 @@ igt@drm_fdinfo
 igt@drm_read
 igt@dumb.*
 igt@fbdev
-igt@feature_discovery
 igt@prime_.*
 igt@sw_sync
 igt@syncobj_.*
