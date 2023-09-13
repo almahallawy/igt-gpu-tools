@@ -294,7 +294,6 @@ intel_xe_progs = [
 	'xe_live_ktest',
 	'xe_media_fill',
 	'xe_mmap',
-	'xe_mmio',
 	'xe_module_load',
 	'xe_noexec_ping_pong',
 	'xe_pm',
