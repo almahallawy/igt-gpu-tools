@@ -740,7 +740,6 @@ static void *thread(void *data)
 
 struct vm_thread_data {
 	pthread_t thread;
-	struct drm_xe_vm_bind_op_error_capture *capture;
 	int fd;
 	int vm;
 };
@@ -772,7 +771,6 @@ static void *vm_async_ops_err_thread(void *data)
 		/* Restart and wait for next error */
 		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_VM_BIND,
 					&bind), 0);
-		args->capture->error = 0;
 		ret = igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait);
 	}
 
@@ -1021,7 +1019,6 @@ static void threads(int fd, int flags)
 	int n_hw_engines = 0, class;
 	uint64_t i = 0;
 	uint32_t vm_legacy_mode = 0, vm_compute_mode = 0;
-	struct drm_xe_vm_bind_op_error_capture capture = {};
 	struct vm_thread_data vm_err_thread = {};
 	bool go = false;
 	int n_threads = 0;
@@ -1054,23 +1051,14 @@ static void threads(int fd, int flags)
 	pthread_cond_init(&cond, 0);
 
 	if (flags & SHARED_VM) {
-		struct drm_xe_ext_set_property ext = {
-			.base.next_extension = 0,
-			.base.name = XE_VM_EXTENSION_SET_PROPERTY,
-			.property =
-				XE_VM_PROPERTY_BIND_OP_ERROR_CAPTURE_ADDRESS,
-			.value = to_user_pointer(&capture),
-		};
-
 		vm_legacy_mode = xe_vm_create(fd,
 					      DRM_XE_VM_CREATE_ASYNC_BIND_OPS,
-					      to_user_pointer(&ext));
+					      0);
 		vm_compute_mode = xe_vm_create(fd,
 					       DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
 					       DRM_XE_VM_CREATE_COMPUTE_MODE,
 					       0);
 
-		vm_err_thread.capture = &capture;
 		vm_err_thread.fd = fd;
 		vm_err_thread.vm = vm_legacy_mode;
 		pthread_create(&vm_err_thread.thread, 0,

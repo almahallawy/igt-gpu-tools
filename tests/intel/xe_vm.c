@@ -324,7 +324,6 @@ static void userptr_invalid(int fd)
 
 struct vm_thread_data {
 	pthread_t thread;
-	struct drm_xe_vm_bind_op_error_capture *capture;
 	int fd;
 	int vm;
 	uint32_t bo;
@@ -388,7 +387,6 @@ static void *vm_async_ops_err_thread(void *data)
 		/* Restart and wait for next error */
 		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_VM_BIND,
 					&bind), 0);
-		args->capture->error = 0;
 		ret = igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait);
 	}
 
@@ -403,24 +401,15 @@ static void vm_async_ops_err(int fd, bool destroy)
 		.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL,
 	};
 #define N_BINDS		32
-	struct drm_xe_vm_bind_op_error_capture capture = {};
-	struct drm_xe_ext_set_property ext = {
-		.base.next_extension = 0,
-		.base.name = XE_VM_EXTENSION_SET_PROPERTY,
-		.property = XE_VM_PROPERTY_BIND_OP_ERROR_CAPTURE_ADDRESS,
-		.value = to_user_pointer(&capture),
-	};
 	struct vm_thread_data thread = {};
 	uint32_t syncobjs[N_BINDS];
 	size_t bo_size = 0x1000 * 32;
 	uint32_t bo;
 	int i, j;
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS,
-			  to_user_pointer(&ext));
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
 	bo = xe_bo_create(fd, 0, vm, bo_size);
 
-	thread.capture = &capture;
 	thread.fd = fd;
 	thread.vm = vm;
 	thread.bo = bo;
