@@ -279,7 +279,7 @@ test_query_gts(int fd)
 
 	for (i = 0; i < gts->num_gt; i++) {
 		igt_info("type: %d\n", gts->gts[i].type);
-		igt_info("instance: %d\n", gts->gts[i].instance);
+		igt_info("gt_id: %d\n", gts->gts[i].gt_id);
 		igt_info("clock_freq: %u\n", gts->gts[i].clock_freq);
 		igt_info("features: 0x%016llx\n", gts->gts[i].features);
 		igt_info("native_mem_regions: 0x%016llx\n",
