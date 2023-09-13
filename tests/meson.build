@@ -464,6 +464,8 @@ if not meson.is_cross_build()
 		    command : [ gen_testlist, '@OUTPUT@', test_list ],
 		    install : true,
 		    install_dir : libexecdir)
+else
+	test_list_target = []
 endif
 
 test_executables += executable('gem_concurrent_all', 'intel/gem_concurrent_all.c',
