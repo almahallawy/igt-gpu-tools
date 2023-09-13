@@ -254,6 +254,8 @@ amdgpu_memcpy_dispatch_test(amdgpu_device_handle device_handle,
 		base_cmd->emit(base_cmd,0x74fac);
 	else if (version == 10)
 		base_cmd->emit(base_cmd,0x1104bfac);
+	else if (version == 11)
+		base_cmd->emit(base_cmd,0x1003dfac);
 
 	/* Writes the UAV constant data to the SGPRs. */
 	base_cmd->emit(base_cmd, PACKET3_COMPUTE(PKT3_SET_SH_REG, 4));
@@ -265,6 +267,8 @@ amdgpu_memcpy_dispatch_test(amdgpu_device_handle device_handle,
 		base_cmd->emit(base_cmd, 0x74fac);
 	else if (version == 10)
 		base_cmd->emit(base_cmd, 0x1104bfac);
+	else if (version == 11)
+		base_cmd->emit(base_cmd, 0x1003dfac);
 
 	/* clear mmCOMPUTE_RESOURCE_LIMITS */
 	base_cmd->emit(base_cmd, PACKET3_COMPUTE(PKT3_SET_SH_REG, 1));
@@ -506,21 +510,18 @@ amdgpu_dispatch_hang_slow_helper(amdgpu_device_handle device_handle,
 	r = amdgpu_query_hw_ip_info(device_handle, ip_type, 0, &info);
 	igt_assert_eq(r, 0);
 	if (!info.available_rings)
-		printf("SKIP ... as there's no ring for ip %d\n", ip_type);
+		igt_info("SKIP ... as there's no ring for ip %d\n", ip_type);
 
 	version = info.hw_ip_version_major;
-	if (version != 9 && version != 10) {
-		printf("SKIP ... unsupported gfx version %d\n", version);
+	if (version != 9 && version != 10 /*&& version != 11*/) {
+		igt_info("SKIP ... unsupported gfx version %d\n", version);
 		return;
 	}
-	//TODO IGT
-	//if (version < 9)
-	//	version = 9;
 	for (ring_id = 0; (1 << ring_id) & info.available_rings; ring_id++) {
 		amdgpu_memcpy_dispatch_test(device_handle, ip_type,
 					    ring_id,  version, 0);
 		amdgpu_memcpy_dispatch_hang_slow_test(device_handle, ip_type,
-						      ring_id, version, AMDGPU_CTX_NO_RESET);
+						      ring_id, version, AMDGPU_CTX_UNKNOWN_RESET);
 
 		amdgpu_memcpy_dispatch_test(device_handle, ip_type, ring_id,
 					    version, 0);
@@ -536,11 +537,11 @@ void amdgpu_gfx_dispatch_test(amdgpu_device_handle device_handle, uint32_t ip_ty
 	r = amdgpu_query_hw_ip_info(device_handle, AMDGPU_HW_IP_GFX, 0, &info);
 	igt_assert_eq(r, 0);
 	if (!info.available_rings)
-		printf("SKIP ... as there's no graphics ring\n");
+		igt_info("SKIP ... as there's no graphics ring\n");
 
 	version = info.hw_ip_version_major;
-	if (version != 9 && version != 10) {
-		printf("SKIP ... unsupported gfx version %d\n", version);
+	if (version != 9 && version != 10 && version != 11) {
+		igt_info("SKIP ... unsupported gfx version %d\n", version);
 		return;
 	}
 	if (version < 9)

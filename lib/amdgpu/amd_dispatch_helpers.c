@@ -118,8 +118,16 @@ int amdgpu_dispatch_write2hw(struct amdgpu_cmd_base * base, uint64_t shader_addr
 		{0x2e08, 0x00000001},	//{ mmCOMPUTE_NUM_THREAD_Y,	0x00000001 },
 		{0x2e09, 0x00000001},	//{ mmCOMPUTE_NUM_THREAD_Z,	0x00000001 }
 	};
+	static uint32_t bufferclear_cs_shader_registers_gfx11[][2] = {
+		{0x2e12, 0x600C0041},	//{ mmCOMPUTE_PGM_RSRC1,	  0x600C0041 },
+		{0x2e13, 0x00000090},	//{ mmCOMPUTE_PGM_RSRC2,	  0x00000090 },
+		{0x2e07, 0x00000040},	//{ mmCOMPUTE_NUM_THREAD_X, 0x00000040 },
+		{0x2e08, 0x00000001},	//{ mmCOMPUTE_NUM_THREAD_Y, 0x00000001 },
+		{0x2e09, 0x00000001},	//{ mmCOMPUTE_NUM_THREAD_Z, 0x00000001 }
+	};
 
 	static const uint32_t bufferclear_cs_shader_registers_num_gfx9 = ARRAY_SIZE(bufferclear_cs_shader_registers_gfx9);
+	static const uint32_t bufferclear_cs_shader_registers_num_gfx11 = ARRAY_SIZE(bufferclear_cs_shader_registers_gfx11);
 	int offset_prev = base->cdw;
 	int j;
 
@@ -130,11 +138,23 @@ int amdgpu_dispatch_write2hw(struct amdgpu_cmd_base * base, uint64_t shader_addr
 	base->emit(base, shader_addr >> 8);
 	base->emit(base, shader_addr >> 40);
 	/* write sh regs */
-	for (j = 0; j < bufferclear_cs_shader_registers_num_gfx9; j++) {
-		base->emit(base, PACKET3_COMPUTE(PKT3_SET_SH_REG, 1));
-		/* - Gfx9ShRegBase */
-		base->emit(base,bufferclear_cs_shader_registers_gfx9[j][0] - 0x2c00);
-		base->emit(base,bufferclear_cs_shader_registers_gfx9[j][1]);
+	if (version == 11) {
+		for (j = 0; j < bufferclear_cs_shader_registers_num_gfx11; j++) {
+			base->emit(base, PACKET3_COMPUTE(PKT3_SET_SH_REG, 1));
+			/* - Gfx11ShRegBase */
+			base->emit(base,bufferclear_cs_shader_registers_gfx11[j][0] - 0x2c00);
+			if (bufferclear_cs_shader_registers_gfx11[j][0] ==0x2E12)
+				bufferclear_cs_shader_registers_gfx11[j][1] &= ~(1<<29);
+
+			base->emit(base,bufferclear_cs_shader_registers_gfx11[j][1]);
+		}
+	} else {
+		for (j = 0; j < bufferclear_cs_shader_registers_num_gfx9; j++) {
+			base->emit(base, PACKET3_COMPUTE(PKT3_SET_SH_REG, 1));
+			/* - Gfx9ShRegBase */
+			base->emit(base,bufferclear_cs_shader_registers_gfx9[j][0] - 0x2c00);
+			base->emit(base,bufferclear_cs_shader_registers_gfx9[j][1]);
+		}
 	}
 	if (version == 10) {
 		/* mmCOMPUTE_PGM_RSRC3 */

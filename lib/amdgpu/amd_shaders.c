@@ -150,10 +150,9 @@ int amdgpu_dispatch_load_cs_shader_hang_slow(uint32_t *ptr, uint32_t family_id)
 			shader = &memcpy_cs_hang_slow_rv;
 			break;
 		case AMDGPU_FAMILY_NV:
+		default:
 			shader = &memcpy_cs_hang_slow_nv;
 			break;
-		default:
-			return -1;
 	}
 
 	memcpy(ptr, shader->shader, shader->header_length * sizeof(uint32_t));
@@ -275,6 +274,85 @@ int  amdgpu_dispatch_load_cs_shader(uint8_t *ptr, int cs_type, uint32_t version)
 		0xBF8C3F70, 0xE01C2000, 0x80010201, 0xBF810000
 	};
 
+	/**
+	 * shader main
+	 * asic(GFX11)
+	 * type(CS)
+	 * s_version     UC_VERSION_GFX11 | UC_VERSION_W64_BIT   // 000000000000: B0802006
+	 * s_set_inst_prefetch_distance  0x0003                  // 000000000004: BF840003
+	 * v_and_b32     v0, lit(0x000003ff), v0                 // 000000000008: 360000FF 000003FF
+	 * v_mov_b32     v1, s5                                  // 000000000010: 7E020205
+	 * v_mov_b32     v2, s6                                  // 000000000014: 7E040206
+	 * v_mov_b32     v3, s7                                  // 000000000018: 7E060207
+	 * s_delay_alu   instid0(VALU_DEP_4)                     // 00000000001C: BF870004
+	 * v_lshl_add_u32  v4, s8, 6, v0                         // 000000000020: D6460004 04010C08
+	 * v_mov_b32     v0, s4                                  // 000000000028: 7E000204
+	 * buffer_store_format_xyzw  v[0:3], v4, s[0:3], 0 idxen // 00000000002C: E01C0000 80800004
+	 * s_sendmsg     sendmsg(MSG_DEALLOC_VGPRS, 0, 0)        // 000000000034: BFB60003
+	 * s_endpgm                                              // 000000000038: BFB00000
+	 */
+	static const uint32_t bufferclear_cs_shader_gfx11[] = {
+		0xB0802006, 0xBF840003, 0x360000FF, 0x000003FF,
+		0x7E020205, 0x7E040206, 0x7E060207, 0xBF870004,
+		0xD6460004, 0x04010C08, 0x7E000204, 0xE01C0000,
+		0x80800004, 0xBFB60003, 0xBFB00000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000
+	};
+
+	/**
+	 * shader main
+	 * asic(GFX11)
+	 * type(CS)
+	 * s_version     UC_VERSION_GFX11 | UC_VERSION_W64_BIT   // 000000000000: B0802006
+	 * s_set_inst_prefetch_distance  0x0003                  // 000000000004: BF840003
+	 * v_and_b32     v0, lit(0x000003ff), v0                 // 000000000008: 360000FF 000003FF
+	 * s_delay_alu   instid0(VALU_DEP_1)                     // 000000000010: BF870001
+	 * v_lshl_add_u32  v1, s8, 6, v0                         // 000000000014: D6460001 04010C08
+	 * buffer_load_format_xyzw  v[2:5], v1, s[0:3], 0 idxen  // 00000000001C: E00C0000 80800201
+	 * s_waitcnt     vmcnt(0)                                // 000000000024: BF8903F7
+	 * buffer_store_format_xyzw  v[2:5], v1, s[4:7], 0 idxen // 000000000028: E01C0000 80810201
+	 * s_sendmsg     sendmsg(MSG_DEALLOC_VGPRS, 0, 0)        // 000000000030: BFB60003
+	 * s_endpgm                                              // 000000000034: BFB00000
+	 * end
+	 */
+	static const uint32_t buffercopy_cs_shader_gfx11[] = {
+		0xB0802006, 0xBF840003, 0x360000FF, 0x000003FF,
+		0xBF870001, 0xD6460001, 0x04010C08, 0xE00C0000,
+		0x80800201, 0xBF8903F7, 0xE01C0000, 0x80810201,
+		0xBFB60003, 0xBFB00000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000, 0xBF9F0000, 0xBF9F0000,
+		0xBF9F0000, 0xBF9F0000
+	};
+
 	uint32_t shader_size;
 	const uint32_t *shader;
 
@@ -286,6 +364,9 @@ int  amdgpu_dispatch_load_cs_shader(uint8_t *ptr, int cs_type, uint32_t version)
 			} else if (version == 10) {
 				shader = bufferclear_cs_shader_gfx10;
 				shader_size = sizeof(bufferclear_cs_shader_gfx10);
+			} else if (version == 11) {
+				shader = bufferclear_cs_shader_gfx11;
+				shader_size = sizeof(bufferclear_cs_shader_gfx11);
 			}
 			break;
 		case CS_BUFFERCOPY:
@@ -295,6 +376,9 @@ int  amdgpu_dispatch_load_cs_shader(uint8_t *ptr, int cs_type, uint32_t version)
 			} else if (version == 10) {
 				shader = buffercopy_cs_shader_gfx10;
 				shader_size = sizeof(buffercopy_cs_shader_gfx10);
+			} else if (version == 11) {
+				shader = buffercopy_cs_shader_gfx11;
+				shader_size = sizeof(buffercopy_cs_shader_gfx11);
 			}
 			break;
 		case CS_HANG:
