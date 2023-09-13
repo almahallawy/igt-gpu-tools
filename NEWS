@@ -1,3 +1,87 @@
+Release 1.28 (2023-09-13)
+-------------------------
+
+General changes:
+
+- New meson options testplan, sphinx and xe_driver. (Mauro Carvalho Chehab)
+
+Library changes:
+
+- Add amdgpu GFX1036, GFX1037 chips. (Jesse Zhang)
+
+- Add xe_pciids.h with Lunar Lake (LNL) support. (Lucas De Marchi)
+
+- Use the new procps library libproc2. (Craig Small)
+
+- Add helper for srandom seed initialization. (Łukasz Łaguna)
+
+- Support for vmwgfx driver. (Maaz Mombasawala, Roye Eshed, Zack Rusin)
+
+- i915_pciids.h updated to include Pontevecchio (PVC) platform.
+  (Niranjana Vishwanathapura)
+
+- Add OAM formats and support for media engines in perf tests.
+  (Umesh Nerlige Ramappa)
+
+- Support for Xe driver. (Matthew Brost, Mauro Carvalho Chehab, Rodrigo Vivi,
+  Jason Ekstrand, Francois Dugast, Philippe Lecluse, Zbigniew Kempczyński,
+  Maarten Lankhorst, Juha-Pekka Heikkila, Bhanuprakash Modem et al)
+
+Runner changes:
+
+- igt_runner can now dump GPU state on timeout. (Chris Wilson)
+
+- igt_runner will now use proper 'abort' as result instead of pseudoresult.
+  (Petri Latvala)
+
+Tools changes:
+
+- New vendor agnostic gputop tool. (Tvrtko Ursulin)
+
+- New tool to dump Intel GuC/HuC CSS header. (Lucas De Marchi)
+
+- Improve tools intel_watermark, intel_vbt_decode, intel_reg. (Ville Syrjälä)
+
+Documentation changes:
+
+- New way for documenting tests will allow to generate documentation and
+  testlists during build, see README.md and test_documentation.md. This
+  is mandatory for Intel (both i915 and xe) and kms tests. (Mauro Carvalho
+  Chehab)
+
+Test changes:
+
+- Move intel specific tests to new directory. (Bhanuprakash Modem)
+
+- Ported and refactored drmlib security tests in amdgpu. (Vitaly Prosyak)
+
+- Switch DRM selftests to KUnit. (Isabella Basso, Dominik Karol Piątkowski,
+  Mauro Carvalho Chehab)
+
+- Enabled MeteorLake aux ccs tests. (Juha-Pekka Heikkila)
+
+- Exercise oversized object detection for Xe. (Priyanka Dandamudi)
+
+- Enable validation for VDSC output formats. (Swati Sharma)
+
+- Add support for Bigjoiner / 8K mode. (Bhanuprakash Modem)
+
+- Use intel_cmds_info library. (Karolina Stolarek)
+
+- Use Intel kernel gpu command definitions. (Zbigniew Kempczyński)
+
+- Add a basic perf_pmu test. (Riana Tauro)
+
+- Add test for V3D's Wait BO IOCTL. (Maíra Canal)
+
+- Add i915_power test for power measurement. (Ashutosh Dixit)
+
+- Remove sysfs_clients. (Lucas De Marchi)
+
+
+And many other bug fixes, improvements, cleanups and new tests.
+
+
 Release 1.27.1 (2023-01-18)
 -------------------------
 
