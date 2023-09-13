@@ -241,7 +241,6 @@ static void *gpu_load(void *ptr)
 	int frame_height;
 	drmModeModeInfo *mode;
 	int frame = 0;
-	int x, y;
 	int rect = 0, total_rects = 0;
 	int pixels = 0;
 
@@ -273,8 +272,8 @@ static void *gpu_load(void *ptr)
 			x_rand = hars_petruska_f54_1_random_unsafe_max(frame_width - rect_width);
 			y_rand = hars_petruska_f54_1_random_unsafe_max(frame_height/2 - rect_height);
 
-			context->blt_rect.x = x + x_rand;
-			context->blt_rect.y = y + y_rand;
+			context->blt_rect.x = x_rand;
+			context->blt_rect.y = y_rand;
 
 			/* Fill randomly sized and positioned rectangles */
 			fill_gpu(context, context->blt_rect.x, context->blt_rect.y,
