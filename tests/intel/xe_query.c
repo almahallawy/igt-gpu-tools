@@ -252,17 +252,17 @@ test_query_mem_usage(int fd)
 }
 
 /**
- * SUBTEST: query-gts
+ * SUBTEST: query-gt-list
  * Test category: functionality test
- * Description: Display information about available GTs for xe device.
+ * Description: Display information about available GT components for xe device.
  */
 static void
-test_query_gts(int fd)
+test_query_gt_list(int fd)
 {
-	struct drm_xe_query_gts *gts;
+	struct drm_xe_query_gt_list *gt_list;
 	struct drm_xe_device_query query = {
 		.extensions = 0,
-		.query = DRM_XE_DEVICE_QUERY_GTS,
+		.query = DRM_XE_DEVICE_QUERY_GT_LIST,
 		.size = 0,
 		.data = 0,
 	};
@@ -271,29 +271,29 @@ test_query_gts(int fd)
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 	igt_assert_neq(query.size, 0);
 
-	gts = malloc(query.size);
-	igt_assert(gts);
+	gt_list = malloc(query.size);
+	igt_assert(gt_list);
 
-	query.data = to_user_pointer(gts);
+	query.data = to_user_pointer(gt_list);
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 
-	for (i = 0; i < gts->num_gt; i++) {
-		igt_info("type: %d\n", gts->gts[i].type);
-		igt_info("gt_id: %d\n", gts->gts[i].gt_id);
-		igt_info("clock_freq: %u\n", gts->gts[i].clock_freq);
+	for (i = 0; i < gt_list->num_gt; i++) {
+		igt_info("type: %d\n", gt_list->gt_list[i].type);
+		igt_info("gt_id: %d\n", gt_list->gt_list[i].gt_id);
+		igt_info("clock_freq: %u\n", gt_list->gt_list[i].clock_freq);
 		igt_info("native_mem_regions: 0x%016llx\n",
-		       gts->gts[i].native_mem_regions);
+		       gt_list->gt_list[i].native_mem_regions);
 		igt_info("slow_mem_regions: 0x%016llx\n",
-		       gts->gts[i].slow_mem_regions);
+		       gt_list->gt_list[i].slow_mem_regions);
 		igt_info("inaccessible_mem_regions: 0x%016llx\n",
-		       gts->gts[i].inaccessible_mem_regions);
+		       gt_list->gt_list[i].inaccessible_mem_regions);
 	}
 }
 
 /**
  * SUBTEST: query-topology
  * Test category: functionality test
- * Description: Display topology information of GTs.
+ * Description: Display topology information of GT.
  */
 static void
 test_query_gt_topology(int fd)
@@ -677,8 +677,8 @@ igt_main
 	igt_subtest("query-mem-usage")
 		test_query_mem_usage(xe);
 
-	igt_subtest("query-gts")
-		test_query_gts(xe);
+	igt_subtest("query-gt-list")
+		test_query_gt_list(xe);
 
 	igt_subtest("query-config")
 		test_query_config(xe);

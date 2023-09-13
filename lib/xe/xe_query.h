@@ -26,13 +26,13 @@ struct xe_device {
 	/** @config: xe configuration */
 	struct drm_xe_query_config *config;
 
-	/** @gts: gt info */
-	struct drm_xe_query_gts *gts;
+	/** @gt_list: gt info */
+	struct drm_xe_query_gt_list *gt_list;
 
 	/** @number_gt: number of gt */
 	unsigned int number_gt;
 
-	/** @gts: bitmask of all memory regions */
+	/** @gt_list: bitmask of all memory regions */
 	uint64_t memory_regions;
 
 	/** @hw_engines: array of hardware engines */
@@ -44,10 +44,10 @@ struct xe_device {
 	/** @mem_usage: regions memory information and usage */
 	struct drm_xe_query_mem_usage *mem_usage;
 
-	/** @vram_size: array of vram sizes for all gts */
+	/** @vram_size: array of vram sizes for all gt_list */
 	uint64_t *vram_size;
 
-	/** @visible_vram_size: array of visible vram sizes for all gts */
+	/** @visible_vram_size: array of visible vram sizes for all gt_list */
 	uint64_t *visible_vram_size;
 
 	/** @default_alignment: safe alignment regardless region location */

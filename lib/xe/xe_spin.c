@@ -20,10 +20,10 @@ static uint32_t read_timestamp_frequency(int fd, int gt_id)
 {
 	struct xe_device *dev = xe_device_get(fd);
 
-	igt_assert(dev && dev->gts && dev->gts->num_gt);
-	igt_assert(gt_id >= 0 && gt_id <= dev->gts->num_gt);
+	igt_assert(dev && dev->gt_list && dev->gt_list->num_gt);
+	igt_assert(gt_id >= 0 && gt_id <= dev->gt_list->num_gt);
 
-	return dev->gts->gts[gt_id].clock_freq;
+	return dev->gt_list->gt_list[gt_id].clock_freq;
 }
 
 static uint64_t div64_u64_round_up(const uint64_t x, const uint64_t y)
