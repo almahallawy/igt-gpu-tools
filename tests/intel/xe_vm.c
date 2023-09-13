@@ -404,7 +404,7 @@ static void vm_async_ops_err(int fd, bool destroy)
 	};
 #define N_BINDS		32
 	struct drm_xe_vm_bind_op_error_capture capture = {};
-	struct drm_xe_ext_vm_set_property ext = {
+	struct drm_xe_ext_set_property ext = {
 		.base.next_extension = 0,
 		.base.name = XE_VM_EXTENSION_SET_PROPERTY,
 		.property = XE_VM_PROPERTY_BIND_OP_ERROR_CAPTURE_ADDRESS,
