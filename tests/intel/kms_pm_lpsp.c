@@ -39,7 +39,7 @@
  *
  * SUBTEST: kms-lpsp
  * Description: This test validates lpsp on all connected outputs on low power PIPE_A
- * Driver requirement: i915
+ * Driver requirement: i915, xe
  * Functionality: pm_lpsp
  * Mega feature: Display Power
  * Test category: functionality test
@@ -192,8 +192,7 @@ igt_main
 	data_t data = {};
 
 	igt_fixture {
-
-		data.drm_fd = drm_open_driver_master(DRIVER_INTEL);
+		data.drm_fd = drm_open_driver_master(DRIVER_INTEL | DRIVER_XE);
 		igt_require(data.drm_fd >= 0);
 		data.debugfs_fd = igt_debugfs_dir(data.drm_fd);
 		igt_require(data.debugfs_fd >= 0);
@@ -206,6 +205,7 @@ igt_main
 
 	igt_describe("This test validates lpsp while all crtc are disabled");
 	igt_subtest("screens-disabled") {
+		igt_require_i915(data.drm_fd);
 		igt_require_f(!dmc_supported(data.debugfs_fd),
 			      "DC states supported platform don't have ROI for this subtest\n");
 		screens_disabled_subtest(&data);
