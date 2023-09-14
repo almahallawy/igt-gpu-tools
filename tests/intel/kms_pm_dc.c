@@ -36,6 +36,8 @@
 #include "limits.h"
 #include "time.h"
 #include "igt_pm.h"
+#include "xe/xe_query.h"
+
 /**
  * TEST: kms pm dc
  * Category: Display
@@ -44,7 +46,7 @@
  * SUBTEST: dc3co-vpb-simulation
  * Description: Make sure that system enters DC3CO when PSR2 is active and system
  *              is in SLEEP state
- * Driver requirement: i915
+ * Driver requirement: i915, xe
  * Functionality: dc3co, pm_dc, psr2
  * Mega feature: Display Power
  * Test category: functionality test
@@ -52,7 +54,7 @@
  * SUBTEST: dc5-dpms
  * Description: Validate display engine entry to DC5 state while all connectors's
  *              DPMS property set to OFF
- * Driver requirement: i915
+ * Driver requirement: i915, xe
  * Functionality: dpms, pm_dc
  * Mega feature: Display Power
  * Test category: functionality test
@@ -60,14 +62,14 @@
  * SUBTEST: dc5-dpms-negative
  * Description: Validate negative scenario of DC5 display engine entry to DC5 state
  *              while all connectors's DPMS property set to ON
- * Driver requirement: i915
+ * Driver requirement: i915, xe
  * Functionality: dpms, pm_dc
  * Mega feature: Display Power
  * Test category: functionality test
  *
  * SUBTEST: dc5-psr
  * Description: This test validates display engine entry to DC5 state while PSR is active
- * Driver requirement: i915
+ * Driver requirement: i915, xe
  * Functionality: pm_dc, psr
  * Mega feature: Display Power
  * Test category: functionality test
@@ -75,21 +77,21 @@
  * SUBTEST: dc6-dpms
  * Description: Validate display engine entry to DC6 state while all connectors's
  *              DPMS property set to OFF
- * Driver requirement: i915
+ * Driver requirement: i915, xe
  * Functionality: dpms, pm_dc
  * Mega feature: Display Power
  * Test category: functionality test
  *
  * SUBTEST: dc6-psr
  * Description: This test validates display engine entry to DC6 state while PSR is active
- * Driver requirement: i915
+ * Driver requirement: i915, xe
  * Functionality: pm_dc, psr
  * Mega feature: Display Power
  * Test category: functionality test
  *
  * SUBTEST: dc9-dpms
  * Description: This test validates display engine entry to DC9 state
- * Driver requirement: i915
+ * Driver requirement: i915, xe
  * Functionality: dpms, pm_dc
  * Mega feature: Display Power
  * Test category: functionality test
@@ -648,7 +650,7 @@ igt_main
 	bool is_dgfx;
 
 	igt_fixture {
-		data.drm_fd = drm_open_driver_master(DRIVER_INTEL);
+		data.drm_fd = drm_open_driver_master(DRIVER_INTEL | DRIVER_XE);
 		data.debugfs_fd = igt_debugfs_dir(data.drm_fd);
 		igt_require(data.debugfs_fd != -1);
 		data.debugfs_root_fd = open(igt_debugfs_mount(), O_RDONLY);
@@ -727,7 +729,7 @@ igt_main
 
 	igt_describe("This test validates display engine entry to DC9 state");
 	igt_subtest("dc9-dpms") {
-		is_dgfx = gem_has_lmem(data.drm_fd);
+		is_dgfx = is_xe_device(data.drm_fd) ? xe_has_vram(data.drm_fd) : gem_has_lmem(data.drm_fd);
 		if (!is_dgfx)
 			igt_require_f(igt_pm_pc8_plus_residencies_enabled(data.msr_fd),
 				      "PC8+ residencies not supported\n");
