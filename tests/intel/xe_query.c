@@ -380,8 +380,8 @@ test_query_config(int fd)
 		config->info[XE_QUERY_CONFIG_GT_COUNT]);
 	igt_info("XE_QUERY_CONFIG_MEM_REGION_COUNT\t%llu\n",
 		config->info[XE_QUERY_CONFIG_MEM_REGION_COUNT]);
-	igt_info("XE_QUERY_CONFIG_MAX_ENGINE_PRIORITY\t%llu\n",
-		config->info[XE_QUERY_CONFIG_MAX_ENGINE_PRIORITY]);
+	igt_info("XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY\t%llu\n",
+		config->info[XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY]);
 	dump_hex_debug(config, query.size);
 
 	free(config);
