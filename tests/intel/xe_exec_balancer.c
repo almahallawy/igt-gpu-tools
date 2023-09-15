@@ -458,18 +458,12 @@ test_cm(int fd, int gt, int class, int n_exec_queues, int n_execs,
 	memset(data, 0, bo_size);
 
 	for (i = 0; i < n_exec_queues; i++) {
-		struct drm_xe_ext_exec_queue_set_property ext = {
-			.base.next_extension = 0,
-			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
-			.property = XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
-			.value = 1,
-		};
 		struct drm_xe_exec_queue_create create = {
 			.vm_id = vm,
 			.width = flags & PARALLEL ? num_placements : 1,
 			.num_placements = flags & PARALLEL ? 1 : num_placements,
 			.instances = to_user_pointer(eci),
-			.extensions = to_user_pointer(&ext),
+			.extensions = 0,
 		};
 
 		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE,

@@ -64,13 +64,6 @@ static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
 	 * stats.
 	 */
 	for (i = 0; i < NUM_VMS; ++i) {
-		struct drm_xe_ext_exec_queue_set_property ext = {
-			.base.next_extension = 0,
-			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
-			.property = XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
-			.value = 1,
-		};
-
 		vm[i] = xe_vm_create(fd, DRM_XE_VM_CREATE_COMPUTE_MODE, 0);
 		for (j = 0; j < NUM_BOS; ++j) {
 			igt_debug("Creating bo size %lu for vm %u\n",
@@ -82,8 +75,7 @@ static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
 			xe_vm_bind(fd, vm[i], bo[i][j], 0, 0x40000 + j*bo_size,
 				   bo_size, NULL, 0);
 		}
-		exec_queues[i] = xe_exec_queue_create(fd, vm[i], eci,
-					      to_user_pointer(&ext));
+		exec_queues[i] = xe_exec_queue_create(fd, vm[i], eci, 0);
 	}
 
 	igt_info("Now sleeping for %ds.\n", SECONDS_TO_WAIT);

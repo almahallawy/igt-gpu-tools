@@ -252,19 +252,11 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 	}
 
 	for (i = 0; i < n_exec_queues; i++) {
-		struct drm_xe_ext_exec_queue_set_property ext = {
-			.base.next_extension = 0,
-			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
-			.property = XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
-			.value = 1,
-		};
-
 		if (flags & MULTI_VM)
-			exec_queues[i] = xe_exec_queue_create(fd, i & 1 ? vm2 : vm, eci,
-						      to_user_pointer(&ext));
+			exec_queues[i] = xe_exec_queue_create(fd, i & 1 ? vm2 :
+							      vm, eci, 0);
 		else
-			exec_queues[i] = xe_exec_queue_create(fd, vm, eci,
-						      to_user_pointer(&ext));
+			exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
 	}
 
 	for (i = 0; i < n_execs; i++) {

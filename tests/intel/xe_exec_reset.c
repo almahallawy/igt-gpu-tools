@@ -540,14 +540,8 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 	memset(data, 0, bo_size);
 
 	for (i = 0; i < n_exec_queues; i++) {
-		struct drm_xe_ext_exec_queue_set_property compute = {
-			.base.next_extension = 0,
-			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
-			.property = XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
-			.value = 1,
-		};
 		struct drm_xe_ext_exec_queue_set_property preempt_timeout = {
-			.base.next_extension = to_user_pointer(&compute),
+			.base.next_extension = 0,
 			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
 			.property = XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
 			.value = 1000,
@@ -557,7 +551,7 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		if (flags & EXEC_QUEUE_RESET)
 			ext = to_user_pointer(&preempt_timeout);
 		else
-			ext = to_user_pointer(&compute);
+			ext = 0;
 
 		exec_queues[i] = xe_exec_queue_create(fd, vm, eci, ext);
 	};
