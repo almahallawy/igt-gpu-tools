@@ -286,7 +286,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 
 	if (!vm) {
 		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
-				  XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE, 0);
+				  DRM_XE_VM_CREATE_COMPUTE_MODE, 0);
 		owns_vm = true;
 	}
 
@@ -1076,7 +1076,7 @@ static void threads(int fd, int flags)
 					      to_user_pointer(&ext));
 		vm_compute_mode = xe_vm_create(fd,
 					       DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
-					       XE_EXEC_QUEUE_SET_PROPERTY_COMPUTE_MODE,
+					       DRM_XE_VM_CREATE_COMPUTE_MODE,
 					       0);
 
 		vm_err_thread.capture = &capture;
