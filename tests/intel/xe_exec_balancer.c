@@ -383,6 +383,12 @@ test_exec(int fd, int gt, int class, int n_exec_queues, int n_execs,
  * @virtual-userptr-rebind:		virtual userptr rebind
  * @virtual-userptr-invalidate:		virtual userptr invalidate
  * @virtual-userptr-invalidate-race:	virtual userptr invalidate racy
+ * @parallel-basic:			parallel basic
+ * @parallel-userptr:			parallel userptr
+ * @parallel-rebind:			parallel rebind
+ * @parallel-userptr-rebind:		parallel userptr rebind
+ * @parallel-userptr-invalidate:	parallel userptr invalidate
+ * @parallel-userptr-invalidate-race:	parallel userptr invalidate racy
  */
 
 static void
@@ -460,8 +466,8 @@ test_cm(int fd, int gt, int class, int n_exec_queues, int n_execs,
 		};
 		struct drm_xe_exec_queue_create create = {
 			.vm_id = vm,
-			.width = 1,
-			.num_placements = num_placements,
+			.width = flags & PARALLEL ? num_placements : 1,
+			.num_placements = flags & PARALLEL ? 1 : num_placements,
 			.instances = to_user_pointer(eci),
 			.extensions = to_user_pointer(&ext),
 		};
@@ -470,6 +476,7 @@ test_cm(int fd, int gt, int class, int n_exec_queues, int n_execs,
 					&create), 0);
 		exec_queues[i] = create.exec_queue_id;
 	}
+	exec.num_batch_buffer = flags & PARALLEL ? num_placements : 1;
 
 	sync[0].addr = to_user_pointer(&data[0].vm_sync);
 	if (bo)
@@ -487,7 +494,11 @@ test_cm(int fd, int gt, int class, int n_exec_queues, int n_execs,
 		uint64_t batch_addr = addr + batch_offset;
 		uint64_t sdi_offset = (char *)&data[i].data - (char *)data;
 		uint64_t sdi_addr = addr + sdi_offset;
+		uint64_t batches[MAX_INSTANCE];
 		int e = i % n_exec_queues;
+
+		for (j = 0; j < num_placements && flags & PARALLEL; ++j)
+			batches[j] = batch_addr;
 
 		b = 0;
 		data[i].batch[b++] = MI_STORE_DWORD_IMM_GEN4;
@@ -500,7 +511,8 @@ test_cm(int fd, int gt, int class, int n_exec_queues, int n_execs,
 		sync[0].addr = addr + (char *)&data[i].exec_sync - (char *)data;
 
 		exec.exec_queue_id = exec_queues[e];
-		exec.address = batch_addr;
+		exec.address = flags & PARALLEL ?
+			to_user_pointer(batches) : batch_addr;
 		xe_exec(fd, &exec);
 
 		if (flags & REBIND && i + 1 != n_execs) {
@@ -660,9 +672,6 @@ igt_main
 				xe_for_each_hw_engine_class(class)
 					test_exec(fd, gt, class, 1, 0,
 						  s->flags);
-
-		if (s->flags & PARALLEL)
-			continue;
 
 		igt_subtest_f("once-cm-%s", s->name)
 			xe_for_each_gt(fd, gt)
