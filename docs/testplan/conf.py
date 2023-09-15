@@ -8,6 +8,8 @@ import sys
 # Get Sphinx version
 major, minor, patch = sphinx.version_info[:3]
 
+sys.path.insert(0, os.path.abspath('sphinx'))
+
 extensions = []
 
 def which(program):
