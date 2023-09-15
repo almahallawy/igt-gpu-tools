@@ -201,16 +201,8 @@ void xe_vm_unbind_async(int fd, uint32_t vm, uint32_t exec_queue,
 static void __xe_vm_bind_sync(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 			      uint64_t addr, uint64_t size, uint32_t op)
 {
-	struct drm_xe_sync sync = {
-		.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL,
-		.handle = syncobj_create(fd, 0),
-	};
-
-	__xe_vm_bind_assert(fd, vm, 0, bo, offset, addr, size, op, 0, &sync, 1,
+	__xe_vm_bind_assert(fd, vm, 0, bo, offset, addr, size, op, 0, NULL, 0,
 			    0, 0);
-
-	igt_assert(syncobj_wait(fd, &sync.handle, 1, INT64_MAX, 0, NULL));
-	syncobj_destroy(fd, sync.handle);
 }
 
 void xe_vm_bind_sync(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
@@ -276,10 +268,11 @@ uint32_t xe_bo_create(int fd, int gt, uint32_t vm, uint64_t size)
 	return create.handle;
 }
 
-uint32_t xe_bind_exec_queue_create(int fd, uint32_t vm, uint64_t ext)
+uint32_t xe_bind_exec_queue_create(int fd, uint32_t vm, uint64_t ext, bool async)
 {
 	struct drm_xe_engine_class_instance instance = {
-		.engine_class = DRM_XE_ENGINE_CLASS_VM_BIND,
+		.engine_class = async ? DRM_XE_ENGINE_CLASS_VM_BIND_ASYNC :
+			DRM_XE_ENGINE_CLASS_VM_BIND_SYNC,
 	};
 	struct drm_xe_exec_queue_create create = {
 		.extensions = ext,

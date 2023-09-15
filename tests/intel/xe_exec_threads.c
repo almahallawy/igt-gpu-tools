@@ -77,7 +77,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 	}
 
 	if (!vm) {
-		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 		owns_vm = true;
 	}
 
@@ -285,7 +285,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 	}
 
 	if (!vm) {
-		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
+		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT |
 				  DRM_XE_VM_CREATE_COMPUTE_MODE, 0);
 		owns_vm = true;
 	}
@@ -454,7 +454,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 static void
 test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		 struct drm_xe_engine_class_instance *eci, int n_exec_queues,
-		 int n_execs, int rebind_error_inject, unsigned int flags)
+		 int n_execs, unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
@@ -489,7 +489,7 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 	}
 
 	if (!vm) {
-		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 		owns_vm = true;
 	}
 
@@ -531,7 +531,8 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		else
 			exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
 		if (flags & BIND_EXEC_QUEUE)
-			bind_exec_queues[i] = xe_bind_exec_queue_create(fd, vm, 0);
+			bind_exec_queues[i] = xe_bind_exec_queue_create(fd, vm,
+									0, true);
 		else
 			bind_exec_queues[i] = 0;
 		syncobjs[i] = syncobj_create(fd, 0);
@@ -583,8 +584,7 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		exec.address = exec_addr;
 		if (e != i && !(flags & HANG))
 			 syncobj_reset(fd, &syncobjs[e], 1);
-		if ((flags & HANG && e == hang_exec_queue) ||
-		    rebind_error_inject > 0) {
+		if ((flags & HANG && e == hang_exec_queue)) {
 			int err;
 
 			do {
@@ -594,20 +594,10 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 			xe_exec(fd, &exec);
 		}
 
-		if (flags & REBIND && i &&
-		    (!(i & 0x1f) || rebind_error_inject == i)) {
-#define INJECT_ERROR	(0x1 << 31)
-			if (rebind_error_inject == i)
-				__xe_vm_bind_assert(fd, vm, bind_exec_queues[e],
-						    0, 0, addr, bo_size,
-						    XE_VM_BIND_OP_UNMAP,
-						    XE_VM_BIND_FLAG_ASYNC |
-						    INJECT_ERROR, sync_all,
-						    n_exec_queues, 0, 0);
-			else
-				xe_vm_unbind_async(fd, vm, bind_exec_queues[e],
-						   0, addr, bo_size,
-						   sync_all, n_exec_queues);
+		if (flags & REBIND && i && !(i & 0x1f)) {
+			xe_vm_unbind_async(fd, vm, bind_exec_queues[e],
+					   0, addr, bo_size,
+					   sync_all, n_exec_queues);
 
 			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
 			addr += bo_size;
@@ -709,7 +699,6 @@ struct thread_data {
 	int n_exec_queue;
 	int n_exec;
 	int flags;
-	int rebind_error_inject;
 	bool *go;
 };
 
@@ -733,46 +722,7 @@ static void *thread(void *data)
 	else
 		test_legacy_mode(t->fd, t->vm_legacy_mode, t->addr, t->userptr,
 				 t->eci, t->n_exec_queue, t->n_exec,
-				 t->rebind_error_inject, t->flags);
-
-	return NULL;
-}
-
-struct vm_thread_data {
-	pthread_t thread;
-	int fd;
-	int vm;
-};
-
-static void *vm_async_ops_err_thread(void *data)
-{
-	struct vm_thread_data *args = data;
-	int fd = args->fd;
-	int ret;
-
-	struct drm_xe_wait_user_fence wait = {
-		.vm_id = args->vm,
-		.op = DRM_XE_UFENCE_WAIT_NEQ,
-		.flags = DRM_XE_UFENCE_WAIT_VM_ERROR,
-		.mask = DRM_XE_UFENCE_WAIT_U32,
-#define BASICALLY_FOREVER	0xffffffffffff
-		.timeout = BASICALLY_FOREVER,
-	};
-
-	ret = igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait);
-
-	while (!ret) {
-		struct drm_xe_vm_bind bind = {
-			.vm_id = args->vm,
-			.num_binds = 1,
-			.bind.op = XE_VM_BIND_OP_RESTART,
-		};
-
-		/* Restart and wait for next error */
-		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_VM_BIND,
-					&bind), 0);
-		ret = igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait);
-	}
+				 t->flags);
 
 	return NULL;
 }
@@ -822,10 +772,10 @@ static void *vm_async_ops_err_thread(void *data)
  *	shared vm rebind bindexecqueue
  * @shared-vm-userptr-rebind:
  *	shared vm userptr rebind
- * @shared-vm-rebind-err:
- *	shared vm rebind err
- * @shared-vm-userptr-rebind-err:
- *	shared vm userptr rebind err
+ * @rebind-err:
+ *	rebind err
+ * @userptr-rebind-err:
+ *	userptr rebind err
  * @shared-vm-userptr-invalidate:
  *	shared vm userptr invalidate
  * @shared-vm-userptr-invalidate-race:
@@ -842,7 +792,7 @@ static void *vm_async_ops_err_thread(void *data)
  *	fd userptr invalidate race
  * @hang-basic:
  *	hang basic
-  * @hang-userptr:
+ * @hang-userptr:
  *	hang userptr
  * @hang-rebind:
  *	hang rebind
@@ -860,10 +810,10 @@ static void *vm_async_ops_err_thread(void *data)
  *	hang shared vm rebind
  * @hang-shared-vm-userptr-rebind:
  *	hang shared vm userptr rebind
- * @hang-shared-vm-rebind-err:
- *	hang shared vm rebind err
- * @hang-shared-vm-userptr-rebind-err:
- *	hang shared vm userptr rebind err
+ * @hang-rebind-err:
+ *	hang rebind err
+ * @hang-userptr-rebind-err:
+ *	hang userptr rebind err
  * @hang-shared-vm-userptr-invalidate:
  *	hang shared vm userptr invalidate
  * @hang-shared-vm-userptr-invalidate-race:
@@ -1019,7 +969,6 @@ static void threads(int fd, int flags)
 	int n_hw_engines = 0, class;
 	uint64_t i = 0;
 	uint32_t vm_legacy_mode = 0, vm_compute_mode = 0;
-	struct vm_thread_data vm_err_thread = {};
 	bool go = false;
 	int n_threads = 0;
 	int gt;
@@ -1052,18 +1001,12 @@ static void threads(int fd, int flags)
 
 	if (flags & SHARED_VM) {
 		vm_legacy_mode = xe_vm_create(fd,
-					      DRM_XE_VM_CREATE_ASYNC_BIND_OPS,
+					      DRM_XE_VM_CREATE_ASYNC_DEFAULT,
 					      0);
 		vm_compute_mode = xe_vm_create(fd,
-					       DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
+					       DRM_XE_VM_CREATE_ASYNC_DEFAULT |
 					       DRM_XE_VM_CREATE_COMPUTE_MODE,
 					       0);
-
-		vm_err_thread.fd = fd;
-		vm_err_thread.vm = vm_legacy_mode;
-		pthread_create(&vm_err_thread.thread, 0,
-			       vm_async_ops_err_thread, &vm_err_thread);
-
 	}
 
 	xe_for_each_hw_engine(fd, hwe) {
@@ -1083,11 +1026,6 @@ static void threads(int fd, int flags)
 		threads_data[i].n_exec_queue = N_EXEC_QUEUE;
 #define N_EXEC		1024
 		threads_data[i].n_exec = N_EXEC;
-		if (flags & REBIND_ERROR)
-			threads_data[i].rebind_error_inject =
-				(N_EXEC / (n_hw_engines + 1)) * (i + 1);
-		else
-			threads_data[i].rebind_error_inject = -1;
 		threads_data[i].flags = flags;
 		if (flags & MIXED_MODE) {
 			threads_data[i].flags &= ~MIXED_MODE;
@@ -1190,8 +1128,6 @@ static void threads(int fd, int flags)
 	if (vm_compute_mode)
 		xe_vm_destroy(fd, vm_compute_mode);
 	free(threads_data);
-	if (flags & SHARED_VM)
-		pthread_join(vm_err_thread.thread, NULL);
 	pthread_barrier_destroy(&barrier);
 }
 
@@ -1214,9 +1150,8 @@ igt_main
 		{ "shared-vm-rebind-bindexecqueue", SHARED_VM | REBIND |
 			BIND_EXEC_QUEUE },
 		{ "shared-vm-userptr-rebind", SHARED_VM | USERPTR | REBIND },
-		{ "shared-vm-rebind-err", SHARED_VM | REBIND | REBIND_ERROR },
-		{ "shared-vm-userptr-rebind-err", SHARED_VM | USERPTR |
-			REBIND | REBIND_ERROR},
+		{ "rebind-err", REBIND | REBIND_ERROR },
+		{ "userptr-rebind-err", USERPTR | REBIND | REBIND_ERROR},
 		{ "shared-vm-userptr-invalidate", SHARED_VM | USERPTR |
 			INVALIDATE },
 		{ "shared-vm-userptr-invalidate-race", SHARED_VM | USERPTR |
@@ -1240,10 +1175,9 @@ igt_main
 		{ "hang-shared-vm-rebind", HANG | SHARED_VM | REBIND },
 		{ "hang-shared-vm-userptr-rebind", HANG | SHARED_VM | USERPTR |
 			REBIND },
-		{ "hang-shared-vm-rebind-err", HANG | SHARED_VM | REBIND |
+		{ "hang-rebind-err", HANG | REBIND | REBIND_ERROR },
+		{ "hang-userptr-rebind-err", HANG | USERPTR | REBIND |
 			REBIND_ERROR },
-		{ "hang-shared-vm-userptr-rebind-err", HANG | SHARED_VM |
-			USERPTR | REBIND | REBIND_ERROR },
 		{ "hang-shared-vm-userptr-invalidate", HANG | SHARED_VM |
 			USERPTR | INVALIDATE },
 		{ "hang-shared-vm-userptr-invalidate-race", HANG | SHARED_VM |

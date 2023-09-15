@@ -316,7 +316,7 @@ bool xe_supports_faults(int fd)
 	bool supports_faults;
 
 	struct drm_xe_vm_create create = {
-		.flags = DRM_XE_VM_CREATE_ASYNC_BIND_OPS |
+		.flags = DRM_XE_VM_CREATE_ASYNC_DEFAULT |
 			 DRM_XE_VM_CREATE_FAULT_MODE,
 	};
 

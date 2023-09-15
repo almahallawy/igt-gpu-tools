@@ -34,7 +34,7 @@ static void do_bind(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 
 	sync[0].addr = to_user_pointer(&wait_fence);
 	sync[0].timeline_value = val;
-	xe_vm_bind(fd, vm, bo, offset, addr, size, sync, 1);
+	xe_vm_bind_async(fd, vm, 0, bo, offset, addr, size, sync, 1);
 }
 
 enum waittype {
@@ -63,7 +63,7 @@ waitfence(int fd, enum waittype wt)
 	uint32_t bo_7;
 	int64_t timeout;
 
-	uint32_t vm = xe_vm_create(fd, 0, 0);
+	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo_1 = xe_bo_create_flags(fd, vm, 0x40000, MY_FLAG);
 	do_bind(fd, vm, bo_1, 0, 0x200000, 0x40000, 1);
 	bo_2 = xe_bo_create_flags(fd, vm, 0x40000, MY_FLAG);
@@ -96,21 +96,6 @@ waitfence(int fd, enum waittype wt)
 			  ", elapsed: %" PRId64 "\n",
 			  timeout, signalled, signalled - current);
 	}
-
-	xe_vm_unbind_sync(fd, vm, 0, 0x200000, 0x40000);
-	xe_vm_unbind_sync(fd, vm, 0, 0xc0000000, 0x40000);
-	xe_vm_unbind_sync(fd, vm, 0, 0x180000000, 0x40000);
-	xe_vm_unbind_sync(fd, vm, 0, 0x140000000, 0x10000);
-	xe_vm_unbind_sync(fd, vm, 0, 0x100000000, 0x100000);
-	xe_vm_unbind_sync(fd, vm, 0, 0xc0040000, 0x1c0000);
-	xe_vm_unbind_sync(fd, vm, 0, 0xeffff0000, 0x10000);
-	gem_close(fd, bo_7);
-	gem_close(fd, bo_6);
-	gem_close(fd, bo_5);
-	gem_close(fd, bo_4);
-	gem_close(fd, bo_3);
-	gem_close(fd, bo_2);
-	gem_close(fd, bo_1);
 }
 
 igt_main

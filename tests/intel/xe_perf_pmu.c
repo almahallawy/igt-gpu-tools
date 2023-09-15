@@ -98,7 +98,7 @@ static void test_any_engine_busyness(int fd, struct drm_xe_engine_class_instance
 	uint32_t pmu_fd;
 	uint64_t count, idle;
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*spin);
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -219,7 +219,7 @@ static void test_engine_group_busyness(int fd, int gt, int class, const char *na
 	igt_skip_on_f(!num_placements, "Engine class:%d gt:%d not enabled on this platform\n",
 		      class, gt);
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*data) * num_placements;
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd), xe_get_default_alignment(fd));
 

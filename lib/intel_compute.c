@@ -80,7 +80,7 @@ static void bo_execenv_create(int fd, struct bo_execenv *execenv)
 		else
 			engine_class = DRM_XE_ENGINE_CLASS_COMPUTE;
 
-		execenv->vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+		execenv->vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 		execenv->exec_queue = xe_exec_queue_create_class(fd, execenv->vm,
 								 engine_class);
 	}

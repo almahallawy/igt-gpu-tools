@@ -71,7 +71,7 @@ static void test_active(int fd, struct drm_xe_engine_class_instance *eci)
 	struct xe_spin_opts spin_opts = { .preempt = true };
 	int i, b, ret;
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*data) * N_EXEC_QUEUES;
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -90,7 +90,7 @@ static void test_active(int fd, struct drm_xe_engine_class_instance *eci)
 
 		for (i = 0; i < N_EXEC_QUEUES; i++) {
 			exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
-			bind_exec_queues[i] = xe_bind_exec_queue_create(fd, vm, 0);
+			bind_exec_queues[i] = xe_bind_exec_queue_create(fd, vm, 0, true);
 			syncobjs[i] = syncobj_create(fd, 0);
 		}
 		syncobjs[N_EXEC_QUEUES] = syncobj_create(fd, 0);

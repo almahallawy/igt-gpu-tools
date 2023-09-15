@@ -71,7 +71,8 @@ uint32_t xe_bo_create(int fd, int gt, uint32_t vm, uint64_t size);
 uint32_t xe_exec_queue_create(int fd, uint32_t vm,
 			  struct drm_xe_engine_class_instance *instance,
 			  uint64_t ext);
-uint32_t xe_bind_exec_queue_create(int fd, uint32_t vm, uint64_t ext);
+uint32_t xe_bind_exec_queue_create(int fd, uint32_t vm, uint64_t ext,
+				   bool async);
 uint32_t xe_exec_queue_create_class(int fd, uint32_t vm, uint16_t class);
 void xe_exec_queue_destroy(int fd, uint32_t exec_queue);
 uint64_t xe_bo_mmap_offset(int fd, uint32_t bo);

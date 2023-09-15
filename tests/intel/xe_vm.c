@@ -275,7 +275,7 @@ static void unbind_all(int fd, int n_vmas)
 		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
 	};
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo = xe_bo_create(fd, 0, vm, bo_size);
 
 	for (i = 0; i < n_vmas; ++i)
@@ -320,171 +320,6 @@ static void userptr_invalid(int fd)
 	igt_assert(ret == -EFAULT);
 
 	xe_vm_destroy(fd, vm);
-}
-
-struct vm_thread_data {
-	pthread_t thread;
-	int fd;
-	int vm;
-	uint32_t bo;
-	size_t bo_size;
-	bool destroy;
-};
-
-/**
- * SUBTEST: vm-async-ops-err
- * Description: Test VM async ops error
- * Functionality: VM
- * Test category: negative test
- *
- * SUBTEST: vm-async-ops-err-destroy
- * Description: Test VM async ops error destroy
- * Functionality: VM
- * Test category: negative test
- */
-
-static void *vm_async_ops_err_thread(void *data)
-{
-	struct vm_thread_data *args = data;
-	int fd = args->fd;
-	uint64_t addr = 0x201a0000;
-	int num_binds = 0;
-	int ret;
-
-	struct drm_xe_wait_user_fence wait = {
-		.vm_id = args->vm,
-		.op = DRM_XE_UFENCE_WAIT_NEQ,
-		.flags = DRM_XE_UFENCE_WAIT_VM_ERROR,
-		.mask = DRM_XE_UFENCE_WAIT_U32,
-		.timeout = MS_TO_NS(1000),
-	};
-
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE,
-				&wait), 0);
-	if (args->destroy) {
-		usleep(5000);	/* Wait other binds to queue up */
-		xe_vm_destroy(fd, args->vm);
-		return NULL;
-	}
-
-	while (!ret) {
-		struct drm_xe_vm_bind bind = {
-			.vm_id = args->vm,
-			.num_binds = 1,
-			.bind.op = XE_VM_BIND_OP_RESTART,
-		};
-
-		/* VM sync ops should work */
-		if (!(num_binds++ % 2)) {
-			xe_vm_bind_sync(fd, args->vm, args->bo, 0, addr,
-					args->bo_size);
-		} else {
-			xe_vm_unbind_sync(fd, args->vm, 0, addr,
-					  args->bo_size);
-			addr += args->bo_size * 2;
-		}
-
-		/* Restart and wait for next error */
-		igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_VM_BIND,
-					&bind), 0);
-		ret = igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait);
-	}
-
-	return NULL;
-}
-
-static void vm_async_ops_err(int fd, bool destroy)
-{
-	uint32_t vm;
-	uint64_t addr = 0x1a0000;
-	struct drm_xe_sync sync = {
-		.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL,
-	};
-#define N_BINDS		32
-	struct vm_thread_data thread = {};
-	uint32_t syncobjs[N_BINDS];
-	size_t bo_size = 0x1000 * 32;
-	uint32_t bo;
-	int i, j;
-
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
-	bo = xe_bo_create(fd, 0, vm, bo_size);
-
-	thread.fd = fd;
-	thread.vm = vm;
-	thread.bo = bo;
-	thread.bo_size = bo_size;
-	thread.destroy = destroy;
-	pthread_create(&thread.thread, 0, vm_async_ops_err_thread, &thread);
-
-	for (i = 0; i < N_BINDS; i++)
-		syncobjs[i] = syncobj_create(fd, 0);
-
-	for (j = 0, i = 0; i < N_BINDS / 4; i++, j++) {
-		sync.handle = syncobjs[j];
-#define INJECT_ERROR	(0x1 << 31)
-		if (i == N_BINDS / 8)	/* Inject error on this bind */
-			__xe_vm_bind_assert(fd, vm, 0, bo, 0,
-					    addr + i * bo_size * 2,
-					    bo_size, XE_VM_BIND_OP_MAP,
-					    XE_VM_BIND_FLAG_ASYNC |
-					    INJECT_ERROR, &sync, 1, 0, 0);
-		else
-			xe_vm_bind_async(fd, vm, 0, bo, 0,
-					 addr + i * bo_size * 2,
-					 bo_size, &sync, 1);
-	}
-
-	for (i = 0; i < N_BINDS / 4; i++, j++) {
-		sync.handle = syncobjs[j];
-		if (i == N_BINDS / 8)
-			__xe_vm_bind_assert(fd, vm, 0, 0, 0,
-					    addr + i * bo_size * 2,
-					    bo_size, XE_VM_BIND_OP_UNMAP,
-					    XE_VM_BIND_FLAG_ASYNC |
-					    INJECT_ERROR, &sync, 1, 0, 0);
-		else
-			xe_vm_unbind_async(fd, vm, 0, 0,
-					   addr + i * bo_size * 2,
-					   bo_size, &sync, 1);
-	}
-
-	for (i = 0; i < N_BINDS / 4; i++, j++) {
-		sync.handle = syncobjs[j];
-		if (i == N_BINDS / 8)
-			__xe_vm_bind_assert(fd, vm, 0, bo, 0,
-					    addr + i * bo_size * 2,
-					    bo_size, XE_VM_BIND_OP_MAP,
-					    XE_VM_BIND_FLAG_ASYNC |
-					    INJECT_ERROR, &sync, 1, 0, 0);
-		else
-			xe_vm_bind_async(fd, vm, 0, bo, 0,
-					 addr + i * bo_size * 2,
-					 bo_size, &sync, 1);
-	}
-
-	for (i = 0; i < N_BINDS / 4; i++, j++) {
-		sync.handle = syncobjs[j];
-		if (i == N_BINDS / 8)
-			__xe_vm_bind_assert(fd, vm, 0, 0, 0,
-					    addr + i * bo_size * 2,
-					    bo_size, XE_VM_BIND_OP_UNMAP,
-					    XE_VM_BIND_FLAG_ASYNC |
-					    INJECT_ERROR, &sync, 1, 0, 0);
-		else
-			xe_vm_unbind_async(fd, vm, 0, 0,
-					   addr + i * bo_size * 2,
-					   bo_size, &sync, 1);
-	}
-
-	for (i = 0; i < N_BINDS; i++)
-		igt_assert(syncobj_wait(fd, &syncobjs[i], 1, INT64_MAX, 0,
-					NULL));
-
-	if (!destroy)
-		xe_vm_destroy(fd, vm);
-
-	pthread_join(thread.thread, NULL);
 }
 
 /**
@@ -537,7 +372,7 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 	data = malloc(sizeof(*data) * n_bo);
 	igt_assert(data);
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(struct shared_pte_page_data);
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -718,7 +553,7 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
 	struct xe_spin_opts spin_opts = { .preempt = true };
 	int i, b;
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*data) * N_EXEC_QUEUES;
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -728,7 +563,7 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
 
 	for (i = 0; i < N_EXEC_QUEUES; i++) {
 		exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
-		bind_exec_queues[i] = xe_bind_exec_queue_create(fd, vm, 0);
+		bind_exec_queues[i] = xe_bind_exec_queue_create(fd, vm, 0, true);
 		syncobjs[i] = syncobj_create(fd, 0);
 	}
 	syncobjs[N_EXEC_QUEUES] = syncobj_create(fd, 0);
@@ -898,7 +733,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 
 	igt_assert(n_execs <= BIND_ARRAY_MAX_N_EXEC);
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*data) * n_execs;
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -908,7 +743,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 	data = xe_bo_map(fd, bo, bo_size);
 
 	if (flags & BIND_ARRAY_BIND_EXEC_QUEUE_FLAG)
-		bind_exec_queue = xe_bind_exec_queue_create(fd, vm, 0);
+		bind_exec_queue = xe_bind_exec_queue_create(fd, vm, 0, true);
 	exec_queue = xe_exec_queue_create(fd, vm, eci, 0);
 
 	for (i = 0; i < n_execs; ++i) {
@@ -1092,7 +927,7 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 	}
 
 	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 
 	if (flags & LARGE_BIND_FLAG_USERPTR) {
 		map = aligned_alloc(xe_get_default_alignment(fd), bo_size);
@@ -1384,7 +1219,7 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 			unbind_n_page_offset *= n_page_per_2mb;
 	}
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo_size = page_size * bo_n_pages;
 
 	if (flags & MAP_FLAG_USERPTR) {
@@ -1684,7 +1519,7 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 			unbind_n_page_offset *= n_page_per_2mb;
 	}
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo_size = page_size * bo_n_pages;
 
 	if (flags & MAP_FLAG_USERPTR) {
@@ -2000,12 +1835,6 @@ igt_main
 
 	igt_subtest("userptr-invalid")
 		userptr_invalid(fd);
-
-	igt_subtest("vm-async-ops-err")
-		vm_async_ops_err(fd, false);
-
-	igt_subtest("vm-async-ops-err-destroy")
-		vm_async_ops_err(fd, true);
 
 	igt_subtest("shared-pte-page")
 		xe_for_each_hw_engine(fd, hwe)

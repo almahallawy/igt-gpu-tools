@@ -109,7 +109,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 	igt_assert(n_vm <= MAX_N_EXEC_QUEUES);
 
 	for (i = 0; i < n_vm; ++i)
-		vm[i] = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_BIND_OPS, 0);
+		vm[i] = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*data) * n_execs;
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -151,7 +151,9 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 
 		exec_queues[i] = xe_exec_queue_create(fd, __vm, eci, 0);
 		if (flags & BIND_EXEC_QUEUE)
-			bind_exec_queues[i] = xe_bind_exec_queue_create(fd, __vm, 0);
+			bind_exec_queues[i] = xe_bind_exec_queue_create(fd,
+									__vm, 0,
+									true);
 		else
 			bind_exec_queues[i] = 0;
 		syncobjs[i] = syncobj_create(fd, 0);
