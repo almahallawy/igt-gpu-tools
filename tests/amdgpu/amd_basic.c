@@ -67,7 +67,7 @@ static void amdgpu_memory_alloc(amdgpu_device_handle device)
  * AMDGPU_HW_IP_GFX
  * @param device
  */
-static void amdgpu_command_submission_gfx(amdgpu_device_handle device)
+static void amdgpu_command_submission_gfx(amdgpu_device_handle device, bool ce_avails)
 {
 	/* write data using the CP */
 	amdgpu_command_submission_write_linear_helper(device, get_ip_block(device, AMDGPU_HW_IP_GFX), false);
@@ -75,10 +75,14 @@ static void amdgpu_command_submission_gfx(amdgpu_device_handle device)
 	amdgpu_command_submission_const_fill_helper(device, get_ip_block(device, AMDGPU_HW_IP_GFX));
 	/* copy data using the CP */
 	amdgpu_command_submission_copy_linear_helper(device, get_ip_block(device, AMDGPU_HW_IP_GFX));
-	/* separate IB buffers for multi-IB submission */
-	amdgpu_command_submission_gfx_separate_ibs(device);
-	/* shared IB buffer for multi-IB submission */
-	amdgpu_command_submission_gfx_shared_ib(device);
+	if (ce_avails) {
+		/* separate IB buffers for multi-IB submission */
+		amdgpu_command_submission_gfx_separate_ibs(device);
+		/* shared IB buffer for multi-IB submission */
+		amdgpu_command_submission_gfx_shared_ib(device);
+	} else {
+		igt_info("separate and shared IB buffers for multi IB submisison testes are skipped due to GFX11\n");
+	}
 }
 
 /**
@@ -624,6 +628,7 @@ igt_main
 {
 	amdgpu_device_handle device;
 	struct amdgpu_gpu_info gpu_info = {0};
+	struct drm_amdgpu_info_hw_ip info = {0};
 	int fd = -1;
 	int r;
 	bool arr_cap[AMD_IP_MAX] = {0};
@@ -641,6 +646,8 @@ igt_main
 			 major, minor);
 
 		r = amdgpu_query_gpu_info(device, &gpu_info);
+		igt_assert_eq(r, 0);
+		r = amdgpu_query_hw_ip_info(device, AMDGPU_HW_IP_GFX, 0, &info);
 		igt_assert_eq(r, 0);
 		r = setup_amdgpu_ip_blocks(major, minor,  &gpu_info, device);
 		igt_assert_eq(r, 0);
@@ -662,7 +669,7 @@ igt_main
 	igt_subtest_with_dynamic("cs-gfx-with-IP-GFX") {
 		if (arr_cap[AMD_IP_GFX]) {
 			igt_dynamic_f("cs-gfx")
-			amdgpu_command_submission_gfx(device);
+			amdgpu_command_submission_gfx(device, info.hw_ip_version_major < 11);
 		}
 	}
 
@@ -676,9 +683,11 @@ igt_main
 
 	igt_describe("Check-GFX-CS-for-multi-fence");
 	igt_subtest_with_dynamic("cs-multi-fence-with-IP-GFX") {
-		if (arr_cap[AMD_IP_GFX]) {
+		if (arr_cap[AMD_IP_GFX] && info.hw_ip_version_major < 11) {
 			igt_dynamic_f("cs-multi-fence")
-		amdgpu_command_submission_multi_fence(device);
+			amdgpu_command_submission_multi_fence(device);
+		} else {
+			igt_info("cs-multi-fence-with-IP-GFX testes are skipped due to GFX11 or no GFX_IP\n");
 		}
 	}
 
