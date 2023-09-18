@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Intel Corporation
+ * Copyright © 2018-2023 Intel Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -26,8 +26,8 @@
  * subtest.
  *
  * Authors:
- * Manasi Navare <manasi.d.navare@intel.com>
- *
+ * 	Manasi Navare <manasi.d.navare@intel.com>
+ * 	Swati Sharma <swati2.sharma@intel.com>
  */
 
 /**
@@ -54,6 +54,7 @@
  * @with-formats:                 DSC with default parameters and creating fb with diff formats
  * @with-output-formats:          DSC and output format
  * @with-output-formats-with-bpc: DSC and output format with certain input BPC for the connector
+ * @fractional-bpp:               DSC and fractional bpp with default parameters
  */
 
 IGT_TEST_DESCRIPTION("Test to validate display stream compression");
@@ -65,6 +66,7 @@ IGT_TEST_DESCRIPTION("Test to validate display stream compression");
 #define TEST_DSC_BPC		(1<<0)
 #define TEST_DSC_FORMAT		(1<<1)
 #define TEST_DSC_OUTPUT_FORMAT	(1<<2)
+#define TEST_DSC_FRACTIONAL_BPP (1<<3)
 
 /*
  * Starting from gen11, intel driver supports DSC1.1. For validating
@@ -72,7 +74,7 @@ IGT_TEST_DESCRIPTION("Test to validate display stream compression");
  * If the sink does support DSC, we will validate different
  * scenarios by forcing dsc. Outline of the tests is as follows:
  * (i) basic modeset (ii) input bpc (iii) pixel formats
- * (iv) output formats
+ * (iv) output formats (v) fractional bpp
  * In the basic subtest, we perform modeset with default parameters.
  * Input bpc and pixel formats subtests, we perform modeset
  * with different input bpc (12/10/8) and pixel formats (YUV/RGB),
@@ -81,8 +83,10 @@ IGT_TEST_DESCRIPTION("Test to validate display stream compression");
  * However, in the output-format subtest, we verify different
  * output formats (RGB/YCBCR444/YCBCR420). Also, test is added to
  * validate output formats with different input bpc (12/10/8).
+ * Lastly, fractional bpp is tested with default parameters.
+ * In this, driver will ignore integer compressed bpp value and
+ * will do modeset with fractional bpp only.
  */
-
 
 typedef struct {
 	int drm_fd;
@@ -185,6 +189,12 @@ static void update_display(data_t *data, uint32_t test_type)
 		force_dsc_output_format(data->drm_fd, data->output, data->output_format);
 	}
 
+	if (test_type & TEST_DSC_FRACTIONAL_BPP) {
+		igt_debug("DSC fractional bpp is supported on %s\n", data->output->name);
+		save_force_dsc_fractional_bpp_en(data->drm_fd, data->output);
+		force_dsc_fractional_bpp_enable(data->drm_fd, data->output);
+	}
+
 	igt_output_set_pipe(output, data->pipe);
 	primary = igt_output_get_plane_type(output, DRM_PLANE_TYPE_PRIMARY);
 
@@ -244,6 +254,7 @@ static void update_display(data_t *data, uint32_t test_type)
 				enabled ? "ON" : "OFF");
 
 	restore_force_dsc_en();
+	restore_force_dsc_fractional_bpp_en();
 
 	if (test_type & TEST_DSC_BPC) {
 		current_bpc = igt_get_pipe_current_bpc(data->drm_fd, data->pipe);
@@ -293,6 +304,11 @@ static void test_dsc(data_t *data, uint32_t test_type, int bpc,
 		if ((test_type & TEST_DSC_OUTPUT_FORMAT) &&
 		    (!is_dsc_output_format_supported(data->drm_fd, data->disp_ver,
 						     data->output, data->output_format)))
+			continue;
+
+		if ((test_type & TEST_DSC_FRACTIONAL_BPP) &&
+		    (!is_dsc_fractional_bpp_supported(data->disp_ver,
+						      data->drm_fd, data->output)))
 			continue;
 
 		if (test_type & TEST_DSC_OUTPUT_FORMAT)
@@ -404,6 +420,16 @@ igt_main_args("l", NULL, help_str, opt_handler, &data)
 			}
 		}
 	}
+
+	igt_describe("Tests fractional compressed bpp functionality if supported "
+		     "by a connector by forcing fractional_bpp on all connectors that support it "
+		     "with default parameter. While finding the optimum compressed bpp, driver will "
+		     "skip over the compressed bpps with integer values. It will go ahead with DSC, "
+		     "iff compressed bpp is fractional, failing in which, it will fail the commit.");
+	igt_subtest_with_dynamic("dsc-fractional-bpp")
+			test_dsc(&data, TEST_DSC_FRACTIONAL_BPP,
+				 DEFAULT_BPC, DRM_FORMAT_XRGB8888,
+				 DSC_FORMAT_RGB);
 
 	igt_fixture {
 		igt_display_fini(&data.display);

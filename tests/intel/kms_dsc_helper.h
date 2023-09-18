@@ -34,5 +34,9 @@ void force_dsc_output_format(int drmfd, igt_output_t *output,
 			     enum dsc_output_format output_format);
 bool is_dsc_output_format_supported(int disp_ver, int drmfd, igt_output_t *output,
 				    enum dsc_output_format output_format);
+void force_dsc_fractional_bpp_enable(int drmfd, igt_output_t *output);
+void save_force_dsc_fractional_bpp_en(int drmfd, igt_output_t *output);
+void restore_force_dsc_fractional_bpp_en(void);
+bool is_dsc_fractional_bpp_supported(int disp_ver, int drmfd, igt_output_t *output);
 
 #endif
