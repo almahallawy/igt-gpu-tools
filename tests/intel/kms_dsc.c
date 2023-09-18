@@ -55,6 +55,7 @@
  * @with-output-formats:          DSC and output format
  * @with-output-formats-with-bpc: DSC and output format with certain input BPC for the connector
  * @fractional-bpp:               DSC and fractional bpp with default parameters
+ * @fractional-bpp-with-bpc:      DSC and fractional bpp with certain input BPC for the connector
  */
 
 IGT_TEST_DESCRIPTION("Test to validate display stream compression");
@@ -85,7 +86,8 @@ IGT_TEST_DESCRIPTION("Test to validate display stream compression");
  * validate output formats with different input bpc (12/10/8).
  * Lastly, fractional bpp is tested with default parameters.
  * In this, driver will ignore integer compressed bpp value and
- * will do modeset with fractional bpp only.
+ * will do modeset with fractional bpp only. Test is added to
+ * validate fractional bpp with different input bpc (12/10/8).
  */
 
 typedef struct {
@@ -430,6 +432,16 @@ igt_main_args("l", NULL, help_str, opt_handler, &data)
 			test_dsc(&data, TEST_DSC_FRACTIONAL_BPP,
 				 DEFAULT_BPC, DRM_FORMAT_XRGB8888,
 				 DSC_FORMAT_RGB);
+
+	igt_describe("Tests fractional compressed bpp functionality if supported "
+		     "by a connector by forcing fractional_bpp on all connectors that support it "
+		     "with certain input BPC for the connector.");
+	igt_subtest_with_dynamic("dsc-fractional-bpp-with-bpc") {
+		for (int j = 0; j < ARRAY_SIZE(bpc_list); j++)
+			test_dsc(&data, TEST_DSC_FRACTIONAL_BPP | TEST_DSC_BPC,
+				 bpc_list[j], DRM_FORMAT_XRGB8888,
+				 DSC_FORMAT_RGB);
+	}
 
 	igt_fixture {
 		igt_display_fini(&data.display);
