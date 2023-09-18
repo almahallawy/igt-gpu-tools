@@ -83,5 +83,7 @@ extern const struct intel_execution_engine2 {
 } intel_execution_engines2[];
 
 int gem_execbuf_flags_to_engine_class(unsigned int flags);
+bool gem_engine_can_block_ggtt_binder(int fd,
+		const struct intel_execution_engine2 *engine);
 
 #endif /* IGT_GT_H */

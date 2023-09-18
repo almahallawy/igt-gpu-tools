@@ -659,3 +659,18 @@ int gem_execbuf_flags_to_engine_class(unsigned int flags)
 		igt_assert(0);
 	}
 }
+
+/**
+ * gem_engine_can_block_ggtt_binder:
+ * @fd: open i915 drm file descriptor
+ * @engine: engine to be assessed
+ *
+ * Detect if the platform needs blitter based GGTT
+ * updates.
+ */
+bool gem_engine_can_block_ggtt_binder(int fd,
+		const struct intel_execution_engine2 *engine)
+{
+	return IS_METEORLAKE(intel_get_drm_devid(fd)) &&
+		engine->class == I915_ENGINE_CLASS_COPY;
+}
