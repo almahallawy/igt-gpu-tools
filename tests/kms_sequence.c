@@ -22,11 +22,6 @@
  * IN THE SOFTWARE.
  */
 
-/** @file kms_sequence.c
- *
- * This is a test of drmCrtcGetSequence and drmCrtcQueueSequence
- */
-
 /**
  * TEST: kms sequence
  * Category: Display
