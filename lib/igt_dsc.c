@@ -42,7 +42,7 @@ static int write_dsc_debugfs(int drmfd, char *connector_name, const char *file_n
 	return ret;
 }
 
-/*
+/**
  * igt_is_dsc_supported_by_source:
  * @drmfd: A drm file descriptor
  *
@@ -63,7 +63,7 @@ bool igt_is_dsc_supported_by_source(int drmfd)
 	return res > 0 ? strstr(buf, "has_dsc: yes") : 0;
 }
 
-/*
+/**
  * igt_is_dsc_supported_by_sink:
  * @drmfd: A drm file descriptor
  * @connector_name: Name of the libdrm connector we're going to use
@@ -75,7 +75,7 @@ bool igt_is_dsc_supported_by_sink(int drmfd, char *connector_name)
 	return check_dsc_debugfs(drmfd, connector_name, "DSC_Sink_Support: yes");
 }
 
-/*
+/**
  * igt_is_fec_supported:
  * @drmfd: A drm file descriptor
  * @connector_name: Name of the libdrm connector we're going to use
@@ -87,7 +87,7 @@ bool igt_is_fec_supported(int drmfd, char *connector_name)
 	return check_dsc_debugfs(drmfd, connector_name, "FEC_Sink_Support: yes");
 }
 
-/*
+/**
  * igt_is_dsc_enabled:
  * @drmfd: A drm file descriptor
  * @connector_name: Name of the libdrm connector we're going to use
@@ -99,7 +99,7 @@ bool igt_is_dsc_enabled(int drmfd, char *connector_name)
 	return check_dsc_debugfs(drmfd, connector_name, "DSC_Enabled: yes");
 }
 
-/*
+/**
  * igt_is_force_dsc_enabled:
  * @drmfd: A drm file descriptor
  * @connector_name: Name of the libdrm connector we're going to use
@@ -112,7 +112,7 @@ bool igt_is_force_dsc_enabled(int drmfd, char *connector_name)
 	return check_dsc_debugfs(drmfd, connector_name, "Force_DSC_Enable: yes");
 }
 
-/*
+/**
  * igt_force_dsc_enable:
  * @drmfd: A drm file descriptor
  * @connector_name: Name of the libdrm connector we're going to use
@@ -124,7 +124,7 @@ int igt_force_dsc_enable(int drmfd, char *connector_name)
 	return write_dsc_debugfs(drmfd, connector_name, "i915_dsc_fec_support", "1");
 }
 
-/*
+/**
  * igt_force_dsc_enable_bpc:
  * @drmfd: A drm file descriptor
  * @connector_name: Name of the libdrm connector we're going to use
@@ -141,7 +141,7 @@ int igt_force_dsc_enable_bpc(int drmfd, char *connector_name, int bpc)
 	return write_dsc_debugfs(drmfd, connector_name, "i915_dsc_bpc", buf);
 }
 
-/*
+/**
  * igt_get_dsc_debugfs_fd:
  * @drmfd: A drm file descriptor
  * @connector_name: Name of the libdrm connector we're going to use
@@ -157,7 +157,7 @@ int igt_get_dsc_debugfs_fd(int drmfd, char *connector_name)
 	return openat(igt_debugfs_dir(drmfd), file_name, O_WRONLY);
 }
 
-/*
+/**
  * igt_is_dsc_output_format_supported_by_sink:
  * @drmfd: A drm file descriptor
  * @connector_name: Name of the libdrm connector we're going to use
@@ -188,7 +188,7 @@ bool igt_is_dsc_output_format_supported_by_sink(int drmfd, char *connector_name,
 	return check_dsc_debugfs(drmfd, connector_name, check_str);
 }
 
-/*
+/**
  * igt_force_dsc_output_format:
  * @drmfd: A drm file descriptor
  * @connector_name: Name of the libdrm connector we're going to use
