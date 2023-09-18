@@ -491,14 +491,14 @@ test_fini(igt_output_t *output, enum igt_commit_style s)
 }
 
 /**
- * SUBTEST: LIC
+ * SUBTEST: lic
  * Description: Test for the integrity of link.
  * Driver requirement: i915, xe
  * Functionality: hdcp1.4
  * Mega feature: HDCP
  * Test category: functionality test
  *
- * SUBTEST: content_type_change
+ * SUBTEST: content-type-change
  * Description: Test the content type change when the content protection already
  *              enabled
  * Driver requirement: i915, xe
@@ -506,7 +506,7 @@ test_fini(igt_output_t *output, enum igt_commit_style s)
  * Mega feature: HDCP
  * Test category: functionality test
  *
- * SUBTEST: mei_interface
+ * SUBTEST: mei-interface
  * Description: Test the teardown and rebuild of the interface between Intel
  *              and mei hdcp.
  * Driver requirement: i915, xe
@@ -802,7 +802,7 @@ static const struct {
 	  .content_type = HDCP_CONTENT_TYPE_0
 	},
 	{ .desc = "Test for the integrity of link.",
-	  .name = "LIC",
+	  .name = "lic",
 	  .cp_tests = CP_LIC,
 	  .content_type = HDCP_CONTENT_TYPE_0,
 	},
@@ -814,12 +814,12 @@ static const struct {
 	},
 	{ .desc = "Test the teardown and rebuild of the interface between "
 		  "Intel and mei hdcp.",
-	  .name = "mei_interface",
+	  .name = "mei-interface",
 	  .cp_tests = CP_MEI_RELOAD,
 	  .content_type = HDCP_CONTENT_TYPE_1,
 	},
 	{ .desc = "Test the content type change when the content protection already enabled",
-	  .name = "content_type_change",
+	  .name = "content-type-change",
 	  .cp_tests = CP_TYPE_CHANGE,
 	  .content_type = HDCP_CONTENT_TYPE_1,
 	},
