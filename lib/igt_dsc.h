@@ -8,6 +8,7 @@
 
 #include "igt_fb.h"
 #include "igt_kms.h"
+#include "igt_core.h"
 
 bool igt_is_dsc_supported_by_source(int drmfd);
 bool igt_is_dsc_supported_by_sink(int drmfd, char *connector_name);
@@ -21,5 +22,10 @@ bool igt_is_dsc_output_format_supported_by_sink(int drmfd, char *connector_name,
 						enum dsc_output_format output_format);
 int igt_force_dsc_output_format(int drmfd, char *connector_name,
 				enum dsc_output_format output_format);
+bool igt_is_dsc_fractional_bpp_supported_by_sink(int drmfd, char *connector_name);
+int igt_get_dsc_fractional_bpp_supported(int drmfd, char *connector_name);
+bool igt_is_force_dsc_fractional_bpp_enabled(int drmfd, char *connector_name);
+int igt_force_dsc_fractional_bpp_enable(int drmfd, char *connector_name);
+int igt_get_dsc_fractional_bpp_debugfs_fd(int drmfd, char *connector_name);
 
 #endif
