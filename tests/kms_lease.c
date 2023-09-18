@@ -21,11 +21,6 @@
  * IN THE SOFTWARE.
  */
 
-/** @file kms_lease.c
- *
- * This is a test of DRM leases
- */
-
 /**
  * TEST: kms lease
  * Category: Display
