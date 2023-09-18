@@ -1047,6 +1047,12 @@ static void smoketest(int i915, const intel_ctx_cfg_t *cfg,
 		for_each_if(gem_class_can_store_dword(i915, (e)->class)) \
 			igt_dynamic_f("%s", e->name)
 
+#define for_each_nonblocking_ggtt_binder_queue(e, i915, cfg) \
+	for_each_ctx_cfg_engine(i915, cfg, e) \
+		for_each_if(gem_class_can_store_dword(i915, (e)->class) && \
+			    !gem_engine_can_block_ggtt_binder(i915, e)) \
+			igt_dynamic_f("%s", e->name)
+
 igt_main
 {
 	const struct intel_execution_engine2 *e;
@@ -1104,22 +1110,22 @@ igt_main
 			}
 
 			igt_subtest_with_dynamic("Q-independent") {
-				for_each_queue(e, i915, &cfg)
+				for_each_nonblocking_ggtt_binder_queue(e, i915, &cfg)
 					independent(i915, &cfg, e, 0);
 			}
 
 			igt_subtest_with_dynamic("Q-in-order") {
-				for_each_queue(e, i915, &cfg)
+				for_each_nonblocking_ggtt_binder_queue(e, i915, &cfg)
 					reorder(i915, &cfg, e->flags, EQUAL);
 			}
 
 			igt_subtest_with_dynamic("Q-out-order") {
-				for_each_queue(e, i915, &cfg)
+				for_each_nonblocking_ggtt_binder_queue(e, i915, &cfg)
 					reorder(i915, &cfg, e->flags, 0);
 			}
 
 			igt_subtest_with_dynamic("Q-promotion") {
-				for_each_queue(e, i915, &cfg)
+				for_each_nonblocking_ggtt_binder_queue(e, i915, &cfg)
 					promotion(i915, &cfg, e->flags);
 			}
 		}
