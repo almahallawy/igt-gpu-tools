@@ -52,10 +52,10 @@
  * @with-bpc:                     DSC with certain input BPC for the connector
  * @with-bpc-formats:             DSC with certain input BPC for the connector and diff formats
  * @with-formats:                 DSC with default parameters and creating fb with diff formats
- * @with-output-formats:          DSC and output format
- * @with-output-formats-with-bpc: DSC and output format with certain input BPC for the connector
- * @fractional-bpp:               DSC and fractional bpp with default parameters
- * @fractional-bpp-with-bpc:      DSC and fractional bpp with certain input BPC for the connector
+ * @with-output-formats:          DSC with output formats
+ * @with-output-formats-with-bpc: DSC with output formats with certain input BPC for the connector
+ * @fractional-bpp:               DSC with fractional bpp with default parameters
+ * @fractional-bpp-with-bpc:      DSC with fractional bpp with certain input BPC for the connector
  */
 
 IGT_TEST_DESCRIPTION("Test to validate display stream compression");
@@ -68,27 +68,6 @@ IGT_TEST_DESCRIPTION("Test to validate display stream compression");
 #define TEST_DSC_FORMAT		(1<<1)
 #define TEST_DSC_OUTPUT_FORMAT	(1<<2)
 #define TEST_DSC_FRACTIONAL_BPP (1<<3)
-
-/*
- * Starting from gen11, intel driver supports DSC1.1. For validating
- * DSC, the first step is to verify if the sink supports DSC.
- * If the sink does support DSC, we will validate different
- * scenarios by forcing dsc. Outline of the tests is as follows:
- * (i) basic modeset (ii) input bpc (iii) pixel formats
- * (iv) output formats (v) fractional bpp
- * In the basic subtest, we perform modeset with default parameters.
- * Input bpc and pixel formats subtests, we perform modeset
- * with different input bpc (12/10/8) and pixel formats (YUV/RGB),
- * respectively. From MTL+, we can verify DSC YCBCR420 output format.
- * The tests are executed with the RGB444 output format by default.
- * However, in the output-format subtest, we verify different
- * output formats (RGB/YCBCR444/YCBCR420). Also, test is added to
- * validate output formats with different input bpc (12/10/8).
- * Lastly, fractional bpp is tested with default parameters.
- * In this, driver will ignore integer compressed bpp value and
- * will do modeset with fractional bpp only. Test is added to
- * validate fractional bpp with different input bpc (12/10/8).
- */
 
 typedef struct {
 	int drm_fd;
