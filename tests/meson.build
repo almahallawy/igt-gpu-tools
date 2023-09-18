@@ -84,6 +84,7 @@ test_progs = [
 
 intel_i915_xe_progs = [
 	'api_intel_allocator',
+	'intel_hwmon',
 ]
 
 intel_i915_progs = [
@@ -218,7 +219,6 @@ intel_i915_progs = [
 	'i915_getparams_basic',
 	'i915_pm_freq_api',
 	'i915_hangman',
-	'i915_hwmon',
 	'i915_module_load',
 	'i915_pciid',
 	'i915_pipe_stress',

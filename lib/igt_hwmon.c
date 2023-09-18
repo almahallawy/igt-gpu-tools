@@ -66,7 +66,10 @@ int igt_hwmon_open(int device)
 {
 	char path[PATH_MAX];
 
-	if (!is_i915_device(device) || !igt_hwmon_path(device, path, "i915"))
+	if (!is_intel_device(device))
+		return -1;
+
+	if (!igt_hwmon_path(device, path, "i915") && !igt_hwmon_path(device, path, "xe"))
 		return -1;
 
 	return open(path, O_RDONLY);

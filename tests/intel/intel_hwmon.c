@@ -9,11 +9,11 @@
 #include "igt_hwmon.h"
 #include "igt_sysfs.h"
 /**
- * TEST: i915 hwmon
- * Description: Tests for i915 hwmon
+ * TEST: intel hwmon
+ * Description: Tests for intel hwmon
  * Feature: hwmon
  * Run type: FULL
- * Test category: GEM_Legacy
+ * Test category: functionality
  *
  * SUBTEST: hwmon-read
  * Description: Verify we can read all hwmon attributes
@@ -22,7 +22,7 @@
  * Description: Verify writable hwmon attributes
  */
 
-IGT_TEST_DESCRIPTION("Tests for i915 hwmon");
+IGT_TEST_DESCRIPTION("Tests for intel hwmon");
 
 static void hwmon_read(int hwm)
 {
@@ -79,7 +79,7 @@ igt_main
 	int fd, hwm;
 
 	igt_fixture {
-		fd = drm_open_driver_master(DRIVER_INTEL);
+		fd = drm_open_driver_master(DRIVER_INTEL | DRIVER_XE);
 		hwm = igt_hwmon_open(fd);
 		igt_require(hwm >= 0);
 	}
