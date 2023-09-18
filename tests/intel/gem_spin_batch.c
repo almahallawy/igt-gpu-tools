@@ -227,6 +227,9 @@ static void spin_all(int i915, const intel_ctx_t *ctx, unsigned int flags)
 		if (!gem_class_can_store_dword(i915, e->class))
 			continue;
 
+		if (gem_engine_can_block_ggtt_binder(i915, e))
+			continue;
+
 		if (flags & PARALLEL_SPIN_NEW_CTX)
 			ctx = intel_ctx_create(i915, &cfg);
 		ahnd = get_reloc_ahnd(i915, ctx->id);
