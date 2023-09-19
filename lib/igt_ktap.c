@@ -91,9 +91,16 @@ int igt_ktap_parse(const char *buf, struct igt_ktap_results *ktap)
 				       "%*1[ ]%*1[ ]%*1[ ]%*1[ ]KTAP%*[ ]version%*[ ]%u %n",
 				       &n, &len) == 1 && len == strlen(buf))) {
 		/*
-		 * TODO: drop the following workaround as soon as
-		 * kernel side issue of missing lines with top level
-		 * KTAP version and test suite plan is fixed.
+		 * TODO: drop the following workaround, which addresses a kernel
+		 * side issue of missing lines that provide top level KTAP
+		 * version and test suite plan, as soon as no longer needed.
+		 *
+		 * The issue has been fixed in v6.6-rc1, commit c95e7c05c139
+		 * ("kunit: Report the count of test suites in a module"),
+		 * but we still need this workaround for as long as LTS kernel
+		 * version 6.1, with DRM selftests already converted to Kunit,
+		 * but without that missing Kunit headers issue fixed, is used
+		 * by major Linux distributions.
 		 */
 		if (ktap->expect == KTAP_START) {
 			ktap->suite_count = 1;
