@@ -1,27 +1,8 @@
-/* SPDX-License-Identifier: MIT
- * Copyright 2014 Advanced Micro Devices, Inc.
- * Copyright 2022 Advanced Micro Devices, Inc.
- *  *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
- * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- *
- *
- */
+// SPDX-License-Identifier: MIT
+// Copyright 2014 Advanced Micro Devices, Inc.
+// Copyright 2022 Advanced Micro Devices, Inc.
+// Copyright 2023 Advanced Micro Devices, Inc.
+
 #include <amdgpu.h>
 #include "amd_memory.h"
 #include "amd_dispatch.h"
@@ -48,12 +29,13 @@ amdgpu_memset_dispatch_test(amdgpu_device_handle device_handle,
 	int bo_shader_size = 4096;
 	int bo_cmd_size = 4096;
 	struct amdgpu_cs_request ibs_request = {0};
-	struct amdgpu_cs_ib_info ib_info= {0};
+	struct amdgpu_cs_ib_info ib_info = {0};
+
 	amdgpu_bo_list_handle bo_list;
 	struct amdgpu_cs_fence fence_status = {0};
 	uint32_t expired;
 
-	struct amdgpu_cmd_base * base_cmd = get_cmd_base();
+	struct amdgpu_cmd_base *base_cmd = get_cmd_base();
 
 	r = amdgpu_cs_ctx_create(device_handle, &context_handle);
 	igt_assert_eq(r, 0);
@@ -103,6 +85,8 @@ amdgpu_memset_dispatch_test(amdgpu_device_handle device_handle,
 		base_cmd->emit(base_cmd, 0x74fac);
 	else if (version == 10)
 		base_cmd->emit(base_cmd, 0x1104bfac);
+	else if (version == 11)
+		base_cmd->emit(base_cmd, 0x1003dfac);
 
 	/* Sets a range of pixel shader constants */
 	base_cmd->emit(base_cmd, PACKET3_COMPUTE(PKT3_SET_SH_REG, 4));
@@ -119,7 +103,7 @@ amdgpu_memset_dispatch_test(amdgpu_device_handle device_handle,
 	base_cmd->emit(base_cmd, 0);
 
 	/* dispatch direct command */
-	base_cmd->emit(base_cmd, PACKET3_COMPUTE(PACKET3_DISPATCH_DIRECT,3));
+	base_cmd->emit(base_cmd, PACKET3_COMPUTE(PACKET3_DISPATCH_DIRECT, 3));
 	base_cmd->emit(base_cmd, 0x10);
 	base_cmd->emit(base_cmd, 1);
 	base_cmd->emit(base_cmd, 1);
@@ -163,9 +147,8 @@ amdgpu_memset_dispatch_test(amdgpu_device_handle device_handle,
 
 	/* verify if memset test result meets with expected */
 	i = 0;
-	while(i < bo_dst_size) {
+	while (i < bo_dst_size)
 		igt_assert_eq(ptr_dst[i++], 0x22);
-	}
 
 	amdgpu_bo_unmap_and_free(bo_dst, va_dst, mc_address_dst, bo_dst_size);
 	amdgpu_bo_unmap_and_free(bo_shader, va_shader, mc_address_shader,
@@ -192,12 +175,12 @@ amdgpu_memcpy_dispatch_test(amdgpu_device_handle device_handle,
 	int bo_shader_size = 4096;
 	int bo_cmd_size = 4096;
 	struct amdgpu_cs_request ibs_request = {0};
-	struct amdgpu_cs_ib_info ib_info= {0};
+	struct amdgpu_cs_ib_info ib_info = {0};
 	uint32_t expired, hang_state, hangs;
 	enum cs_type cs_type;
 	amdgpu_bo_list_handle bo_list;
 	struct amdgpu_cs_fence fence_status = {0};
-	struct amdgpu_cmd_base * base_cmd = get_cmd_base();
+	struct amdgpu_cmd_base *base_cmd = get_cmd_base();
 
 	r = amdgpu_cs_ctx_create(device_handle, &context_handle);
 	igt_assert_eq(r, 0);
@@ -251,11 +234,11 @@ amdgpu_memcpy_dispatch_test(amdgpu_device_handle device_handle,
 
 	base_cmd->emit(base_cmd, 0x400);
 	if (version == 9)
-		base_cmd->emit(base_cmd,0x74fac);
+		base_cmd->emit(base_cmd, 0x74fac);
 	else if (version == 10)
-		base_cmd->emit(base_cmd,0x1104bfac);
+		base_cmd->emit(base_cmd, 0x1104bfac);
 	else if (version == 11)
-		base_cmd->emit(base_cmd,0x1003dfac);
+		base_cmd->emit(base_cmd, 0x1003dfac);
 
 	/* Writes the UAV constant data to the SGPRs. */
 	base_cmd->emit(base_cmd, PACKET3_COMPUTE(PKT3_SET_SH_REG, 4));
@@ -276,7 +259,7 @@ amdgpu_memcpy_dispatch_test(amdgpu_device_handle device_handle,
 	base_cmd->emit(base_cmd, 0);
 
 	/* dispatch direct command */
-	base_cmd->emit(base_cmd, PACKET3_COMPUTE(PACKET3_DISPATCH_DIRECT,3));
+	base_cmd->emit(base_cmd, PACKET3_COMPUTE(PACKET3_DISPATCH_DIRECT, 3));
 	base_cmd->emit(base_cmd, 0x10);
 	base_cmd->emit(base_cmd, 1);
 	base_cmd->emit(base_cmd, 1);
@@ -321,7 +304,7 @@ amdgpu_memcpy_dispatch_test(amdgpu_device_handle device_handle,
 		/* verify if memcpy test result meets with expected */
 		i = 0;
 		/*it works up to 12287 ? vs required 16384 for gfx 8*/
-		while(i < bo_dst_size) {
+		while (i < bo_dst_size) {
 			igt_assert_eq(ptr_dst[i], ptr_src[i]);
 			i++;
 		}
@@ -351,22 +334,22 @@ amdgpu_memcpy_dispatch_hang_slow_test(amdgpu_device_handle device_handle,
 	void *ptr_shader;
 	unsigned char *ptr_src;
 	uint32_t *ptr_cmd;
-	uint64_t mc_address_src, mc_address_dst, mc_address_shader, mc_address_cmd;
+	uint64_t mc_address_src, mc_address_dst, mc_address_shader, mc_address_cmd, reset_flags;
 	amdgpu_va_handle va_src, va_dst, va_shader, va_cmd;
-	int r;
+	int r, r2;
 
 	int bo_dst_size = 0x4000000;
 	int bo_shader_size = 0x400000;
 	int bo_cmd_size = 4096;
 
 	struct amdgpu_cs_request ibs_request = {0};
-	struct amdgpu_cs_ib_info ib_info= {0};
+	struct amdgpu_cs_ib_info ib_info = {0};
 	uint32_t hang_state, hangs, expired;
 	struct amdgpu_gpu_info gpu_info = {0};
 	amdgpu_bo_list_handle bo_list;
 	struct amdgpu_cs_fence fence_status = {0};
 
-	struct amdgpu_cmd_base * base_cmd = get_cmd_base();
+	struct amdgpu_cmd_base *base_cmd = get_cmd_base();
 
 	r = amdgpu_query_gpu_info(device_handle, &gpu_info);
 	igt_assert_eq(r, 0);
@@ -404,7 +387,7 @@ amdgpu_memcpy_dispatch_hang_slow_test(amdgpu_device_handle device_handle,
 
 	memset(ptr_src, 0x55, bo_dst_size);
 
-	amdgpu_dispatch_init(ip_type, base_cmd, version );
+	amdgpu_dispatch_init(ip_type, base_cmd, version);
 
 
 
@@ -425,6 +408,8 @@ amdgpu_memcpy_dispatch_hang_slow_test(amdgpu_device_handle device_handle,
 		base_cmd->emit(base_cmd, 0x74fac);
 	else if (version == 10)
 		base_cmd->emit(base_cmd, 0x1104bfac);
+	else if (version == 11)
+		base_cmd->emit(base_cmd, 0x1003dfac);
 
 
 	/* Writes the UAV constant data to the SGPRs. */
@@ -485,7 +470,18 @@ amdgpu_memcpy_dispatch_hang_slow_test(amdgpu_device_handle device_handle,
 
 	r = amdgpu_cs_query_reset_state(context_handle, &hang_state, &hangs);
 	igt_assert_eq(r, 0);
-	igt_assert_eq(hang_state, gpu_reset_status_equel);
+	r2 = amdgpu_cs_query_reset_state2(context_handle, &reset_flags);
+	igt_assert_eq(r2, 0);
+
+	if (!(reset_flags == 0 ||
+		  reset_flags & AMDGPU_CTX_QUERY2_FLAGS_RESET_IN_PROGRESS)) {
+
+		/* If we're in reset and reset hasn't occurred, then check
+		 * that the hang state is equal to the GPU reset status and
+		 * assert otherwise.
+		 */
+		igt_assert_eq(hang_state, gpu_reset_status_equel);
+	}
 
 	r = amdgpu_bo_list_destroy(bo_list);
 	igt_assert_eq(r, 0);
@@ -513,7 +509,7 @@ amdgpu_dispatch_hang_slow_helper(amdgpu_device_handle device_handle,
 		igt_info("SKIP ... as there's no ring for ip %d\n", ip_type);
 
 	version = info.hw_ip_version_major;
-	if (version != 9 && version != 10 /*&& version != 11*/) {
+	if (version != 9 && version != 10 && version != 11) {
 		igt_info("SKIP ... unsupported gfx version %d\n", version);
 		return;
 	}

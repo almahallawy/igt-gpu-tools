@@ -148,13 +148,17 @@ if libdrm_amdgpu.found()
 		'amdgpu/amd_gfx_v8_0.c',
 		'amdgpu/amd_gfx_v9_0.c',
 		'amdgpu/amd_dispatch_helpers.c',
-		'amdgpu/amd_dispatch.c',
 		'amdgpu/amd_deadlock_helpers.c',
 		'amdgpu/amd_pci_unplug.c',
 		'amdgpu/xalloc.h',
 		'amdgpu/amd_cp_dma.c',
 		'amdgpu/amd_mmd_shared.c'
 	]
+	if libdrm_amdgpu.version().version_compare('> 2.4.99')
+		lib_sources +=[ 'amdgpu/amd_dispatch.c',]
+	else
+		warning('libdrm <= 2.4.99 found, amdgpu_cs_query_reset_state2 not applicable')
+	endif	
 endif
 
 if libunwind.found()

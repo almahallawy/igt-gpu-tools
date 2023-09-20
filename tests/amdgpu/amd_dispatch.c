@@ -27,6 +27,7 @@ igt_main
 	struct amdgpu_gpu_info gpu_info = {0};
 	int fd = -1;
 	int r;
+	bool arr_cap[AMD_IP_MAX] = {0};
 
 	igt_fixture {
 		uint32_t major, minor;
@@ -44,15 +45,24 @@ igt_main
 		igt_assert_eq(r, 0);
 		r = setup_amdgpu_ip_blocks(major, minor, &gpu_info, device);
 		igt_assert_eq(r, 0);
+		asic_rings_readness(device, 1, arr_cap);
 
 	}
 	igt_describe("Test-GPU-reset-using-a-binary-shader-to-hang-the-job-on-compute-ring");
-	igt_subtest("dispatch-hang-slow-compute")
-	amdgpu_dispatch_hang_slow_compute(device);
+	igt_subtest_with_dynamic("amdgpu-dispatch-test-compute-with-IP-COMPUTE") {
+		if (arr_cap[AMD_IP_COMPUTE]) {
+			igt_dynamic_f("amdgpu-dispatch-test-compute")
+			amdgpu_dispatch_hang_slow_compute(device);
+		}
+	}
 
 	igt_describe("Test-GPU-reset-using-a-binary-shader-to-hang-the-job-on-gfx-ring");
-	igt_subtest("dispatch-hang-slow-gfx")
-	amdgpu_dispatch_hang_slow_gfx(device);
+	igt_subtest_with_dynamic("amdgpu-dispatch-test-gfx-with-IP-GFX") {
+		if (arr_cap[AMD_IP_GFX]) {
+			igt_dynamic_f("amdgpu-dispatch-test-gfx")
+			 amdgpu_dispatch_hang_slow_gfx(device);
+		}
+	}
 
 	igt_fixture {
 		amdgpu_device_deinitialize(device);

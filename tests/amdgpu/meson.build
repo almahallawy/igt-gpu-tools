@@ -11,7 +11,6 @@ if libdrm_amdgpu.found()
 			  'amd_cp_dma_misc',
 			  'amd_cs_nop',
 			  'amd_deadlock',
-			  'amd_dispatch',
 			  'amd_dp_dsc',
 			  'amd_freesync_video_mode',
 			  'amd_hotplug',
@@ -42,6 +41,11 @@ if libdrm_amdgpu.found()
 		amdgpu_progs +=[ 'amd_syncobj', ]
 	else
 		warning('libdrm <= 2.4.97 found, amd_syncobj test not applicable')
+	endif
+	if libdrm_amdgpu.version().version_compare('> 2.4.99')
+		amdgpu_progs +=[ 'amd_dispatch',]
+	else
+		warning('libdrm <= 2.4.99 found, amdgpu_cs_query_reset_state2 not applicable')
 	endif
 	amdgpu_deps += libdrm_amdgpu
 endif

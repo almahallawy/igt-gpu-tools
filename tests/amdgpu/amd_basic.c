@@ -612,18 +612,6 @@ amdgpu_sync_dependency_test(amdgpu_device_handle device_handle)
 	free_cmd_base(base);
 }
 
-static void
-amdgpu_gfx_dispatch_test_gfx(amdgpu_device_handle device_handle)
-{
-	amdgpu_gfx_dispatch_test(device_handle, AMDGPU_HW_IP_GFX);
-}
-
-static void
-amdgpu_gfx_dispatch_test_compute(amdgpu_device_handle device_handle)
-{
-	amdgpu_gfx_dispatch_test(device_handle, AMDGPU_HW_IP_COMPUTE);
-}
-
 igt_main
 {
 	amdgpu_device_handle device;
@@ -720,22 +708,6 @@ igt_main
 		if (arr_cap[AMD_IP_GFX]) {
 			igt_dynamic_f("sync-dependency-test")
 			amdgpu_sync_dependency_test(device);
-		}
-	}
-
-	igt_describe("Check-dispatch-test-compute-for-each-ring-using-memset-memcpy-shaders-and-validate-after");
-	igt_subtest_with_dynamic("amdgpu-dispatch-test-compute-with-IP-COMPUTE") {
-		if (arr_cap[AMD_IP_COMPUTE]) {
-			igt_dynamic_f("amdgpu-dispatch-test-compute")
-			amdgpu_gfx_dispatch_test_compute(device);
-		}
-	}
-
-	igt_describe("Check-dispatch-test-gfx-for-each-ring-using-memset-memcpy-shaders-and-validate-after");
-	igt_subtest_with_dynamic("amdgpu-dispatch-test-gfx-with-IP-GFX") {
-		if (arr_cap[AMD_IP_GFX]) {
-			igt_dynamic_f("amdgpu-dispatch-test-gfx")
-			amdgpu_gfx_dispatch_test_gfx(device);
 		}
 	}
 
