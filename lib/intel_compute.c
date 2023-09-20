@@ -1030,7 +1030,7 @@ static void xehpc_compute_exec(int fd, const unsigned char *kernel,
 			       unsigned int size)
 {
 #define XEHPC_BO_DICT_ENTRIES 6
-	struct bo_dict_entry bo_dict[XEHP_BO_DICT_ENTRIES] = {
+	struct bo_dict_entry bo_dict[XEHPC_BO_DICT_ENTRIES] = {
 		{ .addr = XEHP_ADDR_INSTRUCTION_STATE_BASE + OFFSET_KERNEL,
 		  .name = "instr state base"},
 		{ .addr = XEHP_ADDR_GENERAL_STATE_BASE + OFFSET_INDIRECT_DATA_START,
