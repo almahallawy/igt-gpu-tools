@@ -23,18 +23,18 @@
                 "_properties_": {
                     "description": "Defines what category of testlist it belongs",
                     "default-testlist": "FULL",
-                    "testlists": {
-                        "i915 BAT": "../intel-ci/fast-feedback.testlist",
-                        "i915 BAT chamelium": "../intel-ci/fast-feedback-chamelium-only.testlist",
-                        "i915 chamelium": "../intel-ci/chamelium-only.testlist",
+                    "testlists": [
+                        { "i915 BAT": "../intel-ci/fast-feedback.testlist" },
+                        { "i915 BAT chamelium": "../intel-ci/fast-feedback-chamelium-only.testlist" },
+                        { "i915 chamelium": "../intel-ci/chamelium-only.testlist" },
 
-                        "Xe BAT": "../intel-ci/xe-fast-feedback.testlist",
-                        "Xe BAT chamelium": "../intel-ci/xe-fast-feedback-chamelium-only.testlist"
-                    },
-                    "blocklists": {
-                        "i915 BAT, i915 BAT chamelium, i915 chamelium": "../intel-ci/blacklist.txt",
-                        "Xe BAT, Xe BAT chamelium": "../intel-ci/xe.blocklist.txt"
-                    }
+                        { "Xe BAT": "../intel-ci/xe-fast-feedback.testlist" },
+                        { "Xe BAT chamelium": "../intel-ci/xe-fast-feedback-chamelium-only.testlist" }
+                    ],
+                    "blocklists": [
+                        { "i915 BAT, i915 BAT chamelium, i915 chamelium": "../intel-ci/blacklist.txt" },
+                        { "Xe BAT, Xe BAT chamelium": "../intel-ci/xe.blocklist.txt" }
+                    ]
                 }
             }
         },

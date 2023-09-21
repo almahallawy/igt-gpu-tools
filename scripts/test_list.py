@@ -333,16 +333,18 @@ class TestList:
             # Read testlist files if any
             if "testlists" in item["_properties_"]:
                 testlist = {}
-                for name in item["_properties_"]["testlists"].keys():
-                    self.read_testlist(testlist, name, cfg_path + item["_properties_"]["testlists"][name])
+                for value in item["_properties_"]["testlists"]:
+                    for name in value.keys():
+                        self.read_testlist(testlist, name, cfg_path + value[name])
 
                 item["_properties_"]["testlist"] = testlist
 
             # Read blocklist files if any
             if "blocklists" in item["_properties_"]:
                 blocklist = {}
-                for name in item["_properties_"]["blocklists"].keys():
-                    self.read_testlist(blocklist, name, cfg_path + item["_properties_"]["blocklists"][name])
+                for value in item["_properties_"]["blocklists"]:
+                    for name in value.keys():
+                        self.read_testlist(testlist, name, cfg_path + value[name])
 
                 item["_properties_"]["blocklist"] = blocklist
 
@@ -450,7 +452,8 @@ class TestList:
         base = r"^\s*({}[^\s\{}]+)(\S*)\s*(\#.*)?$"
         regex = re.compile(base.format(self.main_name, self.subtest_separator))
 
-        testlist[name] = []
+        if name not in testlist:
+            testlist[name] = []
         with open(filename, 'r', newline = '', encoding = 'utf8') as fp:
             for line in fp:
                 match = regex.match(line)
