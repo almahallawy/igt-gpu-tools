@@ -554,9 +554,9 @@ static int get_num_gts(uint64_t type)
 
 		close(fd);
 	}
-	assert(!errno || errno == ENOENT);
-	assert(cnt > 0);
-	errno = 0;
+
+	if (!cnt || (errno && errno != ENOENT))
+		cnt = -errno;
 
 	return cnt;
 }
@@ -590,6 +590,8 @@ static int pmu_init(struct engines *engines)
 	engines->fd = -1;
 	engines->num_counters = 0;
 	engines->num_gts = get_num_gts(type);
+	if (engines->num_gts <= 0)
+		return -1;
 
 	engines->irq.config = I915_PMU_INTERRUPTS;
 	fd = _open_pmu(type, engines->num_counters, &engines->irq, engines->fd);
