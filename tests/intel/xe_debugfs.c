@@ -13,7 +13,7 @@
  */
 
 #include "igt.h"
-
+#include "igt_sysfs.h"
 #include "xe_drm.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
@@ -116,6 +116,9 @@ test_base(int fd, struct drm_xe_query_config *config)
 		sprintf(reference, "vm_max_level %d", val);
 		igt_assert(igt_debugfs_search(fd, "info", reference));
 	}
+
+	snprintf(reference, sizeof(reference), "tile_count %d", xe_sysfs_get_num_tiles(fd));
+	igt_assert(igt_debugfs_search(fd, "info", reference));
 
 	igt_assert(igt_debugfs_exists(fd, "gt0", O_RDONLY));
 	if (config->info[XE_QUERY_CONFIG_GT_COUNT] > 1)
