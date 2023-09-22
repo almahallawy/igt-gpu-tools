@@ -11,6 +11,7 @@ if libdrm_amdgpu.found()
 			  'amd_cp_dma_misc',
 			  'amd_cs_nop',
 			  'amd_deadlock',
+			  'amd_dispatch',
 			  'amd_dp_dsc',
 			  'amd_freesync_video_mode',
 			  'amd_hotplug',

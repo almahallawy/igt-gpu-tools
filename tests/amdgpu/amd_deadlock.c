@@ -1,44 +1,13 @@
-/* SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
+/*
  * Copyright 2014 Advanced Micro Devices, Inc.
  * Copyright 2022 Advanced Micro Devices, Inc.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
- * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- *
- * Based on libdrm/tests/amdgpu/deadlock_tests.c
+ * Copyright 2023 Advanced Micro Devices, Inc.
  */
 
 #include "lib/amdgpu/amd_memory.h"
 #include "lib/amdgpu/amd_command_submission.h"
-#include "lib/amdgpu/amd_dispatch.h"
 #include "lib/amdgpu/amd_deadlock_helpers.h"
-
-static void
-amdgpu_dispatch_hang_slow_gfx(amdgpu_device_handle device_handle)
-{
-	amdgpu_dispatch_hang_slow_helper(device_handle, AMDGPU_HW_IP_GFX);
-}
-
-static void
-amdgpu_dispatch_hang_slow_compute(amdgpu_device_handle device_handle)
-{
-	amdgpu_dispatch_hang_slow_helper(device_handle, AMDGPU_HW_IP_COMPUTE);
-}
 
 static void
 amdgpu_deadlock_gfx(amdgpu_device_handle device_handle)
@@ -91,30 +60,29 @@ igt_main
 
 		r = amdgpu_query_gpu_info(device, &gpu_info);
 		igt_assert_eq(r, 0);
-		r = setup_amdgpu_ip_blocks( major, minor,  &gpu_info, device);
+		r = setup_amdgpu_ip_blocks(major, minor, &gpu_info, device);
 		igt_assert_eq(r, 0);
 
 	}
-	igt_subtest("amdgpu_deadlock_sdma")
+	igt_describe("Test-GPU-reset-by-flooding-sdma-ring-with-jobs");
+	igt_subtest("amdgpu-deadlock-sdma")
 	amdgpu_deadlock_sdma(device);
 
-	igt_subtest("amdgpu_gfx_illegal_reg_access")
+	igt_describe("Test-GPU-reset-by-access-gfx-illegal-reg");
+	igt_subtest("amdgpu-gfx-illegal-reg-access")
 	amdgpu_gfx_illegal_reg_access(device);
 
-	igt_subtest("amdgpu_gfx_illegal_mem_access")
+	igt_describe("Test-GPU-reset-by-access-gfx-illegal-mem-addr");
+	igt_subtest("amdgpu-gfx-illegal-mem-access")
 	amdgpu_gfx_illegal_mem_access(device);
 
-	igt_subtest("amdgpu_deadlock_gfx")
+	igt_describe("Test-GPU-reset-by-flooding-gfx-ring-with-jobs");
+	igt_subtest("amdgpu-deadlock-gfx")
 	amdgpu_deadlock_gfx(device);
 
-	igt_subtest("amdgpu_deadlock_compute")
+	igt_describe("Test-GPU-reset-by-flooding-compute-ring-with-jobs");
+	igt_subtest("amdgpu-deadlock-compute")
 	amdgpu_deadlock_compute(device);
-
-	igt_subtest("dispatch_hang_slow_compute")
-	amdgpu_dispatch_hang_slow_compute(device);
-
-	igt_subtest("dispatch_hang_slow_gfx")
-	amdgpu_dispatch_hang_slow_gfx(device);
 
 	igt_fixture {
 		amdgpu_device_deinitialize(device);
