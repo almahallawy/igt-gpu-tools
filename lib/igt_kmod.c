@@ -762,15 +762,6 @@ static void *modprobe_task(void *arg)
 	return NULL;
 }
 
-/**
- * igt_kunit:
- * @module_name: the name of the module
- * @opts: options to load the module
- *
- * Loads the test module, parses its (k)tap dmesg output, then unloads it
- *
- * Returns: IGT default codes
- */
 static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 {
 	struct modprobe_data modprobe = { tst->kmod, opts, 0, };
@@ -849,6 +840,14 @@ static void __igt_kunit(struct igt_ktest *tst, const char *opts)
 	igt_skip_on_f(ret, "KTAP parser failed\n");
 }
 
+/**
+ * igt_kunit:
+ * @module_name: the name of the module
+ * @name: the name of subtest, if different from that derived from module name
+ * @opts: options to load the module
+ *
+ * Loads the test module, parses its (k)tap dmesg output, then unloads it
+ */
 void igt_kunit(const char *module_name, const char *name, const char *opts)
 {
 	struct igt_ktest tst = { .kmsg = -1, };
