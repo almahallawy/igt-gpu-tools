@@ -5,6 +5,9 @@
  * Copyright 2023 Advanced Micro Devices, Inc.
  */
 
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include "lib/amdgpu/amd_memory.h"
 #include "lib/amdgpu/amd_command_submission.h"
 #include "lib/amdgpu/amd_dispatch.h"
@@ -19,6 +22,40 @@ static void
 amdgpu_dispatch_hang_slow_compute(amdgpu_device_handle device_handle)
 {
 	amdgpu_dispatch_hang_slow_helper(device_handle, AMDGPU_HW_IP_COMPUTE);
+}
+
+static void
+amdgpu_gpu_reset_test(amdgpu_device_handle device_handle, int drm_amdgpu)
+{
+	amdgpu_context_handle context_handle;
+	char debugfs_path[256], tmp[10];
+	uint32_t hang_state, hangs;
+	struct stat sbuf;
+	int r, fd;
+
+	r = amdgpu_cs_ctx_create(device_handle, &context_handle);
+	igt_assert_eq(r, 0);
+
+	r = fstat(drm_amdgpu, &sbuf);
+	igt_assert_eq(r, 0);
+
+	sprintf(debugfs_path, "/sys/kernel/debug/dri/%d/amdgpu_gpu_recover", minor(sbuf.st_rdev));
+	fd = open(debugfs_path, O_RDONLY);
+	igt_assert_fd(fd);
+
+	r = read(fd, tmp, ARRAY_SIZE(tmp));
+	igt_assert_lt(0, r);
+
+	r = amdgpu_cs_query_reset_state(context_handle, &hang_state, &hangs);
+	igt_assert_eq(r, 0);
+	igt_assert_eq(hang_state, AMDGPU_CTX_UNKNOWN_RESET);
+
+	close(fd);
+	r = amdgpu_cs_ctx_free(context_handle);
+	igt_assert_eq(r, 0);
+
+	amdgpu_gfx_dispatch_test(device_handle, AMDGPU_HW_IP_GFX);
+	amdgpu_gfx_dispatch_test(device_handle, AMDGPU_HW_IP_COMPUTE);
 }
 
 igt_main
@@ -61,6 +98,14 @@ igt_main
 		if (arr_cap[AMD_IP_GFX]) {
 			igt_dynamic_f("amdgpu-dispatch-test-gfx")
 			 amdgpu_dispatch_hang_slow_gfx(device);
+		}
+	}
+
+	igt_describe("Test-GPU-reset-using-amdgpu-debugfs-to-hang-the-job-on-gfx-ring");
+	igt_subtest_with_dynamic("amdgpu-reset-test-gfx-with-IP-GFX-and-COMPUTE") {
+		if (arr_cap[AMD_IP_GFX] && arr_cap[AMD_IP_COMPUTE]) {
+			igt_dynamic_f("amdgpu-reset-gfx-compute")
+			amdgpu_gpu_reset_test(device, fd);
 		}
 	}
 
