@@ -68,6 +68,8 @@ typedef struct {
 	enum pipe pipe;
 } data_t;
 
+static int max_dotclock;
+
 static bool lpsp_is_enabled(data_t *data)
 {
 	char buf[MAX_SINK_LPSP_INFO_BUF_LEN];
@@ -123,7 +125,6 @@ static void setup_lpsp_output(data_t *data)
 {
 	igt_plane_t *primary;
 
-	igt_output_set_pipe(data->output, data->pipe);
 	primary = igt_output_get_plane_type(data->output,
 					    DRM_PLANE_TYPE_PRIMARY);
 	igt_plane_set_fb(primary, NULL);
@@ -158,20 +159,22 @@ static bool test_constraint(data_t *data)
 	int i;
 
 	igt_display_reset(&data->display);
+	igt_output_set_pipe(data->output, data->pipe);
 
 	data->mode = igt_output_get_mode(data->output);
 
-	/* For LPSP avoid pipe big joiner by atleast 4k mode */
-	if (data->mode->hdisplay > 3840 && data->mode->vdisplay > 2160)
+	/* For LPSP avoid Bigjoiner. */
+	if (igt_bigjoiner_possible(data->mode, max_dotclock)) {
 		for (i = 0; i < c->count_modes; i++) {
-			if (c->modes[i].hdisplay <= 3840 &&
-			    c->modes[i].vdisplay <= 2160) {
-				data->mode = &c->modes[i];
-				igt_output_override_mode(data->output,
-							 data->mode);
-				return true;
-			}
+			data->mode = &c->modes[i];
+			if (igt_bigjoiner_possible(data->mode, max_dotclock))
+				continue;
+
+			igt_output_override_mode(data->output, data->mode);
+
+			return true;
 		}
+	}
 
 	return false;
 }
@@ -200,6 +203,8 @@ igt_main
 		data.devid = intel_get_drm_devid(data.drm_fd);
 		igt_display_require(&data.display, data.drm_fd);
 		igt_require(igt_pm_dmc_loaded(data.debugfs_fd));
+
+		max_dotclock = igt_get_max_dotclock(data.drm_fd);
 	}
 
 	igt_describe("This test validates lpsp while all crtc are disabled");
