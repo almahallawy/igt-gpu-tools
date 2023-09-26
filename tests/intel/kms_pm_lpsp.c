@@ -38,7 +38,7 @@
  * Category: Display
  *
  * SUBTEST: kms-lpsp
- * Description: This test validates lpsp on all connected outputs on low power PIPE_A
+ * Description: This test validates lpsp on all connected outputs on low power pipes
  * Driver requirement: i915, xe
  * Functionality: pm_lpsp
  * Mega feature: Display Power
@@ -65,6 +65,7 @@ typedef struct {
 	struct igt_fb fb;
 	drmModeModeInfo *mode;
 	igt_output_t *output;
+	enum pipe pipe;
 } data_t;
 
 static bool lpsp_is_enabled(data_t *data)
@@ -122,8 +123,7 @@ static void setup_lpsp_output(data_t *data)
 {
 	igt_plane_t *primary;
 
-	/* set output pipe = PIPE_A for LPSP */
-	igt_output_set_pipe(data->output, PIPE_A);
+	igt_output_set_pipe(data->output, data->pipe);
 	primary = igt_output_get_plane_type(data->output,
 					    DRM_PLANE_TYPE_PRIMARY);
 	igt_plane_set_fb(primary, NULL);
@@ -152,15 +152,12 @@ static void test_cleanup(data_t *data)
 	data->output = NULL;
 }
 
-static void test_lpsp(data_t *data)
+static bool test_constraint(data_t *data)
 {
 	drmModeConnectorPtr c = data->output->config.connector;
 	int i;
 
-	/* LPSP is low power single pipe usages i.e. PIPE_A */
-	igt_require(igt_pipe_connector_valid(PIPE_A, data->output));
-	igt_require_f(i915_output_is_lpsp_capable(data->drm_fd, data->output),
-		      "output is not lpsp capable\n");
+	igt_display_reset(&data->display);
 
 	data->mode = igt_output_get_mode(data->output);
 
@@ -172,13 +169,15 @@ static void test_lpsp(data_t *data)
 				data->mode = &c->modes[i];
 				igt_output_override_mode(data->output,
 							 data->mode);
-				break;
+				return true;
 			}
 		}
 
-	igt_require(data->mode->hdisplay <= 3840 &&
-		    data->mode->vdisplay <= 2160);
+	return false;
+}
 
+static void test_lpsp(data_t *data)
+{
 	setup_lpsp_output(data);
 	igt_assert_f(igt_wait(lpsp_is_enabled(data), 1000, 100),
 		     "%s: lpsp is not enabled\n%s:\n%s\n",
@@ -211,19 +210,35 @@ igt_main
 		screens_disabled_subtest(&data);
 	}
 
-	igt_describe("This test validates lpsp on all connected outputs on low power PIPE_A");
+	igt_describe("This test validates lpsp on all connected outputs on low power pipes");
 	igt_subtest_with_dynamic_f("kms-lpsp") {
 		igt_display_t *display = &data.display;
 		igt_output_t *output;
+		enum pipe pipe;
 
 		for_each_connected_output(display, output) {
-			igt_dynamic_f("kms-lpsp-%s",
-				      kmstest_connector_type_str(output->config.connector->connector_type)) {
-				data.output = output;
-				test_lpsp(&data);
-			}
+			if (!i915_output_is_lpsp_capable(data.drm_fd, output))
+				continue;
 
-			test_cleanup(&data);
+			for_each_pipe(display, pipe) {
+				if (!igt_pipe_connector_valid(pipe, output))
+					continue;
+
+				/* LPSP is low power single pipe usages i.e. PIPE_A */
+				if (pipe != PIPE_A)
+					continue;
+
+				data.output = output;
+				data.pipe = pipe;
+
+				if (!test_constraint(&data))
+					continue;
+
+				igt_dynamic_f("pipe-%s-%s", kmstest_pipe_name(pipe), igt_output_name(output))
+					test_lpsp(&data);
+
+				test_cleanup(&data);
+			}
 		}
 	}
 
