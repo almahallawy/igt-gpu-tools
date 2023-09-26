@@ -47,6 +47,12 @@ if libdrm_amdgpu.found()
 	else
 		warning('libdrm <= 2.4.99 found, amdgpu_cs_query_reset_state2 not applicable')
 	endif
+	if libdrm_amdgpu.version().version_compare('> 2.4.109')
+		amdgpu_progs +=[ 'amd_pstate', ]
+	else
+		warning('libdrm <= 2.4.109 found, amd_pstate test not applicable')
+	endif
+
 	amdgpu_deps += libdrm_amdgpu
 endif
 
