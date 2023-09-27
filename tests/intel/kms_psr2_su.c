@@ -331,7 +331,7 @@ igt_main
 			      "Sink does not support PSR2\n");
 
 		igt_require_f(intel_display_ver(intel_get_drm_devid(data.drm_fd)) < 13,
-			      "Registers used by this test do not work on display 13\n");
+			      "Registers used by this test do not work on display 13+\n");
 
 		display_init(&data);
 
