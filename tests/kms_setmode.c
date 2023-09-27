@@ -46,8 +46,8 @@
  * Test category: functionality test
  *
  * SUBTEST: basic-clone-single-crtc
- * Description: Tests the mode by cloning the single crtc by iterating through all
- *              valid crtc/connector combinations
+ * Description: Test allows the use of a single CRTC for two connectors, such as VGA/HDMI,
+ *		VGA/DP, and HDMI/HDMI
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
@@ -62,8 +62,8 @@
  * Test category: functionality test
  *
  * SUBTEST: invalid-clone-exclusive-crtc
- * Description: Tests the mode by cloning the exclusive crtc by iterating through
- *              all invalid crtc/connector combinations
+ * Description: Test is allowed when a connector uses CRTC that is not compatible with the
+ *		connector, for instance, DP/HDMI can be used on certain pipes only on older platforms
  * Driver requirement: i915, xe
  * Functionality: kms_core
  * Mega feature: General Display Features
@@ -978,6 +978,7 @@ const char *help_str =
 	"  -d\t\tDon't run any test, only print what would be done. (still needs DRM access)\n"
 	"  -t <test id>\tRun only the test with this id\n"
 	"  -e \t\tExtend to run on all pipes. (By default tests will run on two pipes only)\n";
+
 
 igt_main_args("det:", NULL, help_str, opt_handler, NULL)
 {
