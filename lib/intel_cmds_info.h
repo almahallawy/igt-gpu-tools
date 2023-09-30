@@ -18,8 +18,15 @@ enum blt_tiling_type {
 	__BLT_MAX_TILING
 };
 
+enum blt_memop_type {
+	M_LINEAR,
+	M_MATRIX,
+};
+
 enum blt_cmd_type {
 	SRC_COPY,
+	MEM_SET,
+	MEM_COPY,
 	XY_SRC_COPY,
 	XY_FAST_COPY,
 	XY_BLOCK_COPY,

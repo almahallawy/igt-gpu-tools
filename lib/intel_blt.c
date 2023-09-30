@@ -290,6 +290,38 @@ bool blt_has_block_copy(int fd)
 }
 
 /**
+ * blt_has_mem_copy
+ * @fd: drm fd
+ *
+ * Check if mem copy is supported by @fd device
+ *
+ * Returns:
+ * true if it does, false otherwise.
+ */
+bool blt_has_mem_copy(int fd)
+{
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
+
+	return blt_supports_command(cmds_info, MEM_COPY);
+}
+
+/**
+ * blt_has_mem_set
+ * @fd: drm fd
+ *
+ * Check if mem set is supported by @fd device
+ *
+ * Returns:
+ * true if it does, false otherwise.
+ */
+bool blt_has_mem_set(int fd)
+{
+	const struct intel_cmds_info *cmds_info = GET_CMDS_INFO(fd);
+
+	return blt_supports_command(cmds_info, MEM_SET);
+}
+
+/**
  * blt_has_fast_copy
  * @fd: drm fd
  *

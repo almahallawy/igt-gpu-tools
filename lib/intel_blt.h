@@ -175,6 +175,8 @@ bool blt_cmd_has_property(const struct intel_cmds_info *cmds_info,
 			  uint32_t prop);
 
 bool blt_has_block_copy(int fd);
+bool blt_has_mem_copy(int fd);
+bool blt_has_mem_set(int fd);
 bool blt_has_fast_copy(int fd);
 bool blt_has_xy_src_copy(int fd);
 bool blt_has_xy_color(int fd);

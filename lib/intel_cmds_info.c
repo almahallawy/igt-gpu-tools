@@ -83,6 +83,15 @@ static const struct blt_cmd_info
 						 BLT_CMD_EXTENDED);
 
 static const struct blt_cmd_info
+		pvc_mem_copy = BLT_INFO(MEM_COPY,
+					BIT(M_LINEAR));
+
+static const struct blt_cmd_info
+		pvc_mem_set = BLT_INFO(MEM_SET,
+				       BIT(M_LINEAR) |
+				       BIT(M_MATRIX));
+
+static const struct blt_cmd_info
 		pre_gen6_xy_color_blt = BLT_INFO(XY_COLOR_BLT,
 						 BIT(T_LINEAR) |
 						 BIT(T_XMAJOR));
@@ -154,6 +163,8 @@ const struct intel_cmds_info gen12_pvc_cmds_info = {
 	.blt_cmds = {
 		[XY_FAST_COPY] = &pvc_xy_fast_copy,
 		[XY_BLOCK_COPY] = &pvc_xy_block_copy,
+		[MEM_COPY] = &pvc_mem_copy,
+		[MEM_SET] = &pvc_mem_set,
 	}
 };
 
