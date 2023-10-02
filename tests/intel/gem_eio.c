@@ -1111,8 +1111,16 @@ static void test_reset_stress(int fd, unsigned int flags)
 	const intel_ctx_t *ctx0 = context_create_safe(fd);
 	uint64_t ahnd = get_reloc_ahnd(fd, ctx0->id);
 
-	for_each_ring(e, fd)
+	for_each_ring(e, fd) {
+		struct intel_execution_engine2 engine;
+
+		engine = gem_eb_flags_to_engine(eb_ring(e));
+
+		if (gem_engine_can_block_ggtt_binder(fd, &engine))
+			continue;
+
 		reset_stress(fd, ahnd, ctx0, e->name, eb_ring(e), flags);
+	}
 
 	intel_ctx_destroy(fd, ctx0);
 	put_ahnd(ahnd);
