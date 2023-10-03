@@ -1,4 +1,4 @@
-igt@feature_discovery@chamelium
+igt@kms_feature_discovery@chamelium
 igt@kms_chamelium_audio@dp-audio
 igt@kms_chamelium_audio@dp-audio-edid
 igt@kms_chamelium_audio@hdmi-audio
