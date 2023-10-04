@@ -2920,17 +2920,19 @@ static void blitcopy(const struct igt_fb *dst_fb,
 			blt_set_copy_object(&blt.src, src);
 			blt_set_copy_object(&blt.dst, dst);
 
-			blt_set_object_ext(&ext.src,
-					   blt_compression_format(&blt, src_fb),
-					   src_fb->width, src_fb->height,
-					   SURFACE_TYPE_2D);
+			if (blt_uses_extended_block_copy(src_fb->fd)) {
+				blt_set_object_ext(&ext.src,
+						blt_compression_format(&blt, src_fb),
+						src_fb->width, src_fb->height,
+						SURFACE_TYPE_2D);
 
-			blt_set_object_ext(&ext.dst,
-					   blt_compression_format(&blt, dst_fb),
-					   dst_fb->width, dst_fb->height,
-					   SURFACE_TYPE_2D);
+				blt_set_object_ext(&ext.dst,
+						blt_compression_format(&blt, dst_fb),
+						dst_fb->width, dst_fb->height,
+						SURFACE_TYPE_2D);
 
-			pext = &ext;
+				pext = &ext;
+			}
 
 			blt_set_batch(&blt.bb, xe_bb, bb_size, mem_region);
 
