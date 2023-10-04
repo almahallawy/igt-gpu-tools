@@ -16,8 +16,6 @@
 #define GEN12_MOCS_WB_IDX			2
 #define XE2_MOCS_UC_IDX				3
 #define XE2_MOCS_WB_IDX				4
-#define XY_BLOCK_COPY_BLT_MOCS_SHIFT		21
-#define XY_CTRL_SURF_COPY_BLT_MOCS_SHIFT	25
 
 struct drm_intel_mocs_index {
 	uint8_t uc_index;
