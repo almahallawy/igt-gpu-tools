@@ -259,8 +259,7 @@ gen11_fill_surface_state(struct intel_bb *ibb,
 }
 
 static uint32_t
-gen7_fill_binding_table(struct intel_bb *ibb,
-			struct intel_buf *buf)
+fill_binding_table(struct intel_bb *ibb, struct intel_buf *buf)
 {
 	uint32_t binding_table_offset;
 	uint32_t *binding_table;
@@ -321,7 +320,7 @@ gen7_fill_interface_descriptor(struct intel_bb *ibb,
 	uint32_t offset;
 	uint32_t binding_table_offset, kernel_offset;
 
-	binding_table_offset = gen7_fill_binding_table(ibb, buf);
+	binding_table_offset = fill_binding_table(ibb, buf);
 	kernel_offset = gen7_fill_kernel(ibb, kernel, size);
 
 	intel_bb_ptr_align(ibb, 64);
@@ -357,7 +356,7 @@ gen8_fill_interface_descriptor(struct intel_bb *ibb,
 	uint32_t offset;
 	uint32_t binding_table_offset, kernel_offset;
 
-	binding_table_offset = gen7_fill_binding_table(ibb, buf);
+	binding_table_offset = fill_binding_table(ibb, buf);
 	kernel_offset = gen7_fill_kernel(ibb, kernel, size);
 
 	intel_bb_ptr_align(ibb, 64);
@@ -803,7 +802,7 @@ xehp_fill_interface_descriptor(struct intel_bb *ibb,
 {
 	uint32_t binding_table_offset, kernel_offset;
 
-	binding_table_offset = gen7_fill_binding_table(ibb, dst);
+	binding_table_offset = fill_binding_table(ibb, dst);
 	kernel_offset = gen7_fill_kernel(ibb, kernel, size);
 
 	memset(idd, 0, sizeof(*idd));
