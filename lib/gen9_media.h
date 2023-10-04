@@ -1,91 +1,24 @@
-#ifndef GEN8_MEDIA_H
-#define GEN8_MEDIA_H
+#ifndef GEN9_MEDIA_H
+#define GEN9_MEDIA_H
 
 #include <stdint.h>
 #include "surfaceformat.h"
 #include "gen4_render.h"
 
-#define GEN8_FLOATING_POINT_IEEE_754		0
-#define GEN8_FLOATING_POINT_NON_IEEE_754	1
+#define GEN9_PIPELINE_SELECTION_MASK		(3 << 8)
 
-#define GFXPIPE(Pipeline,Opcode,Subopcode) ((3 << 29) |			\
-						((Pipeline) << 27) |	\
-						((Opcode) << 24) |	\
-						((Subopcode) << 16))
+/*  If enabled, it will force awake media enginee and the following instructions
+ *  will require that the media enginee is awake.
+ */
+#define GEN9_FORCE_MEDIA_AWAKE_DISABLE		(0 << 5)
+#define GEN9_FORCE_MEDIA_AWAKE_ENABLE		(1 << 5)
+#define GEN9_FORCE_MEDIA_AWAKE_MASK		(1 << 13)
 
-#define GEN8_PIPELINE_SELECT			GFXPIPE(1, 1, 4)
+#define GEN9_SAMPLER_DOP_GATE_DISABLE		(0 << 4)
+#define GEN9_SAMPLER_DOP_GATE_ENABLE		(1 << 4)
+#define GEN9_SAMPLER_DOP_GATE_MASK		(1 << 12)
 
-#define GEN8_STATE_BASE_ADDRESS			GFXPIPE(0, 1, 1)
-
-#define GEN8_MEDIA_VFE_STATE			GFXPIPE(2, 0, 0)
-#define GEN8_MEDIA_CURBE_LOAD			GFXPIPE(2, 0, 1)
-#define GEN8_MEDIA_INTERFACE_DESCRIPTOR_LOAD	GFXPIPE(2, 0, 2)
-#define GEN8_MEDIA_STATE_FLUSH			GFXPIPE(2, 0, 4)
-#define GEN8_MEDIA_OBJECT			GFXPIPE(2, 1, 0)
-
-#define GEN8_3DSTATE_BINDING_TABLE_POOL_ALLOC	GFXPIPE(3, 1, 25)
-
-struct gen8_interface_descriptor_data
-{
-	struct {
-		uint32_t pad0:6;
-		uint32_t kernel_start_pointer:26;
-	} desc0;
-
-	struct {
-		uint32_t kernel_start_pointer_high:16;
-		uint32_t pad0:16;
-	} desc1;
-
-	struct {
-		uint32_t pad0:7;
-		uint32_t software_exception_enable:1;
-		uint32_t pad1:3;
-		uint32_t maskstack_exception_enable:1;
-		uint32_t pad2:1;
-		uint32_t illegal_opcode_exception_enable:1;
-		uint32_t pad3:2;
-		uint32_t floating_point_mode:1;
-		uint32_t thread_priority:1;
-		uint32_t single_program_flow:1;
-		uint32_t denorm_mode:1;
-		uint32_t pad4:12;
-	} desc2;
-
-	struct {
-		uint32_t pad0:2;
-		uint32_t sampler_count:3;
-		uint32_t sampler_state_pointer:27;
-	} desc3;
-
-	struct {
-		uint32_t binding_table_entry_count:5;
-		uint32_t binding_table_pointer:11;
-		uint32_t pad0: 16;
-	} desc4;
-
-	struct {
-		uint32_t constant_urb_entry_read_offset:16;
-		uint32_t constant_urb_entry_read_length:16;
-	} desc5;
-
-	struct {
-		uint32_t num_threads_in_tg:10;
-		uint32_t pad0:5;
-		uint32_t global_barrier_enable:1;
-		uint32_t shared_local_memory_size:5;
-		uint32_t barrier_enable:1;
-		uint32_t rounding_mode:2;
-		uint32_t pad1:8;
-	} desc6;
-
-	struct {
-		uint32_t cross_thread_constant_data_read_length:8;
-		uint32_t pad0:24;
-	} desc7;
-};
-
-struct gen8_surface_state
+struct gen9_surface_state
 {
 	struct {
 		uint32_t cube_pos_z:1;
@@ -207,4 +140,4 @@ struct gen8_surface_state
 	} ss15;
 };
 
-#endif /* GEN8_MEDIA_H */
+#endif /* GEN9_MEDIA_H */

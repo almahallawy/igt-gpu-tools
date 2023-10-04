@@ -6,6 +6,7 @@ ignore_headers = [
 	'gen7_render.h',
 	'gen8_media.h',
 	'gen8_render.h',
+	'gen9_media.h',
 	'gpgpu_fill.h',
 	'i830_reg.h',
 	'i915_3d.h',

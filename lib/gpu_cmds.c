@@ -191,7 +191,7 @@ gen9_fill_surface_state(struct intel_bb *ibb,
 			uint32_t format,
 			int is_dst)
 {
-	struct gen8_surface_state *ss;
+	struct gen9_surface_state *ss;
 	uint32_t write_domain, read_domain, offset;
 	uint64_t address;
 	enum intel_buf_mocs mocs = intel_buf_get_mocs(buf);
@@ -252,7 +252,7 @@ gen11_fill_surface_state(struct intel_bb *ibb,
 			 uint32_t horizontal_alignment,
 			 int is_dst)
 {
-	struct gen8_surface_state *ss;
+	struct gen9_surface_state *ss;
 	uint32_t write_domain, read_domain, offset;
 	uint64_t address;
 	enum intel_buf_mocs mocs = intel_buf_get_mocs(buf);

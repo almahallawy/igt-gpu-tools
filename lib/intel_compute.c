@@ -12,6 +12,7 @@
 #include "igt.h"
 #include "gen7_media.h"
 #include "gen8_media.h"
+#include "gen9_media.h"
 #include "intel_compute.h"
 #include "lib/igt_syncobj.h"
 #include "lib/intel_reg.h"

@@ -27,6 +27,7 @@
 #include "media_fill.h"
 #include "gen7_media.h"
 #include "gen8_media.h"
+#include "gen9_media.h"
 #include "intel_reg.h"
 #include "drmtest.h"
 #include "gpu_cmds.h"
