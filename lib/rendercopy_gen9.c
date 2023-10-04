@@ -19,6 +19,7 @@
 #include "intel_bufops.h"
 #include "intel_batchbuffer.h"
 #include "intel_io.h"
+#include "intel_mocs.h"
 #include "rendercopy.h"
 #include "gen9_render.h"
 #include "intel_reg.h"
@@ -134,34 +135,6 @@ static const uint32_t gen12p71_render_copy[][4] = {
 	{ 0x00040061, 0x77050aa0, 0x00461205, 0x00000000 },
 	{ 0x80041131, 0x00000004, 0x50007144, 0x00c40000 },
 };
-
-/*
- * Gen >= 12 onwards don't have a setting for PTE,
- * so using I915_MOCS_PTE as mocs index may lead to
- * some undefined MOCS behavior.
- * Correct MOCS index should be referred from BSpec
- * and programmed accordingly.
- * This helper function is providing appropriate UC index.
- */
-static uint8_t
-intel_get_uc_mocs(int fd) {
-
-	uint16_t devid = intel_get_drm_devid(fd);
-	uint8_t  uc_index;
-
-	if (IS_DG1(devid))
-		uc_index = 1;
-	else if (IS_GEN12(devid))
-		uc_index = 3;
-	else
-		uc_index = I915_MOCS_PTE;
-
-	/*
-	 * BitField [6:1] represents index to MOCS Tables
-	 * BitField [0] represents Encryption/Decryption
-	 */
-	return uc_index << 1;
-}
 
 /* Mostly copy+paste from gen6, except height, width, pitch moved */
 static uint32_t
