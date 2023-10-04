@@ -109,7 +109,8 @@ struct xehp_surface_state {
 		uint32_t double_fetch_disable: BITRANGE(17, 17);
 		uint32_t corner_texel_mode: BITRANGE(18, 18);
 		uint32_t base_mip_level: BITRANGE(19, 23);
-		uint32_t memory_object_control: BITRANGE(24, 30);
+		uint32_t pxp: BITRANGE(24, 24);
+		uint32_t mocs_index: BITRANGE(25, 30);
 		uint32_t unorm_path_in_color_pipe: BITRANGE(31, 31);
 	} ss1;
 

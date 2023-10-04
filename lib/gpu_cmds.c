@@ -215,9 +215,9 @@ gen9_fill_surface_state(struct intel_bb *ibb,
 	ss->ss0.horizontal_alignment = 1; /* align 4 */
 
 	if (mocs == INTEL_BUF_MOCS_UC)
-		ss->ss1.memory_object_control = intel_get_uc_mocs(ibb->fd);
+		ss->ss1.mocs_index = intel_get_uc_mocs_index(ibb->fd);
 	else if (mocs == INTEL_BUF_MOCS_WB)
-		ss->ss1.memory_object_control = intel_get_wb_mocs(ibb->fd);
+		ss->ss1.mocs_index = intel_get_wb_mocs_index(ibb->fd);
 
 	if (buf->tiling == I915_TILING_X)
 		ss->ss0.tiled_mode = 2;
@@ -276,9 +276,9 @@ gen11_fill_surface_state(struct intel_bb *ibb,
 	ss->ss0.horizontal_alignment = horizontal_alignment; /* align 4 */
 
 	if (mocs == INTEL_BUF_MOCS_UC)
-		ss->ss1.memory_object_control = intel_get_uc_mocs(ibb->fd);
+		ss->ss1.mocs_index = intel_get_uc_mocs_index(ibb->fd);
 	else if (mocs == INTEL_BUF_MOCS_WB)
-		ss->ss1.memory_object_control = intel_get_wb_mocs(ibb->fd);
+		ss->ss1.mocs_index = intel_get_wb_mocs_index(ibb->fd);
 
 	if (buf->tiling == I915_TILING_X)
 		ss->ss0.tiled_mode = 2;
@@ -295,7 +295,7 @@ gen11_fill_surface_state(struct intel_bb *ibb,
 	ss->ss9.base_addr_hi = address >> 32;
 
 	if (is_dst) {
-		ss->ss1.memory_object_control = 2;
+		ss->ss1.mocs_index = I915_MOCS_PTE;
 		ss->ss2.height = 1;
 		ss->ss2.width  = 95;
 		ss->ss3.pitch  = 0;
@@ -909,9 +909,9 @@ xehp_fill_surface_state(struct intel_bb *ibb,
 	ss->ss0.horizontal_alignment = 1; /* align 4 */
 
 	if (mocs == INTEL_BUF_MOCS_UC)
-		ss->ss1.memory_object_control = intel_get_uc_mocs(ibb->fd);
+		ss->ss1.mocs_index = intel_get_uc_mocs_index(ibb->fd);
 	else if (mocs == INTEL_BUF_MOCS_WB)
-		ss->ss1.memory_object_control = intel_get_wb_mocs(ibb->fd);
+		ss->ss1.mocs_index = intel_get_wb_mocs_index(ibb->fd);
 
 	if (buf->tiling == I915_TILING_X)
 		ss->ss0.tiled_mode = 2;

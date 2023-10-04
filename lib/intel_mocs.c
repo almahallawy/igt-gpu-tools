@@ -51,22 +51,20 @@ static void get_mocs_index(int fd, struct drm_intel_mocs_index *mocs)
 	}
 }
 
-/* BitField [6:1] represents index to MOCS Tables
- * BitField [0] represents Encryption/Decryption
- */
-
-uint8_t intel_get_wb_mocs(int fd)
+uint8_t intel_get_wb_mocs_index(int fd)
 {
 	struct drm_intel_mocs_index mocs;
 
 	get_mocs_index(fd, &mocs);
-	return mocs.wb_index << 1;
+
+	return mocs.wb_index;
 }
 
-uint8_t intel_get_uc_mocs(int fd)
+uint8_t intel_get_uc_mocs_index(int fd)
 {
 	struct drm_intel_mocs_index mocs;
 
 	get_mocs_index(fd, &mocs);
-	return mocs.uc_index << 1;
+
+	return mocs.uc_index;
 }

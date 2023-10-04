@@ -100,7 +100,7 @@ static void surf_copy(int i915,
 	uint32_t bb1, bb2, ccs, ccs2, *ccsmap, *ccsmap2;
 	uint64_t bb_size, ccssize = mid->size / CCS_RATIO;
 	uint32_t *ccscopy;
-	uint8_t uc_mocs = intel_get_uc_mocs(i915);
+	uint8_t uc_mocs = intel_get_uc_mocs_index(i915);
 	int result;
 
 	igt_assert(mid->compression);
@@ -323,7 +323,7 @@ static void block_copy(int i915,
 	enum blt_compression mid_compression = config->compression;
 	int mid_compression_format = param.compression_format;
 	enum blt_compression_type comp_type = COMPRESSION_TYPE_3D;
-	uint8_t uc_mocs = intel_get_uc_mocs(i915);
+	uint8_t uc_mocs = intel_get_uc_mocs_index(i915);
 	int result;
 
 	igt_assert(__gem_create_in_memory_regions(i915, &bb, &bb_size, region1) == 0);
@@ -439,7 +439,7 @@ static void block_multicopy(int i915,
 	enum blt_compression mid_compression = config->compression;
 	int mid_compression_format = param.compression_format;
 	enum blt_compression_type comp_type = COMPRESSION_TYPE_3D;
-	uint8_t uc_mocs = intel_get_uc_mocs(i915);
+	uint8_t uc_mocs = intel_get_uc_mocs_index(i915);
 	int result;
 
 	igt_assert(__gem_create_in_memory_regions(i915, &bb, &bb_size, region1) == 0);
@@ -475,7 +475,7 @@ static void block_multicopy(int i915,
 
 	if (config->inplace) {
 		blt_set_object(&blt3.dst, mid->handle, dst->size, mid->region,
-			       mid->mocs, mid_tiling, COMPRESSION_DISABLED,
+			       mid->mocs_index, mid_tiling, COMPRESSION_DISABLED,
 			       comp_type);
 		blt3.dst.ptr = mid->ptr;
 	}

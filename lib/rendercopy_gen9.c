@@ -138,7 +138,7 @@ static const uint32_t gen12p71_render_copy[][4] = {
 
 /* Mostly copy+paste from gen6, except height, width, pitch moved */
 static uint32_t
-gen8_bind_buf(struct intel_bb *ibb, const struct intel_buf *buf, int is_dst,
+gen9_bind_buf(struct intel_bb *ibb, const struct intel_buf *buf, int is_dst,
 	      bool fast_clear) {
 	struct gen9_surface_state *ss;
 	uint32_t write_domain, read_domain;
@@ -173,11 +173,11 @@ gen8_bind_buf(struct intel_bb *ibb, const struct intel_buf *buf, int is_dst,
 		/*
 		 * mocs table version 1 index 3 groub wb use l3
 		 */
-		ss->ss1.memory_object_control = 3 << 1;
+		ss->ss1.mocs_index = 3;
 		ss->ss5.mip_tail_start_lod = 0;
 	} else {
 		ss->ss0.render_cache_read_write = 1;
-		ss->ss1.memory_object_control = intel_get_uc_mocs(i915);
+		ss->ss1.mocs_index = intel_get_uc_mocs_index(i915);
 		ss->ss5.mip_tail_start_lod = 1; /* needed with trmode */
 	}
 
@@ -187,7 +187,7 @@ gen8_bind_buf(struct intel_bb *ibb, const struct intel_buf *buf, int is_dst,
 		ss->ss0.tiled_mode = 3;
 
 	if (intel_buf_pxp(buf))
-		ss->ss1.memory_object_control |= 1;
+		ss->ss1.pxp = 1;
 
 	if (buf->tiling == I915_TILING_Yf)
 		ss->ss5.trmode = 1;
@@ -282,10 +282,10 @@ gen8_bind_surfaces(struct intel_bb *ibb,
 	binding_table = intel_bb_ptr_align(ibb, 32);
 	binding_table_offset = intel_bb_ptr_add_return_prev_offset(ibb, 32);
 
-	binding_table[0] = gen8_bind_buf(ibb, dst, 1, fast_clear);
+	binding_table[0] = gen9_bind_buf(ibb, dst, 1, fast_clear);
 
 	if (src != NULL)
-		binding_table[1] = gen8_bind_buf(ibb, src, 0, false);
+		binding_table[1] = gen9_bind_buf(ibb, src, 0, false);
 
 	return binding_table_offset;
 }

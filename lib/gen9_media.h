@@ -45,7 +45,8 @@ struct gen9_surface_state
 		uint32_t qpitch:15;
 		uint32_t pad1:4;
 		uint32_t base_mip_level:5;
-		uint32_t memory_object_control:7;
+		uint32_t pxp:1;
+		uint32_t mocs_index:6;
 		uint32_t pad0:1;
 	} ss1;
 

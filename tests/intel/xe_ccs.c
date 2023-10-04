@@ -96,7 +96,7 @@ static void surf_copy(int xe,
 	uint32_t bb1, bb2, ccs, ccs2, *ccsmap, *ccsmap2;
 	uint64_t bb_size, ccssize = mid->size / CCS_RATIO;
 	uint32_t *ccscopy;
-	uint8_t uc_mocs = intel_get_uc_mocs(xe);
+	uint8_t uc_mocs = intel_get_uc_mocs_index(xe);
 	uint32_t sysmem = system_memory(xe);
 	int result;
 
@@ -294,7 +294,7 @@ static void block_copy(int xe,
 	enum blt_compression mid_compression = config->compression;
 	int mid_compression_format = param.compression_format;
 	enum blt_compression_type comp_type = COMPRESSION_TYPE_3D;
-	uint8_t uc_mocs = intel_get_uc_mocs(xe);
+	uint8_t uc_mocs = intel_get_uc_mocs_index(xe);
 	int result;
 
 	bb = xe_bo_create_flags(xe, 0, bb_size, region1);
@@ -415,7 +415,7 @@ static void block_multicopy(int xe,
 	enum blt_compression mid_compression = config->compression;
 	int mid_compression_format = param.compression_format;
 	enum blt_compression_type comp_type = COMPRESSION_TYPE_3D;
-	uint8_t uc_mocs = intel_get_uc_mocs(xe);
+	uint8_t uc_mocs = intel_get_uc_mocs_index(xe);
 	int result;
 
 	bb = xe_bo_create_flags(xe, 0, bb_size, region1);
@@ -450,7 +450,7 @@ static void block_multicopy(int xe,
 
 	if (config->inplace) {
 		blt_set_object(&blt3.dst, mid->handle, dst->size, mid->region,
-			       mid->mocs, mid_tiling, COMPRESSION_DISABLED,
+			       mid->mocs_index, mid_tiling, COMPRESSION_DISABLED,
 			       comp_type);
 		blt3.dst.ptr = mid->ptr;
 	}

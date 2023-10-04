@@ -58,7 +58,8 @@ struct gen12_block_copy_data {
 	struct {
 		uint32_t dst_pitch:			BITRANGE(0, 17);
 		uint32_t dst_aux_mode:			BITRANGE(18, 20);
-		uint32_t dst_mocs:			BITRANGE(21, 27);
+		uint32_t pxp:				BITRANGE(21, 21);
+		uint32_t dst_mocs_index:		BITRANGE(22, 27);
 		uint32_t dst_ctrl_surface_type:		BITRANGE(28, 28);
 		uint32_t dst_compression:		BITRANGE(29, 29);
 		uint32_t dst_tiling:			BITRANGE(30, 31);
@@ -98,7 +99,8 @@ struct gen12_block_copy_data {
 	struct {
 		uint32_t src_pitch:			BITRANGE(0, 17);
 		uint32_t src_aux_mode:			BITRANGE(18, 20);
-		uint32_t src_mocs:			BITRANGE(21, 27);
+		uint32_t pxp:				BITRANGE(21, 21);
+		uint32_t src_mocs_index:		BITRANGE(22, 27);
 		uint32_t src_ctrl_surface_type:		BITRANGE(28, 28);
 		uint32_t src_compression:		BITRANGE(29, 29);
 		uint32_t src_tiling:			BITRANGE(30, 31);
@@ -565,7 +567,7 @@ static void fill_data(struct gen12_block_copy_data *data,
 		data->dw01.dst_aux_mode = __aux_mode(blt->fd, blt->driver, &blt->dst);
 	data->dw01.dst_pitch = blt->dst.pitch - 1;
 
-	data->dw01.dst_mocs = blt->dst.mocs;
+	data->dw01.dst_mocs_index = blt->dst.mocs_index;
 	data->dw01.dst_compression = blt->dst.compression;
 	data->dw01.dst_tiling = __block_tiling(blt->dst.tiling);
 
@@ -590,7 +592,7 @@ static void fill_data(struct gen12_block_copy_data *data,
 
 	data->dw08.src_pitch = blt->src.pitch - 1;
 	data->dw08.src_aux_mode = __aux_mode(blt->fd, blt->driver, &blt->src);
-	data->dw08.src_mocs = blt->src.mocs;
+	data->dw08.src_mocs_index = blt->src.mocs_index;
 	data->dw08.src_compression = blt->src.compression;
 	data->dw08.src_tiling = __block_tiling(blt->src.tiling);
 
@@ -660,10 +662,10 @@ static void dump_bb_cmd(struct gen12_block_copy_data *data)
 		 cmd[0],
 		 data->dw00.client, data->dw00.opcode, data->dw00.color_depth,
 		 data->dw00.special_mode, data->dw00.length);
-	igt_info(" dw01: [%08x] dst <pitch: %d, aux: %d, mocs: %d, compr: %d, "
+	igt_info(" dw01: [%08x] dst <pitch: %d, aux: %d, mocs_idx: %d, compr: %d, "
 		 "tiling: %d, ctrl surf type: %d>\n",
 		 cmd[1], data->dw01.dst_pitch, data->dw01.dst_aux_mode,
-		 data->dw01.dst_mocs, data->dw01.dst_compression,
+		 data->dw01.dst_mocs_index, data->dw01.dst_compression,
 		 data->dw01.dst_tiling, data->dw01.dst_ctrl_surface_type);
 	igt_info(" dw02: [%08x] dst geom <x1: %d, y1: %d>\n",
 		 cmd[2], data->dw02.dst_x1, data->dw02.dst_y1);
@@ -678,10 +680,10 @@ static void dump_bb_cmd(struct gen12_block_copy_data *data)
 		 data->dw06.dst_target_memory);
 	igt_info(" dw07: [%08x] src geom <x1: %d, y1: %d>\n",
 		 cmd[7], data->dw07.src_x1, data->dw07.src_y1);
-	igt_info(" dw08: [%08x] src <pitch: %d, aux: %d, mocs: %d, compr: %d, "
+	igt_info(" dw08: [%08x] src <pitch: %d, aux: %d, mocs_idx: %d, compr: %d, "
 		 "tiling: %d, ctrl surf type: %d>\n",
 		 cmd[8], data->dw08.src_pitch, data->dw08.src_aux_mode,
-		 data->dw08.src_mocs, data->dw08.src_compression,
+		 data->dw08.src_mocs_index, data->dw08.src_compression,
 		 data->dw08.src_tiling, data->dw08.src_ctrl_surface_type);
 	igt_info(" dw09: [%08x] src offset lo (0x%x)\n",
 		 cmd[9], data->dw09.src_address_lo);
@@ -946,7 +948,8 @@ struct gen12_ctrl_surf_copy_data {
 
 	struct {
 		uint32_t src_address_hi:		BITRANGE(0, 24);
-		uint32_t src_mocs:			BITRANGE(25, 31);
+		uint32_t pxp:				BITRANGE(25, 25);
+		uint32_t src_mocs_index:		BITRANGE(26, 31);
 	} dw02;
 
 	struct {
@@ -955,7 +958,8 @@ struct gen12_ctrl_surf_copy_data {
 
 	struct {
 		uint32_t dst_address_hi:		BITRANGE(0, 24);
-		uint32_t dst_mocs:			BITRANGE(25, 31);
+		uint32_t pxp:				BITRANGE(25, 25);
+		uint32_t dst_mocs_index:		BITRANGE(26, 31);
 	} dw04;
 };
 
@@ -972,12 +976,12 @@ static void dump_bb_surf_ctrl_cmd(const struct gen12_ctrl_surf_copy_data *data)
 		 data->dw00.size_of_ctrl_copy, data->dw00.length);
 	igt_info(" dw01: [%08x] src offset lo (0x%x)\n",
 		 cmd[1], data->dw01.src_address_lo);
-	igt_info(" dw02: [%08x] src offset hi (0x%x), src mocs: %u\n",
-		 cmd[2], data->dw02.src_address_hi, data->dw02.src_mocs);
+	igt_info(" dw02: [%08x] src offset hi (0x%x), src mocs idx: %u\n",
+		 cmd[2], data->dw02.src_address_hi, data->dw02.src_mocs_index);
 	igt_info(" dw03: [%08x] dst offset lo (0x%x)\n",
 		 cmd[3], data->dw03.dst_address_lo);
-	igt_info(" dw04: [%08x] dst offset hi (0x%x), src mocs: %u\n",
-		 cmd[4], data->dw04.dst_address_hi, data->dw04.dst_mocs);
+	igt_info(" dw04: [%08x] dst offset hi (0x%x), dst mocs idx: %u\n",
+		 cmd[4], data->dw04.dst_address_hi, data->dw04.dst_mocs_index);
 }
 
 /**
@@ -1042,11 +1046,11 @@ uint64_t emit_blt_ctrl_surf_copy(int fd,
 
 	data.dw01.src_address_lo = src_offset;
 	data.dw02.src_address_hi = src_offset >> 32;
-	data.dw02.src_mocs = surf->src.mocs;
+	data.dw02.src_mocs_index = surf->src.mocs_index;
 
 	data.dw03.dst_address_lo = dst_offset;
 	data.dw04.dst_address_hi = dst_offset >> 32;
-	data.dw04.dst_mocs = surf->dst.mocs;
+	data.dw04.dst_mocs_index = surf->dst.mocs_index;
 
 	bb = bo_map(fd, surf->bb.handle, surf->bb.size, surf->driver);
 
@@ -1435,7 +1439,7 @@ void blt_set_batch(struct blt_copy_batch *batch,
 
 struct blt_copy_object *
 blt_create_object(const struct blt_copy_data *blt, uint32_t region,
-		  uint32_t width, uint32_t height, uint32_t bpp, uint8_t mocs,
+		  uint32_t width, uint32_t height, uint32_t bpp, uint8_t mocs_index,
 		  enum blt_tiling_type tiling,
 		  enum blt_compression compression,
 		  enum blt_compression_type compression_type,
@@ -1460,7 +1464,7 @@ blt_create_object(const struct blt_copy_data *blt, uint32_t region,
 							  &size, region) == 0);
 	}
 
-	blt_set_object(obj, handle, size, region, mocs, tiling,
+	blt_set_object(obj, handle, size, region, mocs_index, tiling,
 		       compression, compression_type);
 	blt_set_geom(obj, stride, 0, 0, width, height, 0, 0);
 
@@ -1481,14 +1485,14 @@ void blt_destroy_object(int fd, struct blt_copy_object *obj)
 
 void blt_set_object(struct blt_copy_object *obj,
 		    uint32_t handle, uint64_t size, uint32_t region,
-		    uint8_t mocs, enum blt_tiling_type tiling,
+		    uint8_t mocs_index, enum blt_tiling_type tiling,
 		    enum blt_compression compression,
 		    enum blt_compression_type compression_type)
 {
 	obj->handle = handle;
 	obj->size = size;
 	obj->region = region;
-	obj->mocs = mocs;
+	obj->mocs_index = mocs_index;
 	obj->tiling = tiling;
 	obj->compression = compression;
 	obj->compression_type = compression_type;
@@ -1516,12 +1520,12 @@ void blt_set_copy_object(struct blt_copy_object *obj,
 
 void blt_set_ctrl_surf_object(struct blt_ctrl_surf_copy_object *obj,
 			      uint32_t handle, uint32_t region, uint64_t size,
-			      uint8_t mocs, enum blt_access_type access_type)
+			      uint8_t mocs_index, enum blt_access_type access_type)
 {
 	obj->handle = handle;
 	obj->region = region;
 	obj->size = size;
-	obj->mocs = mocs;
+	obj->mocs_index = mocs_index;
 	obj->access_type = access_type;
 }
 
@@ -1589,8 +1593,8 @@ void blt_surface_fill_rect(int fd, const struct blt_copy_object *obj,
 void blt_surface_info(const char *info, const struct blt_copy_object *obj)
 {
 	igt_info("[%s]\n", info);
-	igt_info("surface <handle: %u, size: %llx, region: %x, mocs: %x>\n",
-		 obj->handle, (long long) obj->size, obj->region, obj->mocs);
+	igt_info("surface <handle: %u, size: %llx, region: %x, mocs_idx: %x>\n",
+		 obj->handle, (long long) obj->size, obj->region, obj->mocs_index);
 	igt_info("        <tiling: %s, compression: %u, compression type: %d>\n",
 		 blt_tiling_name(obj->tiling), obj->compression, obj->compression_type);
 	igt_info("        <pitch: %u, offset [x: %u, y: %u] geom [<%d,%d> <%d,%d>]>\n",
