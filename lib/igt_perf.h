@@ -61,15 +61,10 @@ int igt_perf_open_group(uint64_t type, uint64_t config, int group);
 const char *i915_perf_device(int i915, char *buf, int buflen);
 uint64_t i915_perf_type_id(int i915);
 
-const char *xe_perf_device(int xe, char *buf, int buflen);
-uint64_t xe_perf_type_id(int);
-
 int perf_igfx_open(uint64_t config);
 int perf_igfx_open_group(uint64_t config, int group);
 
 int perf_i915_open(int i915, uint64_t config);
 int perf_i915_open_group(int i915, uint64_t config, int group);
-
-int perf_xe_open(int xe, uint64_t config);
 
 #endif /* I915_PERF_H */

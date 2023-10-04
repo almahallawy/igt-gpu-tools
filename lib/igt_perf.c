@@ -69,36 +69,6 @@ const char *i915_perf_device(int i915, char *buf, int buflen)
 	return buf;
 }
 
-const char *xe_perf_device(int xe, char *buf, int buflen)
-{
-	char *s;
-	char pref[] = "xe_";
-	int len = strlen(pref);
-
-
-	if (!buf || buflen < len)
-		return "xe";
-
-	memcpy(buf, pref, len);
-
-	if (!bus_address(xe, buf + len, buflen - len))
-		buf[len - 1] = '\0';
-
-	/* Convert all colons in the address to '_', thanks perf! */
-	for (s = buf; *s; s++)
-		if (*s == ':')
-			*s = '_';
-
-	return buf;
-}
-
-uint64_t xe_perf_type_id(int xe)
-{
-	char buf[80];
-
-	return igt_perf_type_id(xe_perf_device(xe, buf, sizeof(buf)));
-}
-
 uint64_t i915_perf_type_id(int i915)
 {
 	char buf[80];
@@ -175,12 +145,6 @@ int perf_igfx_open_group(uint64_t config, int group)
 {
 	return _perf_open(igt_perf_type_id("i915"), config, group,
 			  PERF_FORMAT_TOTAL_TIME_ENABLED | PERF_FORMAT_GROUP);
-}
-
-int perf_xe_open(int xe, uint64_t config)
-{
-	return _perf_open(xe_perf_type_id(xe), config, -1,
-			PERF_FORMAT_TOTAL_TIME_ENABLED);
 }
 
 int perf_i915_open(int i915, uint64_t config)
