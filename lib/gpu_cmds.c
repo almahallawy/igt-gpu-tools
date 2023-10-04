@@ -25,6 +25,12 @@
 #include "gpu_cmds.h"
 #include "intel_mocs.h"
 
+static uint32_t
+xehp_fill_surface_state(struct intel_bb *ibb,
+			struct intel_buf *buf,
+			uint32_t format,
+			int is_dst);
+
 uint32_t
 gen7_fill_curbe_buffer_data(struct intel_bb *ibb, uint8_t color)
 {
@@ -873,7 +879,7 @@ xehp_fill_interface_descriptor(struct intel_bb *ibb,
 	idd->desc5.num_threads_in_tg = 1;
 }
 
-uint32_t
+static uint32_t
 xehp_fill_surface_state(struct intel_bb *ibb,
 			struct intel_buf *buf,
 			uint32_t format,

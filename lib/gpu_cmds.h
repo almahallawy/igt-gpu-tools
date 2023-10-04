@@ -116,12 +116,6 @@ xehp_fill_interface_descriptor(struct intel_bb *ibb,
 			       size_t size,
 			       struct xehp_interface_descriptor_data *idd);
 
-uint32_t
-xehp_fill_surface_state(struct intel_bb *ibb,
-			struct intel_buf *buf,
-			uint32_t format,
-			int is_dst);
-
 void
 xehp_emit_state_compute_mode(struct intel_bb *ibb);
 
