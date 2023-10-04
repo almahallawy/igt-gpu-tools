@@ -1185,16 +1185,29 @@ struct gen12_fast_copy_data {
 		uint32_t client:			BITRANGE(29, 31);
 	} dw00;
 
-	struct {
-		uint32_t dst_pitch:			BITRANGE(0, 15);
-		uint32_t rsvd1:				BITRANGE(16, 23);
-		uint32_t color_depth:			BITRANGE(24, 26);
-		uint32_t rsvd0:				BITRANGE(27, 27);
-		uint32_t dst_memory:			BITRANGE(28, 28);
-		uint32_t src_memory:			BITRANGE(29, 29);
-		uint32_t dst_type_y:			BITRANGE(30, 30);
-		uint32_t src_type_y:			BITRANGE(31, 31);
-	} dw01;
+	union {
+		struct {
+			uint32_t dst_pitch:			BITRANGE(0, 15);
+			uint32_t rsvd1:				BITRANGE(16, 23);
+			uint32_t color_depth:			BITRANGE(24, 26);
+			uint32_t rsvd0:				BITRANGE(27, 27);
+			uint32_t dst_memory:			BITRANGE(28, 28);
+			uint32_t src_memory:			BITRANGE(29, 29);
+			uint32_t dst_type_y:			BITRANGE(30, 30);
+			uint32_t src_type_y:			BITRANGE(31, 31);
+		} dw01;
+		struct {
+			uint32_t dst_pitch:			BITRANGE(0, 15);
+			uint32_t rsvd0:				BITRANGE(16, 16);
+			uint32_t pxp:				BITRANGE(17, 17);
+			uint32_t rsvd1:				BITRANGE(18, 19);
+			uint32_t dst_mocs_index:		BITRANGE(20, 23);
+			uint32_t color_depth:			BITRANGE(24, 26);
+			uint32_t rsvd2:				BITRANGE(27, 29);
+			uint32_t dst_type_y:			BITRANGE(30, 30);
+			uint32_t src_type_y:			BITRANGE(31, 31);
+		} dw01_xe2;
+	};
 
 	struct {
 		int32_t dst_x1:				BITRANGE(0, 15);
@@ -1219,10 +1232,20 @@ struct gen12_fast_copy_data {
 		int32_t src_y1:				BITRANGE(16, 31);
 	} dw06;
 
-	struct {
-		uint32_t src_pitch:			BITRANGE(0, 15);
-		uint32_t rsvd0:				BITRANGE(16, 31);
-	} dw07;
+	union {
+		struct {
+			uint32_t src_pitch:			BITRANGE(0, 15);
+			uint32_t rsvd0:				BITRANGE(16, 31);
+		} dw07;
+		struct {
+			uint32_t src_pitch:			BITRANGE(0, 15);
+			uint32_t rsvd0:				BITRANGE(16, 16);
+			uint32_t pxp:				BITRANGE(17, 17);
+			uint32_t rsvd1:				BITRANGE(18, 19);
+			uint32_t src_mocs_index:		BITRANGE(20, 23);
+			uint32_t rsvd2:				BITRANGE(24, 31);
+		} dw07_xe2;
+	};
 
 	struct {
 		uint32_t src_address_lo;
@@ -1321,10 +1344,12 @@ uint64_t emit_blt_fast_copy(int fd,
 			    uint64_t bb_pos,
 			    bool emit_bbe)
 {
+	unsigned int ip_ver = intel_graphics_ver(intel_get_drm_devid(fd));
 	struct gen12_fast_copy_data data = {};
 	uint64_t dst_offset, src_offset, bb_offset, alignment;
 	uint32_t bbe = MI_BATCH_BUFFER_END;
 	uint32_t *bb;
+
 
 	alignment = get_default_alignment(fd, blt->driver);
 
@@ -1334,12 +1359,22 @@ uint64_t emit_blt_fast_copy(int fd,
 	data.dw00.src_tiling = __fast_tiling(blt->src.tiling);
 	data.dw00.length = 8;
 
-	data.dw01.dst_pitch = blt->dst.pitch;
-	data.dw01.color_depth = __fast_color_depth(blt->color_depth);
-	data.dw01.dst_memory = __memory_type(blt->fd, blt->driver, blt->dst.region);
-	data.dw01.src_memory = __memory_type(blt->fd, blt->driver, blt->src.region);
-	data.dw01.dst_type_y = __new_tile_y_type(blt->dst.tiling) ? 1 : 0;
-	data.dw01.src_type_y = __new_tile_y_type(blt->src.tiling) ? 1 : 0;
+	if (ip_ver >= IP_VER(20, 0)) {
+		data.dw01_xe2.dst_pitch = blt->dst.pitch;
+		data.dw01_xe2.dst_mocs_index = blt->dst.mocs_index;
+		data.dw01_xe2.color_depth = __fast_color_depth(blt->color_depth);
+
+		/* Undefined behavior to leave as 0, must be set to 1 */
+		data.dw01_xe2.dst_type_y = 1;
+		data.dw01_xe2.src_type_y = 1;
+	} else {
+		data.dw01.dst_pitch = blt->dst.pitch;
+		data.dw01.color_depth = __fast_color_depth(blt->color_depth);
+		data.dw01.dst_memory = __memory_type(blt->fd, blt->driver, blt->dst.region);
+		data.dw01.src_memory = __memory_type(blt->fd, blt->driver, blt->src.region);
+		data.dw01.dst_type_y = __new_tile_y_type(blt->dst.tiling) ? 1 : 0;
+		data.dw01.src_type_y = __new_tile_y_type(blt->src.tiling) ? 1 : 0;
+	}
 
 	data.dw02.dst_x1 = blt->dst.x1;
 	data.dw02.dst_y1 = blt->dst.y1;
@@ -1359,7 +1394,12 @@ uint64_t emit_blt_fast_copy(int fd,
 	data.dw06.src_x1 = blt->src.x1;
 	data.dw06.src_y1 = blt->src.y1;
 
-	data.dw07.src_pitch = blt->src.pitch;
+	if (ip_ver >= IP_VER(20, 0)) {
+		data.dw07_xe2.src_pitch = blt->src.pitch;
+		data.dw07_xe2.src_mocs_index = blt->src.mocs_index;
+	} else {
+		data.dw07.src_pitch = blt->src.pitch;
+	}
 
 	data.dw08.src_address_lo = src_offset;
 	data.dw09.src_address_hi = src_offset >> 32;
