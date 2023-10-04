@@ -9,42 +9,13 @@
 #include "lib/amdgpu/amd_command_submission.h"
 #include "lib/amdgpu/amd_deadlock_helpers.h"
 
-static void
-amdgpu_deadlock_gfx(amdgpu_device_handle device_handle)
-{
-	amdgpu_wait_memory_helper(device_handle, AMDGPU_HW_IP_GFX);
-}
-
-static void
-amdgpu_deadlock_compute(amdgpu_device_handle device_handle)
-{
-	amdgpu_wait_memory_helper(device_handle, AMDGPU_HW_IP_COMPUTE);
-}
-
-static void
-amdgpu_deadlock_sdma(amdgpu_device_handle device_handle)
-{
-	amdgpu_wait_memory_helper(device_handle, AMDGPU_HW_IP_DMA);
-}
-
-static void
-amdgpu_gfx_illegal_reg_access(amdgpu_device_handle device_handle)
-{
-	bad_access_helper(device_handle, 1, AMDGPU_HW_IP_GFX);
-}
-
-static void
-amdgpu_gfx_illegal_mem_access(amdgpu_device_handle device_handle)
-{
-	bad_access_helper(device_handle, 0, AMDGPU_HW_IP_GFX);
-}
-
 igt_main
 {
 	amdgpu_device_handle device;
 	struct amdgpu_gpu_info gpu_info = {0};
 	int fd = -1;
 	int r;
+	bool arr_cap[AMD_IP_MAX] = {0};
 
 	igt_fixture {
 		uint32_t major, minor;
@@ -62,27 +33,49 @@ igt_main
 		igt_assert_eq(r, 0);
 		r = setup_amdgpu_ip_blocks(major, minor, &gpu_info, device);
 		igt_assert_eq(r, 0);
+		asic_rings_readness(device, 1, arr_cap);
 
 	}
 	igt_describe("Test-GPU-reset-by-flooding-sdma-ring-with-jobs");
-	igt_subtest("amdgpu-deadlock-sdma")
-	amdgpu_deadlock_sdma(device);
+	igt_subtest_with_dynamic("amdgpu-deadlock-sdma") {
+		if (arr_cap[AMD_IP_DMA]) {
+			igt_dynamic_f("amdgpu-deadlock-sdma")
+			amdgpu_wait_memory_helper(device, AMDGPU_HW_IP_DMA);
+		}
+	}
 
 	igt_describe("Test-GPU-reset-by-access-gfx-illegal-reg");
-	igt_subtest("amdgpu-gfx-illegal-reg-access")
-	amdgpu_gfx_illegal_reg_access(device);
+	igt_subtest_with_dynamic("amdgpu-gfx-illegal-reg-access") {
+		if (arr_cap[AMD_IP_GFX]) {
+			igt_dynamic_f("amdgpu-illegal-reg-access")
+			bad_access_helper(device, 1, AMDGPU_HW_IP_GFX);
+		}
+	}
 
 	igt_describe("Test-GPU-reset-by-access-gfx-illegal-mem-addr");
-	igt_subtest("amdgpu-gfx-illegal-mem-access")
-	amdgpu_gfx_illegal_mem_access(device);
+	igt_subtest_with_dynamic("amdgpu-gfx-illegal-mem-access") {
+		if (arr_cap[AMD_IP_GFX]) {
+			igt_dynamic_f("amdgpu-illegal-mem-access")
+			bad_access_helper(device, 0, AMDGPU_HW_IP_GFX);
+		}
+	}
+
 
 	igt_describe("Test-GPU-reset-by-flooding-gfx-ring-with-jobs");
-	igt_subtest("amdgpu-deadlock-gfx")
-	amdgpu_deadlock_gfx(device);
+	igt_subtest_with_dynamic("amdgpu-deadlock-gfx") {
+		if (arr_cap[AMD_IP_GFX]) {
+			igt_dynamic_f("amdgpu-deadlock-gfx")
+			amdgpu_wait_memory_helper(device, AMDGPU_HW_IP_GFX);
+		}
+	}
 
 	igt_describe("Test-GPU-reset-by-flooding-compute-ring-with-jobs");
-	igt_subtest("amdgpu-deadlock-compute")
-	amdgpu_deadlock_compute(device);
+	igt_subtest_with_dynamic("amdgpu-deadlock-compute") {
+		if (arr_cap[AMD_IP_COMPUTE]) {
+			igt_dynamic_f("amdgpu-deadlock-compute")
+			amdgpu_wait_memory_helper(device, AMDGPU_HW_IP_COMPUTE);
+		}
+	}
 
 	igt_fixture {
 		amdgpu_device_deinitialize(device);
