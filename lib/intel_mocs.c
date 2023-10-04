@@ -14,6 +14,8 @@
 #define MTL_MOCS_WB_IDX				10
 #define GEN12_MOCS_UC_IDX			3
 #define GEN12_MOCS_WB_IDX			2
+#define XE2_MOCS_UC_IDX				3
+#define XE2_MOCS_WB_IDX				4
 #define XY_BLOCK_COPY_BLT_MOCS_SHIFT		21
 #define XY_CTRL_SURF_COPY_BLT_MOCS_SHIFT	25
 
@@ -33,7 +35,10 @@ static void get_mocs_index(int fd, struct drm_intel_mocs_index *mocs)
 	 * This helper function is providing current UC as well
 	 * as WB MOCS index based on platform.
 	 */
-	if (IS_METEORLAKE(devid)) {
+	if (intel_graphics_ver(devid) >= IP_VER(20, 0)) {
+		mocs->uc_index = XE2_MOCS_UC_IDX;
+		mocs->wb_index = XE2_MOCS_WB_IDX;
+	} else if (IS_METEORLAKE(devid)) {
 		mocs->uc_index = MTL_MOCS_UC_IDX;
 		mocs->wb_index = MTL_MOCS_WB_IDX;
 	} else if (IS_DG2(devid)) {
