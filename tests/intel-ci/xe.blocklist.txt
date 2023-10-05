@@ -44,20 +44,18 @@ igt@syncobj_.*
 igt@template
 igt@tools_test
 ##################################################################
-# Pipe E, F, G and H
+# KMS: Pipe E, F, G and H are not available on Intel hardware,
+# hence can't use more than 4 displays.
 ##################################################################
 igt@.*@.*pipe-(e|f|g|h).*
-##################################################################
-# Multidisplay
-##################################################################
 igt@kms_bw@.*-(5|6|7|8)-displays-.*
+##################################################################
+# KMS: Tests specific to i915 driver
 ##################################################################
 igt@kms_draw_crc@draw-method-(mmap-cpu|mmap-gtt|pwrite)
 igt@kms_pipe_b_c_ivb@.*
 igt@kms_pwrite_crc
-igt@kms_ccs@.*
 igt@kms_frontbuffer_tracking@.*-(cpu|gtt|pwrite)
-igt@kms_fbcon_fbt@(fbc|psr)(-suspend)
 igt@kms_fence_pin_leak
 igt@kms_busy@.*
 igt@kms_psr@.*_mmap_(cpu|gtt)
@@ -68,4 +66,9 @@ igt@kms_flip@flip-vs-fences(-interruptible)
 igt@kms_addfb_basic@clobberred-modifier
 igt@kms_rotation_crc@exhaust-fences
 igt@kms_force_connector_basic@force-load-detect
+##################################################################
+# KMS: Yet to add/missing XE support
+##################################################################
+igt@kms_ccs@.*
+igt@kms_fbcon_fbt@(fbc|psr)(-suspend)
 ##################################################################
