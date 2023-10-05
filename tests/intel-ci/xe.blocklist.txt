@@ -1,10 +1,9 @@
 ###############################################
 igt@meta_test(@.*)?
 ##################################################################
-# Non-Xe driver tests
+# Non-Intel driver tests
 ##################################################################
 igt@amdgpu.*
-igt@i915_.*
 igt@msm_.*
 igt@nouveau_.*
 igt@panfrost_.*
@@ -13,11 +12,12 @@ igt@vc4.*
 igt@vgem_.*
 igt@vmwgfx.*
 ##################################################################
-# Exclude all other i915 tests
+# Exclude all i915 tests
 ##################################################################
 igt@api.*
 igt@gem.*
 igt@gen.*
+igt@i915_.*
 igt@perf.*
 igt@sysfs_.*
 ##################################################################
@@ -52,23 +52,27 @@ igt@kms_bw@.*-(5|6|7|8)-displays-.*
 ##################################################################
 # KMS: Tests specific to i915 driver
 ##################################################################
-igt@kms_draw_crc@draw-method-(mmap-cpu|mmap-gtt|pwrite)
-igt@kms_pipe_b_c_ivb@.*
-igt@kms_pwrite_crc
-igt@kms_frontbuffer_tracking@.*-(cpu|gtt|pwrite)
-igt@kms_fence_pin_leak
-igt@kms_busy@.*
-igt@kms_psr@.*_mmap_(cpu|gtt)
-igt@kms_legacy_colorkey@basic
-igt@kms_legacy_colorkey@invalid-plane
-igt@kms_flip@2x-flip-vs-fences
-igt@kms_flip@flip-vs-fences(-interruptible)
+igt@kms_addfb_basic@bo-too-small-due-to-tiling
 igt@kms_addfb_basic@clobberred-modifier
-igt@kms_rotation_crc@exhaust-fences
+igt@kms_addfb_basic@.*framebuffer-vs-set-tiling
+igt@kms_busy@.*
+igt@kms_draw_crc@draw-method-(mmap-cpu|mmap-gtt|pwrite)
+igt@kms_fence_pin_leak
+igt@kms_flip@.*flip-vs-fences.*
 igt@kms_force_connector_basic@force-load-detect
+igt@kms_frontbuffer_tracking@.*-(cpu|gtt|pwrite)
+igt@kms_legacy_colorkey@.*
+igt@kms_pipe_b_c_ivb@.*
+igt@kms_psr@.*_mmap_(cpu|gtt)
+igt@kms_pwrite_crc
+igt@kms_rotation_crc@exhaust-fences
 ##################################################################
 # KMS: Yet to add/missing XE support
 ##################################################################
-igt@kms_ccs@.*
-igt@kms_fbcon_fbt@(fbc|psr)(-suspend)
+igt@kms_fb_coherency@memset-crc
+igt@kms_prime@.*
+##################################################################
+# KMS: Non-Intel tests
+##################################################################
+igt@kms_cursor_legacy@modeset-atomic-cursor-hotspot
 ##################################################################
