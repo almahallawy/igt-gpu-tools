@@ -923,7 +923,7 @@ static void __intel_buf_init(struct buf_ops *bops,
 				igt_assert_eq(__gem_create(bops->fd, &size, &buf->handle), 0);
 		} else {
 			size = ALIGN(size, xe_get_default_alignment(bops->fd));
-			buf->handle = xe_bo_create(bops->fd, 0, size, region);
+			buf->handle = xe_bo_create(bops->fd, 0, size, region, 0);
 		}
 	}
 

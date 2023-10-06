@@ -45,14 +45,14 @@
  * @vram-system:	system vram
  */
 static void
-test_mmap(int fd, uint32_t flags)
+test_mmap(int fd, uint32_t placement, uint32_t flags)
 {
 	uint32_t bo;
 	void *map;
 
-	igt_require_f(flags, "Device doesn't support such memory region\n");
+	igt_require_f(placement, "Device doesn't support such memory region\n");
 
-	bo = xe_bo_create(fd, 0, 4096, flags);
+	bo = xe_bo_create(fd, 0, 4096, placement, flags);
 
 	map = xe_bo_map(fd, bo, 4096);
 	strcpy(map, "Write some data to the BO!");
@@ -73,7 +73,7 @@ static void test_bad_flags(int fd)
 	uint64_t size = xe_get_default_alignment(fd);
 	struct drm_xe_gem_mmap_offset mmo = {
 		.handle = xe_bo_create(fd, 0, size,
-				       vram_if_possible(fd, 0) |
+				       vram_if_possible(fd, 0),
 				       DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM),
 		.flags = -1u,
 	};
@@ -94,7 +94,7 @@ static void test_bad_extensions(int fd)
 	struct xe_user_extension ext;
 	struct drm_xe_gem_mmap_offset mmo = {
 		.handle = xe_bo_create(fd, 0, size,
-				       vram_if_possible(fd, 0) |
+				       vram_if_possible(fd, 0),
 				       DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM),
 	};
 
@@ -116,7 +116,7 @@ static void test_bad_object(int fd)
 	uint64_t size = xe_get_default_alignment(fd);
 	struct drm_xe_gem_mmap_offset mmo = {
 		.handle = xe_bo_create(fd, 0, size,
-				       vram_if_possible(fd, 0) |
+				       vram_if_possible(fd, 0),
 				       DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM),
 	};
 
@@ -163,12 +163,14 @@ static void test_small_bar(int fd)
 
 	/* 2BIG invalid case */
 	igt_assert_neq(__xe_bo_create(fd, 0, visible_size + 4096,
-				      visible_vram_memory(fd, 0), &bo),
+				      vram_memory(fd, 0),
+				      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM,
+				      &bo),
 		       0);
 
 	/* Normal operation */
-	bo = xe_bo_create(fd, 0, visible_size / 4,
-			  visible_vram_memory(fd, 0));
+	bo = xe_bo_create(fd, 0, visible_size / 4, vram_memory(fd, 0),
+			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	mmo = xe_bo_mmap_offset(fd, bo);
 	map = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, fd, mmo);
 	igt_assert(map != MAP_FAILED);
@@ -180,8 +182,9 @@ static void test_small_bar(int fd)
 
 	/* Normal operation with system memory spilling */
 	bo = xe_bo_create(fd, 0, visible_size,
-			  visible_vram_memory(fd, 0) |
-			  system_memory(fd));
+			  vram_memory(fd, 0) |
+			  system_memory(fd),
+			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	mmo = xe_bo_mmap_offset(fd, bo);
 	map = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, fd, mmo);
 	igt_assert(map != MAP_FAILED);
@@ -192,8 +195,7 @@ static void test_small_bar(int fd)
 	gem_close(fd, bo);
 
 	/* Bogus operation with SIGBUS */
-	bo = xe_bo_create(fd, 0, visible_size + 4096,
-			  vram_memory(fd, 0));
+	bo = xe_bo_create(fd, 0, visible_size + 4096, vram_memory(fd, 0), 0);
 	mmo = xe_bo_mmap_offset(fd, bo);
 	map = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, fd, mmo);
 	igt_assert(map != MAP_FAILED);
@@ -202,7 +204,7 @@ static void test_small_bar(int fd)
 	gem_close(fd, bo);
 }
 
-static void assert_caching(int fd, uint64_t flags, uint16_t cpu_caching, bool fail)
+static void assert_caching(int fd, uint64_t placement, uint16_t cpu_caching, bool fail)
 {
 	uint64_t size = xe_get_default_alignment(fd);
 	uint64_t mmo;
@@ -210,7 +212,7 @@ static void assert_caching(int fd, uint64_t flags, uint16_t cpu_caching, bool fa
 	uint32_t *map;
 	bool ret;
 
-	ret = __xe_bo_create_caching(fd, 0, size, flags, cpu_caching, &handle);
+	ret = __xe_bo_create_caching(fd, 0, size, placement, 0, cpu_caching, &handle);
 	igt_assert(ret == fail);
 
 	if (fail)
@@ -258,13 +260,15 @@ igt_main
 		fd = drm_open_driver(DRIVER_XE);
 
 	igt_subtest("system")
-		test_mmap(fd, system_memory(fd));
+		test_mmap(fd, system_memory(fd), 0);
 
 	igt_subtest("vram")
-		test_mmap(fd, visible_vram_memory(fd, 0));
+		test_mmap(fd, vram_memory(fd, 0),
+			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
 	igt_subtest("vram-system")
-		test_mmap(fd, visible_vram_memory(fd, 0) | system_memory(fd));
+		test_mmap(fd, vram_memory(fd, 0) | system_memory(fd),
+			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
 	igt_subtest("bad-flags")
 		test_bad_flags(fd);

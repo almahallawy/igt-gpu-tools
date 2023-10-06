@@ -53,7 +53,7 @@ mem_copy(int fd, uint32_t src_handle, uint32_t dst_handle, const intel_ctx_t *ct
 	uint32_t bb;
 	int result;
 
-	bb = xe_bo_create(fd, 0, bb_size, region);
+	bb = xe_bo_create(fd, 0, bb_size, region, 0);
 
 	blt_mem_init(fd, &mem);
 	blt_set_mem_object(&mem.src, src_handle, size, 0, width, height,
@@ -105,7 +105,7 @@ mem_set(int fd, uint32_t dst_handle, const intel_ctx_t *ctx, uint32_t size,
 	uint32_t bb;
 	uint8_t *result;
 
-	bb = xe_bo_create(fd, 0, bb_size, region);
+	bb = xe_bo_create(fd, 0, bb_size, region, 0);
 	blt_mem_init(fd, &mem);
 	blt_set_mem_object(&mem.dst, dst_handle, size, 0, width, height, region,
 			   dst_mocs, DEFAULT_PAT_INDEX, M_LINEAR, COMPRESSION_DISABLED);
@@ -135,8 +135,8 @@ static void copy_test(int fd, uint32_t size, enum blt_cmd_type cmd, uint32_t reg
 	uint32_t bo_size = ALIGN(size, xe_get_default_alignment(fd));
 	intel_ctx_t *ctx;
 
-	src_handle = xe_bo_create(fd, 0, bo_size, region);
-	dst_handle = xe_bo_create(fd, 0, bo_size, region);
+	src_handle = xe_bo_create(fd, 0, bo_size, region, 0);
+	dst_handle = xe_bo_create(fd, 0, bo_size, region, 0);
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	exec_queue = xe_exec_queue_create(fd, vm, &inst, 0);
 	ctx = intel_ctx_xe(fd, vm, exec_queue, 0, 0, 0);

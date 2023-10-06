@@ -153,11 +153,11 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		if (flags & PREFETCH)
 			bo = xe_bo_create(fd, 0, bo_size,
 					  all_memory_regions(fd) |
-					  vram_if_possible(fd, 0) |
+					  vram_if_possible(fd, 0),
 					  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		else
 			bo = xe_bo_create(fd, 0, bo_size,
-					  vram_if_possible(fd, eci->gt_id) |
+					  vram_if_possible(fd, eci->gt_id),
 					  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		data = xe_bo_map(fd, bo, bo_size);
 	}

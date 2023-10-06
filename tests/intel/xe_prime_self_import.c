@@ -105,7 +105,7 @@ static void test_with_fd_dup(void)
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
 
-	handle = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0) |
+	handle = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0),
 			      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
 	dma_buf_fd1 = prime_handle_to_fd(fd1, handle);
@@ -139,9 +139,9 @@ static void test_with_two_bos(void)
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
 
-	handle1 = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0) |
+	handle1 = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0),
 			       DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
-	handle2 = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0) |
+	handle2 = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0),
 			       DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
 	dma_buf_fd = prime_handle_to_fd(fd1, handle1);
@@ -178,7 +178,7 @@ static void test_with_one_bo_two_files(void)
 	fd2 = drm_open_driver(DRIVER_XE);
 
 	handle_orig = xe_bo_create(fd1, 0, bo_size,
-				   vram_if_possible(fd1, 0) |
+				   vram_if_possible(fd1, 0),
 				   DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	dma_buf_fd1 = prime_handle_to_fd(fd1, handle_orig);
 
@@ -211,7 +211,7 @@ static void test_with_one_bo(void)
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
 
-	handle = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0) |
+	handle = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0),
 			      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
 	dma_buf_fd = prime_handle_to_fd(fd1, handle);
@@ -299,7 +299,7 @@ static void *thread_fn_reimport_vs_close(void *p)
 	fds[0] = drm_open_driver(DRIVER_XE);
 
 	handle = xe_bo_create(fds[0], 0, bo_size,
-			      vram_if_possible(fds[0], 0) |
+			      vram_if_possible(fds[0], 0),
 			      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
 	fds[1] = prime_handle_to_fd(fds[0], handle);
@@ -343,7 +343,7 @@ static void *thread_fn_export_vs_close(void *p)
 	igt_until_timeout(g_time_out) {
 		/* We want to race gem close against prime export on handle one.*/
 		handle = xe_bo_create(fd, 0, bo_size,
-				      vram_if_possible(fd, 0) |
+				      vram_if_possible(fd, 0),
 				      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		if (handle != 1)
 			gem_close(fd, handle);
@@ -441,7 +441,7 @@ static void test_llseek_size(void)
 		int bufsz = xe_get_default_alignment(fd) << i;
 
 		handle = xe_bo_create(fd, 0, bufsz,
-				      vram_if_possible(fd, 0) |
+				      vram_if_possible(fd, 0),
 				      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		dma_buf_fd = prime_handle_to_fd(fd, handle);
 
@@ -471,7 +471,7 @@ static void test_llseek_bad(void)
 	fd = drm_open_driver(DRIVER_XE);
 
 	handle = xe_bo_create(fd, 0, bo_size,
-			      vram_if_possible(fd, 0) |
+			      vram_if_possible(fd, 0),
 			      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	dma_buf_fd = prime_handle_to_fd(fd, handle);
 

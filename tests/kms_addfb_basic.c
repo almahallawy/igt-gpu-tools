@@ -306,7 +306,7 @@ static void invalid_tests(int fd)
 			handle = gem_create_in_memory_regions(fd, size, REGION_SMEM);
 		} else {
 			igt_require(xe_has_vram(fd));
-			handle = xe_bo_create(fd, 0, size, system_memory(fd));
+			handle = xe_bo_create(fd, 0, size, system_memory(fd), 0);
 		}
 
 		f.handles[0] = handle;

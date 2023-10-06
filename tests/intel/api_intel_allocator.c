@@ -471,7 +471,7 @@ static void __simple_allocs(int fd)
 		size = (rand() % 4 + 1) * 0x1000;
 		if (is_xe)
 			handles[i] = xe_bo_create(fd, 0, size,
-						  system_memory(fd));
+						  system_memory(fd), 0);
 		else
 			handles[i] = gem_create(fd, size);
 

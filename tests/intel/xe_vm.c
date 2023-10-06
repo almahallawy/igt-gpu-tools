@@ -53,7 +53,7 @@ write_dwords(int fd, uint32_t vm, int n_dwords, uint64_t *addrs)
 	batch_size = ALIGN(batch_size + xe_cs_prefetch_size(fd),
 			   xe_get_default_alignment(fd));
 	batch_bo = xe_bo_create(fd, vm, batch_size,
-				vram_if_possible(fd, 0) |
+				vram_if_possible(fd, 0),
 				DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	batch_map = xe_bo_map(fd, batch_bo, batch_size);
 
@@ -118,7 +118,7 @@ __test_bind_one_bo(int fd, uint32_t vm, int n_addrs, uint64_t *addrs)
 		vms = malloc(sizeof(*vms) * n_addrs);
 		igt_assert(vms);
 	}
-	bo = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, 0) |
+	bo = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, 0),
 			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	map = xe_bo_map(fd, bo, bo_size);
 	memset(map, 0, bo_size);
@@ -270,7 +270,7 @@ static void test_partial_unbinds(int fd)
 {
 	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	size_t bo_size = 3 * xe_get_default_alignment(fd);
-	uint32_t bo = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, 0));
+	uint32_t bo = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, 0), 0);
 	uint64_t unbind_size = bo_size / 3;
 	uint64_t addr = 0x1a0000;
 
@@ -319,7 +319,7 @@ static void unbind_all(int fd, int n_vmas)
 	};
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
-	bo = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, 0));
+	bo = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, 0), 0);
 
 	for (i = 0; i < n_vmas; ++i)
 		xe_vm_bind_async(fd, vm, 0, bo, 0, addr + i * bo_size,
@@ -426,7 +426,7 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 
 	for (i = 0; i < n_bo; ++i) {
 		bo[i] = xe_bo_create(fd, vm, bo_size,
-				     vram_if_possible(fd, eci->gt_id) |
+				     vram_if_possible(fd, eci->gt_id),
 				     DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		data[i] = xe_bo_map(fd, bo[i], bo_size);
 	}
@@ -606,7 +606,7 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
 	bo = xe_bo_create(fd, vm, bo_size,
-			  vram_if_possible(fd, eci->gt_id) |
+			  vram_if_possible(fd, eci->gt_id),
 			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	data = xe_bo_map(fd, bo, bo_size);
 
@@ -788,7 +788,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 			xe_get_default_alignment(fd));
 
 	bo = xe_bo_create(fd, vm, bo_size,
-			  vram_if_possible(fd, eci->gt_id) |
+			  vram_if_possible(fd, eci->gt_id),
 			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	data = xe_bo_map(fd, bo, bo_size);
 
@@ -988,7 +988,7 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 			    xe_visible_vram_size(fd, 0));
 
 		bo = xe_bo_create(fd, vm, bo_size,
-				  vram_if_possible(fd, eci->gt_id) |
+				  vram_if_possible(fd, eci->gt_id),
 				  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		map = xe_bo_map(fd, bo, bo_size);
 	}
@@ -1283,7 +1283,7 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 		igt_assert(map != MAP_FAILED);
 	} else {
 		bo = xe_bo_create(fd, vm, bo_size,
-				  vram_if_possible(fd, eci->gt_id) |
+				  vram_if_possible(fd, eci->gt_id),
 				  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		map = xe_bo_map(fd, bo, bo_size);
 	}
@@ -1587,9 +1587,9 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 		igt_assert(map0 != MAP_FAILED);
 		igt_assert(map1 != MAP_FAILED);
 	} else {
-		bo0 = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, eci->gt_id));
+		bo0 = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, eci->gt_id), 0);
 		map0 = xe_bo_map(fd, bo0, bo_size);
-		bo1 = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, eci->gt_id));
+		bo1 = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, eci->gt_id), 0);
 		map1 = xe_bo_map(fd, bo1, bo_size);
 	}
 	memset(map0, 0, bo_size);

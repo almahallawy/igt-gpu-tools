@@ -71,7 +71,7 @@ static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
 				  (unsigned int) vm[i]);
 
 			bo[i][j] = xe_bo_create(fd, vm[i], bo_size,
-						vram_memory(fd, 0));
+						vram_memory(fd, 0), 0);
 			xe_vm_bind(fd, vm[i], bo[i][j], 0, 0x40000 + j*bo_size,
 				   bo_size, NULL, 0);
 		}

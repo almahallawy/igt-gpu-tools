@@ -107,7 +107,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 		}
 	} else {
 		bo = xe_bo_create(fd, vm, bo_size,
-				  vram_if_possible(fd, gt) |
+				  vram_if_possible(fd, gt),
 				  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		data = xe_bo_map(fd, bo, bo_size);
 	}
@@ -309,7 +309,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		}
 	} else {
 		bo = xe_bo_create(fd, 0, bo_size,
-				  vram_if_possible(fd, eci->gt_id) |
+				  vram_if_possible(fd, eci->gt_id),
 				  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		data = xe_bo_map(fd, bo, bo_size);
 	}
@@ -513,7 +513,7 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		}
 	} else {
 		bo = xe_bo_create(fd, vm, bo_size,
-				  vram_if_possible(fd, eci->gt_id) |
+				  vram_if_possible(fd, eci->gt_id),
 				  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		data = xe_bo_map(fd, bo, bo_size);
 	}

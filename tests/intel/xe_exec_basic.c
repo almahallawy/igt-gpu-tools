@@ -136,11 +136,12 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 	} else {
 		uint32_t bo_flags;
 
-		bo_flags = vram_if_possible(fd, eci->gt_id) | DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
+		bo_flags = DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
 		if (flags & DEFER_ALLOC)
 			bo_flags |= DRM_XE_GEM_CREATE_FLAG_DEFER_BACKING;
 
-		bo = xe_bo_create(fd, n_vm == 1 ? vm[0] : 0, bo_size, bo_flags);
+		bo = xe_bo_create(fd, n_vm == 1 ? vm[0] : 0, bo_size,
+				  vram_if_possible(fd, eci->gt_id), bo_flags);
 		if (!(flags & DEFER_BIND))
 			data = xe_bo_map(fd, bo, bo_size);
 	}

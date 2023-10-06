@@ -120,7 +120,7 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 			xe_get_default_alignment(fd[0]));
 	for (i = 0; i < n_bo; ++i) {
 		bo[i] = xe_bo_create(fd[0], 0, bo_size,
-				     vram_if_possible(fd[0], hwe0->gt_id) |
+				     vram_if_possible(fd[0], hwe0->gt_id),
 				     DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		dma_buf_fd[i] = prime_handle_to_fd(fd[0], bo[i]);
 		import_bo[i] = prime_fd_to_handle(fd[1], dma_buf_fd[i]);

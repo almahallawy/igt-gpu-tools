@@ -103,8 +103,8 @@ static void surf_copy(int xe,
 
 	igt_assert(mid->compression);
 	ccscopy = (uint32_t *) malloc(ccssize);
-	ccs = xe_bo_create(xe, 0, ccssize, sysmem);
-	ccs2 = xe_bo_create(xe, 0, ccssize, sysmem);
+	ccs = xe_bo_create(xe, 0, ccssize, sysmem, 0);
+	ccs2 = xe_bo_create(xe, 0, ccssize, sysmem, 0);
 
 	blt_ctrl_surf_copy_init(xe, &surf);
 	surf.print_bb = param.print_bb;
@@ -113,7 +113,7 @@ static void surf_copy(int xe,
 	blt_set_ctrl_surf_object(&surf.dst, ccs, sysmem, ccssize, uc_mocs,
 				 DEFAULT_PAT_INDEX, DIRECT_ACCESS);
 	bb_size = xe_get_default_alignment(xe);
-	bb1 = xe_bo_create(xe, 0, bb_size, sysmem);
+	bb1 = xe_bo_create(xe, 0, bb_size, sysmem, 0);
 	blt_set_batch(&surf.bb, bb1, bb_size, sysmem);
 	blt_ctrl_surf_copy(xe, ctx, NULL, ahnd, &surf);
 	intel_ctx_xe_sync(ctx, true);
@@ -168,7 +168,7 @@ static void surf_copy(int xe,
 	blt_set_copy_object(&blt.dst, dst);
 	blt_set_object_ext(&ext.src, mid->compression_type, mid->x2, mid->y2, SURFACE_TYPE_2D);
 	blt_set_object_ext(&ext.dst, 0, dst->x2, dst->y2, SURFACE_TYPE_2D);
-	bb2 = xe_bo_create(xe, 0, bb_size, sysmem);
+	bb2 = xe_bo_create(xe, 0, bb_size, sysmem, 0);
 	blt_set_batch(&blt.bb, bb2, bb_size, sysmem);
 	blt_block_copy(xe, ctx, NULL, ahnd, &blt, &ext);
 	intel_ctx_xe_sync(ctx, true);
@@ -299,7 +299,7 @@ static void block_copy(int xe,
 	uint8_t uc_mocs = intel_get_uc_mocs_index(xe);
 	int result;
 
-	bb = xe_bo_create(xe, 0, bb_size, region1);
+	bb = xe_bo_create(xe, 0, bb_size, region1, 0);
 
 	if (!blt_uses_extended_block_copy(xe))
 		pext = NULL;
@@ -421,7 +421,7 @@ static void block_multicopy(int xe,
 	uint8_t uc_mocs = intel_get_uc_mocs_index(xe);
 	int result;
 
-	bb = xe_bo_create(xe, 0, bb_size, region1);
+	bb = xe_bo_create(xe, 0, bb_size, region1, 0);
 
 	if (!blt_uses_extended_block_copy(xe))
 		pext3 = NULL;

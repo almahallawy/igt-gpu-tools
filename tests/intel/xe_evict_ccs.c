@@ -82,7 +82,8 @@ static void copy_obj(struct blt_copy_data *blt,
 	w = src_obj->x2;
 	h = src_obj->y2;
 
-	bb = xe_bo_create(fd, 0, bb_size, visible_vram_memory(fd, 0));
+	bb = xe_bo_create(fd, 0, bb_size, vram_memory(fd, 0),
+			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
 	blt->color_depth = CD_32bit;
 	blt->print_bb = params.print_bb;
@@ -275,7 +276,7 @@ static void evict_single(int fd, int child, const struct config *config)
 
 		if (config->flags & TEST_SIMPLE) {
 			big_obj = xe_bo_create(fd, vm, kb_left * SZ_1K,
-					       vram_memory(fd, 0));
+					       vram_memory(fd, 0), 0);
 			break;
 		}
 

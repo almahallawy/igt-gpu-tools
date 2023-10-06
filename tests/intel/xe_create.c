@@ -18,14 +18,14 @@
 
 #define PAGE_SIZE 0x1000
 
-static int __create_bo(int fd, uint32_t vm, uint64_t size, uint32_t flags,
+static int __create_bo(int fd, uint32_t vm, uint64_t size, uint32_t placement,
 		       uint32_t *handlep)
 {
 	struct drm_xe_gem_create create = {
 		.vm_id = vm,
 		.size = size,
-		.flags = flags,
-		.cpu_caching = __xe_default_cpu_caching_from_flags(fd, flags),
+		.cpu_caching = __xe_default_cpu_caching_from_placement(fd, placement),
+		.placement = placement,
 	};
 	int ret = 0;
 

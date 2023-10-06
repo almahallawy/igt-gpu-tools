@@ -409,27 +409,6 @@ static uint64_t __xe_visible_vram_size(int fd, int gt)
 }
 
 /**
- * visible_vram_memory:
- * @fd: xe device fd
- * @gt: gt id
- *
- * Returns vram memory bitmask for xe device @fd and @gt id, with
- * DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM also set, to ensure that CPU access is
- * possible.
- */
-uint64_t visible_vram_memory(int fd, int gt)
-{
-	/*
-	 * TODO: Keep it backwards compat for now. Fixup once the kernel side
-	 * has landed.
-	 */
-	if (__xe_visible_vram_size(fd, gt))
-		return vram_memory(fd, gt) | DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
-	else
-		return vram_memory(fd, gt); /* older kernel */
-}
-
-/**
  * vram_if_possible:
  * @fd: xe device fd
  * @gt: gt id

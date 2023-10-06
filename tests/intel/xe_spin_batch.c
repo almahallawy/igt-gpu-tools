@@ -169,7 +169,7 @@ static void xe_spin_fixed_duration(int fd)
 	exec_queue = xe_exec_queue_create_class(fd, vm, DRM_XE_ENGINE_CLASS_COPY);
 	ahnd = intel_allocator_open(fd, 0, INTEL_ALLOCATOR_RELOC);
 	bo_size = ALIGN(sizeof(*spin) + xe_cs_prefetch_size(fd), xe_get_default_alignment(fd));
-	bo = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, 0));
+	bo = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, 0), 0);
 	spin = xe_bo_map(fd, bo, bo_size);
 	spin_addr = intel_allocator_alloc_with_strategy(ahnd, bo, bo_size, 0,
 							ALLOC_STRATEGY_LOW_TO_HIGH);

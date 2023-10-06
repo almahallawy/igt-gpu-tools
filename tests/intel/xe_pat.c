@@ -82,7 +82,7 @@ static void pat_index_all(int fd)
 
 	vm = xe_vm_create(fd, 0, 0);
 
-	bo = xe_bo_create_caching(fd, 0, size, all_memory_regions(fd),
+	bo = xe_bo_create_caching(fd, 0, size, all_memory_regions(fd), 0,
 				  DRM_XE_GEM_CPU_CACHING_WC);
 
 	igt_assert_eq(__xe_vm_bind(fd, vm, 0, bo, 0, 0x40000,
@@ -155,7 +155,7 @@ static void pat_index_all(int fd)
 
 	/* coh_none is never allowed with cpu_caching WB. */
 
-	bo = xe_bo_create_caching(fd, 0, size, system_memory(fd),
+	bo = xe_bo_create_caching(fd, 0, size, system_memory(fd), 0,
 				  DRM_XE_GEM_CPU_CACHING_WB);
 
 	igt_assert_eq(__xe_vm_bind(fd, vm, 0, bo, 0, 0x40000,
@@ -263,7 +263,7 @@ static void pat_index_blt(struct xe_pat_param *p)
 					 p->size->alignment);
 
 	bb_size = xe_get_default_alignment(fd);
-	bb = xe_bo_create(fd, 0, bb_size, system_memory(fd));
+	bb = xe_bo_create(fd, 0, bb_size, system_memory(fd), 0);
 
 	size = width * height * bpp / 8;
 	stride = width * 4;
@@ -578,7 +578,7 @@ static void prime_self_import_coh(void)
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
 
-	dst_handle = xe_bo_create_caching(fd1, 0, size, all_memory_regions(fd1),
+	dst_handle = xe_bo_create_caching(fd1, 0, size, all_memory_regions(fd1), 0,
 					  DRM_XE_GEM_CPU_CACHING_WC);
 
 	dma_buf_fd = prime_handle_to_fd(fd1, dst_handle);
@@ -611,7 +611,7 @@ static void prime_self_import_coh(void)
 	 * object as the dst.
 	 */
 
-	src_handle = xe_bo_create_caching(fd2, 0, size, system_memory(fd2),
+	src_handle = xe_bo_create_caching(fd2, 0, size, system_memory(fd2), 0,
 					  DRM_XE_GEM_CPU_CACHING_WB);
 
 	p.fd = fd2;
@@ -696,7 +696,7 @@ static void prime_external_import_coh(void)
 	 * coherent PAT index, where the imported object is the dst.
 	 */
 
-	src_handle = xe_bo_create_caching(fd2, 0, size, system_memory(fd2),
+	src_handle = xe_bo_create_caching(fd2, 0, size, system_memory(fd2), 0,
 					  DRM_XE_GEM_CPU_CACHING_WB);
 
 	p.fd = fd2;
@@ -845,7 +845,7 @@ static uint32_t create_object(int fd, int r, int size, uint16_t coh_mode,
 	else
 		cpu_caching = DRM_XE_GEM_CPU_CACHING_WC;
 
-	return xe_bo_create_caching(fd, 0, size, r | flags, cpu_caching);
+	return xe_bo_create_caching(fd, 0, size, r, flags, cpu_caching);
 }
 
 /**

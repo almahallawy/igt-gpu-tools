@@ -397,7 +397,7 @@ static void create_in_region(struct buf_ops *bops, uint64_t region)
 		intel_bb_set_debug(ibb, true);
 
 	size = xe_min_page_size(xe, system_memory(xe));
-	handle = xe_bo_create(xe, 0, size, system_memory(xe));
+	handle = xe_bo_create(xe, 0, size, system_memory(xe), 0);
 	intel_buf_init_full(bops, handle, &buf,
 			    width/4, height, 32, 0,
 			    I915_TILING_NONE, 0,

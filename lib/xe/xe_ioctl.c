@@ -230,10 +230,10 @@ void xe_vm_destroy(int fd, uint32_t vm)
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_VM_DESTROY, &destroy), 0);
 }
 
-uint16_t __xe_default_cpu_caching_from_flags(int fd, uint32_t flags)
+uint16_t __xe_default_cpu_caching_from_placement(int fd, uint32_t placement)
 {
-	if ((flags & all_memory_regions(fd)) != system_memory(fd) ||
-	    flags & DRM_XE_GEM_CREATE_FLAG_SCANOUT)
+	if ((placement & all_memory_regions(fd)) != system_memory(fd) ||
+	    placement & DRM_XE_GEM_CREATE_FLAG_SCANOUT)
 		/* VRAM placements or scanout should always use WC */
 		return DRM_XE_GEM_CPU_CACHING_WC;
 
@@ -252,12 +252,13 @@ static bool vram_selected(int fd, uint32_t selected_regions)
 	return false;
 }
 
-static uint32_t ___xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t flags,
-				      uint16_t cpu_caching, uint32_t *handle)
+static uint32_t ___xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t placement,
+				uint32_t flags, uint16_t cpu_caching, uint32_t *handle)
 {
 	struct drm_xe_gem_create create = {
 		.vm_id = vm,
 		.size = size,
+		.placement = placement,
 		.flags = flags,
 		.cpu_caching = cpu_caching,
 	};
@@ -267,7 +268,7 @@ static uint32_t ___xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t fla
 	 * In case vram_if_possible returned system_memory,
 	 * visible VRAM cannot be requested through flags
 	 */
-	if (!vram_selected(fd, flags))
+	if (!vram_selected(fd, placement))
 		create.flags &= ~DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
 
 	err = igt_ioctl(fd, DRM_IOCTL_XE_GEM_CREATE, &create);
@@ -279,36 +280,36 @@ static uint32_t ___xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t fla
 
 }
 
-uint32_t __xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t flags,
-			      uint32_t *handle)
+uint32_t __xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t placement,
+			uint32_t flags, uint32_t *handle)
 {
-	uint16_t cpu_caching = __xe_default_cpu_caching_from_flags(fd, flags);
+	uint16_t cpu_caching = __xe_default_cpu_caching_from_placement(fd, placement);
 
-	return ___xe_bo_create(fd, vm, size, flags, cpu_caching, handle);
+	return ___xe_bo_create(fd, vm, size, placement, flags, cpu_caching, handle);
 }
 
-uint32_t xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t flags)
+uint32_t xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t placement,
+		      uint32_t flags)
 {
 	uint32_t handle;
 
-	igt_assert_eq(__xe_bo_create(fd, vm, size, flags, &handle), 0);
+	igt_assert_eq(__xe_bo_create(fd, vm, size, placement, flags, &handle), 0);
 
 	return handle;
 }
 
-uint32_t __xe_bo_create_caching(int fd, uint32_t vm, uint64_t size, uint32_t flags,
-				uint16_t cpu_caching, uint32_t *handle)
+uint32_t __xe_bo_create_caching(int fd, uint32_t vm, uint64_t size, uint32_t placement,
+				uint32_t flags, uint16_t cpu_caching, uint32_t *handle)
 {
-	return ___xe_bo_create(fd, vm, size, flags, cpu_caching,
-				     handle);
+	return ___xe_bo_create(fd, vm, size, placement, flags, cpu_caching, handle);
 }
 
-uint32_t xe_bo_create_caching(int fd, uint32_t vm, uint64_t size, uint32_t flags,
-			      uint16_t cpu_caching)
+uint32_t xe_bo_create_caching(int fd, uint32_t vm, uint64_t size, uint32_t placement,
+			      uint32_t flags, uint16_t cpu_caching)
 {
 	uint32_t handle;
 
-	igt_assert_eq(__xe_bo_create_caching(fd, vm, size, flags,
+	igt_assert_eq(__xe_bo_create_caching(fd, vm, size, placement, flags,
 					     cpu_caching, &handle), 0);
 
 	return handle;

@@ -1746,7 +1746,7 @@ xe_alloc_step_batch(struct workload *wrk, struct w_step *w)
 	w->bb_size = ALIGN(PAGE_SIZE + xe_cs_prefetch_size(fd),
 			   xe_get_default_alignment(fd));
 	w->bb_handle = xe_bo_create(fd, vm->id, w->bb_size,
-				    vram_if_possible(fd, eq->hwe_list[0].gt_id) |
+				    vram_if_possible(fd, eq->hwe_list[0].gt_id),
 				    DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	w->xe.data = xe_bo_map(fd, w->bb_handle, w->bb_size);
 	w->xe.exec.address =

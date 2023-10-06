@@ -101,16 +101,19 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 			if (flags & MULTI_VM) {
 				__bo = bo[i] = xe_bo_create(fd, 0,
 							    bo_size,
-							    visible_vram_memory(fd, eci->gt_id));
+							    vram_memory(fd, eci->gt_id),
+							    DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 			} else if (flags & THREADED) {
 				__bo = bo[i] = xe_bo_create(fd, vm,
 							    bo_size,
-							    visible_vram_memory(fd, eci->gt_id));
+							    vram_memory(fd, eci->gt_id),
+							    DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 			} else {
 				__bo = bo[i] = xe_bo_create(fd, _vm,
 							    bo_size,
-							    visible_vram_memory(fd, eci->gt_id) |
-							    system_memory(fd));
+							    vram_memory(fd, eci->gt_id) |
+							    system_memory(fd),
+							    DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 			}
 		} else {
 			__bo = bo[i % (n_execs / 2)];
@@ -277,16 +280,19 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 			if (flags & MULTI_VM) {
 				__bo = bo[i] = xe_bo_create(fd, 0,
 							    bo_size,
-							    visible_vram_memory(fd, eci->gt_id));
+							    vram_memory(fd, eci->gt_id),
+							    DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 			} else if (flags & THREADED) {
 				__bo = bo[i] = xe_bo_create(fd, vm,
 							    bo_size,
-							    visible_vram_memory(fd, eci->gt_id));
+							    vram_memory(fd, eci->gt_id),
+							    DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 			} else {
 				__bo = bo[i] = xe_bo_create(fd, _vm,
 							    bo_size,
-							    visible_vram_memory(fd, eci->gt_id) |
-							    system_memory(fd));
+							    vram_memory(fd, eci->gt_id) |
+							    system_memory(fd),
+							    DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 			}
 		} else {
 			__bo = bo[i % (n_execs / 2)];

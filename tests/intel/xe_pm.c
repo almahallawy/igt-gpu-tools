@@ -272,7 +272,7 @@ test_exec(device_t device, struct drm_xe_engine_class_instance *eci,
 		rpm_usage = igt_pm_get_runtime_usage(device.pci_xe);
 
 	bo = xe_bo_create(device.fd_xe, vm, bo_size,
-			  vram_if_possible(device.fd_xe, eci->gt_id) |
+			  vram_if_possible(device.fd_xe, eci->gt_id),
 			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	data = xe_bo_map(device.fd_xe, bo, bo_size);
 
@@ -381,15 +381,15 @@ static void test_vram_d3cold_threshold(device_t device, int sysfs_fd)
 		.data = 0,
 	};
 	uint64_t vram_used_mb = 0, vram_total_mb = 0, threshold;
-	uint32_t bo, flags;
+	uint32_t bo, placement;
 	int handle, i;
 	bool active;
 	void *map;
 
 	igt_require(xe_has_vram(device.fd_xe));
 
-	flags = vram_memory(device.fd_xe, 0);
-	igt_require_f(flags, "Device doesn't support vram memory region\n");
+	placement = vram_memory(device.fd_xe, 0);
+	igt_require_f(placement, "Device doesn't support vram memory region\n");
 
 	igt_assert_eq(igt_ioctl(device.fd_xe, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 	igt_assert_neq(query.size, 0);
@@ -410,7 +410,7 @@ static void test_vram_d3cold_threshold(device_t device, int sysfs_fd)
 	threshold = vram_used_mb + (SIZE / 1024 /1024);
 	igt_require(threshold < vram_total_mb);
 
-	bo = xe_bo_create(device.fd_xe, 0, SIZE, flags);
+	bo = xe_bo_create(device.fd_xe, 0, SIZE, placement, 0);
 	map = xe_bo_map(device.fd_xe, bo, SIZE);
 	memset(map, 0, SIZE);
 	munmap(map, SIZE);

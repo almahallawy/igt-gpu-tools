@@ -958,7 +958,7 @@ __intel_bb_create(int fd, uint32_t ctx, uint32_t vm, const intel_ctx_cfg_t *cfg,
 
 		ibb->alignment = alignment;
 		size = ALIGN(size, ibb->alignment);
-		ibb->handle = xe_bo_create(fd, 0, size, vram_if_possible(fd, 0) |
+		ibb->handle = xe_bo_create(fd, 0, size, vram_if_possible(fd, 0),
 					   DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
 		/* Limit to 48-bit due to MI_* address limitation */
@@ -1425,7 +1425,7 @@ void intel_bb_reset(struct intel_bb *ibb, bool purge_objects_cache)
 		ibb->handle = gem_create(ibb->fd, ibb->size);
 	else
 		ibb->handle = xe_bo_create(ibb->fd, 0, ibb->size,
-					   vram_if_possible(ibb->fd, 0) |
+					   vram_if_possible(ibb->fd, 0),
 					   DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
 	/* Reacquire offset for RELOC and SIMPLE */
