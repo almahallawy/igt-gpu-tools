@@ -295,16 +295,6 @@ uint32_t xe_bo_create_caching(int fd, uint32_t vm, uint64_t size, uint32_t flags
 	return handle;
 }
 
-uint32_t xe_bo_create(int fd, int gt, uint32_t vm, uint64_t size)
-{
-	uint32_t handle;
-
-	igt_assert_eq(__xe_bo_create_flags(fd, vm, size, vram_if_possible(fd, gt),
-					   &handle), 0);
-
-	return handle;
-}
-
 uint32_t xe_bind_exec_queue_create(int fd, uint32_t vm, uint64_t ext, bool async)
 {
 	struct drm_xe_engine_class_instance instance = {
