@@ -73,6 +73,7 @@ enum intel_engine_id {
 
 struct duration {
 	unsigned int min, max;
+	bool unbound;
 };
 
 enum w_type
@@ -145,7 +146,6 @@ struct w_step
 	unsigned int context;
 	unsigned int engine;
 	struct duration duration;
-	bool unbound_duration;
 	struct deps data_deps;
 	struct deps fence_deps;
 	int emit_fence;
@@ -1130,7 +1130,7 @@ parse_workload(struct w_arg *arg, unsigned int flags, double scale_dur,
 				check_arg(intel_gen(intel_get_drm_devid(fd)) < 8,
 					  "Infinite batch at step %u needs Gen8+!\n",
 					  nr_steps);
-				step.unbound_duration = true;
+				step.duration.unbound = true;
 			} else {
 				tmpl = strtol(field, &sep, 10);
 				check_arg(tmpl <= 0 || tmpl == LONG_MIN ||
@@ -2172,8 +2172,8 @@ update_bb_start(struct workload *wrk, struct w_step *w)
 
 	/* ticks is inverted for MI_DO_COMPARE (less-than comparison) */
 	ticks = 0;
-	if (!w->unbound_duration)
-		ticks = ~ns_to_ctx_ticks(1000 * get_duration(wrk, w));
+	if (!w->duration.unbound)
+		ticks = ~ns_to_ctx_ticks(1000LL * get_duration(wrk, w));
 
 	*w->bb_duration = ticks;
 }
@@ -2349,7 +2349,7 @@ static void *run_workload(void *data)
 
 				igt_assert(t_idx >= 0 && t_idx < i);
 				igt_assert(wrk->steps[t_idx].type == BATCH);
-				igt_assert(wrk->steps[t_idx].unbound_duration);
+				igt_assert(wrk->steps[t_idx].duration.unbound);
 
 				*wrk->steps[t_idx].bb_duration = 0xffffffff;
 				__sync_synchronize();
