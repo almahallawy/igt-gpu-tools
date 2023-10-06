@@ -769,25 +769,27 @@ __copy_dev_to_card(struct igt_device *dev, struct igt_device_card *card)
  * Iterate over all igt_devices array and find first discrete/integrated card.
  * card->pci_slot_name will be updated only if a card is found.
  */
-static bool __find_first_i915_card(struct igt_device_card *card, bool discrete)
+static bool __find_first_intel_card_by_driver_name(struct igt_device_card *card,
+				bool want_discrete, const char *drv_name)
 {
 	struct igt_device *dev;
-	int cmp;
+	int is_integrated;
 
+	igt_assert(drv_name);
 	memset(card, 0, sizeof(*card));
 
 	igt_list_for_each_entry(dev, &igt_devs.all, link) {
 
-		if (!is_pci_subsystem(dev) || strcmp(dev->driver, "i915"))
+		if (!is_pci_subsystem(dev) || strcmp(dev->driver, drv_name))
 			continue;
 
-		cmp = strncmp(dev->pci_slot_name, INTEGRATED_I915_GPU_PCI_ID,
-			      PCI_SLOT_NAME_SIZE);
+		is_integrated = !strncmp(dev->pci_slot_name, INTEGRATED_I915_GPU_PCI_ID,
+					 PCI_SLOT_NAME_SIZE);
 
-		if (discrete && cmp) {
+		if (want_discrete && !is_integrated) {
 			__copy_dev_to_card(dev, card);
 			return true;
-		} else if (!discrete && !cmp) {
+		} else if (!want_discrete && is_integrated) {
 			__copy_dev_to_card(dev, card);
 			return true;
 		}
@@ -800,14 +802,46 @@ bool igt_device_find_first_i915_discrete_card(struct igt_device_card *card)
 {
 	igt_assert(card);
 
-	return __find_first_i915_card(card, true);
+	return __find_first_intel_card_by_driver_name(card, true, "i915");
+}
+
+/**
+ * igt_device_find_first_xe_discrete_card
+ * @card: pointer to igt_device_card structure
+ *
+ * Iterate over all igt_devices array and find first xe discrete card.
+ * card will be updated only if a device is found.
+ *
+ * Returns: true if device is found, false otherwise.
+ */
+bool igt_device_find_first_xe_discrete_card(struct igt_device_card *card)
+{
+	igt_assert(card);
+
+	return __find_first_intel_card_by_driver_name(card, true, "xe");
 }
 
 bool igt_device_find_integrated_card(struct igt_device_card *card)
 {
 	igt_assert(card);
 
-	return __find_first_i915_card(card, false);
+	return __find_first_intel_card_by_driver_name(card, false, "i915");
+}
+
+/**
+ * igt_device_find_xe_integrated_card
+ * @card: pointer to igt_device_card structure
+ *
+ * Iterate over all igt_devices array and find first xe integrated card.
+ * card will be updated only if a device is found.
+ *
+ * Returns: true if device is found, false otherwise.
+ */
+bool igt_device_find_xe_integrated_card(struct igt_device_card *card)
+{
+	igt_assert(card);
+
+	return __find_first_intel_card_by_driver_name(card, false, "xe");
 }
 
 static struct igt_device *igt_device_from_syspath(const char *syspath)
