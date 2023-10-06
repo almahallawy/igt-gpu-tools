@@ -1142,10 +1142,10 @@ parse_workload(struct w_arg *arg, unsigned int flags, double scale_dur,
 				if (sep && *sep == '-') {
 					tmpl = strtol(sep + 1, NULL, 10);
 					check_arg(tmpl <= 0 ||
-						tmpl <= step.duration.min ||
+						__duration(tmpl, scale_dur) <= step.duration.min ||
 						tmpl == LONG_MIN ||
 						tmpl == LONG_MAX,
-						"Invalid duration range at step %u!\n",
+						"Invalid maximum duration at step %u!\n",
 						nr_steps);
 					step.duration.max = __duration(tmpl,
 								       scale_dur);
