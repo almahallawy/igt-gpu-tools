@@ -4902,17 +4902,23 @@ void igt_fb_set_size(struct igt_fb *fb, igt_plane_t *plane,
 	igt_plane_set_prop_value(plane, IGT_PLANE_SRC_H, IGT_FIXED(h, 0));
 }
 
-static const char *rotation_name(igt_rotation_t rotation)
+/**
+ * igt_plane_rotation_name:
+ * @rotation: Plane rotation value (0, 90, 180, 270)
+ *
+ * Returns: Plane rotation value as a string
+ */
+const char *igt_plane_rotation_name(igt_rotation_t rotation)
 {
 	switch (rotation & IGT_ROTATION_MASK) {
 	case IGT_ROTATION_0:
-		return "0°";
+		return "0";
 	case IGT_ROTATION_90:
-		return "90°";
+		return "90";
 	case IGT_ROTATION_180:
-		return "180°";
+		return "180";
 	case IGT_ROTATION_270:
-		return "270°";
+		return "270";
 	default:
 		igt_assert(0);
 	}
@@ -4932,9 +4938,9 @@ void igt_plane_set_rotation(igt_plane_t *plane, igt_rotation_t rotation)
 	igt_pipe_t *pipe = plane->pipe;
 	igt_display_t *display = pipe->display;
 
-	LOG(display, "%s.%d: plane_set_rotation(%s)\n",
+	LOG(display, "%s.%d: plane_set_rotation(%s°)\n",
 	    kmstest_pipe_name(pipe->pipe),
-	    plane->index, rotation_name(rotation));
+	    plane->index, igt_plane_rotation_name(rotation));
 
 	igt_plane_set_prop_value(plane, IGT_PLANE_ROTATION, rotation);
 }
