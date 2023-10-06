@@ -1,6 +1,8 @@
 Workload descriptor format
 ==========================
 
+Lines starting with '#' are treated as comments and will not create a work step.
+
 ctx.engine.duration_us.dependency.wait,...
 <uint>.<str>.<uint>[-<uint>]|*.<int <= 0>[/<int <= 0>][...].<0|1>,...
 B.<uint>

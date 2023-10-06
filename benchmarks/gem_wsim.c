@@ -43,6 +43,7 @@
 #include <limits.h>
 #include <pthread.h>
 #include <math.h>
+#include <ctype.h>
 
 #include "drm.h"
 #include "drmtest.h"
@@ -812,6 +813,14 @@ parse_workload(struct w_arg *arg, unsigned int flags, double scale_dur,
 		field = strtok_r(fstart, ".", &fctx);
 		if (field) {
 			fstart = NULL;
+
+			/* line starting with # is a comment */
+			if (field[0] == '#') {
+				if (verbose > 3)
+					printf("skipped line: %s\n", _token);
+				free(token);
+				continue;
+			}
 
 			if (!strcmp(field, "d")) {
 				int_field(DELAY, delay, tmp <= 0,
@@ -2403,6 +2412,7 @@ static char *load_workload_descriptor(char *filename)
 	char *buf;
 	int infd, ret, i;
 	ssize_t len;
+	bool in_comment = false;
 
 	ret = stat(filename, &sbuf);
 	if (ret || !S_ISREG(sbuf.st_mode))
@@ -2419,8 +2429,18 @@ static char *load_workload_descriptor(char *filename)
 	close(infd);
 
 	for (i = 0; i < len; i++) {
-		if (buf[i] == '\n')
+		/*
+		 * Lines starting with '#' are skipped.
+		 * If command line step separator (',') is encountered after '#'
+		 * it is replaced with ';' to not break parsing.
+		 */
+		if (buf[i] == '#')
+			in_comment = true;
+		else if (buf[i] == '\n') {
 			buf[i] = ',';
+			in_comment = false;
+		} else if (in_comment && buf[i] == ',')
+			buf[i] = ';';
 	}
 
 	len--;
