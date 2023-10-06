@@ -860,6 +860,44 @@ static long __duration(long dur, double scale)
 	return round(scale * dur);
 }
 
+static int
+parse_duration(unsigned int nr_steps, struct duration *dur, double scale_dur, char *field)
+{
+	char *sep = NULL;
+	long tmpl;
+
+	if (field[0] == '*') {
+		if (intel_gen(intel_get_drm_devid(fd)) < 8) {
+			wsim_err("Infinite batch at step %u needs Gen8+!\n", nr_steps);
+			return -1;
+		}
+		dur->unbound = true;
+	} else {
+		tmpl = strtol(field, &sep, 10);
+		if (tmpl <= 0 || tmpl == LONG_MIN || tmpl == LONG_MAX) {
+			wsim_err("Invalid duration at step %u!\n", nr_steps);
+			return -1;
+		}
+
+		dur->min = __duration(tmpl, scale_dur);
+
+		if (sep && *sep == '-') {
+			tmpl = strtol(sep + 1, NULL, 10);
+			if (tmpl <= 0 || __duration(tmpl, scale_dur) <= dur->min ||
+			    tmpl == LONG_MIN || tmpl == LONG_MAX) {
+				wsim_err("Invalid maximum duration at step %u!\n", nr_steps);
+				return -1;
+			}
+
+			dur->max = __duration(tmpl, scale_dur);
+		} else {
+			dur->max = dur->min;
+		}
+	}
+
+	return 0;
+}
+
 #define int_field(_STEP_, _FIELD_, _COND_, _ERR_) \
 	if ((field = strtok_r(fstart, ".", &fctx))) { \
 		tmp = atoi(field); \
@@ -1121,38 +1159,10 @@ parse_workload(struct w_arg *arg, unsigned int flags, double scale_dur,
 		}
 
 		if ((field = strtok_r(fstart, ".", &fctx))) {
-			char *sep = NULL;
-			long int tmpl;
-
 			fstart = NULL;
 
-			if (field[0] == '*') {
-				check_arg(intel_gen(intel_get_drm_devid(fd)) < 8,
-					  "Infinite batch at step %u needs Gen8+!\n",
-					  nr_steps);
-				step.duration.unbound = true;
-			} else {
-				tmpl = strtol(field, &sep, 10);
-				check_arg(tmpl <= 0 || tmpl == LONG_MIN ||
-					  tmpl == LONG_MAX,
-					  "Invalid duration at step %u!\n",
-					  nr_steps);
-				step.duration.min = __duration(tmpl, scale_dur);
-
-				if (sep && *sep == '-') {
-					tmpl = strtol(sep + 1, NULL, 10);
-					check_arg(tmpl <= 0 ||
-						__duration(tmpl, scale_dur) <= step.duration.min ||
-						tmpl == LONG_MIN ||
-						tmpl == LONG_MAX,
-						"Invalid maximum duration at step %u!\n",
-						nr_steps);
-					step.duration.max = __duration(tmpl,
-								       scale_dur);
-				} else {
-					step.duration.max = step.duration.min;
-				}
-			}
+			if (parse_duration(nr_steps, &step.duration, scale_dur, field))
+				return NULL;
 
 			valid++;
 		}
