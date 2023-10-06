@@ -1762,19 +1762,11 @@ static void measure_active_set(struct workload *wrk)
 
 #define alloca0(sz) ({ size_t sz__ = (sz); memset(alloca(sz__), 0, sz__); })
 
-static int prepare_workload(unsigned int id, struct workload *wrk)
+static void allocate_contexts(unsigned int id, struct workload *wrk)
 {
-	struct working_set **sets;
-	unsigned long total = 0;
-	uint32_t share_vm = 0;
 	int max_ctx = -1;
 	struct w_step *w;
-	int i, j;
-
-	wrk->id = id;
-	wrk->bb_prng = (wrk->flags & FLAG_SYNCEDCLIENTS) ? master_prng : rand();
-	wrk->bo_prng = (wrk->flags & FLAG_SYNCEDCLIENTS) ? master_prng : rand();
-	wrk->run = true;
+	int i;
 
 	/*
 	 * Pre-scan workload steps to allocate context list storage.
@@ -1798,6 +1790,13 @@ static int prepare_workload(unsigned int id, struct workload *wrk)
 
 		max_ctx = ctx;
 	}
+}
+
+static int prepare_contexts(unsigned int id, struct workload *wrk)
+{
+	uint32_t share_vm = 0;
+	struct w_step *w;
+	int i, j;
 
 	/*
 	 * Transfer over engine map configuration from the workload step.
@@ -1964,6 +1963,28 @@ static int prepare_workload(unsigned int id, struct workload *wrk)
 	if (share_vm)
 		vm_destroy(fd, share_vm);
 
+	return 0;
+}
+
+static int prepare_workload(unsigned int id, struct workload *wrk)
+{
+	struct working_set **sets;
+	unsigned long total = 0;
+	struct w_step *w;
+	int i, j;
+	int ret = 0;
+
+	wrk->id = id;
+	wrk->bb_prng = (wrk->flags & FLAG_SYNCEDCLIENTS) ? master_prng : rand();
+	wrk->bo_prng = (wrk->flags & FLAG_SYNCEDCLIENTS) ? master_prng : rand();
+	wrk->run = true;
+
+	allocate_contexts(id, wrk);
+
+	ret = prepare_contexts(id, wrk);
+	if (ret)
+		return ret;
+
 	/* Record default preemption. */
 	for (i = 0, w = wrk->steps; i < wrk->nr_steps; i++, w++) {
 		if (w->type == BATCH)
@@ -2065,7 +2086,7 @@ static int prepare_workload(unsigned int id, struct workload *wrk)
 
 	measure_active_set(wrk);
 
-	return 0;
+	return ret;
 }
 
 static double elapsed(const struct timespec *start, const struct timespec *end)
