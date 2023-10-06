@@ -240,6 +240,18 @@ uint16_t __xe_default_cpu_caching_from_flags(int fd, uint32_t flags)
 	return DRM_XE_GEM_CPU_CACHING_WB;
 }
 
+static bool vram_selected(int fd, uint32_t selected_regions)
+{
+	uint64_t regions = all_memory_regions(fd) & selected_regions;
+	uint64_t region;
+
+	xe_for_each_mem_region(fd, regions, region)
+		if (xe_mem_region(fd, region)->mem_class == DRM_XE_MEM_REGION_CLASS_VRAM)
+			return true;
+
+	return false;
+}
+
 static uint32_t ___xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t flags,
 				      uint16_t cpu_caching, uint32_t *handle)
 {
@@ -250,6 +262,13 @@ static uint32_t ___xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t fla
 		.cpu_caching = cpu_caching,
 	};
 	int err;
+
+	/*
+	 * In case vram_if_possible returned system_memory,
+	 * visible VRAM cannot be requested through flags
+	 */
+	if (!vram_selected(fd, flags))
+		create.flags &= ~DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
 
 	err = igt_ioctl(fd, DRM_IOCTL_XE_GEM_CREATE, &create);
 	if (err)

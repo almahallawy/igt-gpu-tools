@@ -82,7 +82,6 @@ uint64_t system_memory(int fd);
 uint64_t vram_memory(int fd, int gt);
 uint64_t visible_vram_memory(int fd, int gt);
 uint64_t vram_if_possible(int fd, int gt);
-uint64_t visible_vram_if_possible(int fd, int gt);
 struct drm_xe_engine_class_instance *xe_hw_engines(int fd);
 struct drm_xe_engine_class_instance *xe_hw_engine(int fd, int idx);
 struct drm_xe_query_mem_region *xe_mem_region(int fd, uint64_t region);

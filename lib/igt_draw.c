@@ -800,9 +800,9 @@ static void draw_rect_render(int fd, struct cmd_data *cmd_data,
 		tmp.handle = gem_create(fd, tmp.size);
 	else
 		tmp.handle = xe_bo_create(fd, 0,
-						ALIGN(tmp.size, xe_get_default_alignment(fd)),
-						visible_vram_if_possible(fd, 0) |
-						DRM_XE_GEM_CREATE_FLAG_SCANOUT);
+					  ALIGN(tmp.size, xe_get_default_alignment(fd)),
+					  vram_if_possible(fd, 0) |
+					  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
 	tmp.stride = rect->w * pixel_size;
 	tmp.bpp = buf->bpp;

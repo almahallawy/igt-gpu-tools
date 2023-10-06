@@ -142,7 +142,8 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		}
 	} else {
 		bo = xe_bo_create(fd, flags & VM_FOR_BO ? vm : 0,
-				  bo_size, visible_vram_if_possible(fd, eci->gt_id));
+				  bo_size, vram_if_possible(fd, eci->gt_id) |
+				  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		data = xe_bo_map(fd, bo, bo_size);
 	}
 	memset(data, 0, bo_size);

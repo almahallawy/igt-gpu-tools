@@ -1207,8 +1207,8 @@ static int create_bo_for_fb(struct igt_fb *fb, bool prefer_sysmem)
 			igt_assert(err == 0 || err == -EOPNOTSUPP);
 		} else if (is_xe_device(fd)) {
 			fb->gem_handle = xe_bo_create(fd, 0, fb->size,
-							    visible_vram_if_possible(fd, 0) |
-							    DRM_XE_GEM_CREATE_FLAG_SCANOUT);
+						      vram_if_possible(fd, 0)
+						      | DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 		} else if (is_vc4_device(fd)) {
 			fb->gem_handle = igt_vc4_create_bo(fd, fb->size);
 

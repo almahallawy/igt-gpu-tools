@@ -136,7 +136,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 	} else {
 		uint32_t bo_flags;
 
-		bo_flags = visible_vram_if_possible(fd, eci->gt_id);
+		bo_flags = vram_if_possible(fd, eci->gt_id) | DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
 		if (flags & DEFER_ALLOC)
 			bo_flags |= DRM_XE_GEM_CREATE_FLAG_DEFER_BACKING;
 

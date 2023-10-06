@@ -443,32 +443,6 @@ uint64_t vram_if_possible(int fd, int gt)
 }
 
 /**
- * visible_vram_if_possible:
- * @fd: xe device fd
- * @gt: gt id
- *
- * Returns vram memory bitmask for xe device @fd and @gt id or system memory if
- * there's no vram memory available for @gt. Also attaches the
- * DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM to ensure that CPU access is possible
- * when using vram.
- */
-uint64_t visible_vram_if_possible(int fd, int gt)
-{
-	uint64_t regions = all_memory_regions(fd);
-	uint64_t system_memory = regions & 0x1;
-	uint64_t vram = regions & (0x2 << gt);
-
-	/*
-	 * TODO: Keep it backwards compat for now. Fixup once the kernel side
-	 * has landed.
-	 */
-	if (__xe_visible_vram_size(fd, gt))
-		return vram ? vram | DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM : system_memory;
-	else
-		return vram ? vram : system_memory; /* older kernel */
-}
-
-/**
  * xe_hw_engines:
  * @fd: xe device fd
  *

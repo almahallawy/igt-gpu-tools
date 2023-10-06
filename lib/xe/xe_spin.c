@@ -220,7 +220,8 @@ xe_spin_create(int fd, const struct igt_spin_factory *opt)
 	}
 
 	spin->handle = xe_bo_create(fd, spin->vm, bo_size,
-				    visible_vram_if_possible(fd, 0));
+				    vram_if_possible(fd, 0) |
+				    DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	xe_spin = xe_bo_map(fd, spin->handle, bo_size);
 	addr = intel_allocator_alloc_with_strategy(ahnd, spin->handle, bo_size, 0, ALLOC_STRATEGY_LOW_TO_HIGH);
 	xe_vm_bind_sync(fd, spin->vm, spin->handle, 0, addr, bo_size);
@@ -298,8 +299,8 @@ void xe_cork_init(int fd, struct drm_xe_engine_class_instance *hwe,
 
 	vm = xe_vm_create(fd, 0, 0);
 
-	bo = xe_bo_create(fd, vm, bo_size,
-			  visible_vram_if_possible(fd, hwe->gt_id));
+	bo = xe_bo_create(fd, vm, bo_size, vram_if_possible(fd, hwe->gt_id) |
+			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	spin = xe_bo_map(fd, bo, 0x1000);
 
 	xe_vm_bind_sync(fd, vm, bo, 0, addr, bo_size);
