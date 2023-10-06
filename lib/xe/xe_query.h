@@ -11,6 +11,8 @@
 
 #include <stdint.h>
 #include <xe_drm.h>
+
+#include "igt_aux.h"
 #include "igt_list.h"
 #include "igt_sizes.h"
 
