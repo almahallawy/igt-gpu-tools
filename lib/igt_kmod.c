@@ -805,34 +805,36 @@ static int kunit_kmsg_result_get(struct igt_list_head *results,
 		if (igt_debug_on(igt_kernel_tainted(&taints)))
 			return -ENOTRECOVERABLE;
 
-		err = igt_debug_on(sigaction(SIGCHLD, &sigchld, saved));
-		if (err == -1)
-			return -errno;
-		else if (unlikely(err))
-			return err;
+		if (modprobe) {
+			err = igt_debug_on(sigaction(SIGCHLD, &sigchld, saved));
+			if (err == -1)
+				return -errno;
+			else if (unlikely(err))
+				return err;
 
-		err = pthread_mutex_lock(&modprobe->lock);
-		switch (err) {
-		case EOWNERDEAD:
-			/* leave the mutex unrecoverable */
-			igt_debug_on(pthread_mutex_unlock(&modprobe->lock));
-			__attribute__ ((fallthrough));
-		case ENOTRECOVERABLE:
-			igt_debug_on(sigaction(SIGCHLD, saved, NULL));
-			if (igt_debug_on(modprobe->err))
-				return modprobe->err;
-			break;
-		case 0:
-			break;
-		default:
-			igt_debug("pthread_mutex_lock() error: %d\n", err);
-			igt_debug_on(sigaction(SIGCHLD, saved, NULL));
-			return -err;
+			err = pthread_mutex_lock(&modprobe->lock);
+			switch (err) {
+			case EOWNERDEAD:
+				/* leave the mutex unrecoverable */
+				igt_debug_on(pthread_mutex_unlock(&modprobe->lock));
+				__attribute__ ((fallthrough));
+			case ENOTRECOVERABLE:
+				igt_debug_on(sigaction(SIGCHLD, saved, NULL));
+				if (igt_debug_on(modprobe->err))
+					return modprobe->err;
+				break;
+			case 0:
+				break;
+			default:
+				igt_debug("pthread_mutex_lock() error: %d\n", err);
+				igt_debug_on(sigaction(SIGCHLD, saved, NULL));
+				return -err;
+			}
 		}
 
 		ret = read(fd, record, BUF_LEN);
 
-		if (!err) {	/* pthread_mutex_lock() succeeded */
+		if (modprobe && !err) {	/* pthread_mutex_lock() succeeded */
 			igt_debug_on(pthread_mutex_unlock(&modprobe->lock));
 			igt_debug_on(sigaction(SIGCHLD, saved, NULL));
 		}
