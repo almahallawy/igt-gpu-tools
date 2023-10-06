@@ -1966,10 +1966,64 @@ static int prepare_contexts(unsigned int id, struct workload *wrk)
 	return 0;
 }
 
-static int prepare_workload(unsigned int id, struct workload *wrk)
+static void prepare_working_sets(unsigned int id, struct workload *wrk)
 {
 	struct working_set **sets;
 	unsigned long total = 0;
+	struct w_step *w;
+	int i;
+
+	/*
+	 * Allocate working sets.
+	 */
+	for (i = 0, w = wrk->steps; i < wrk->nr_steps; i++, w++) {
+		if (w->type == WORKINGSET && !w->working_set.shared)
+			total += allocate_working_set(wrk, &w->working_set);
+	}
+
+	if (verbose > 2)
+		printf("%u: %lu bytes in working sets.\n", wrk->id, total);
+
+	/*
+	 * Map of working set ids.
+	 */
+	wrk->max_working_set_id = -1;
+	for (i = 0, w = wrk->steps; i < wrk->nr_steps; i++, w++) {
+		if (w->type == WORKINGSET &&
+		    w->working_set.id > wrk->max_working_set_id)
+			wrk->max_working_set_id = w->working_set.id;
+	}
+
+	sets = wrk->working_sets;
+	wrk->working_sets = calloc(wrk->max_working_set_id + 1,
+				   sizeof(*wrk->working_sets));
+	igt_assert(wrk->working_sets);
+
+	for (i = 0, w = wrk->steps; i < wrk->nr_steps; i++, w++) {
+		struct working_set *set;
+
+		if (w->type != WORKINGSET)
+			continue;
+
+		if (!w->working_set.shared) {
+			set = &w->working_set;
+		} else {
+			igt_assert(sets);
+
+			set = sets[w->working_set.id];
+			igt_assert(set->shared);
+			igt_assert(set->sizes);
+		}
+
+		wrk->working_sets[w->working_set.id] = set;
+	}
+
+	if (sets)
+		free(sets);
+}
+
+static int prepare_workload(unsigned int id, struct workload *wrk)
+{
 	struct w_step *w;
 	int i, j;
 	int ret = 0;
@@ -2026,53 +2080,7 @@ static int prepare_workload(unsigned int id, struct workload *wrk)
 		}
 	}
 
-	/*
-	 * Allocate working sets.
-	 */
-	for (i = 0, w = wrk->steps; i < wrk->nr_steps; i++, w++) {
-		if (w->type == WORKINGSET && !w->working_set.shared)
-			total += allocate_working_set(wrk, &w->working_set);
-	}
-
-	if (verbose > 2)
-		printf("%u: %lu bytes in working sets.\n", wrk->id, total);
-
-	/*
-	 * Map of working set ids.
-	 */
-	wrk->max_working_set_id = -1;
-	for (i = 0, w = wrk->steps; i < wrk->nr_steps; i++, w++) {
-		if (w->type == WORKINGSET &&
-		    w->working_set.id > wrk->max_working_set_id)
-			wrk->max_working_set_id = w->working_set.id;
-	}
-
-	sets = wrk->working_sets;
-	wrk->working_sets = calloc(wrk->max_working_set_id + 1,
-				   sizeof(*wrk->working_sets));
-	igt_assert(wrk->working_sets);
-
-	for (i = 0, w = wrk->steps; i < wrk->nr_steps; i++, w++) {
-		struct working_set *set;
-
-		if (w->type != WORKINGSET)
-			continue;
-
-		if (!w->working_set.shared) {
-			set = &w->working_set;
-		} else {
-			igt_assert(sets);
-
-			set = sets[w->working_set.id];
-			igt_assert(set->shared);
-			igt_assert(set->sizes);
-		}
-
-		wrk->working_sets[w->working_set.id] = set;
-	}
-
-	if (sets)
-		free(sets);
+	prepare_working_sets(id, wrk);
 
 	/*
 	 * Allocate batch buffers.
