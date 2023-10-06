@@ -4919,32 +4919,32 @@ const char *igt_fb_modifier_name(uint64_t modifier)
 	case DRM_FORMAT_MOD_LINEAR:
 		return "linear";
 	case I915_FORMAT_MOD_X_TILED:
-		return "X";
+		return "x";
 	case I915_FORMAT_MOD_Y_TILED:
-		return "Y";
+		return "y";
 	case I915_FORMAT_MOD_Yf_TILED:
-		return "Yf";
+		return "yf";
 	case I915_FORMAT_MOD_Y_TILED_CCS:
-		return "Y-CCS";
+		return "y-ccs";
 	case I915_FORMAT_MOD_Yf_TILED_CCS:
-		return "Yf-CCS";
+		return "yf-ccs";
 	case I915_FORMAT_MOD_Y_TILED_GEN12_RC_CCS:
-		return "Y-RC_CCS";
+		return "y-rc-ccs";
 	case I915_FORMAT_MOD_Y_TILED_GEN12_RC_CCS_CC:
-		return "Y-RC_CCS-CC";
+		return "y-rc-ccs-cc";
 	case I915_FORMAT_MOD_Y_TILED_GEN12_MC_CCS:
-		return "Y-MC_CCS";
+		return "y-mc-ccs";
 	case I915_FORMAT_MOD_4_TILED:
 		return "4";
 	case I915_FORMAT_MOD_4_TILED_MTL_RC_CCS:
 	case I915_FORMAT_MOD_4_TILED_DG2_RC_CCS:
-		return "4-RC_CCS";
+		return "4-rc-ccs";
 	case I915_FORMAT_MOD_4_TILED_MTL_MC_CCS:
 	case I915_FORMAT_MOD_4_TILED_DG2_MC_CCS:
-		return "4-MC_CCS";
+		return "4-mc-ccs";
 	case I915_FORMAT_MOD_4_TILED_MTL_RC_CCS_CC:
 	case I915_FORMAT_MOD_4_TILED_DG2_RC_CCS_CC:
-		return "4-RC_CCS-CC";
+		return "4-rc-ccs-cc";
 	default:
 		return "?";
 	}
