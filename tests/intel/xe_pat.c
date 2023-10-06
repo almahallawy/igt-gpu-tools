@@ -263,7 +263,7 @@ static void pat_index_blt(struct xe_pat_param *p)
 					 p->size->alignment);
 
 	bb_size = xe_get_default_alignment(fd);
-	bb = xe_bo_create_flags(fd, 0, bb_size, system_memory(fd));
+	bb = xe_bo_create(fd, 0, bb_size, system_memory(fd));
 
 	size = width * height * bpp / 8;
 	stride = width * 4;

@@ -100,8 +100,8 @@ static void exec_load(int fd, struct drm_xe_engine_class_instance *hwe, unsigned
 	exec_queue = xe_exec_queue_create(fd, vm, hwe, 0);
 	bo_size = xe_get_default_alignment(fd);
 
-	bo = xe_bo_create_flags(fd, vm, bo_size,
-				visible_vram_if_possible(fd, hwe->gt_id));
+	bo = xe_bo_create(fd, vm, bo_size,
+			  visible_vram_if_possible(fd, hwe->gt_id));
 	data = xe_bo_map(fd, bo, bo_size);
 	syncobj = syncobj_create(fd, 0);
 

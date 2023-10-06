@@ -96,19 +96,19 @@ waitfence(int fd, enum waittype wt)
 	int64_t timeout;
 
 	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
-	bo_1 = xe_bo_create_flags(fd, vm, 0x40000, MY_FLAG);
+	bo_1 = xe_bo_create(fd, vm, 0x40000, MY_FLAG);
 	do_bind(fd, vm, bo_1, 0, 0x200000, 0x40000, 1);
-	bo_2 = xe_bo_create_flags(fd, vm, 0x40000, MY_FLAG);
+	bo_2 = xe_bo_create(fd, vm, 0x40000, MY_FLAG);
 	do_bind(fd, vm, bo_2, 0, 0xc0000000, 0x40000, 2);
-	bo_3 = xe_bo_create_flags(fd, vm, 0x40000, MY_FLAG);
+	bo_3 = xe_bo_create(fd, vm, 0x40000, MY_FLAG);
 	do_bind(fd, vm, bo_3, 0, 0x180000000, 0x40000, 3);
-	bo_4 = xe_bo_create_flags(fd, vm, 0x10000, MY_FLAG);
+	bo_4 = xe_bo_create(fd, vm, 0x10000, MY_FLAG);
 	do_bind(fd, vm, bo_4, 0, 0x140000000, 0x10000, 4);
-	bo_5 = xe_bo_create_flags(fd, vm, 0x100000, MY_FLAG);
+	bo_5 = xe_bo_create(fd, vm, 0x100000, MY_FLAG);
 	do_bind(fd, vm, bo_5, 0, 0x100000000, 0x100000, 5);
-	bo_6 = xe_bo_create_flags(fd, vm, 0x1c0000, MY_FLAG);
+	bo_6 = xe_bo_create(fd, vm, 0x1c0000, MY_FLAG);
 	do_bind(fd, vm, bo_6, 0, 0xc0040000, 0x1c0000, 6);
-	bo_7 = xe_bo_create_flags(fd, vm, 0x10000, MY_FLAG);
+	bo_7 = xe_bo_create(fd, vm, 0x10000, MY_FLAG);
 	do_bind(fd, vm, bo_7, 0, 0xeffff0000, 0x10000, 7);
 
 	if (wt == RELTIME) {
@@ -173,7 +173,7 @@ invalid_flag(int fd)
 
 	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 
-	bo = xe_bo_create_flags(fd, vm, 0x40000, MY_FLAG);
+	bo = xe_bo_create(fd, vm, 0x40000, MY_FLAG);
 
 	do_bind(fd, vm, bo, 0, 0x200000, 0x40000, 1);
 
@@ -198,7 +198,7 @@ invalid_ops(int fd)
 
 	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 
-	bo = xe_bo_create_flags(fd, vm, 0x40000, MY_FLAG);
+	bo = xe_bo_create(fd, vm, 0x40000, MY_FLAG);
 
 	do_bind(fd, vm, bo, 0, 0x200000, 0x40000, 1);
 
@@ -223,7 +223,7 @@ invalid_engine(int fd)
 
 	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 
-	bo = xe_bo_create_flags(fd, vm, 0x40000, MY_FLAG);
+	bo = xe_bo_create(fd, vm, 0x40000, MY_FLAG);
 
 	do_bind(fd, vm, bo, 0, 0x200000, 0x40000, 1);
 

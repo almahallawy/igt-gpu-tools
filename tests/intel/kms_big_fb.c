@@ -778,10 +778,10 @@ test_size_overflow(data_t *data)
 	if (is_i915_device(data->drm_fd))
 		bo = gem_buffer_create_fb_obj(data->drm_fd, (1ULL << 32) - 4096);
 	else
-		bo = xe_bo_create_flags(data->drm_fd, 0,
-					ALIGN(((1ULL << 32) - 4096),
-					      xe_get_default_alignment(data->drm_fd)),
-					vram_if_possible(data->drm_fd, 0));
+		bo = xe_bo_create(data->drm_fd, 0,
+				  ALIGN(((1ULL << 32) - 4096),
+					xe_get_default_alignment(data->drm_fd)),
+				  vram_if_possible(data->drm_fd, 0));
 	igt_require(bo);
 
 	ret = __kms_addfb(data->drm_fd, bo,
@@ -822,10 +822,10 @@ test_size_offset_overflow(data_t *data)
 	if (is_i915_device(data->drm_fd))
 		bo = gem_buffer_create_fb_obj(data->drm_fd, (1ULL << 32) - 4096);
 	else
-		bo = xe_bo_create_flags(data->drm_fd, 0,
-					ALIGN(((1ULL << 32) - 4096),
-					      xe_get_default_alignment(data->drm_fd)),
-					vram_if_possible(data->drm_fd, 0));
+		bo = xe_bo_create(data->drm_fd, 0,
+				  ALIGN(((1ULL << 32) - 4096),
+					xe_get_default_alignment(data->drm_fd)),
+				  vram_if_possible(data->drm_fd, 0));
 	igt_require(bo);
 
 	offsets[0] = 0;
@@ -887,9 +887,9 @@ test_addfb(data_t *data)
 	if (is_i915_device(data->drm_fd))
 		bo = gem_buffer_create_fb_obj(data->drm_fd, size);
 	else
-		bo = xe_bo_create_flags(data->drm_fd, 0,
-					ALIGN(size, xe_get_default_alignment(data->drm_fd)),
-					vram_if_possible(data->drm_fd, 0));
+		bo = xe_bo_create(data->drm_fd, 0,
+				  ALIGN(size, xe_get_default_alignment(data->drm_fd)),
+				  vram_if_possible(data->drm_fd, 0));
 	igt_require(bo);
 
 	if (is_i915_device(data->drm_fd) && intel_display_ver(data->devid) < 4)

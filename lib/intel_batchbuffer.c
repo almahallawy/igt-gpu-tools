@@ -958,7 +958,7 @@ __intel_bb_create(int fd, uint32_t ctx, uint32_t vm, const intel_ctx_cfg_t *cfg,
 
 		ibb->alignment = alignment;
 		size = ALIGN(size, ibb->alignment);
-		ibb->handle = xe_bo_create_flags(fd, 0, size, visible_vram_if_possible(fd, 0));
+		ibb->handle = xe_bo_create(fd, 0, size, visible_vram_if_possible(fd, 0));
 
 		/* Limit to 48-bit due to MI_* address limitation */
 		ibb->gtt_size = 1ull << min_t(uint32_t, xe_va_bits(fd), 48);
@@ -1423,8 +1423,8 @@ void intel_bb_reset(struct intel_bb *ibb, bool purge_objects_cache)
 	if (ibb->driver == INTEL_DRIVER_I915)
 		ibb->handle = gem_create(ibb->fd, ibb->size);
 	else
-		ibb->handle = xe_bo_create_flags(ibb->fd, 0, ibb->size,
-						 visible_vram_if_possible(ibb->fd, 0));
+		ibb->handle = xe_bo_create(ibb->fd, 0, ibb->size,
+					   visible_vram_if_possible(ibb->fd, 0));
 
 	/* Reacquire offset for RELOC and SIMPLE */
 	if (ibb->allocator_type == INTEL_ALLOCATOR_SIMPLE ||

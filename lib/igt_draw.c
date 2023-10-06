@@ -799,7 +799,7 @@ static void draw_rect_render(int fd, struct cmd_data *cmd_data,
 	if (is_i915_device(fd))
 		tmp.handle = gem_create(fd, tmp.size);
 	else
-		tmp.handle = xe_bo_create_flags(fd, 0,
+		tmp.handle = xe_bo_create(fd, 0,
 						ALIGN(tmp.size, xe_get_default_alignment(fd)),
 						visible_vram_if_possible(fd, 0) |
 						DRM_XE_GEM_CREATE_FLAG_SCANOUT);

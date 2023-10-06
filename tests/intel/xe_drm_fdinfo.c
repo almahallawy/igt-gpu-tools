@@ -85,7 +85,7 @@ static void test_active(int fd, struct drm_xe_engine_class_instance *eci)
 		igt_assert_f(ret != 0, "failed with err:%d\n", errno);
 		pre_size = info.region_mem[memregion->instance + 1].active;
 
-		bo = xe_bo_create_flags(fd, vm, bo_size, region);
+		bo = xe_bo_create(fd, vm, bo_size, region);
 		data = xe_bo_map(fd, bo, bo_size);
 
 		for (i = 0; i < N_EXEC_QUEUES; i++) {
@@ -185,7 +185,7 @@ static void test_shared(int xe)
 		igt_assert_f(ret != 0, "failed with err:%d\n", errno);
 		pre_size = info.region_mem[memregion->instance + 1].shared;
 
-		bo = xe_bo_create_flags(xe, 0, BO_SIZE, region);
+		bo = xe_bo_create(xe, 0, BO_SIZE, region);
 
 		flink.handle = bo;
 		ret = igt_ioctl(xe, DRM_IOCTL_GEM_FLINK, &flink);
@@ -232,7 +232,7 @@ static void test_total_resident(int xe)
 		igt_assert_f(ret != 0, "failed with err:%d\n", errno);
 		pre_size = info.region_mem[memregion->instance + 1].shared;
 
-		handle = xe_bo_create_flags(xe, vm, BO_SIZE, region);
+		handle = xe_bo_create(xe, vm, BO_SIZE, region);
 		xe_vm_bind_sync(xe, vm, handle, 0, addr, BO_SIZE);
 
 		ret = igt_parse_drm_fdinfo(xe, &info, NULL, 0, NULL, 0);

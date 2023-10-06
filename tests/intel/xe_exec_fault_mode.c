@@ -151,12 +151,12 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		}
 	} else {
 		if (flags & PREFETCH)
-			bo = xe_bo_create_flags(fd, 0, bo_size,
-						all_memory_regions(fd) |
-						visible_vram_if_possible(fd, 0));
+			bo = xe_bo_create(fd, 0, bo_size,
+					  all_memory_regions(fd) |
+					  visible_vram_if_possible(fd, 0));
 		else
-			bo = xe_bo_create_flags(fd, 0, bo_size,
-						visible_vram_if_possible(fd, eci->gt_id));
+			bo = xe_bo_create(fd, 0, bo_size,
+					  visible_vram_if_possible(fd, eci->gt_id));
 		data = xe_bo_map(fd, bo, bo_size);
 	}
 	memset(data, 0, bo_size);

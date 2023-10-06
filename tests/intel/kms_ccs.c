@@ -452,8 +452,8 @@ static void test_bad_ccs_plane(data_t *data, int width, int height, int ccs_plan
 	if (data->flags & TEST_BAD_CCS_HANDLE) {
 		bad_ccs_bo = is_i915_device(data->drm_fd) ?
 				gem_create(data->drm_fd, fb.size) :
-				xe_bo_create_flags(data->drm_fd, 0, fb.size,
-						   visible_vram_if_possible(data->drm_fd, 0));
+				xe_bo_create(data->drm_fd, 0, fb.size,
+					     visible_vram_if_possible(data->drm_fd, 0));
 		f.handles[ccs_plane] = bad_ccs_bo;
 	}
 

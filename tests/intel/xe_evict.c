@@ -99,18 +99,18 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
                                 i < n_execs / 8 ? 0 : vm;
 
 			if (flags & MULTI_VM) {
-				__bo = bo[i] = xe_bo_create_flags(fd, 0,
-								  bo_size,
-								  visible_vram_memory(fd, eci->gt_id));
+				__bo = bo[i] = xe_bo_create(fd, 0,
+							    bo_size,
+							    visible_vram_memory(fd, eci->gt_id));
 			} else if (flags & THREADED) {
-				__bo = bo[i] = xe_bo_create_flags(fd, vm,
-								  bo_size,
-								  visible_vram_memory(fd, eci->gt_id));
+				__bo = bo[i] = xe_bo_create(fd, vm,
+							    bo_size,
+							    visible_vram_memory(fd, eci->gt_id));
 			} else {
-				__bo = bo[i] = xe_bo_create_flags(fd, _vm,
-								  bo_size,
-								  visible_vram_memory(fd, eci->gt_id) |
-								  system_memory(fd));
+				__bo = bo[i] = xe_bo_create(fd, _vm,
+							    bo_size,
+							    visible_vram_memory(fd, eci->gt_id) |
+							    system_memory(fd));
 			}
 		} else {
 			__bo = bo[i % (n_execs / 2)];
@@ -275,18 +275,18 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
                                 i < n_execs / 8 ? 0 : vm;
 
 			if (flags & MULTI_VM) {
-				__bo = bo[i] = xe_bo_create_flags(fd, 0,
-								  bo_size,
-								  visible_vram_memory(fd, eci->gt_id));
+				__bo = bo[i] = xe_bo_create(fd, 0,
+							    bo_size,
+							    visible_vram_memory(fd, eci->gt_id));
 			} else if (flags & THREADED) {
-				__bo = bo[i] = xe_bo_create_flags(fd, vm,
-								  bo_size,
-								  visible_vram_memory(fd, eci->gt_id));
+				__bo = bo[i] = xe_bo_create(fd, vm,
+							    bo_size,
+							    visible_vram_memory(fd, eci->gt_id));
 			} else {
-				__bo = bo[i] = xe_bo_create_flags(fd, _vm,
-								  bo_size,
-								  visible_vram_memory(fd, eci->gt_id) |
-								  system_memory(fd));
+				__bo = bo[i] = xe_bo_create(fd, _vm,
+							    bo_size,
+							    visible_vram_memory(fd, eci->gt_id) |
+							    system_memory(fd));
 			}
 		} else {
 			__bo = bo[i % (n_execs / 2)];

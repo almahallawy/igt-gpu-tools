@@ -1206,7 +1206,7 @@ static int create_bo_for_fb(struct igt_fb *fb, bool prefer_sysmem)
 			/* If we can't use fences, we won't use ggtt detiling later. */
 			igt_assert(err == 0 || err == -EOPNOTSUPP);
 		} else if (is_xe_device(fd)) {
-			fb->gem_handle = xe_bo_create_flags(fd, 0, fb->size,
+			fb->gem_handle = xe_bo_create(fd, 0, fb->size,
 							    visible_vram_if_possible(fd, 0) |
 							    DRM_XE_GEM_CREATE_FLAG_SCANOUT);
 		} else if (is_vc4_device(fd)) {
@@ -2907,7 +2907,7 @@ static void blitcopy(const struct igt_fb *dst_fb,
 
 		bb_size = ALIGN(bb_size + xe_cs_prefetch_size(dst_fb->fd),
 				xe_get_default_alignment(dst_fb->fd));
-		xe_bb = xe_bo_create_flags(dst_fb->fd, 0, bb_size, mem_region);
+		xe_bb = xe_bo_create(dst_fb->fd, 0, bb_size, mem_region);
 	}
 
 	for (int i = 0; i < dst_fb->num_planes - dst_cc; i++) {

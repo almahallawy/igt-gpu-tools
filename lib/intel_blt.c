@@ -1808,7 +1808,7 @@ blt_create_object(const struct blt_copy_data *blt, uint32_t region,
 			flags |= DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
 
 		size = ALIGN(size, xe_get_default_alignment(blt->fd));
-		handle = xe_bo_create_flags(blt->fd, 0, size, flags);
+		handle = xe_bo_create(blt->fd, 0, size, flags);
 	} else {
 		igt_assert(__gem_create_in_memory_regions(blt->fd, &handle,
 							  &size, region) == 0);

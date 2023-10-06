@@ -125,7 +125,7 @@ static void fast_copy_emit(int xe, const intel_ctx_t *ctx,
 	uint32_t bb, width = param.width, height = param.height;
 	int result;
 
-	bb = xe_bo_create_flags(xe, 0, bb_size, region1);
+	bb = xe_bo_create(xe, 0, bb_size, region1);
 
 	blt_copy_init(xe, &bltinit);
 	src = blt_create_object(&bltinit, region1, width, height, bpp, 0,
@@ -184,7 +184,7 @@ static void fast_copy(int xe, const intel_ctx_t *ctx,
 	uint32_t width = param.width, height = param.height;
 	int result;
 
-	bb = xe_bo_create_flags(xe, 0, bb_size, region1);
+	bb = xe_bo_create(xe, 0, bb_size, region1);
 
 	blt_copy_init(xe, &blt);
 	src = blt_create_object(&blt, region1, width, height, bpp, 0,

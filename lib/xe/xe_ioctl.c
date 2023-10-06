@@ -240,7 +240,7 @@ uint16_t __xe_default_cpu_caching_from_flags(int fd, uint32_t flags)
 	return DRM_XE_GEM_CPU_CACHING_WB;
 }
 
-static uint32_t ___xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags,
+static uint32_t ___xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t flags,
 				      uint16_t cpu_caching, uint32_t *handle)
 {
 	struct drm_xe_gem_create create = {
@@ -260,19 +260,19 @@ static uint32_t ___xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32
 
 }
 
-uint32_t __xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags,
+uint32_t __xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t flags,
 			      uint32_t *handle)
 {
 	uint16_t cpu_caching = __xe_default_cpu_caching_from_flags(fd, flags);
 
-	return ___xe_bo_create_flags(fd, vm, size, flags, cpu_caching, handle);
+	return ___xe_bo_create(fd, vm, size, flags, cpu_caching, handle);
 }
 
-uint32_t xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags)
+uint32_t xe_bo_create(int fd, uint32_t vm, uint64_t size, uint32_t flags)
 {
 	uint32_t handle;
 
-	igt_assert_eq(__xe_bo_create_flags(fd, vm, size, flags, &handle), 0);
+	igt_assert_eq(__xe_bo_create(fd, vm, size, flags, &handle), 0);
 
 	return handle;
 }
@@ -280,7 +280,7 @@ uint32_t xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags)
 uint32_t __xe_bo_create_caching(int fd, uint32_t vm, uint64_t size, uint32_t flags,
 				uint16_t cpu_caching, uint32_t *handle)
 {
-	return ___xe_bo_create_flags(fd, vm, size, flags, cpu_caching,
+	return ___xe_bo_create(fd, vm, size, flags, cpu_caching,
 				     handle);
 }
 

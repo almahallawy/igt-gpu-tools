@@ -140,8 +140,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		if (flags & DEFER_ALLOC)
 			bo_flags |= DRM_XE_GEM_CREATE_FLAG_DEFER_BACKING;
 
-		bo = xe_bo_create_flags(fd, n_vm == 1 ? vm[0] : 0,
-					bo_size, bo_flags);
+		bo = xe_bo_create(fd, n_vm == 1 ? vm[0] : 0, bo_size, bo_flags);
 		if (!(flags & DEFER_BIND))
 			data = xe_bo_map(fd, bo, bo_size);
 	}

@@ -210,7 +210,7 @@ static void get_ccs_fb(int fd, struct drm_mode_fb_cmd2 *ret)
 	if (is_i915_device(fd))
 		add.handles[0] = gem_buffer_create_fb_obj(fd, size);
 	else
-		add.handles[0] = xe_bo_create_flags(fd, 0, size, vram_if_possible(fd, 0));
+		add.handles[0] = xe_bo_create(fd, 0, size, vram_if_possible(fd, 0));
 	igt_require(add.handles[0] != 0);
 
 	if (!HAS_FLATCCS(devid))

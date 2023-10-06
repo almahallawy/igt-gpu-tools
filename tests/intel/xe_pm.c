@@ -271,8 +271,8 @@ test_exec(device_t device, struct drm_xe_engine_class_instance *eci,
 	if (check_rpm && runtime_usage_available(device.pci_xe))
 		rpm_usage = igt_pm_get_runtime_usage(device.pci_xe);
 
-	bo = xe_bo_create_flags(device.fd_xe, vm, bo_size,
-				visible_vram_if_possible(device.fd_xe, eci->gt_id));
+	bo = xe_bo_create(device.fd_xe, vm, bo_size,
+			  visible_vram_if_possible(device.fd_xe, eci->gt_id));
 	data = xe_bo_map(device.fd_xe, bo, bo_size);
 
 	for (i = 0; i < n_exec_queues; i++) {
@@ -409,7 +409,7 @@ static void test_vram_d3cold_threshold(device_t device, int sysfs_fd)
 	threshold = vram_used_mb + (SIZE / 1024 /1024);
 	igt_require(threshold < vram_total_mb);
 
-	bo = xe_bo_create_flags(device.fd_xe, 0, SIZE, flags);
+	bo = xe_bo_create(device.fd_xe, 0, SIZE, flags);
 	map = xe_bo_map(device.fd_xe, bo, SIZE);
 	memset(map, 0, SIZE);
 	munmap(map, SIZE);

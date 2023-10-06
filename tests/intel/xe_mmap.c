@@ -52,7 +52,7 @@ test_mmap(int fd, uint32_t flags)
 
 	igt_require_f(flags, "Device doesn't support such memory region\n");
 
-	bo = xe_bo_create_flags(fd, 0, 4096, flags);
+	bo = xe_bo_create(fd, 0, 4096, flags);
 
 	map = xe_bo_map(fd, bo, 4096);
 	strcpy(map, "Write some data to the BO!");
@@ -72,8 +72,8 @@ static void test_bad_flags(int fd)
 {
 	uint64_t size = xe_get_default_alignment(fd);
 	struct drm_xe_gem_mmap_offset mmo = {
-		.handle = xe_bo_create_flags(fd, 0, size,
-					     visible_vram_if_possible(fd, 0)),
+		.handle = xe_bo_create(fd, 0, size,
+				       visible_vram_if_possible(fd, 0)),
 		.flags = -1u,
 	};
 
@@ -92,8 +92,8 @@ static void test_bad_extensions(int fd)
 	uint64_t size = xe_get_default_alignment(fd);
 	struct xe_user_extension ext;
 	struct drm_xe_gem_mmap_offset mmo = {
-		.handle = xe_bo_create_flags(fd, 0, size,
-					     visible_vram_if_possible(fd, 0)),
+		.handle = xe_bo_create(fd, 0, size,
+				       visible_vram_if_possible(fd, 0)),
 	};
 
 	mmo.extensions = to_user_pointer(&ext);
@@ -113,8 +113,8 @@ static void test_bad_object(int fd)
 {
 	uint64_t size = xe_get_default_alignment(fd);
 	struct drm_xe_gem_mmap_offset mmo = {
-		.handle = xe_bo_create_flags(fd, 0, size,
-					     visible_vram_if_possible(fd, 0)),
+		.handle = xe_bo_create(fd, 0, size,
+				       visible_vram_if_possible(fd, 0)),
 	};
 
 	mmo.handle = 0xdeadbeef;
@@ -159,13 +159,13 @@ static void test_small_bar(int fd)
 	uint32_t *map;
 
 	/* 2BIG invalid case */
-	igt_assert_neq(__xe_bo_create_flags(fd, 0, visible_size + 4096,
-					    visible_vram_memory(fd, 0), &bo),
+	igt_assert_neq(__xe_bo_create(fd, 0, visible_size + 4096,
+				      visible_vram_memory(fd, 0), &bo),
 		       0);
 
 	/* Normal operation */
-	bo = xe_bo_create_flags(fd, 0, visible_size / 4,
-				visible_vram_memory(fd, 0));
+	bo = xe_bo_create(fd, 0, visible_size / 4,
+			  visible_vram_memory(fd, 0));
 	mmo = xe_bo_mmap_offset(fd, bo);
 	map = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, fd, mmo);
 	igt_assert(map != MAP_FAILED);
@@ -176,9 +176,9 @@ static void test_small_bar(int fd)
 	gem_close(fd, bo);
 
 	/* Normal operation with system memory spilling */
-	bo = xe_bo_create_flags(fd, 0, visible_size,
-				visible_vram_memory(fd, 0) |
-				system_memory(fd));
+	bo = xe_bo_create(fd, 0, visible_size,
+			  visible_vram_memory(fd, 0) |
+			  system_memory(fd));
 	mmo = xe_bo_mmap_offset(fd, bo);
 	map = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, fd, mmo);
 	igt_assert(map != MAP_FAILED);
@@ -189,8 +189,8 @@ static void test_small_bar(int fd)
 	gem_close(fd, bo);
 
 	/* Bogus operation with SIGBUS */
-	bo = xe_bo_create_flags(fd, 0, visible_size + 4096,
-				vram_memory(fd, 0));
+	bo = xe_bo_create(fd, 0, visible_size + 4096,
+			  vram_memory(fd, 0));
 	mmo = xe_bo_mmap_offset(fd, bo);
 	map = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, fd, mmo);
 	igt_assert(map != MAP_FAILED);
