@@ -209,8 +209,6 @@ struct workload {
 	uint32_t bb_prng;
 	uint32_t bo_prng;
 
-	struct timespec repeat_start;
-
 	unsigned int nr_ctxs;
 	struct ctx *ctx_list;
 
@@ -2280,7 +2278,7 @@ static void sync_deps(struct workload *wrk, struct w_step *w)
 static void *run_workload(void *data)
 {
 	struct workload *wrk = (struct workload *)data;
-	struct timespec t_start, t_end;
+	struct timespec t_start, t_end, repeat_start;
 	struct w_step *w;
 	int throttle = -1;
 	int qd_throttle = -1;
@@ -2294,7 +2292,7 @@ static void *run_workload(void *data)
 	     count++) {
 		unsigned int cur_seqno = wrk->sync_seqno;
 
-		clock_gettime(CLOCK_MONOTONIC, &wrk->repeat_start);
+		clock_gettime(CLOCK_MONOTONIC, &repeat_start);
 
 		for (i = 0, w = wrk->steps; wrk->run && (i < wrk->nr_steps);
 		     i++, w++) {
@@ -2308,7 +2306,7 @@ static void *run_workload(void *data)
 				int elapsed;
 
 				clock_gettime(CLOCK_MONOTONIC, &now);
-				elapsed = elapsed_us(&wrk->repeat_start, &now);
+				elapsed = elapsed_us(&repeat_start, &now);
 				do_sleep = w->period - elapsed;
 				time_tot += elapsed;
 				if (elapsed < time_min)
