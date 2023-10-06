@@ -231,6 +231,13 @@ struct workload {
 	unsigned int nrequest[NUM_ENGINES];
 };
 
+#define __for_each_ctx(__ctx, __wrk, __ctx_idx) \
+	for (typeof((__wrk)->nr_ctxs) __ctx_idx = 0; __ctx_idx < (__wrk)->nr_ctxs && \
+	     (__ctx = &(__wrk)->ctx_list[__ctx_idx]); ++__ctx_idx)
+
+#define for_each_ctx(__ctx, __wrk) \
+	__for_each_ctx(__ctx, __wrk, igt_unique(__ctx_idx))
+
 static unsigned int master_prng;
 
 static int verbose = 1;
@@ -1804,16 +1811,15 @@ static int prepare_contexts(unsigned int id, struct workload *wrk)
 {
 	uint32_t share_vm = 0;
 	struct w_step *w;
-	int i, j;
+	struct ctx *ctx, *ctx2;
+	unsigned int i, j;
 
 	/*
 	 * Transfer over engine map configuration from the workload step.
 	 */
-	for (j = 0; j < wrk->nr_ctxs; j++) {
-		struct ctx *ctx = &wrk->ctx_list[j];
-
+	__for_each_ctx(ctx, wrk, ctx_idx) {
 		for (i = 0, w = wrk->steps; i < wrk->nr_steps; i++, w++) {
-			if (w->context != j)
+			if (w->context != ctx_idx)
 				continue;
 
 			if (w->type == ENGINE_MAP) {
@@ -1850,32 +1856,32 @@ static int prepare_contexts(unsigned int id, struct workload *wrk)
 	/*
 	 * Create and configure contexts.
 	 */
-	for (i = 0; i < wrk->nr_ctxs; i++) {
+	for_each_ctx(ctx, wrk) {
 		struct drm_i915_gem_context_create_ext_setparam ext = {
 			.base.name = I915_CONTEXT_CREATE_EXT_SETPARAM,
 			.param.param = I915_CONTEXT_PARAM_VM,
 		};
 		struct drm_i915_gem_context_create_ext args = { };
-		struct ctx *ctx = &wrk->ctx_list[i];
 		uint32_t ctx_id;
 
 		igt_assert(!ctx->id);
 
 		/* Find existing context to share ppgtt with. */
-		for (j = 0; !share_vm && j < wrk->nr_ctxs; j++) {
-			struct drm_i915_gem_context_param param = {
-				.param = I915_CONTEXT_PARAM_VM,
-				.ctx_id = wrk->ctx_list[j].id,
-			};
+		if (!share_vm)
+			for_each_ctx(ctx2, wrk) {
+				struct drm_i915_gem_context_param param = {
+					.param = I915_CONTEXT_PARAM_VM,
+					.ctx_id = ctx2->id,
+				};
 
-			if (!param.ctx_id)
-				continue;
+				if (!param.ctx_id)
+					continue;
 
-			gem_context_get_param(fd, &param);
-			igt_assert(param.value);
-			share_vm = param.value;
-			break;
-		}
+				gem_context_get_param(fd, &param);
+				igt_assert(param.value);
+				share_vm = param.value;
+				break;
+			}
 
 		if (share_vm) {
 			ext.param.value = share_vm;
