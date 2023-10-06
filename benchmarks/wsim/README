@@ -88,6 +88,19 @@ Batch durations can also be specified as infinite by using the '*' in the
 duration field. Such batches must be ended by the terminate command ('T')
 otherwise they will cause a GPU hang to be reported.
 
+Xe and i915 differences
+------------------------
+
+There are differences between Xe and i915, like not allowing a BO list to
+be passed to an exec (and create implicit syncs). For more details see:
+https://gitlab.freedesktop.org/drm/xe/kernel/-/blob/drm-xe-next/drivers/gpu/drm/xe/xe_exec.c
+
+Currently following batch steps are equal on Xe:
+1.1000.-2.0 <==> 1.1000.f-2.0
+and will create explicit sync fence dependency (via syncobjects).
+
+The data dependency need to wait for working sets implementation.
+
 Sync (fd) fences
 ----------------
 
@@ -131,7 +144,7 @@ runnable. When the second RCS batch completes the standalone fence is signaled
 which allows the two VCS batches to be executed. Finally we wait until the both
 VCS batches have completed before starting the (optional) next iteration.
 
-Submit fences
+Submit fences (i915 only)
 -------------
 
 Submit fences are a type of input fence which are signalled when the originating
@@ -148,7 +161,7 @@ Submit fences have the identical syntax as the sync fences with the lower-case
 Here VCS1 and VCS2 batches will only be submitted for executing once the RCS
 batch enters the GPU.
 
-Context priority
+Context priority (i915 only)
 ----------------
 
   P.1.-1
@@ -213,7 +226,7 @@ Example:
 
 This enables load balancing for context number one.
 
-Engine bonds
+Engine bonds (i915 only)
 ------------
 
 Engine bonds are extensions on load balanced contexts. They allow expressing
@@ -261,7 +274,7 @@ then look like:
   2.DEFAULT.1000.s-1.0
   a.-3
 
-Context SSEU configuration
+Context SSEU configuration (i915 only)
 --------------------------
 
   S.1.1
@@ -281,7 +294,7 @@ Slice mask of -1 has a special meaning of "all slices". Otherwise any integer
 can be specifying as the slice mask, but beware any apart from 1 and -1 can make
 the workload not portable between different GPUs.
 
-Working sets
+Working sets (i915 only)
 ------------
 
 When used plainly workload steps can create implicit data dependencies by
