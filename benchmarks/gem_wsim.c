@@ -236,9 +236,9 @@ static struct drm_i915_gem_context_param_sseu device_sseu = {
 	.slice_mask = -1 /* Force read on first use. */
 };
 
-#define SYNCEDCLIENTS	(1<<1)
-#define DEPSYNC		(1<<2)
-#define SSEU		(1<<3)
+#define FLAG_SYNCEDCLIENTS	(1<<1)
+#define FLAG_DEPSYNC		(1<<2)
+#define FLAG_SSEU		(1<<3)
 
 static const char *ring_str_map[NUM_ENGINES] = {
 	[DEFAULT] = "DEFAULT",
@@ -1230,7 +1230,7 @@ add_step:
 	wrk->sseu = arg->sseu;
 	wrk->max_working_set_id = -1;
 	wrk->working_sets = NULL;
-	wrk->bo_prng = (flags & SYNCEDCLIENTS) ? master_prng : rand();
+	wrk->bo_prng = (flags & FLAG_SYNCEDCLIENTS) ? master_prng : rand();
 
 	free(desc);
 
@@ -1868,8 +1868,8 @@ static int prepare_workload(unsigned int id, struct workload *wrk)
 	int i, j;
 
 	wrk->id = id;
-	wrk->bb_prng = (wrk->flags & SYNCEDCLIENTS) ? master_prng : rand();
-	wrk->bo_prng = (wrk->flags & SYNCEDCLIENTS) ? master_prng : rand();
+	wrk->bb_prng = (wrk->flags & FLAG_SYNCEDCLIENTS) ? master_prng : rand();
+	wrk->bo_prng = (wrk->flags & FLAG_SYNCEDCLIENTS) ? master_prng : rand();
 	wrk->run = true;
 
 	/*
@@ -2387,7 +2387,7 @@ static void *run_workload(void *data)
 
 			igt_assert(w->type == BATCH);
 
-			if (wrk->flags & DEPSYNC)
+			if (wrk->flags & FLAG_DEPSYNC)
 				sync_deps(wrk, w);
 
 			if (throttle > 0)
@@ -2594,7 +2594,7 @@ int main(int argc, char **argv)
 			/* Fall through */
 		case 'w':
 			w_args = add_workload_arg(w_args, ++nr_w_args, optarg,
-						  prio, flags & SSEU);
+						  prio, flags & FLAG_SSEU);
 			break;
 		case 'p':
 			prio = atoi(optarg);
@@ -2620,13 +2620,13 @@ int main(int argc, char **argv)
 			verbose++;
 			break;
 		case 'S':
-			flags |= SYNCEDCLIENTS;
+			flags |= FLAG_SYNCEDCLIENTS;
 			break;
 		case 's':
-			flags ^= SSEU;
+			flags ^= FLAG_SSEU;
 			break;
 		case 'd':
-			flags |= DEPSYNC;
+			flags |= FLAG_DEPSYNC;
 			break;
 		case 'I':
 			master_prng = strtol(optarg, NULL, 0);
