@@ -1178,38 +1178,6 @@ static const char *plane_test_str(unsigned plane)
 	}
 }
 
-static const char *rot_test_str(igt_rotation_t rot)
-{
-	switch (rot) {
-	case IGT_ROTATION_0:
-		return "0";
-	case IGT_ROTATION_90:
-		return "90";
-	case IGT_ROTATION_180:
-		return "180";
-	case IGT_ROTATION_270:
-		return "270";
-	default:
-		igt_assert(0);
-	}
-}
-
-static const char *modifier_test_str(uint64_t modifier)
-{
-	switch (modifier) {
-	case I915_FORMAT_MOD_X_TILED:
-		return "x-tiled";
-	case I915_FORMAT_MOD_Y_TILED:
-		return "y-tiled";
-	case I915_FORMAT_MOD_Yf_TILED:
-		return "yf-tiled";
-	case I915_FORMAT_MOD_4_TILED:
-		return "4-tiled";
-	default:
-		igt_assert(0);
-	}
-}
-
 static int opt_handler(int opt, int opt_index, void *_data)
 {
 	data_t *data = _data;
@@ -1289,7 +1257,7 @@ igt_main_args("", long_opts, help_str, opt_handler, &data)
 	for (subtest = subtests; subtest->rot; subtest++) {
 		igt_subtest_f("%s-rotation-%s",
 			      plane_test_str(subtest->plane),
-			      rot_test_str(subtest->rot)) {
+			      igt_plane_rotation_name(subtest->rot)) {
 			if (is_amdgpu_device(data.gfx_fd)) {
 				data.override_fmt = DRM_FORMAT_XRGB8888;
 				if (igt_rotation_90_or_270(subtest->rot))
@@ -1339,9 +1307,9 @@ igt_main_args("", long_opts, help_str, opt_handler, &data)
 		igt_fixture
 			igt_require_intel(data.gfx_fd);
 
-		igt_subtest_f("primary-%s-reflect-x-%s",
-			      modifier_test_str(reflect_x->modifier),
-			      rot_test_str(reflect_x->rot)) {
+		igt_subtest_f("primary-%s-tiled-reflect-x-%s",
+			      igt_fb_modifier_name(reflect_x->modifier),
+			      igt_plane_rotation_name(reflect_x->rot)) {
 			data.rotation = (IGT_REFLECT_X | reflect_x->rot);
 			data.override_modifier = reflect_x->modifier;
 			test_plane_rotation(&data, DRM_PLANE_TYPE_PRIMARY, false);
