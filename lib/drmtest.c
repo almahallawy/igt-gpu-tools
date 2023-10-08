@@ -260,8 +260,11 @@ static int open_device(const char *name, unsigned int chipset)
 		goto err;
 
 	forced = forced_driver();
-	if (forced && chipset == DRIVER_ANY && strcmp(forced, dev_name))
+	if (forced && chipset == DRIVER_ANY && strcmp(forced, dev_name)) {
+		igt_debug("Expected driver \"%s\" but got \"%s\"\n",
+				  forced, dev_name);
 		goto err;
+	}
 
 	for (int start = 0, end = ARRAY_SIZE(modules) - 1; start < end; ){
 		int mid = start + (end - start) / 2;
