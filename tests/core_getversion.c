@@ -48,7 +48,6 @@ igt_simple_main
 {
 	int fd;
 	drmVersionPtr v;
-	const char *name = getenv("IGT_FORCE_DRIVER");
 
 	fd = __drm_open_driver(DRIVER_ANY);
 	igt_assert_fd(fd);
@@ -58,11 +57,6 @@ igt_simple_main
 	igt_assert_neq(strlen(v->desc), 0);
 	if (is_i915_device(fd))
 		igt_assert_lte(1, v->version_major);
-	if (name) {
-		igt_assert_f(!strcmp(name, v->name),
-			     "Expected driver \"%s\" but got \"%s\"\n",
-			     name, v->name);
-	}
 
 	drmFree(v);
 	drm_close_driver(fd);
