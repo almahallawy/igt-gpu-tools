@@ -17,10 +17,6 @@
  * Description: Test to check if %s arg[1] schedule parameter checks for min max values.
  * Test category: functionality test
  *
- * SUBTEST: %s-nonprivileged-user
- * Description: Test %s arg[1] schedule parameter for nonprivileged user.
- * Test category: functionality test
- *
  * arg[1]:
  *
  * @preempt_timeout_us:		preempt timeout us
