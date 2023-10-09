@@ -736,14 +736,6 @@ static void test_scanout(data_t *data)
 }
 
 /**
- * SUBTEST: linear-addfb-size-overflow
- * Description: Sanity check if addfb ioctl fails correctly for (Linear) modifier
- *              with small bo.
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
- *
  * SUBTEST: %s-addfb-size-overflow
  * Description: Sanity check if addfb ioctl fails correctly for (%arg[1]) modifier
  *              with small bo.
@@ -804,14 +796,6 @@ test_size_overflow(data_t *data)
 }
 
 /**
- * SUBTEST: linear-addfb-size-offset-overflow
- * Description: Sanity check if addfb ioctl fails correctly for (Linear) modifier
- *              and offsets with small bo
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
- *
  * SUBTEST: %s-addfb-size-offset-overflow
  * Description: Sanity check if addfb ioctl fails correctly for (%arg[1]) modifier
  *              and offsets with small bo
