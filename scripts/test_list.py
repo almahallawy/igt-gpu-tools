@@ -1105,13 +1105,39 @@ class TestList:
 
             doc_subtests.add(subtest)
 
+        doc_subtests = list(sorted(doc_subtests))
+
         # Get a list of tests from
-        run_subtests = set(self.get_testlist())
+        run_subtests = self.get_testlist()
 
-        # Compare sets
+        # Compare arrays
 
-        run_missing = list(sorted(run_subtests - doc_subtests))
-        doc_uneeded = list(sorted(doc_subtests - run_subtests))
+        run_missing = []
+        doc_uneeded = []
+
+        test_regex = r""
+        for doc_test in doc_subtests:
+            if test_regex != r"":
+                test_regex += r"|"
+            test_regex += doc_test
+
+        test_regex = re.compile(r'^(' + test_regex + r')$')
+
+        for doc_test in doc_subtests:
+            found = False
+            for run_test in run_subtests:
+                if test_regex.match(run_test):
+                    found = True
+                    break
+            if not found:
+                doc_uneeded.append(doc_test)
+
+        for run_test in run_subtests:
+            found = False
+            if test_regex.match(run_test):
+                found = True
+            if not found:
+                run_missing.append(run_test)
 
         if doc_uneeded:
             for test_name in doc_uneeded:
