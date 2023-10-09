@@ -3025,13 +3025,6 @@ static bool tiling_is_valid(int feature_flags, enum tiling_type tiling)
  * Mega feature: General Display Features
  * Test category: functionality test
  *
- * SUBTEST: fbc-slowdraw
- * Description: Sleep a little bit between drawing operations with FBC
- * Driver requirement: i915, xe
- * Functionality: fbc, fbt, kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- *
  * SUBTEST: psr-slowdraw
  * Description: Sleep a little bit between drawing operations with PSR
  * Driver requirement: i915, xe
