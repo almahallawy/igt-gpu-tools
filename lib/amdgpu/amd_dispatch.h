@@ -27,7 +27,7 @@
 #include <amdgpu.h>
 
 void amdgpu_gfx_dispatch_test(amdgpu_device_handle device_handle,
-			      uint32_t ip_type);
+			      uint32_t ip_type, int hang);
 
 void amdgpu_memcpy_dispatch_test(amdgpu_device_handle device_handle,
 					uint32_t ip_type,
