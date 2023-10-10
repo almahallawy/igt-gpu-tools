@@ -11,12 +11,19 @@ kms_test_config = join_paths(source_root, 'tests', 'intel', 'kms_test_config.jso
 i915_test_config = join_paths(source_root, 'tests', 'intel', 'i915_test_config.json')
 
 check_testlist = []
+kms_check_testlist = []
 if build_tests
 	doc_dependencies = testlist_files
 	# Check if documentation matches the actual tests and tests can run
 	if not meson.is_cross_build()
 		build_info += 'Will Check if documentation is in sync with testlist'
 		check_testlist = [ '--check-testlist', '--igt-build-path', build_root ]
+
+		if not chamelium.found()
+			warning('WARNING: Will not check if documentation is in sync for KMS as chamelium is disabled')
+		else
+			kms_check_testlist = check_testlist
+		endif
 	else
 		warning('WARNING: Will not check if documentation is in sync with testlist')
 	endif
@@ -24,20 +31,16 @@ else
 	doc_dependencies = []
 endif
 
-xe_test_dict = {
-		 'xe_tests': { 'input': xe_test_config, 'extra_args': check_testlist }
-	       }
-
 if build_xe
 	test_dict = {
 		'i915_tests': { 'input': i915_test_config, 'extra_args': check_testlist },
-		'kms_tests': { 'input': kms_test_config, 'extra_args': check_testlist },
+		'kms_tests': { 'input': kms_test_config, 'extra_args': kms_check_testlist },
 		'xe_tests': { 'input': xe_test_config, 'extra_args': check_testlist }
 	    }
 else
 	test_dict = {
 	      'i915_tests': { 'input': i915_test_config, 'extra_args': check_testlist },
-	      'kms_tests': { 'input': kms_test_config, 'extra_args': check_testlist }
+	      'kms_tests': { 'input': kms_test_config, 'extra_args': kms_check_testlist }
 	    }
 endif
 
