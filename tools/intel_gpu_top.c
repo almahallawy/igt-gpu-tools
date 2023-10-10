@@ -972,7 +972,8 @@ print_percentage_bar(double percent, double max, int max_len, bool numeric)
 	int bar_len, i, len = max_len - 2;
 	const int w = 8;
 
-	assert(max_len > 0);
+	if (len < 2) /* For edge lines '|' */
+		return;
 
 	bar_len = ceil(w * percent * len / max);
 	if (bar_len > w * len)
@@ -986,6 +987,8 @@ print_percentage_bar(double percent, double max, int max_len, bool numeric)
 		printf("%s", bars[i]);
 
 	len -= (bar_len + (w - 1)) / w;
+	if (len < 1)
+		return;
 	n_spaces(len);
 
 	putchar('|');
@@ -2001,8 +2004,7 @@ print_clients_header(struct igt_drm_clients *clients, int lines,
 				 4 : clients->max_name_len; /* At least "NAME" */
 
 	if (output_mode == INTERACTIVE) {
-		unsigned int num_active = 0;
-		int len;
+		int len, num_active = 0;
 
 		if (lines++ >= con_h)
 			return lines;
