@@ -1170,7 +1170,7 @@ static void atomic_invalid_params(igt_pipe_t *pipe,
 }
 
 /**
- * SUBTEST: atomic_plane_damage
+ * SUBTEST: atomic-plane-damage
  * Description: Simple test cases to use FB_DAMAGE_CLIPS plane property
  * Driver requirement: i915, xe
  * Functionality: kms_core, plane
@@ -1550,7 +1550,7 @@ igt_main
 	}
 
 	igt_describe("Simple test cases to use FB_DAMAGE_CLIPS plane property");
-	igt_subtest("atomic_plane_damage") {
+	igt_subtest("atomic-plane-damage") {
 		igt_require(igt_plane_has_prop(primary, IGT_PLANE_FB_DAMAGE_CLIPS));
 
 		atomic_setup(&display, pipe, output, primary, &fb);
