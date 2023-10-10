@@ -58,6 +58,8 @@
 
 IGT_TEST_DESCRIPTION("Test atomic modesetting API");
 
+static bool all_pipes = false;
+
 /* Common test data. */
 typedef struct {
 	igt_display_t display;
@@ -1409,7 +1411,23 @@ pipe_output_combo_valid(igt_display_t *display,
 	return ret;
 }
 
-igt_main
+static int opt_handler(int opt, int opt_index, void *_data)
+{
+	switch (opt) {
+		case 'e':
+			all_pipes = true;
+			break;
+		default:
+			return IGT_OPT_HANDLER_ERROR;
+	}
+
+	return IGT_OPT_HANDLER_SUCCESS;
+}
+
+static const char *help_str =
+	"  -e \tRun on all pipes. (By default subtests will run only on one pipe)\n";
+
+igt_main_args("e", NULL, help_str, opt_handler, NULL)
 {
 	enum pipe pipe = PIPE_NONE;
 	igt_output_t *output = NULL;
@@ -1440,7 +1458,8 @@ igt_main
 				plane_overlay(&data, output, overlay, format);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1455,7 +1474,8 @@ igt_main
 				plane_primary(&data);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1482,7 +1502,8 @@ igt_main
 								   DRM_FORMAT_ARGB8888, DRM_FORMAT_ARGB1555);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1501,7 +1522,8 @@ igt_main
 				plane_immutable_zpos(&data, output, pipe, n_planes);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1523,7 +1545,8 @@ igt_main
 				atomic_clear(&data, pipe, output);
 				test_only(&data, output, pipe, format);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1543,7 +1566,8 @@ igt_main
 				plane_cursor(&data, output, cursor);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1557,7 +1581,8 @@ igt_main
 				plane_invalid_params(&data, output);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1571,7 +1596,8 @@ igt_main
 				plane_invalid_params_fence(&data, output);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1585,7 +1611,8 @@ igt_main
 				crtc_invalid_params(&data, output);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1599,7 +1626,8 @@ igt_main
 				crtc_invalid_params_fence(&data, output);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1615,7 +1643,8 @@ igt_main
 				atomic_invalid_params(&data, output);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
@@ -1633,7 +1662,8 @@ igt_main
 				atomic_plane_damage(&data);
 				atomic_clear(&data, pipe, output);
 			}
-			break;
+			if (!all_pipes)
+				break;
 		}
 	}
 
