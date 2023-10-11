@@ -229,9 +229,9 @@ igt_main
 					if (plane->formats[j] != data.testformat)
 						continue;
 
-					igt_dynamic_f("%s-pipe-%s-%s-to-%s",
-						      igt_output_name(output),
+					igt_dynamic_f("pipe-%s-%s-%s-to-%s",
 						      kmstest_pipe_name(pipe),
+						      igt_output_name(output),
 						      igt_fb_modifier_name(modifier[0]),
 						      igt_fb_modifier_name(modifier[1]))
 						test_flip_tiling(&data, pipe, output, modifier);
