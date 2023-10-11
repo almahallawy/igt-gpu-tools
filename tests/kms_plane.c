@@ -84,6 +84,8 @@ static color_t blue  = { 0.0f, 0.0f, 1.0f };
 static void test_init(data_t *data, enum pipe pipe)
 {
 	igt_require(data->display.pipes[pipe].n_planes > 0);
+	if (data->pipe_crc)
+		igt_pipe_crc_free(data->pipe_crc);
 	data->pipe_crc = igt_pipe_crc_new(data->drm_fd, pipe,
 					  IGT_PIPE_CRC_SOURCE_AUTO);
 	igt_display_reset(&data->display);
@@ -92,6 +94,7 @@ static void test_init(data_t *data, enum pipe pipe)
 static void test_fini(data_t *data)
 {
 	igt_pipe_crc_free(data->pipe_crc);
+	data->pipe_crc = NULL;
 }
 
 enum {
