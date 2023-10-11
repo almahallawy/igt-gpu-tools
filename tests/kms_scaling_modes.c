@@ -121,7 +121,7 @@ static void test_scaling_mode(data_t *data, uint32_t flags)
 		if (!i915_pipe_output_combo_valid(display))
 			continue;
 
-		igt_dynamic_f("%s-pipe-%s", output->name, kmstest_pipe_name(pipe))
+		igt_dynamic_f("pipe-%s-%s", kmstest_pipe_name(pipe), igt_output_name(output))
 			test_scaling_mode_on_output(display, pipe, output, flags);
 	}
 }
