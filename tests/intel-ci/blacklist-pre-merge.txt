@@ -13,8 +13,8 @@
 #
 # Data acquired on 2020-02-19 by Martin Peres
 ###############################################################################
-igt@i915_pm_rpm@legacy-planes(-dpms)?
-igt@i915_pm_rpm@universal-planes(-dpms)?
+igt@kms_pm_rpm@legacy-planes(-dpms)?
+igt@kms_pm_rpm@universal-planes(-dpms)?
 
 
 ###############################################################################
@@ -67,7 +67,7 @@ igt@gem_exec_alignment@.*
 #
 # Data acquired on 2020-02-20 by Martin Peres
 ###############################################################################
-igt@i915_pm_rpm@debugfs-read
+igt@kms_pm_rpm@debugfs-read
 
 
 ###############################################################################
@@ -109,4 +109,4 @@ igt@gem_tiled_wc
 #
 # Data acquired on 2020-02-20 by Martin Peres
 ###############################################################################
-igt@i915_pm_rpm@modeset-stress-extra-wait
+igt@kms_pm_rpm@modeset-stress-extra-wait
