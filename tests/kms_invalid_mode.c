@@ -317,7 +317,7 @@ igt_main
 				if (!i915_pipe_output_combo_valid(&data.display))
 					continue;
 
-				igt_dynamic_f("%s-pipe-%s", igt_output_name(output), kmstest_pipe_name(pipe)) {
+				igt_dynamic_f("pipe-%s-%s", kmstest_pipe_name(pipe), igt_output_name(output)) {
 					data.output = output;
 					data.pipe = pipe;
 					data.adjust_mode = subtests[i].adjust_mode;
