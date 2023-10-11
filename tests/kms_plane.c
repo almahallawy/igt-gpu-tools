@@ -1307,7 +1307,7 @@ static void run_test(data_t *data, void (*test)(data_t *, enum pipe))
 			continue;
 
 		igt_output_set_pipe(data->output, PIPE_NONE);
-		igt_dynamic_f("pipe-%s-planes", kmstest_pipe_name(pipe))
+		igt_dynamic_f("pipe-%s", kmstest_pipe_name(pipe))
 			test(data, pipe);
 
 		if (is_pipe_limit_reached(++count))
