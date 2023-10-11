@@ -320,7 +320,7 @@ igt_main
 					if (!i915_pipe_output_combo_valid(&data.display))
 						continue;
 
-					igt_dynamic_f("%s-pipe-%s", igt_output_name(output), kmstest_pipe_name(p)) {
+					igt_dynamic_f("pipe-%s-%s", kmstest_pipe_name(p), igt_output_name(output)) {
 						data.pipe = p;
 						data.output = output;
 						data.flags = m->flags;
