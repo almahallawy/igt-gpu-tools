@@ -21,11 +21,6 @@
  * IN THE SOFTWARE.
  */
 
-/** @file kms_vblank.c
- *
- * This is a test of performance of drmWaitVblank.
- */
-
 #include "igt.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -46,7 +41,7 @@
  * Description: Test speed of WaitVblank.
  *
  * SUBTEST: crtc-id
- * Description: check the Vblank and flip events works with given crtc id
+ * Description: Check the vblank and flip events works with given crtc id
  * Driver requirement: i915, xe
  * Functionality: vblank
  * Mega feature: General Display Features
@@ -623,7 +618,7 @@ static void run_subtests_for_pipe(data_t *data)
 			if (m->flags & ~(f->valid | NOHANG))
 				continue;
 
-			igt_describe("Check if test run while hanging by introducing NOHANG flag");
+			igt_describe("Check if test run while hanging by introducing NOHANG flag.");
 			igt_subtest_f("pipe-%s-%s-%s",
 				      kmstest_pipe_name(data->pipe),
 				      f->name, m->name) {
@@ -645,7 +640,7 @@ static void run_subtests_for_pipe(data_t *data)
 			if (f->valid & NOHANG || m->flags & NOHANG)
 				continue;
 
-			igt_describe("check if injected hang is working properly");
+			igt_describe("Check if injected hang is working properly.");
 			igt_subtest_f("pipe-%s-%s-%s-hang",
 				      kmstest_pipe_name(data->pipe),
 				      f->name, m->name) {
@@ -742,11 +737,11 @@ igt_main
 		igt_display_require_output(&data.display);
 	}
 
-	igt_describe("Negative test for vblank request");
+	igt_describe("Negative test for vblank request.");
 	igt_subtest("invalid")
 		invalid_subtest(&data, fd);
 
-	igt_describe("check the Vblank and flip events works with given crtc id");
+	igt_describe("Check the vblank and flip events works with given crtc id.");
 	igt_subtest("crtc-id")
 		crtc_id_subtest(&data, fd);
 
