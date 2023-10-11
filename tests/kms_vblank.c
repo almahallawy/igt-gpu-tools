@@ -150,6 +150,10 @@ typedef struct {
 #define RPM	0x80
 } data_t;
 
+static bool all_pipes;
+static enum pipe active_pipes[IGT_MAX_PIPES];
+static uint32_t last_pipe;
+
 static double elapsed(const struct timespec *start,
 		      const struct timespec *end,
 		      int loop)
@@ -546,6 +550,10 @@ static void run_subtests(data_t *data)
 					if (!pipe_output_combo_valid(&data->display, data->pipe, data->output))
 						continue;
 
+					if (!all_pipes && data->pipe != active_pipes[0] &&
+					    data->pipe != active_pipes[last_pipe])
+						continue;
+
 					igt_dynamic_f("pipe-%s-%s", kmstest_pipe_name(data->pipe), data->output->name) {
 						data->flags = m->flags | NOHANG;
 						run_test(data, f->func);
@@ -564,6 +572,10 @@ static void run_subtests(data_t *data)
 				hang = igt_allow_hang(data->display.drm_fd, 0, 0);
 				for_each_pipe_with_valid_output(&data->display, data->pipe, data->output) {
 					if (!pipe_output_combo_valid(&data->display, data->pipe, data->output))
+						continue;
+
+					if (!all_pipes && data->pipe != active_pipes[0] &&
+					    data->pipe != active_pipes[last_pipe])
 						continue;
 
 					igt_dynamic_f("pipe-%s-%s", kmstest_pipe_name(data->pipe), data->output->name) {
@@ -622,7 +634,23 @@ static void invalid_subtest(data_t *data, int fd)
 	cleanup_crtc(data, fd, output);
 }
 
-igt_main
+static int opt_handler(int opt, int opt_index, void *data)
+{
+	switch (opt) {
+		case 'e':
+			all_pipes = true;
+			break;
+		default:
+			return IGT_OPT_HANDLER_ERROR;
+	}
+
+	return IGT_OPT_HANDLER_SUCCESS;
+}
+
+const char *help_str =
+	"  -e \tRun on all pipes. (By default subtests will run on two pipes)\n";
+
+igt_main_args("e", NULL, help_str, opt_handler, NULL)
 {
 	int fd;
 	data_t data;
@@ -632,6 +660,11 @@ igt_main
 		kmstest_set_vt_graphics_mode();
 		igt_display_require(&data.display, fd);
 		igt_display_require_output(&data.display);
+
+		/* Get active pipes. */
+		for_each_pipe(&data.display, data.pipe)
+			active_pipes[last_pipe++] = data.pipe;
+		last_pipe--;
 	}
 
 	igt_describe("Negative test for vblank request.");
@@ -651,6 +684,10 @@ igt_main
 	igt_subtest_with_dynamic("crtc-id") {
 		for_each_pipe_with_valid_output(&data.display, data.pipe, data.output) {
 			if (!pipe_output_combo_valid(&data.display, data.pipe, data.output))
+				continue;
+
+			if (!all_pipes && data.pipe != active_pipes[0] &&
+					  data.pipe != active_pipes[last_pipe])
 				continue;
 
 			igt_dynamic_f("pipe-%s-%s", kmstest_pipe_name(data.pipe), data.output->name)
