@@ -263,6 +263,7 @@ intel_kms_progs = [
 	'kms_pm_backlight',
 	'kms_pm_dc',
 	'kms_pm_lpsp',
+	'kms_pm_rpm',
 	'kms_psr',
 	'kms_psr2_sf',
 	'kms_psr2_su',
