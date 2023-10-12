@@ -138,6 +138,7 @@ struct intel_clients {
 
 static struct termios termios_orig;
 static bool class_view;
+static bool aggregate_regions;
 
 /* Maps i915 fdinfo names to indices */
 static const char *memory_region_map[] = {
@@ -1050,6 +1051,7 @@ usage(const char *appname)
 		"\t[-L]            List all cards.\n"
 		"\t[-d <device>]   Device filter, please check manual page for more details.\n"
 		"\t[-p]            Default to showing physical engines instead of classes.\n"
+		"\t[-m]            Default to showing all memory regions.\n"
 		"\n",
 		appname, DEFAULT_PERIOD_MS);
 	igt_device_print_filter_types();
@@ -2032,6 +2034,7 @@ print_clients_header(struct igt_drm_clients *clients, int lines,
 
 	if (output_mode == INTERACTIVE) {
 		int len, num_active = 0;
+		unsigned int i;
 
 		if (lines++ >= con_h)
 			return lines;
@@ -2042,11 +2045,17 @@ print_clients_header(struct igt_drm_clients *clients, int lines,
 		if (lines++ >= con_h || len >= con_w)
 			return lines;
 
-		if (iclients->regions)
-			len += printf("     MEM      RSS ");
+		if (iclients->regions) {
+			if (aggregate_regions) {
+				len += printf("     MEM      RSS ");
+			} else {
+				len += printf("     RAM      RSS ");
+				if (iclients->regions->num_regions > 1)
+					len += printf("    VRAM     VRSS ");
+			}
+		}
 
 		if (iclients->classes.num_engines) {
-			unsigned int i;
 			int width;
 
 			for (i = 0; i <= iclients->classes.max_engine_id; i++) {
@@ -2120,15 +2129,26 @@ print_client(struct igt_drm_client *c, struct engines *engines, double t, int li
 		len = printf("%*s ", clients->max_pid_len, c->pid_str);
 
 		if (iclients->regions) {
-			uint64_t sz;
+			if (aggregate_regions) {
+				uint64_t sz;
 
-			for (sz = 0, i = 0; i <= c->regions->max_region_id; i++)
-				sz += c->memory[i].total;
-			len += print_size(sz);
+				for (sz = 0, i = 0;
+				     i <= c->regions->max_region_id; i++)
+					sz += c->memory[i].total;
+				len += print_size(sz);
 
-			for (sz = 0, i = 0; i <= c->regions->max_region_id; i++)
-				sz += c->memory[i].resident;
-			len += print_size(sz);
+				for (sz = 0, i = 0;
+				     i <= c->regions->max_region_id; i++)
+					sz += c->memory[i].resident;
+				len += print_size(sz);
+			} else {
+				len += print_size(c->memory[0].total);
+				len += print_size(c->memory[0].resident);
+				if (c->regions->num_regions > 1) {
+					len += print_size(c->memory[1].total);
+					len += print_size(c->memory[1].resident);
+				}
+			}
 		}
 
 		for (i = 0; i <= iclients->classes.max_engine_id; i++) {
@@ -2405,6 +2425,13 @@ static void process_normal_stdin(void)
 			else
 				header_msg = "Showing individual clients.";
 			break;
+		case 'm':
+			aggregate_regions ^= true;
+			if (aggregate_regions)
+				header_msg = "Aggregating memory regions.";
+			else
+				header_msg = "Showing memory regions.";
+			break;
 		};
 	}
 }
@@ -2453,6 +2480,7 @@ static void show_help_screen(void)
 "    's'    Toggle between sort modes (runtime, total runtime, pid, client id).\n"
 "    'i'    Toggle display of clients which used no GPU time.\n"
 "    'H'    Toggle between per PID aggregation and individual clients.\n"
+"    'm'    Toggle between aggregated memory regions and full breakdown.\n"
 "\n"
 "    'h' or 'q'    Exit interactive help.\n"
 "\n");
@@ -2580,6 +2608,7 @@ int main(int argc, char **argv)
 {
 	unsigned int period_us = DEFAULT_PERIOD_MS * 1000;
 	bool physical_engines = false;
+	bool separate_regions = false;
 	struct intel_clients iclients;
 	int con_w = -1, con_h = -1;
 	char *output_path = NULL;
@@ -2592,7 +2621,7 @@ int main(int argc, char **argv)
 	struct timespec ts;
 
 	/* Parse options */
-	while ((ch = getopt(argc, argv, "o:s:d:pcJLlh")) != -1) {
+	while ((ch = getopt(argc, argv, "o:s:d:mpcJLlh")) != -1) {
 		switch (ch) {
 		case 'o':
 			output_path = optarg;
@@ -2605,6 +2634,9 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			physical_engines = true;
+			break;
+		case 'm':
+			separate_regions = true;
 			break;
 		case 'c':
 			output_mode = CSV;
@@ -2649,6 +2681,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Failed to install signal handler!\n");
 
 	class_view = !physical_engines;
+	aggregate_regions = !separate_regions;
 
 	switch (output_mode) {
 	case INTERACTIVE:

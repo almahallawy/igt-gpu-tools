@@ -55,6 +55,9 @@ OPTIONS
 -p
    Default to showing physical engines instead of aggregated classes.
 
+-m
+   Default to showing all memory regions separately.
+
 RUNTIME CONTROL
 ===============
 
@@ -68,6 +71,7 @@ Supported keys:
 |    's'    Toggle between sort modes (runtime, total runtime, pid, client id).
 |    'i'    Toggle display of clients which used no GPU time.
 |    'H'    Toggle between per PID aggregation and individual clients.
+|    'm'    Toggle between aggregated memory regions and full breakdown.
 
 DEVICE SELECTION
 ================
