@@ -321,6 +321,10 @@ class TestList:
             self.props["Class"]["_properties_"]["level"] = 1
             self.props["Class"]["_properties_"]["sublevel"] = sublevel_count[0] + 1
 
+        flags = 0
+        if self.config.get("case_insensitive_testlist", False):
+            flags |= re.IGNORECASE
+
         # Remove non-multilevel items, as we're only interested on
         # hierarchical item levels here
         for field, item in self.props.items():
@@ -335,7 +339,7 @@ class TestList:
                 testlist = {}
                 for value in item["_properties_"]["testlists"]:
                     for name in value.keys():
-                        self.read_testlist(testlist, name, cfg_path + value[name])
+                        self.read_testlist(testlist, name, cfg_path + value[name], flags)
 
                 item["_properties_"]["testlist"] = testlist
 
@@ -344,7 +348,7 @@ class TestList:
                 blocklist = {}
                 for value in item["_properties_"]["blocklists"]:
                     for name in value.keys():
-                        self.read_testlist(testlist, name, cfg_path + value[name])
+                        self.read_testlist(testlist, name, cfg_path + value[name], flags)
 
                 item["_properties_"]["blocklist"] = blocklist
 
@@ -448,7 +452,7 @@ class TestList:
 
             self.__add_field(key, sublevel, hierarchy_level, field[key])
 
-    def read_testlist(self, testlist, name, filename):
+    def read_testlist(self, testlist, name, filename, flags):
         base = r"^\s*({}[^\s\{}]+)(\S*)\s*(\#.*)?$"
         regex = re.compile(base.format(self.main_name, self.subtest_separator))
 
@@ -462,7 +466,7 @@ class TestList:
                     subtest = match.group(2)
                     if not subtest.endswith("$"):
                         subtest += r"(\@.*)?$"
-                    testlist[name].append(re.compile(f"{test}{subtest}"))
+                    testlist[name].append(re.compile(f"{test}{subtest}", flags))
 
     def __filter_subtest(self, test, subtest, field_not_found_value):
 
