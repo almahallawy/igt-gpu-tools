@@ -1305,13 +1305,13 @@ static void test_one_plane(bool dpms, uint32_t plane_id,
 		plane_format = DRM_FORMAT_XRGB8888;
 		plane_w = 64;
 		plane_h = 64;
-		modifier = I915_FORMAT_MOD_X_TILED;
+		modifier = DRM_FORMAT_MOD_LINEAR;
 		break;
 	case PLANE_PRIMARY:
 		plane_format = DRM_FORMAT_XRGB8888;
 		plane_w = default_mode_params->mode->hdisplay;
 		plane_h = default_mode_params->mode->vdisplay;
-		modifier = I915_FORMAT_MOD_X_TILED;
+		modifier = DRM_FORMAT_MOD_LINEAR;
 		break;
 	case PLANE_CURSOR:
 		plane_format = DRM_FORMAT_ARGB8888;
