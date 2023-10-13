@@ -1004,7 +1004,7 @@ static void test_shared_reset_domain(const intel_ctx_cfg_t *base_cfg,
 
 	sync_gpu();
 
-	params.engine = e;
+	params.engine = *e;
 	params.preempt_timeout = 1;
 	params.heartbeat_interval = 250;
 	gem_engine_properties_configure(device, &params);

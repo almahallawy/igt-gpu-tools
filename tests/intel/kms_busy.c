@@ -404,7 +404,7 @@ static void gpu_engines_init_timeouts(int fd, int max_engines,
 	for_each_physical_engine(fd, e) {
 		igt_assert(*num_engines < max_engines);
 
-		props[*num_engines].engine = e;
+		props[*num_engines].engine = *e;
 		props[*num_engines].preempt_timeout = 0;
 		props[*num_engines].heartbeat_interval = 250;
 

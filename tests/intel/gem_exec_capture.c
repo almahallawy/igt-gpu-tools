@@ -258,7 +258,7 @@ configure_hangs(int fd, const struct intel_execution_engine2 *e, int ctxt_id)
 	struct gem_engine_properties props;
 
 	/* Ensure fast hang detection */
-	props.engine = e;
+	props.engine = *e;
 	props.preempt_timeout = 250;
 	props.heartbeat_interval = 500;
 	gem_engine_properties_configure(fd, &props);

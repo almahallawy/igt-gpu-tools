@@ -600,7 +600,7 @@ igt_main
 		gem_require_mmap_device_coherent(device);
 
 		for_each_physical_engine(device, e) {
-			saved_params[num_engines].engine = e;
+			saved_params[num_engines].engine = *e;
 			saved_params[num_engines].preempt_timeout = 500;
 			saved_params[num_engines].heartbeat_interval = 1000;
 			gem_engine_properties_configure(device, saved_params + num_engines++);

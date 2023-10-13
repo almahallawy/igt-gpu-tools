@@ -122,7 +122,7 @@ struct intel_execution_engine2 gem_eb_flags_to_engine(unsigned int flags);
 	     intel_next_engine(&i__##e__))
 
 struct gem_engine_properties {
-	const struct intel_execution_engine2 *engine;
+	struct intel_execution_engine2 engine;
 	int preempt_timeout;
 	int heartbeat_interval;
 };

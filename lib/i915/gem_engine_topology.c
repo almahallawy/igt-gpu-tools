@@ -571,23 +571,23 @@ void gem_engine_properties_configure(int fd, struct gem_engine_properties *param
 	int ret;
 	struct gem_engine_properties write = *params;
 
-	ret = gem_engine_property_scanf(fd, write.engine->name,
+	ret = gem_engine_property_scanf(fd, write.engine.name,
 					"heartbeat_interval_ms",
 					"%d", &params->heartbeat_interval);
 	igt_assert_eq(ret, 1);
 
-	ret = gem_engine_property_printf(fd, write.engine->name,
+	ret = gem_engine_property_printf(fd, write.engine.name,
 					 "heartbeat_interval_ms", "%d",
 					 write.heartbeat_interval);
 	igt_assert_lt(0, ret);
 
 	if (gem_scheduler_has_preemption(fd)) {
-		ret = gem_engine_property_scanf(fd, write.engine->name,
+		ret = gem_engine_property_scanf(fd, write.engine.name,
 						"preempt_timeout_ms",
 						"%d", &params->preempt_timeout);
 		igt_assert_eq(ret, 1);
 
-		ret = gem_engine_property_printf(fd, write.engine->name,
+		ret = gem_engine_property_printf(fd, write.engine.name,
 						 "preempt_timeout_ms", "%d",
 						 write.preempt_timeout);
 		igt_assert_lt(0, ret);
@@ -598,13 +598,13 @@ void gem_engine_properties_restore(int fd, const struct gem_engine_properties *s
 {
 	int ret;
 
-	ret = gem_engine_property_printf(fd, saved->engine->name,
+	ret = gem_engine_property_printf(fd, saved->engine.name,
 					 "heartbeat_interval_ms", "%d",
 					 saved->heartbeat_interval);
 	igt_assert_lt(0, ret);
 
 	if (gem_scheduler_has_preemption(fd)) {
-		ret = gem_engine_property_printf(fd, saved->engine->name,
+		ret = gem_engine_property_printf(fd, saved->engine.name,
 						 "preempt_timeout_ms", "%d",
 						 saved->preempt_timeout);
 		igt_assert_lt(0, ret);
