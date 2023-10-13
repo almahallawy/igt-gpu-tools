@@ -33,10 +33,10 @@
                             "mandatory": true,
                             "description": "Defines what category of testlist it belongs",
                             "default-testlist": "FULL",
-                            "testlists": [
+                            "include": [
                                 { "Xe BAT": "../intel-ci/xe-fast-feedback.testlist" }
                             ],
-                            "blocklists": [
+                            "exclude": [
                                 { "Xe BAT": "../intel-ci/xe.blocklist.txt" }
                             ],
                             "order": [

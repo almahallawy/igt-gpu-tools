@@ -260,8 +260,6 @@ class TestList:
         self.igt_build_path = igt_build_path
         self.level_count = 0
         self.field_list = {}
-        self.testlist = {}
-        self.blocklist = {}
         self.title = None
         self.filters = {}
         self.subtest_separator = subtest_separator
@@ -335,22 +333,22 @@ class TestList:
                     del item["_properties_"]["sublevel"]
 
             # Read testlist files if any
-            if "testlists" in item["_properties_"]:
+            if "include" in item["_properties_"]:
                 testlist = {}
-                for value in item["_properties_"]["testlists"]:
+                for value in item["_properties_"]["include"]:
                     for name in value.keys():
                         self.read_testlist(testlist, name, cfg_path + value[name], flags)
 
-                item["_properties_"]["testlist"] = testlist
+                item["_properties_"]["include"] = testlist
 
             # Read blocklist files if any
-            if "blocklists" in item["_properties_"]:
-                blocklist = {}
-                for value in item["_properties_"]["blocklists"]:
+            if "exclude" in item["_properties_"]:
+                testlist = {}
+                for value in item["_properties_"]["exclude"]:
                     for name in value.keys():
                         self.read_testlist(testlist, name, cfg_path + value[name], flags)
 
-                item["_properties_"]["blocklist"] = blocklist
+                item["_properties_"]["exclude"] = testlist
 
         if "_properties_" in self.props:
             del self.props["_properties_"]
@@ -490,7 +488,7 @@ class TestList:
             if "_properties_" not in self.props[field]:
                 continue
 
-            if "testlist" not in self.props[field]["_properties_"]:
+            if "include" not in self.props[field]["_properties_"]:
                 continue
 
             default_value = self.props[field]["_properties_"].get("default-testlist")
@@ -503,7 +501,7 @@ class TestList:
             else:
                 values = set()
 
-            for names, regex_array in self.props[field]["_properties_"]["testlist"].items():
+            for names, regex_array in self.props[field]["_properties_"]["include"].items():
                 name = set(re.split(",\s*", names))
                 for regex in regex_array:
                     if regex.match(testname):
@@ -512,8 +510,8 @@ class TestList:
 
             # If test is at a global blocklist, ignore it
             set_full_if_empty = True
-            if "blocklist" in self.props[field]["_properties_"]:
-                for names, regex_array in self.props[field]["_properties_"]["testlist"].items():
+            if "exclude" in self.props[field]["_properties_"]:
+                for names, regex_array in self.props[field]["_properties_"]["exclude"].items():
                     deleted_names = set(re.split(",\s*", names))
                     for regex in regex_array:
                         if regex.match(testname):
