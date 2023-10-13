@@ -6084,3 +6084,41 @@ int igt_get_dp_mst_connector_id(igt_output_t *output)
 
 	return connector_id;
 }
+
+/**
+ * get_num_scalers:
+ * @drm_fd: drm file descriptor
+ * @pipe: display pipe
+ *
+ * Returns: num_scalers supported/pipe.
+ */
+int get_num_scalers(int drm_fd, enum pipe pipe)
+{
+	char buf[8120];
+	char *start_loc1, *start_loc2;
+	int dir, res;
+	int num_scalers = 0;
+	char dest[20] = ":pipe ";
+
+	strcat(dest, kmstest_pipe_name(pipe));
+
+	if (is_intel_device(drm_fd) &&
+	    intel_display_ver(intel_get_drm_devid(drm_fd)) >= 9) {
+
+		dir = igt_debugfs_dir(drm_fd);
+		igt_assert(dir >= 0);
+
+		res = igt_debugfs_simple_read(dir, "i915_display_info", buf, sizeof(buf));
+		close(dir);
+		igt_require(res > 0);
+
+		start_loc1 = strstr(buf, dest);
+
+		if ((start_loc1 = strstr(buf, dest))) {
+			igt_assert(start_loc2 = strstr(start_loc1, "num_scalers="));
+			igt_assert_eq(sscanf(start_loc2, "num_scalers=%d", &num_scalers), 1);
+		}
+	}
+
+	return num_scalers;
+}
