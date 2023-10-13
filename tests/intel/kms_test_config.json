@@ -4,6 +4,7 @@
     "files": [ "../chamelium/kms_*.c", "../kms_*.c", "../testdisplay.c", "kms_*.c" ],
     "exclude_files": [ "../chamelium/kms_chamelium_helper.c", "../kms_color_helper.c",
                        "kms_dsc_helper.c" ],
+    "case_insensitive_testlist": true,
     "fields": {
         "Category": {
             "_properties_": {
