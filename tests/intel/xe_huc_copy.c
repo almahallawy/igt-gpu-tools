@@ -104,9 +104,9 @@ gen12_create_batch_huc_copy(uint32_t *batch,
  */
 
 static void
-test_huc_copy(int fd)
+__test_huc_copy(int fd, uint32_t vm, struct drm_xe_engine_class_instance *hwe)
 {
-	uint32_t vm, exec_queue;
+	uint32_t exec_queue;
 	char *dinput;
 	struct drm_xe_sync sync = { 0 };
 
@@ -117,8 +117,7 @@ test_huc_copy(int fd)
 		{ .addr = ADDR_BATCH, .size = SIZE_BATCH }, // batch
 	};
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
-	exec_queue = xe_exec_queue_create_class(fd, vm, DRM_XE_ENGINE_CLASS_VIDEO_DECODE);
+	exec_queue = xe_exec_queue_create(fd, vm, hwe, 0);
 	sync.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL;
 	sync.handle = syncobj_create(fd, 0);
 
@@ -148,7 +147,28 @@ test_huc_copy(int fd)
 
 	syncobj_destroy(fd, sync.handle);
 	xe_exec_queue_destroy(fd, exec_queue);
+}
+
+static void
+test_huc_copy(int fd)
+{
+	struct drm_xe_engine_class_instance *hwe;
+	uint32_t vm;
+	uint32_t tested_gts = 0;
+
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+
+	xe_for_each_hw_engine(fd, hwe) {
+		if (hwe->engine_class == DRM_XE_ENGINE_CLASS_VIDEO_DECODE &&
+		    !(tested_gts & BIT(hwe->gt_id))) {
+			tested_gts |= BIT(hwe->gt_id);
+			__test_huc_copy(fd, vm, hwe);
+		}
+	}
+
 	xe_vm_destroy(fd, vm);
+
+	igt_require_f(tested_gts, "No video class engines found\n");
 }
 
 static bool
