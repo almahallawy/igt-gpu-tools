@@ -283,7 +283,7 @@ int main(int argc, char *argv[])
 	bool write, fail, targets[MAX+1] = {false};
 	int i, fd, try = 1, set_freq[MAX+1] = {0};
 
-	fd = drm_open_driver(DRIVER_INTEL);
+	fd = __drm_open_driver(DRIVER_INTEL);
 	devid = intel_get_drm_devid(fd);
 	device = igt_device_get_card_index(fd);
 	close(fd);
