@@ -87,7 +87,8 @@ void __set_forced_driver(const char *name);
  *
  * Macro to align a value @v to a specified unit @a.
  */
-#define ALIGN(v, a) (((v) + (a)-1) & ~((a)-1))
+#define ALIGN(v, a) ALIGN_MASK(v, (typeof(v))(a) - 1)
+#define ALIGN_MASK(v, mask) (((v) + (mask)) & ~(mask))
 
 /**
  * ALIGN_DOWN:
