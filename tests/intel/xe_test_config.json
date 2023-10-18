@@ -33,6 +33,7 @@
                             "mandatory": true,
                             "description": "Defines what category of testlist it belongs",
                             "default-testlist": "FULL",
+                            "match-type": "subtest-match",
                             "include": [
                                 { "Xe BAT": "../intel-ci/xe-fast-feedback.testlist" }
                             ],

@@ -319,10 +319,6 @@ class TestList:
             self.props["Class"]["_properties_"]["level"] = 1
             self.props["Class"]["_properties_"]["sublevel"] = sublevel_count[0] + 1
 
-        flags = 0
-        if self.config.get("case_insensitive_testlist", False):
-            flags |= re.IGNORECASE
-
         # Remove non-multilevel items, as we're only interested on
         # hierarchical item levels here
         for field, item in self.props.items():
@@ -337,7 +333,7 @@ class TestList:
                 testlist = {}
                 for value in item["_properties_"]["include"]:
                     for name in value.keys():
-                        self.read_testlist(testlist, name, cfg_path + value[name], flags)
+                        self.read_testlist(field, item, testlist, name, cfg_path + value[name])
 
                 item["_properties_"]["include"] = testlist
 
@@ -346,7 +342,7 @@ class TestList:
                 testlist = {}
                 for value in item["_properties_"]["exclude"]:
                     for name in value.keys():
-                        self.read_testlist(testlist, name, cfg_path + value[name], flags)
+                        self.read_testlist(field, item, testlist, name, cfg_path + value[name])
 
                 item["_properties_"]["exclude"] = testlist
 
@@ -450,7 +446,22 @@ class TestList:
 
             self.__add_field(key, sublevel, hierarchy_level, field[key])
 
-    def read_testlist(self, testlist, name, filename, flags):
+    def read_testlist(self, field, item, testlist, name, filename):
+
+        match_type = item["_properties_"].get("match-type", "subtest-match")
+
+        match_type_regex = set(["regex", "regex-ignorecase"])
+        match_type_str = set(["subtest-match"])
+        match_types = match_type_regex | match_type_str
+
+        if match_type not in match_types:
+            sys.exit(f"Error: invalid match type '{match_type}' for {field}")
+
+        if match_type == "regex":
+            flags = 0
+        elif match_type == "regex-ignorecase":
+            flags = re.IGNORECASE
+
         base = r"^\s*({}[^\s\{}]+)(\S*)\s*(\#.*)?$"
         regex = re.compile(base.format(self.main_name, self.subtest_separator))
 
@@ -459,12 +470,25 @@ class TestList:
         with open(filename, 'r', newline = '', encoding = 'utf8') as fp:
             for line in fp:
                 match = regex.match(line)
-                if match:
-                    test = match.group(1)
-                    subtest = match.group(2)
-                    if not subtest.endswith("$"):
-                        subtest += r"(\@.*)?$"
-                    testlist[name].append(re.compile(f"{test}{subtest}", flags))
+                if not match:
+                    continue
+
+                test = match.group(1)
+                subtest = match.group(2)
+                test_name = f"{test}{subtest}"
+
+                if match_type in match_type_regex:
+                    testlist[name].append(re.compile(test_name, flags))
+                    continue
+
+                subtests = test_name.split(self.subtest_separator)[:3]
+
+                prefix=""
+                for subtest in subtests:
+                    subtest = prefix + subtest
+                    prefix = subtest + self.subtest_separator
+
+                testlist[name].append(re.compile(f"{subtest}(@.*)?"))
 
     def __filter_subtest(self, test, subtest, field_not_found_value):
 
@@ -504,7 +528,7 @@ class TestList:
             for names, regex_array in self.props[field]["_properties_"]["include"].items():
                 name = set(re.split(",\s*", names))
                 for regex in regex_array:
-                    if regex.match(testname):
+                    if regex.fullmatch(testname):
                         values.update(name)
                         break
 
@@ -514,7 +538,7 @@ class TestList:
                 for names, regex_array in self.props[field]["_properties_"]["exclude"].items():
                     deleted_names = set(re.split(",\s*", names))
                     for regex in regex_array:
-                        if regex.match(testname):
+                        if regex.fullmatch(testname):
                             if sorted(deleted_names) == sorted(values):
                                 set_full_if_empty = False
                             values.discard(deleted_names)

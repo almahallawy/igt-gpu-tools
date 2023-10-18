@@ -4,7 +4,6 @@
     "files": [ "../chamelium/kms_*.c", "../kms_*.c", "../testdisplay.c", "kms_*.c" ],
     "exclude_files": [ "../chamelium/kms_chamelium_helper.c", "../kms_color_helper.c",
                        "kms_dsc_helper.c" ],
-    "case_insensitive_testlist": true,
     "fields": {
         "Category": {
             "_properties_": {
@@ -24,6 +23,7 @@
                 "_properties_": {
                     "description": "Defines what category of testlist it belongs",
                     "default-testlist": "FULL",
+                    "match-type": "subtest-match",
                     "include": [
                         { "i915 BAT": "../intel-ci/fast-feedback.testlist" },
                         { "i915 BAT chamelium": "../intel-ci/fast-feedback-chamelium-only.testlist" },
