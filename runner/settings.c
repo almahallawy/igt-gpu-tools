@@ -323,7 +323,7 @@ static bool add_regex(struct regex_list *list, char *new)
 	GRegex *regex;
 	GError *error = NULL;
 
-	regex = g_regex_new(new, G_REGEX_OPTIMIZE, 0, &error);
+	regex = g_regex_new(new, G_REGEX_CASELESS | G_REGEX_OPTIMIZE, 0, &error);
 	if (error) {
 		usage(stderr, "Invalid regex '%s': %s", new, error->message);
 		g_error_free(error);
