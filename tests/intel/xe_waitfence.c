@@ -81,7 +81,7 @@ enum waittype {
 static void
 waitfence(int fd, enum waittype wt)
 {
-	struct drm_xe_engine_class_instance *eci = NULL;
+	struct drm_xe_query_engine_info *engine = NULL;
 	struct timespec ts;
 	int64_t current, signalled;
 	uint32_t bo_1;
@@ -114,11 +114,11 @@ waitfence(int fd, enum waittype wt)
 		igt_debug("wait type: RELTIME - timeout: %ld, timeout left: %ld\n",
 			  MS_TO_NS(10), timeout);
 	} else if (wt == ENGINE) {
-		eci = xe_engine(fd, 1);
+		engine = xe_engine(fd, 1);
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		current = ts.tv_sec * 1e9 + ts.tv_nsec;
 		timeout = current + MS_TO_NS(10);
-		signalled = wait_with_eci_abstime(fd, &wait_fence, 7, eci, timeout);
+		signalled = wait_with_eci_abstime(fd, &wait_fence, 7, &engine->instance, timeout);
 		igt_debug("wait type: ENGINE ABSTIME - timeout: %" PRId64
 			  ", signalled: %" PRId64
 			  ", elapsed: %" PRId64 "\n",

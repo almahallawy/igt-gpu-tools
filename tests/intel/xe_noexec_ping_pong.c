@@ -43,7 +43,7 @@
   *	there is worked queued on one of the VM's compute exec_queues.
  */
 
-static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
+static void test_ping_pong(int fd, struct drm_xe_query_engine_info *engine)
 {
 	size_t vram_size = xe_vram_size(fd, 0);
 	size_t align = xe_get_default_alignment(fd);
@@ -75,7 +75,8 @@ static void test_ping_pong(int fd, struct drm_xe_engine_class_instance *eci)
 			xe_vm_bind(fd, vm[i], bo[i][j], 0, 0x40000 + j*bo_size,
 				   bo_size, NULL, 0);
 		}
-		exec_queues[i] = xe_exec_queue_create(fd, vm[i], eci, 0);
+		exec_queues[i] = xe_exec_queue_create(fd, vm[i],
+						      &engine->instance, 0);
 	}
 
 	igt_info("Now sleeping for %ds.\n", SECONDS_TO_WAIT);

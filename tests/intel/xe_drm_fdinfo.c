@@ -40,7 +40,7 @@ IGT_TEST_DESCRIPTION("Read and verify drm client memory consumption using fdinfo
 #define BO_SIZE (65536)
 
 /* Subtests */
-static void test_active(int fd, struct drm_xe_engine_class_instance *eci)
+static void test_active(int fd, struct drm_xe_query_engine_info *engine)
 {
 	struct drm_xe_query_mem_region *memregion;
 	uint64_t memreg = all_memory_regions(fd), region;
@@ -89,7 +89,8 @@ static void test_active(int fd, struct drm_xe_engine_class_instance *eci)
 		data = xe_bo_map(fd, bo, bo_size);
 
 		for (i = 0; i < N_EXEC_QUEUES; i++) {
-			exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
+			exec_queues[i] = xe_exec_queue_create(fd, vm,
+							      &engine->instance, 0);
 			bind_exec_queues[i] = xe_bind_exec_queue_create(fd, vm, 0, true);
 			syncobjs[i] = syncobj_create(fd, 0);
 		}

@@ -33,7 +33,7 @@ struct xe_device {
 	uint64_t memory_regions;
 
 	/** @engines: array of hardware engines */
-	struct drm_xe_engine_class_instance *engines;
+	struct drm_xe_query_engine_info *engines;
 
 	/** @number_engines: length of hardware engines array */
 	unsigned int number_engines;
@@ -62,7 +62,7 @@ struct xe_device {
 
 #define xe_for_each_engine(__fd, __hwe) \
 	for (int __i = 0; __i < xe_number_engines(__fd) && \
-	     (__hwe = xe_engine(__fd, __i)); ++__i)
+	     (__hwe = &xe_engine(__fd, __i)->instance); ++__i)
 #define xe_for_each_engine_class(__class) \
 	for (__class = 0; __class < DRM_XE_ENGINE_CLASS_COMPUTE + 1; \
 	     ++__class)
@@ -81,8 +81,8 @@ uint64_t all_memory_regions(int fd);
 uint64_t system_memory(int fd);
 uint64_t vram_memory(int fd, int gt);
 uint64_t vram_if_possible(int fd, int gt);
-struct drm_xe_engine_class_instance *xe_engines(int fd);
-struct drm_xe_engine_class_instance *xe_engine(int fd, int idx);
+struct drm_xe_query_engine_info *xe_engines(int fd);
+struct drm_xe_query_engine_info *xe_engine(int fd, int idx);
 struct drm_xe_query_mem_region *xe_mem_region(int fd, uint64_t region);
 const char *xe_region_name(uint64_t region);
 uint16_t xe_region_class(int fd, uint64_t region);

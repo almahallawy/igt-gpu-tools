@@ -149,7 +149,7 @@ static void create_execqueues(int fd, enum exec_queue_destroy ed)
 	igt_nsec_elapsed(&tv);
 
 	igt_fork(n, nproc) {
-		struct drm_xe_engine_class_instance *hwe;
+		struct drm_xe_query_engine_info *engine;
 		uint32_t exec_queue, exec_queues[exec_queues_per_process];
 		int idx, err, i;
 
@@ -157,8 +157,9 @@ static void create_execqueues(int fd, enum exec_queue_destroy ed)
 
 		for (i = 0; i < exec_queues_per_process; i++) {
 			idx = rand() % num_engines;
-			hwe = xe_engine(fd, idx);
-			err = __xe_exec_queue_create(fd, vm, hwe, 0, &exec_queue);
+			engine = xe_engine(fd, idx);
+			err = __xe_exec_queue_create(fd, vm, &engine->instance,
+						     0, &exec_queue);
 			igt_debug("[%2d] Create exec_queue: err=%d, exec_queue=%u [idx = %d]\n",
 				  n, err, exec_queue, i);
 			if (err)

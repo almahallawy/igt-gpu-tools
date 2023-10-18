@@ -689,7 +689,7 @@ xe_get_default_engine(void)
 	struct drm_xe_engine_class_instance default_hwe, *hwe;
 
 	/* select RCS0 | CCS0 or first available engine */
-	default_hwe = *xe_engine(fd, 0);
+	default_hwe = xe_engine(fd, 0)->instance;
 	xe_for_each_engine(fd, hwe) {
 		if ((hwe->engine_class == DRM_XE_ENGINE_CLASS_RENDER ||
 		     hwe->engine_class == DRM_XE_ENGINE_CLASS_COMPUTE) &&
