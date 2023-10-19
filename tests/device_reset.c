@@ -65,7 +65,7 @@ struct device_fds {
 		int slot_dir; /* pci hotplug slots fd */
 	} fds;
 	char dev_bus_addr[DEV_BUS_ADDR_LEN];
-	bool snd_unload;
+	char *snd_driver;
 };
 
 static int __open_sysfs_dir(int fd, const char* path)
@@ -188,7 +188,6 @@ static void init_device_fds(struct device_fds *dev)
 {
 	char dev_path[PATH_MAX];
 	char *addr_pos;
-	uint32_t devid;
 
 	igt_debug("open device\n");
 	/**
@@ -198,17 +197,8 @@ static void init_device_fds(struct device_fds *dev)
 	 */
 	dev->fds.dev = __drm_open_driver(DRIVER_ANY);
 	igt_assert_fd(dev->fds.dev);
-	if (is_i915_device(dev->fds.dev)) {
+	if (is_i915_device(dev->fds.dev))
 		igt_require_gem(dev->fds.dev);
-
-		devid = intel_get_drm_devid(dev->fds.dev);
-		if ((IS_HASWELL(devid) || IS_BROADWELL(devid) ||
-		     IS_DG1(devid)) &&
-		     (igt_kmod_is_loaded("snd_hda_intel"))) {
-			igt_debug("Enable WA to unload snd driver\n");
-			dev->snd_unload = true;
-		}
-	}
 
 	igt_assert(device_sysfs_path(dev->fds.dev, dev_path));
 	addr_pos = strrchr(dev_path, '/');
@@ -312,33 +302,8 @@ static bool is_sysfs_cold_reset_supported(int slot_fd)
 /* Unbind the driver from the device */
 static void driver_unbind(struct device_fds *dev)
 {
-	/**
-	 * FIXME: Unbinding the i915 driver on affected platforms with
-	 * audio results in a kernel WARN on "i915 raw-wakerefs=1
-	 * wakelocks=1 on cleanup". The below CI friendly user level
-	 * workaround to unload and de-couple audio from IGT testing,
-	 * prevents the warning from appearing. Drop this hack as soon
-	 * as this is fixed in the kernel. unbind/re-bind validation
-	 * on audio side is not robust and we could have potential
-	 * failures blocking display CI, currently this seems to the
-	 * safest and easiest way out.
-	 */
-	if (dev->snd_unload) {
-		igt_terminate_process(SIGTERM, "alsactl");
-
-		/* unbind snd_hda_intel */
-		kick_snd_hda_intel();
-
-		if (igt_kmod_unload("snd_hda_intel", 0)) {
-			dev->snd_unload = false;
-			igt_warn("Could not unload snd_hda_intel\n");
-			igt_kmod_list_loaded();
-			igt_lsof("/dev/snd");
-			igt_skip("Audio is in use, skipping\n");
-		} else {
-			igt_info("Preventively unloaded snd_hda_intel\n");
-		}
-	}
+	if (is_i915_device(dev->fds.dev))
+		igt_audio_driver_unload(&dev->snd_driver);
 
 	igt_debug("unbind the driver from the device\n");
 	igt_assert(igt_sysfs_set(dev->fds.drv_dir, "unbind",
@@ -352,8 +317,8 @@ static void driver_bind(struct device_fds *dev)
 	igt_abort_on_f(!igt_sysfs_set(dev->fds.drv_dir, "bind",
 		       dev->dev_bus_addr), "driver rebind failed");
 
-	if (dev->snd_unload)
-		igt_kmod_load("snd_hda_intel", NULL);
+	if (dev->snd_driver)
+		igt_kmod_load(dev->snd_driver, NULL);
 }
 
 /* Initiate device reset */
