@@ -13,12 +13,14 @@
 #include "igt.h"
 #include "igt_syncobj.h"
 #include "intel_blt.h"
+#include "intel_mocs.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 #include "xe/xe_util.h"
 
 #define BITRANGE(start, end) (end - start + 1)
 #define GET_CMDS_INFO(__fd) intel_get_cmds_info(intel_get_drm_devid(__fd))
+#define MEM_COPY_MOCS_SHIFT                     25
 
 /* Blitter tiling definitions sanity checks */
 static_assert(T_LINEAR == I915_TILING_NONE, "Linear definitions have to match");
@@ -1577,6 +1579,187 @@ int blt_fast_copy(int fd,
 	return ret;
 }
 
+/**
+ * blt_mem_init:
+ * @fd: drm fd
+ * @mem: structure for initialization
+ *
+ * Function is zeroing @mem and sets fd and driver fields (INTEL_DRIVER_I915 or
+ * INTEL_DRIVER_XE).
+ */
+void blt_mem_init(int fd, struct blt_mem_data *mem)
+{
+	memset(mem, 0, sizeof(*mem));
+
+	mem->fd = fd;
+	mem->driver = get_intel_driver(fd);
+}
+
+static void emit_blt_mem_copy(int fd, uint64_t ahnd, const struct blt_mem_data *mem)
+{
+	uint64_t dst_offset, src_offset, alignment;
+	int i;
+	uint32_t *batch;
+	uint32_t optype;
+
+	alignment = get_default_alignment(fd, mem->driver);
+	src_offset = get_offset(ahnd, mem->src.handle, mem->src.size, alignment);
+	dst_offset = get_offset(ahnd, mem->dst.handle, mem->dst.size, alignment);
+
+	batch = bo_map(fd, mem->bb.handle, mem->bb.size, mem->driver);
+	optype = mem->src.type == M_MATRIX ? 1 << 17 : 0;
+
+	i = 0;
+	batch[i++] = MEM_COPY_CMD | (1 << 19) | optype;
+	batch[i++] = mem->src.width - 1;
+	batch[i++] = mem->src.height - 1;
+	batch[i++] = mem->src.pitch - 1;
+	batch[i++] = mem->dst.pitch - 1;
+	batch[i++] = src_offset;
+	batch[i++] = src_offset << 32;
+	batch[i++] = dst_offset;
+	batch[i++] = dst_offset << 32;
+	batch[i++] = mem->src.mocs_index << MEM_COPY_MOCS_SHIFT | mem->dst.mocs_index;
+	batch[i++] = MI_BATCH_BUFFER_END;
+
+	munmap(batch, mem->bb.size);
+}
+
+/**
+ * blt_mem_copy:
+ * @fd: drm fd
+ * @ctx: intel_ctx_t context
+ * @e: blitter engine for @ctx
+ * @ahnd: allocator handle
+ * @blt: blitter data for mem-copy.
+ *
+ * Function does mem blit between @src and @dst described in @blt object.
+ *
+ * Returns:
+ * execbuffer status.
+ */
+int blt_mem_copy(int fd, const intel_ctx_t *ctx,
+		 const struct intel_execution_engine2 *e,
+		 uint64_t ahnd,
+		 const struct blt_mem_data *mem)
+{
+	struct drm_i915_gem_execbuffer2 execbuf = {};
+	struct drm_i915_gem_exec_object2 obj[3] = {};
+	uint64_t dst_offset, src_offset, bb_offset, alignment;
+	int ret;
+
+	alignment = get_default_alignment(fd, mem->driver);
+	src_offset = get_offset(ahnd, mem->src.handle, mem->src.size, alignment);
+	dst_offset = get_offset(ahnd, mem->dst.handle, mem->dst.size, alignment);
+	bb_offset = get_offset(ahnd, mem->bb.handle, mem->bb.size, alignment);
+
+	emit_blt_mem_copy(fd, ahnd, mem);
+
+	if (mem->driver == INTEL_DRIVER_XE) {
+		intel_ctx_xe_exec(ctx, ahnd, CANONICAL(bb_offset));
+	} else {
+		obj[0].offset = CANONICAL(dst_offset);
+		obj[1].offset = CANONICAL(src_offset);
+		obj[2].offset = CANONICAL(bb_offset);
+		obj[0].handle = mem->dst.handle;
+		obj[1].handle = mem->src.handle;
+		obj[2].handle = mem->bb.handle;
+		obj[0].flags = EXEC_OBJECT_PINNED | EXEC_OBJECT_WRITE |
+			       EXEC_OBJECT_SUPPORTS_48B_ADDRESS;
+		obj[1].flags = EXEC_OBJECT_PINNED | EXEC_OBJECT_SUPPORTS_48B_ADDRESS;
+		obj[2].flags = EXEC_OBJECT_PINNED | EXEC_OBJECT_SUPPORTS_48B_ADDRESS;
+		execbuf.buffer_count = 3;
+		execbuf.buffers_ptr = to_user_pointer(obj);
+		execbuf.rsvd1 = ctx ? ctx->id : 0;
+		execbuf.flags = e ? e->flags : I915_EXEC_BLT;
+		ret = __gem_execbuf(fd, &execbuf);
+		put_offset(ahnd, mem->dst.handle);
+		put_offset(ahnd, mem->src.handle);
+		put_offset(ahnd, mem->bb.handle);
+	}
+
+	return ret;
+}
+
+static void emit_blt_mem_set(int fd, uint64_t ahnd, const struct blt_mem_data *mem,
+			     uint8_t fill_data)
+{
+	uint64_t dst_offset, alignment;
+	int b;
+	uint32_t *batch;
+	uint32_t value;
+
+	alignment = get_default_alignment(fd, mem->driver);
+	dst_offset = get_offset(ahnd, mem->dst.handle, mem->dst.size, alignment);
+
+	batch = bo_map(fd, mem->bb.handle, mem->bb.size, mem->driver);
+	value = (uint32_t)fill_data << 24;
+
+	b = 0;
+	batch[b++] = MEM_SET_CMD;
+	batch[b++] = mem->dst.width - 1;
+	batch[b++] = mem->dst.height - 1;
+	batch[b++] = mem->dst.pitch - 1;
+	batch[b++] = dst_offset;
+	batch[b++] = dst_offset << 32;
+	batch[b++] = value | mem->dst.mocs_index;
+	batch[b++] = MI_BATCH_BUFFER_END;
+
+	munmap(batch, mem->bb.size);
+
+}
+/**
+ * blt_mem_set:
+ * @fd: drm fd
+ * @ctx: intel_ctx_t context
+ * @e: blitter engine for @ctx
+ * @ahnd: allocator handle
+ * @blt: blitter data for mem-set.
+ *
+ * Function does mem set blit in described @blt object.
+ *
+ * Returns:
+ * execbuffer status.
+ */
+int blt_mem_set(int fd, const intel_ctx_t *ctx,
+		const struct intel_execution_engine2 *e,
+		uint64_t ahnd,
+		const struct blt_mem_data *mem,
+		uint8_t fill_data)
+{
+	struct drm_i915_gem_execbuffer2 execbuf = {};
+	struct drm_i915_gem_exec_object2 obj[2] = {};
+	uint64_t dst_offset, bb_offset, alignment;
+	int ret;
+
+	alignment = get_default_alignment(fd, mem->driver);
+	dst_offset = get_offset(ahnd, mem->dst.handle, mem->dst.size, alignment);
+	bb_offset = get_offset(ahnd, mem->bb.handle, mem->bb.size, alignment);
+
+	emit_blt_mem_set(fd, ahnd, mem, fill_data);
+
+	if (mem->driver == INTEL_DRIVER_XE) {
+		intel_ctx_xe_exec(ctx, ahnd, CANONICAL(bb_offset));
+	} else {
+		obj[0].offset = CANONICAL(dst_offset);
+		obj[1].offset = CANONICAL(bb_offset);
+		obj[0].handle = mem->dst.handle;
+		obj[1].handle = mem->bb.handle;
+		obj[0].flags = EXEC_OBJECT_PINNED | EXEC_OBJECT_WRITE |
+						    EXEC_OBJECT_SUPPORTS_48B_ADDRESS;
+		obj[1].flags = EXEC_OBJECT_PINNED | EXEC_OBJECT_SUPPORTS_48B_ADDRESS;
+		execbuf.buffer_count = 2;
+		execbuf.buffers_ptr = to_user_pointer(obj);
+		execbuf.rsvd1 = ctx ? ctx->id : 0;
+		execbuf.flags = e ? e->flags : I915_EXEC_BLT;
+		ret = __gem_execbuf(fd, &execbuf);
+		put_offset(ahnd, mem->dst.handle);
+		put_offset(ahnd, mem->bb.handle);
+	}
+
+	return ret;
+}
+
 void blt_set_geom(struct blt_copy_object *obj, uint32_t pitch,
 		  int16_t x1, int16_t y1, int16_t x2, int16_t y2,
 		  uint16_t x_offset, uint16_t y_offset)
@@ -1657,6 +1840,23 @@ void blt_set_object(struct blt_copy_object *obj,
 	obj->tiling = tiling;
 	obj->compression = compression;
 	obj->compression_type = compression_type;
+}
+
+void blt_set_mem_object(struct blt_mem_object *obj,
+			uint32_t handle, uint64_t size, uint32_t pitch,
+			uint32_t width, uint32_t height, uint32_t region,
+			uint8_t mocs_index, enum blt_memop_type type,
+			enum blt_compression compression)
+{
+	obj->handle = handle;
+	obj->region = region;
+	obj->size = size;
+	obj->mocs_index = mocs_index;
+	obj->type = type;
+	obj->compression = compression;
+	obj->width = width;
+	obj->height = height;
+	obj->pitch = pitch;
 }
 
 void blt_set_object_ext(struct blt_block_copy_object_ext *obj,

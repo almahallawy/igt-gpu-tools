@@ -2588,6 +2588,10 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define   XY_FAST_COPY_COLOR_DEPTH_64			(4  << 24)
 #define   XY_FAST_COPY_COLOR_DEPTH_128			(5  << 24)
 
+/* RAW memory commands */
+#define MEM_COPY_CMD                    ((0x2 << 29)|(0x5a << 22)|0x8)
+#define MEM_SET_CMD                     ((0x2 << 29)|(0x5b << 22)|0x5)
+
 #define CTXT_NO_RESTORE			(1)
 #define CTXT_PALETTE_SAVE_DISABLE	(1<<3)
 #define CTXT_PALETTE_RESTORE_DISABLE	(1<<2)

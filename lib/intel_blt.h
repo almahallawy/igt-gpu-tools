@@ -93,6 +93,19 @@ struct blt_copy_object {
 	uint32_t plane_offset;
 };
 
+struct blt_mem_object {
+	uint32_t handle;
+	uint32_t region;
+	uint64_t size;
+	uint8_t mocs_index;
+	enum blt_memop_type type;
+	enum blt_compression compression;
+	uint32_t width;
+	uint32_t height;
+	uint32_t pitch;
+	uint32_t *ptr;
+};
+
 struct blt_copy_batch {
 	uint32_t handle;
 	uint32_t region;
@@ -110,6 +123,14 @@ struct blt_copy_data {
 
 	/* debug stuff */
 	bool print_bb;
+};
+
+struct blt_mem_data {
+	int fd;
+	enum intel_driver driver;
+	struct blt_mem_object src;
+	struct blt_mem_object dst;
+	struct blt_copy_batch bb;
 };
 
 enum blt_surface_type {
@@ -231,6 +252,17 @@ int blt_fast_copy(int fd,
 		  uint64_t ahnd,
 		  const struct blt_copy_data *blt);
 
+void blt_mem_init(int fd, struct blt_mem_data *mem);
+
+int blt_mem_copy(int fd, const intel_ctx_t *ctx,
+			 const struct intel_execution_engine2 *e,
+			 uint64_t ahnd,
+			 const struct blt_mem_data *mem);
+
+int blt_mem_set(int fd, const intel_ctx_t *ctx,
+			const struct intel_execution_engine2 *e, uint64_t ahnd,
+			const struct blt_mem_data *mem, uint8_t fill_data);
+
 void blt_set_geom(struct blt_copy_object *obj, uint32_t pitch,
 		  int16_t x1, int16_t y1, int16_t x2, int16_t y2,
 		  uint16_t x_offset, uint16_t y_offset);
@@ -250,6 +282,13 @@ void blt_set_object(struct blt_copy_object *obj,
 		    uint8_t mocs_index, enum blt_tiling_type tiling,
 		    enum blt_compression compression,
 		    enum blt_compression_type compression_type);
+
+void blt_set_mem_object(struct blt_mem_object *obj,
+			uint32_t handle, uint64_t size, uint32_t pitch,
+			uint32_t width, uint32_t height, uint32_t region,
+			uint8_t mocs_index, enum blt_memop_type type,
+			enum blt_compression compression);
+
 void blt_set_object_ext(struct blt_block_copy_object_ext *obj,
 			uint8_t compression_format,
 			uint16_t surface_width, uint16_t surface_height,
