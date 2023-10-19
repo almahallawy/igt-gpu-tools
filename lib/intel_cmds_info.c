@@ -84,7 +84,8 @@ static const struct blt_cmd_info
 
 static const struct blt_cmd_info
 		pvc_mem_copy = BLT_INFO(MEM_COPY,
-					BIT(M_LINEAR));
+					BIT(M_LINEAR) |
+					BIT(M_MATRIX));
 
 static const struct blt_cmd_info
 		pvc_mem_set = BLT_INFO(MEM_SET,
