@@ -216,14 +216,10 @@ out:
  * @opts: Parameters for the module. NULL in case no parameters
  * are to be passed, or a '\0' terminated string otherwise.
  *
- * Returns: 0 in case of success or -errno in case the module could not
- * be loaded.
- *
  * This function loads a kernel module using the name specified in @mod_name.
  *
- * @Note: This functions doesn't automatically resolve other module
- * dependencies so make make sure you load the dependencies module(s) before
- * this one.
+ * Returns: 0 in case of success or -errno in case the module could not
+ * be loaded.
  */
 int
 igt_kmod_load(const char *mod_name, const char *opts)
