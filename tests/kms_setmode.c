@@ -30,7 +30,10 @@
 #include <string.h>
 #include <sys/time.h>
 #include <math.h>
+
+#include "i915/intel_drrs.h"
 #include "xe/xe_query.h"
+
 /**
  * TEST: kms setmode
  * Category: Display
@@ -650,6 +653,9 @@ retry:
 			ret = drmModeSetCrtc(drm_fd, crtc->crtc_id,
 					     crtc->fb_info.fb_id, 0, 0, ids,
 					     crtc->connector_count, &crtc->mode);
+
+		if (is_intel_device(drm_fd))
+			intel_drrs_disable(drm_fd, crtc->pipe_id);
 
 		free(ids);
 
