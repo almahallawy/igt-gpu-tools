@@ -10,6 +10,7 @@
  */
 
 #include "igt.h"
+#include "intel_pat.h"
 #include "lib/igt_syncobj.h"
 #include "lib/intel_reg.h"
 #include "xe_drm.h"
@@ -356,7 +357,8 @@ static void userptr_invalid(int fd)
 	vm = xe_vm_create(fd, 0, 0);
 	munmap(data, size);
 	ret = __xe_vm_bind(fd, vm, 0, 0, to_user_pointer(data), 0x40000,
-			   size, DRM_XE_VM_BIND_OP_MAP_USERPTR, 0, NULL, 0, 0, 0);
+			   size, DRM_XE_VM_BIND_OP_MAP_USERPTR, 0, NULL, 0, 0,
+			   DEFAULT_PAT_INDEX, 0);
 	igt_assert(ret == -EFAULT);
 
 	xe_vm_destroy(fd, vm);
@@ -798,6 +800,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 		bind_ops[i].op = DRM_XE_VM_BIND_OP_MAP;
 		bind_ops[i].flags = DRM_XE_VM_BIND_FLAG_ASYNC;
 		bind_ops[i].prefetch_mem_region_instance = 0;
+		bind_ops[i].pat_index = intel_get_pat_idx_wb(fd);
 		bind_ops[i].reserved[0] = 0;
 		bind_ops[i].reserved[1] = 0;
 
