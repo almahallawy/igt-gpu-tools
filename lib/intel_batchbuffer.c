@@ -896,7 +896,7 @@ static inline uint64_t __intel_bb_get_offset(struct intel_bb *ibb,
 static struct intel_bb *
 __intel_bb_create(int fd, uint32_t ctx, uint32_t vm, const intel_ctx_cfg_t *cfg,
 		  uint32_t size, bool do_relocs,
-		  uint64_t start, uint64_t end,
+		  uint64_t start, uint64_t end, uint64_t alignment,
 		  uint8_t allocator_type, enum allocator_strategy strategy)
 {
 	struct drm_i915_gem_exec_object2 *object;
@@ -920,7 +920,11 @@ __intel_bb_create(int fd, uint32_t ctx, uint32_t vm, const intel_ctx_cfg_t *cfg,
 	 */
 	if (ibb->driver == INTEL_DRIVER_I915) {
 		ibb->uses_full_ppgtt = gem_uses_full_ppgtt(fd);
-		ibb->alignment = gem_detect_safe_alignment(fd);
+
+		if (!alignment)
+			alignment = gem_detect_safe_alignment(fd);
+
+		ibb->alignment = alignment;
 		ibb->gtt_size = gem_aperture_size(fd);
 		ibb->handle = gem_create(fd, size);
 
@@ -949,7 +953,10 @@ __intel_bb_create(int fd, uint32_t ctx, uint32_t vm, const intel_ctx_cfg_t *cfg,
 	} else {
 		igt_assert(!do_relocs);
 
-		ibb->alignment = xe_get_default_alignment(fd);
+		if (!alignment)
+			alignment = xe_get_default_alignment(fd);
+
+		ibb->alignment = alignment;
 		size = ALIGN(size, ibb->alignment);
 		ibb->handle = xe_bo_create_flags(fd, 0, size, visible_vram_if_possible(fd, 0));
 
@@ -1020,6 +1027,7 @@ __intel_bb_create(int fd, uint32_t ctx, uint32_t vm, const intel_ctx_cfg_t *cfg,
  * @size: size of the batchbuffer
  * @start: allocator vm start address
  * @end: allocator vm start address
+ * @alignment: alignment to use for allocator, zero for default
  * @allocator_type: allocator type, SIMPLE, RELOC, ...
  * @strategy: allocation strategy
  *
@@ -1036,11 +1044,11 @@ __intel_bb_create(int fd, uint32_t ctx, uint32_t vm, const intel_ctx_cfg_t *cfg,
 struct intel_bb *intel_bb_create_full(int fd, uint32_t ctx, uint32_t vm,
 				      const intel_ctx_cfg_t *cfg, uint32_t size,
 				      uint64_t start, uint64_t end,
-				      uint8_t allocator_type,
+				      uint64_t alignment, uint8_t allocator_type,
 				      enum allocator_strategy strategy)
 {
 	return __intel_bb_create(fd, ctx, vm, cfg, size, false, start, end,
-				 allocator_type, strategy);
+				 alignment, allocator_type, strategy);
 }
 
 /**
@@ -1065,7 +1073,7 @@ struct intel_bb *intel_bb_create_with_allocator(int fd, uint32_t ctx, uint32_t v
 						uint32_t size,
 						uint8_t allocator_type)
 {
-	return __intel_bb_create(fd, ctx, vm, cfg, size, false, 0, 0,
+	return __intel_bb_create(fd, ctx, vm, cfg, size, false, 0, 0, 0,
 				 allocator_type, ALLOC_STRATEGY_HIGH_TO_LOW);
 }
 
@@ -1104,7 +1112,7 @@ struct intel_bb *intel_bb_create(int fd, uint32_t size)
 	bool relocs = is_i915_device(fd) && gem_has_relocations(fd);
 
 	return __intel_bb_create(fd, 0, 0, NULL, size,
-				 relocs && !aux_needs_softpin(fd), 0, 0,
+				 relocs && !aux_needs_softpin(fd), 0, 0, 0,
 				 INTEL_ALLOCATOR_SIMPLE,
 				 ALLOC_STRATEGY_HIGH_TO_LOW);
 }
@@ -1131,7 +1139,7 @@ intel_bb_create_with_context(int fd, uint32_t ctx, uint32_t vm,
 	bool relocs = is_i915_device(fd) && gem_has_relocations(fd);
 
 	return __intel_bb_create(fd, ctx, vm, cfg, size,
-				 relocs && !aux_needs_softpin(fd), 0, 0,
+				 relocs && !aux_needs_softpin(fd), 0, 0, 0,
 				 INTEL_ALLOCATOR_SIMPLE,
 				 ALLOC_STRATEGY_HIGH_TO_LOW);
 }
@@ -1152,7 +1160,7 @@ struct intel_bb *intel_bb_create_with_relocs(int fd, uint32_t size)
 {
 	igt_require(is_i915_device(fd) && gem_has_relocations(fd));
 
-	return __intel_bb_create(fd, 0, 0, NULL, size, true, 0, 0,
+	return __intel_bb_create(fd, 0, 0, NULL, size, true, 0, 0, 0,
 				 INTEL_ALLOCATOR_NONE, ALLOC_STRATEGY_NONE);
 }
 
@@ -1177,7 +1185,7 @@ intel_bb_create_with_relocs_and_context(int fd, uint32_t ctx,
 {
 	igt_require(is_i915_device(fd) && gem_has_relocations(fd));
 
-	return __intel_bb_create(fd, ctx, 0, cfg, size, true, 0, 0,
+	return __intel_bb_create(fd, ctx, 0, cfg, size, true, 0, 0, 0,
 				 INTEL_ALLOCATOR_NONE, ALLOC_STRATEGY_NONE);
 }
 
@@ -1197,7 +1205,7 @@ struct intel_bb *intel_bb_create_no_relocs(int fd, uint32_t size)
 {
 	igt_require(gem_uses_full_ppgtt(fd));
 
-	return __intel_bb_create(fd, 0, 0, NULL, size, false, 0, 0,
+	return __intel_bb_create(fd, 0, 0, NULL, size, false, 0, 0, 0,
 				 INTEL_ALLOCATOR_SIMPLE,
 				 ALLOC_STRATEGY_HIGH_TO_LOW);
 }

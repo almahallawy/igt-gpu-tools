@@ -307,7 +307,7 @@ struct intel_bb {
 struct intel_bb *
 intel_bb_create_full(int fd, uint32_t ctx, uint32_t vm,
 		     const intel_ctx_cfg_t *cfg, uint32_t size, uint64_t start,
-		     uint64_t end, uint8_t allocator_type,
+		     uint64_t end, uint64_t alignment, uint8_t allocator_type,
 		     enum allocator_strategy strategy);
 struct intel_bb *
 intel_bb_create_with_allocator(int fd, uint32_t ctx, uint32_t vm,
