@@ -19,6 +19,7 @@
 #include "igt.h"
 #include "igt_crc.h"
 #include "intel_bufops.h"
+#include "intel_pat.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 
@@ -400,7 +401,7 @@ static void create_in_region(struct buf_ops *bops, uint64_t region)
 	intel_buf_init_full(bops, handle, &buf,
 			    width/4, height, 32, 0,
 			    I915_TILING_NONE, 0,
-			    size, 0, region);
+			    size, 0, region, DEFAULT_PAT_INDEX);
 	intel_buf_set_ownership(&buf, true);
 
 	intel_bb_add_intel_buf(ibb, &buf, false);

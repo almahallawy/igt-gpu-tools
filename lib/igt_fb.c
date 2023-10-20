@@ -2637,7 +2637,8 @@ igt_fb_create_intel_buf(int fd, struct buf_ops *bops,
 				    igt_fb_mod_to_tiling(fb->modifier),
 				    compression, fb->size,
 				    fb->strides[0],
-				    region);
+				    region,
+				    intel_get_pat_idx_uc(fd));
 	intel_buf_set_name(buf, name);
 
 	/* Make sure we close handle on destroy path */

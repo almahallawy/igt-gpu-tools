@@ -38,6 +38,7 @@
 #include "intel_batchbuffer.h"
 #include "intel_bufops.h"
 #include "intel_chipset.h"
+#include "intel_pat.h"
 #include "media_fill.h"
 #include "media_spin.h"
 #include "sw_sync.h"
@@ -827,15 +828,18 @@ static void __reallocate_objects(struct intel_bb *ibb)
 static inline uint64_t __intel_bb_get_offset(struct intel_bb *ibb,
 					     uint32_t handle,
 					     uint64_t size,
-					     uint32_t alignment)
+					     uint32_t alignment,
+					     uint8_t pat_index)
 {
 	uint64_t offset;
 
 	if (ibb->enforce_relocs)
 		return 0;
 
-	offset = intel_allocator_alloc(ibb->allocator_handle,
-				       handle, size, alignment);
+	offset = __intel_allocator_alloc(ibb->allocator_handle, handle,
+					 size, alignment, pat_index,
+					 ALLOC_STRATEGY_NONE);
+	igt_assert(offset != ALLOC_INVALID_ADDRESS);
 
 	return offset;
 }
@@ -1282,6 +1286,9 @@ void intel_bb_destroy(struct intel_bb *ibb)
 	free(ibb);
 }
 
+#define XE_OBJ_SIZE(rsvd1) ((rsvd1) & ~(SZ_4K-1))
+#define XE_OBJ_PAT_IDX(rsvd1) ((rsvd1) & (SZ_4K-1))
+
 static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct intel_bb *ibb,
 						   uint32_t op, uint32_t flags,
 						   uint32_t prefetch_region)
@@ -1304,11 +1311,14 @@ static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct intel_bb *ibb,
 		ops->flags = flags;
 		ops->obj_offset = 0;
 		ops->addr = objects[i]->offset;
-		ops->range = objects[i]->rsvd1;
+		ops->range = XE_OBJ_SIZE(objects[i]->rsvd1);
 		ops->prefetch_mem_region_instance = prefetch_region;
+		if (set_obj)
+			ops->pat_index = XE_OBJ_PAT_IDX(objects[i]->rsvd1);
 
-		igt_debug("  [%d]: handle: %u, offset: %llx, size: %llx\n",
-			  i, ops->obj, (long long)ops->addr, (long long)ops->range);
+		igt_debug("  [%d]: handle: %u, offset: %llx, size: %llx pat_index: %u\n",
+			  i, ops->obj, (long long)ops->addr, (long long)ops->range,
+			  ops->pat_index);
 	}
 
 	return bind_ops;
@@ -1414,7 +1424,8 @@ void intel_bb_reset(struct intel_bb *ibb, bool purge_objects_cache)
 		ibb->batch_offset = __intel_bb_get_offset(ibb,
 							  ibb->handle,
 							  ibb->size,
-							  ibb->alignment);
+							  ibb->alignment,
+							  DEFAULT_PAT_INDEX);
 
 	intel_bb_add_object(ibb, ibb->handle, ibb->size,
 			    ibb->batch_offset,
@@ -1650,7 +1661,8 @@ static void __remove_from_objects(struct intel_bb *ibb,
  */
 static struct drm_i915_gem_exec_object2 *
 __intel_bb_add_object(struct intel_bb *ibb, uint32_t handle, uint64_t size,
-		      uint64_t offset, uint64_t alignment, bool write)
+		      uint64_t offset, uint64_t alignment, uint8_t pat_index,
+		      bool write)
 {
 	struct drm_i915_gem_exec_object2 *object;
 
@@ -1675,7 +1687,7 @@ __intel_bb_add_object(struct intel_bb *ibb, uint32_t handle, uint64_t size,
 	if (INVALID_ADDR(object->offset)) {
 		if (INVALID_ADDR(offset)) {
 			offset = __intel_bb_get_offset(ibb, handle, size,
-						       alignment);
+						       alignment, pat_index);
 		} else {
 			offset = offset & (roundup_power_of_two(ibb->gtt_size) - 1);
 
@@ -1726,6 +1738,18 @@ __intel_bb_add_object(struct intel_bb *ibb, uint32_t handle, uint64_t size,
 	if (ibb->driver == INTEL_DRIVER_XE) {
 		object->alignment = alignment;
 		object->rsvd1 = size;
+		igt_assert(!XE_OBJ_PAT_IDX(object->rsvd1));
+
+		if (pat_index == DEFAULT_PAT_INDEX)
+			pat_index = intel_get_pat_idx_wb(ibb->fd);
+
+		/*
+		 * XXX: For now encode the pat_index in the first few bits of
+		 * rsvd1. intel_batchbuffer should really stop using the i915
+		 * drm_i915_gem_exec_object2 to encode VMA placement
+		 * information on xe...
+		 */
+		object->rsvd1 |= pat_index;
 	}
 
 	return object;
@@ -1738,7 +1762,7 @@ intel_bb_add_object(struct intel_bb *ibb, uint32_t handle, uint64_t size,
 	struct drm_i915_gem_exec_object2 *obj = NULL;
 
 	obj = __intel_bb_add_object(ibb, handle, size, offset,
-				    alignment, write);
+				    alignment, DEFAULT_PAT_INDEX, write);
 	igt_assert(obj);
 
 	return obj;
@@ -1800,8 +1824,10 @@ __intel_bb_add_intel_buf(struct intel_bb *ibb, struct intel_buf *buf,
 		}
 	}
 
-	obj = intel_bb_add_object(ibb, buf->handle, intel_buf_bo_size(buf),
-				  buf->addr.offset, alignment, write);
+	obj = __intel_bb_add_object(ibb, buf->handle, intel_buf_bo_size(buf),
+				    buf->addr.offset, alignment, buf->pat_index,
+				    write);
+	igt_assert(obj);
 	buf->addr.offset = obj->offset;
 
 	if (igt_list_empty(&buf->link)) {

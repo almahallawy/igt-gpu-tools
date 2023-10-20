@@ -31,6 +31,7 @@
 #include "intel_batchbuffer.h"
 #include "intel_chipset.h"
 #include "intel_mocs.h"
+#include "intel_pat.h"
 #include "igt_core.h"
 #include "igt_fb.h"
 #include "ioctl_wrappers.h"
@@ -75,6 +76,7 @@ struct buf_data {
 	uint32_t size;
 	uint32_t stride;
 	int bpp;
+	uint8_t pat_index;
 };
 
 struct rect {
@@ -658,7 +660,8 @@ static struct intel_buf *create_buf(int fd, struct buf_ops *bops,
 				    width, height, from->bpp, 0,
 				    tiling, 0,
 				    size, 0,
-				    region);
+				    region,
+				    from->pat_index);
 
 	/* Make sure we close handle on destroy path */
 	intel_buf_set_ownership(buf, true);
@@ -791,6 +794,7 @@ static void draw_rect_render(int fd, struct cmd_data *cmd_data,
 	igt_skip_on(!rendercopy);
 
 	/* We create a temporary buffer and copy from it using rendercopy. */
+	tmp.pat_index = buf->pat_index;
 	tmp.size = rect->w * rect->h * pixel_size;
 	if (is_i915_device(fd))
 		tmp.handle = gem_create(fd, tmp.size);
@@ -858,6 +862,7 @@ void igt_draw_rect(int fd, struct buf_ops *bops, uint32_t ctx,
 		.size = buf_size,
 		.stride = buf_stride,
 		.bpp = bpp,
+		.pat_index = intel_get_pat_idx_uc(fd),
 	};
 	struct rect rect = {
 		.x = rect_x,

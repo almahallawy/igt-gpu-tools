@@ -20,6 +20,7 @@
 
 #include "i915/intel_drrs.h"
 #include "i915/intel_fbc.h"
+#include "intel_pat.h"
 
 #include "xe/xe_query.h"
 
@@ -254,14 +255,16 @@ static void run_test(data_t *data)
 				    0,
 				    igt_fb_mod_to_tiling(data->fbs[1].modifier),
 				    0, 0, 0, is_xe_device(data->drm_fd) ?
-				    system_memory(data->drm_fd) : 0);
+				    system_memory(data->drm_fd) : 0,
+				    intel_get_pat_idx_uc(data->drm_fd));
 	dst = intel_buf_create_full(data->bops, data->fbs[2].gem_handle,
 				    data->fbs[2].width,
 				    data->fbs[2].height,
 				    igt_drm_format_to_bpp(data->fbs[2].drm_format),
 				    0, igt_fb_mod_to_tiling(data->fbs[2].modifier),
 				    0, 0, 0, is_xe_device(data->drm_fd) ?
-				    system_memory(data->drm_fd) : 0);
+				    system_memory(data->drm_fd) : 0,
+				    intel_get_pat_idx_uc(data->drm_fd));
 	ibb = intel_bb_create(data->drm_fd, PAGE_SIZE);
 
 	spin = igt_spin_new(data->drm_fd, .ahnd = ibb->allocator_handle);
