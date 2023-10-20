@@ -584,8 +584,8 @@ static int handle_request(struct alloc_req *req, struct alloc_resp *resp)
 			break;
 
 		case REQ_ALLOC:
-			if (!req->alloc.alignment)
-				req->alloc.alignment = ial->default_alignment;
+			req->alloc.alignment = max(ial->default_alignment,
+						   req->alloc.alignment);
 
 			resp->response_type = RESP_ALLOC;
 			resp->alloc.offset = ial->alloc(ial,

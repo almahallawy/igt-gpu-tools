@@ -206,7 +206,7 @@ static void reserve(int fd, uint8_t type)
 static void default_alignment(int fd)
 {
 	struct test_obj obj[3];
-	uint64_t ahnd, default_alignment = 0x4000;
+	uint64_t ahnd, default_alignment = SZ_4K;
 
 	ahnd = intel_allocator_open_full(fd, 0, 0, 0, INTEL_ALLOCATOR_SIMPLE,
 					 ALLOC_STRATEGY_LOW_TO_HIGH,
@@ -214,13 +214,13 @@ static void default_alignment(int fd)
 
 	for (int i = 0; i < ARRAY_SIZE(obj); i++) {
 		obj[i].handle = gem_handle_gen();
-		obj[i].offset = intel_allocator_alloc(ahnd, obj[i].handle, 4096,
-				i == 2 ? 4096 : 0);
+		obj[i].offset = intel_allocator_alloc(ahnd, obj[i].handle,
+						      SZ_4K, i == 2 ? 0 : SZ_16K);
 		igt_debug("obj[%d].offset: %llx, handle: %u\n", i,
 			 (long long) obj[i].offset, obj[i].handle);
 	}
 
-	igt_assert_eq(obj[1].offset - obj[0].offset, default_alignment);
+	igt_assert_eq(obj[1].offset - obj[0].offset, SZ_16K);
 	/* obj[2] should be between obj[0] and obj[1] */
 	igt_assert(obj[0].offset < obj[2].offset);
 	igt_assert(obj[2].offset < obj[1].offset);
