@@ -199,6 +199,54 @@ static void test_small_bar(int fd)
 	gem_close(fd, bo);
 }
 
+static void assert_caching(int fd, uint64_t flags, uint16_t cpu_caching, bool fail)
+{
+	uint64_t size = xe_get_default_alignment(fd);
+	uint64_t mmo;
+	uint32_t handle;
+	uint32_t *map;
+	bool ret;
+
+	ret = __xe_bo_create_caching(fd, 0, size, flags, cpu_caching, &handle);
+	igt_assert(ret == fail);
+
+	if (fail)
+		return;
+
+	mmo = xe_bo_mmap_offset(fd, handle);
+	map = mmap(NULL, size, PROT_WRITE, MAP_SHARED, fd, mmo);
+	igt_assert(map != MAP_FAILED);
+	map[0] = 0xdeadbeaf;
+	gem_close(fd, handle);
+}
+
+/**
+ * SUBTEST: cpu-caching
+ * Description: Test explicit cpu_caching, including mmap behaviour.
+ * Test category: functionality test
+ */
+static void test_cpu_caching(int fd)
+{
+	if (vram_memory(fd, 0)) {
+		assert_caching(fd, vram_memory(fd, 0),
+			       DRM_XE_GEM_CPU_CACHING_WC, false);
+		assert_caching(fd, vram_memory(fd, 0) | system_memory(fd),
+			       DRM_XE_GEM_CPU_CACHING_WC, false);
+
+		assert_caching(fd, vram_memory(fd, 0),
+			       DRM_XE_GEM_CPU_CACHING_WB, true);
+		assert_caching(fd, vram_memory(fd, 0) | system_memory(fd),
+			       DRM_XE_GEM_CPU_CACHING_WB, true);
+	}
+
+	assert_caching(fd, system_memory(fd), DRM_XE_GEM_CPU_CACHING_WB, false);
+	assert_caching(fd, system_memory(fd), DRM_XE_GEM_CPU_CACHING_WC, false);
+
+	assert_caching(fd, system_memory(fd), -1, true);
+	assert_caching(fd, system_memory(fd), 0, true);
+	assert_caching(fd, system_memory(fd), DRM_XE_GEM_CPU_CACHING_WC + 1, true);
+}
+
 igt_main
 {
 	int fd;
@@ -229,6 +277,9 @@ igt_main
 		igt_require(xe_visible_vram_size(fd, 0) < xe_vram_size(fd, 0));
 		test_small_bar(fd);
 	}
+
+	igt_subtest("cpu-caching")
+		test_cpu_caching(fd);
 
 	igt_fixture
 		drm_close_driver(fd);
