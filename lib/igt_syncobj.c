@@ -543,3 +543,43 @@ syncobj_timeline_to_timeline(int fd,
 					 timeline_dst, point_dst,
 					 timeline_src, point_src, 0), 0);
 }
+
+int
+__syncobj_eventfd(int fd, uint32_t handle, uint64_t point, uint32_t flags,
+		  int ev_fd)
+{
+	struct drm_syncobj_eventfd args;
+	int ret;
+
+	args.handle = handle;
+	args.flags = flags;
+	args.point = point;
+	args.fd = ev_fd;
+	args.pad = 0;
+
+	ret = igt_ioctl(fd, DRM_IOCTL_SYNCOBJ_EVENTFD, &args);
+	if (ret) {
+		ret = -errno;
+		igt_assume(ret);
+		errno = 0;
+	}
+
+	return ret;
+}
+
+/**
+ * syncobj_eventfd:
+ * @fd: The DRM file descriptor.
+ * @handle: A syncobj handle.
+ * @point: A point on the timeline syncobj, or 0 for binary syncobjs.
+ * @flags: Flags.
+ * @ev_fd: An eventfd.
+ *
+ * Wait for a syncobj with an eventfd.
+ */
+void
+syncobj_eventfd(int fd, uint32_t handle, uint64_t point, uint32_t flags,
+		int ev_fd)
+{
+	igt_assert_eq(__syncobj_eventfd(fd, handle, point, flags, ev_fd), 0);
+}

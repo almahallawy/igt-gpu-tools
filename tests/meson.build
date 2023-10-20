@@ -72,6 +72,7 @@ test_progs = [
 	'prime_udl',
 	'prime_vgem',
 	'syncobj_basic',
+	'syncobj_eventfd',
 	'syncobj_wait',
 	'syncobj_timeline',
 	'sw_sync',
