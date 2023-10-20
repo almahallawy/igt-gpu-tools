@@ -15,6 +15,7 @@
 #include "lib/intel_chipset.h"
 #include "intel_blt.h"
 #include "intel_mocs.h"
+#include "intel_pat.h"
 /**
  * TEST: gem ccs
  * Description: Exercise gen12 blitter with and without flatccs compression
@@ -111,9 +112,9 @@ static void surf_copy(int i915,
 	blt_ctrl_surf_copy_init(i915, &surf);
 	surf.print_bb = param.print_bb;
 	blt_set_ctrl_surf_object(&surf.src, mid->handle, mid->region, mid->size,
-				 uc_mocs, BLT_INDIRECT_ACCESS);
+				 uc_mocs, DEFAULT_PAT_INDEX, BLT_INDIRECT_ACCESS);
 	blt_set_ctrl_surf_object(&surf.dst, ccs, REGION_SMEM, ccssize,
-				 uc_mocs, DIRECT_ACCESS);
+				 uc_mocs, DEFAULT_PAT_INDEX, DIRECT_ACCESS);
 	bb_size = 4096;
 	igt_assert_eq(__gem_create(i915, &bb_size, &bb1), 0);
 	blt_set_batch(&surf.bb, bb1, bb_size, REGION_SMEM);
@@ -133,7 +134,7 @@ static void surf_copy(int i915,
 		igt_system_suspend_autoresume(SUSPEND_STATE_FREEZE, SUSPEND_TEST_NONE);
 
 		blt_set_ctrl_surf_object(&surf.dst, ccs2, REGION_SMEM, ccssize,
-					 0, DIRECT_ACCESS);
+					 0, DEFAULT_PAT_INDEX, DIRECT_ACCESS);
 		blt_ctrl_surf_copy(i915, ctx, e, ahnd, &surf);
 		gem_sync(i915, surf.dst.handle);
 
@@ -155,9 +156,9 @@ static void surf_copy(int i915,
 	for (int i = 0; i < surf.dst.size / sizeof(uint32_t); i++)
 		ccsmap[i] = i;
 	blt_set_ctrl_surf_object(&surf.src, ccs, REGION_SMEM, ccssize,
-				 uc_mocs, DIRECT_ACCESS);
+				 uc_mocs, DEFAULT_PAT_INDEX, DIRECT_ACCESS);
 	blt_set_ctrl_surf_object(&surf.dst, mid->handle, mid->region, mid->size,
-				 uc_mocs, INDIRECT_ACCESS);
+				 uc_mocs, DEFAULT_PAT_INDEX, INDIRECT_ACCESS);
 	blt_ctrl_surf_copy(i915, ctx, e, ahnd, &surf);
 
 	blt_copy_init(i915, &blt);
@@ -399,7 +400,8 @@ static void block_copy(int i915,
 	blt_set_object_ext(&ext.dst, 0, width, height, SURFACE_TYPE_2D);
 	if (config->inplace) {
 		blt_set_object(&blt.dst, mid->handle, dst->size, mid->region, 0,
-			       T_LINEAR, COMPRESSION_DISABLED, comp_type);
+			       DEFAULT_PAT_INDEX, T_LINEAR, COMPRESSION_DISABLED,
+			       comp_type);
 		blt.dst.ptr = mid->ptr;
 	}
 
@@ -475,7 +477,7 @@ static void block_multicopy(int i915,
 
 	if (config->inplace) {
 		blt_set_object(&blt3.dst, mid->handle, dst->size, mid->region,
-			       mid->mocs_index, mid_tiling, COMPRESSION_DISABLED,
+			       mid->mocs_index, DEFAULT_PAT_INDEX, mid_tiling, COMPRESSION_DISABLED,
 			       comp_type);
 		blt3.dst.ptr = mid->ptr;
 	}

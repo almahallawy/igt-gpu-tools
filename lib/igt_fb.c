@@ -37,6 +37,7 @@
 #include "i915/gem_mman.h"
 #include "intel_blt.h"
 #include "intel_mocs.h"
+#include "intel_pat.h"
 #include "igt_aux.h"
 #include "igt_color_encoding.h"
 #include "igt_fb.h"
@@ -2768,6 +2769,7 @@ static struct blt_copy_object *blt_fb_init(const struct igt_fb *fb,
 
 	blt_set_object(blt, handle, fb->size, memregion,
 		       intel_get_uc_mocs_index(fb->fd),
+		       intel_get_pat_idx_uc(fb->fd),
 		       blt_tile,
 		       is_ccs_modifier(fb->modifier) ? COMPRESSION_ENABLED : COMPRESSION_DISABLED,
 		       is_gen12_mc_ccs_modifier(fb->modifier) ? COMPRESSION_TYPE_MEDIA : COMPRESSION_TYPE_3D);

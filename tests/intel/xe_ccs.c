@@ -13,6 +13,7 @@
 #include "igt_syncobj.h"
 #include "intel_blt.h"
 #include "intel_mocs.h"
+#include "intel_pat.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 #include "xe/xe_util.h"
@@ -108,8 +109,9 @@ static void surf_copy(int xe,
 	blt_ctrl_surf_copy_init(xe, &surf);
 	surf.print_bb = param.print_bb;
 	blt_set_ctrl_surf_object(&surf.src, mid->handle, mid->region, mid->size,
-				 uc_mocs, BLT_INDIRECT_ACCESS);
-	blt_set_ctrl_surf_object(&surf.dst, ccs, sysmem, ccssize, uc_mocs, DIRECT_ACCESS);
+				 uc_mocs, DEFAULT_PAT_INDEX, BLT_INDIRECT_ACCESS);
+	blt_set_ctrl_surf_object(&surf.dst, ccs, sysmem, ccssize, uc_mocs,
+				 DEFAULT_PAT_INDEX, DIRECT_ACCESS);
 	bb_size = xe_get_default_alignment(xe);
 	bb1 = xe_bo_create_flags(xe, 0, bb_size, sysmem);
 	blt_set_batch(&surf.bb, bb1, bb_size, sysmem);
@@ -130,7 +132,7 @@ static void surf_copy(int xe,
 		igt_system_suspend_autoresume(SUSPEND_STATE_FREEZE, SUSPEND_TEST_NONE);
 
 		blt_set_ctrl_surf_object(&surf.dst, ccs2, system_memory(xe), ccssize,
-					 0, DIRECT_ACCESS);
+					 0, DEFAULT_PAT_INDEX, DIRECT_ACCESS);
 		blt_ctrl_surf_copy(xe, ctx, NULL, ahnd, &surf);
 		intel_ctx_xe_sync(ctx, true);
 
@@ -153,9 +155,9 @@ static void surf_copy(int xe,
 	for (int i = 0; i < surf.dst.size / sizeof(uint32_t); i++)
 		ccsmap[i] = i;
 	blt_set_ctrl_surf_object(&surf.src, ccs, sysmem, ccssize,
-				 uc_mocs, DIRECT_ACCESS);
+				 uc_mocs, DEFAULT_PAT_INDEX, DIRECT_ACCESS);
 	blt_set_ctrl_surf_object(&surf.dst, mid->handle, mid->region, mid->size,
-				 uc_mocs, INDIRECT_ACCESS);
+				 uc_mocs, DEFAULT_PAT_INDEX, INDIRECT_ACCESS);
 	blt_ctrl_surf_copy(xe, ctx, NULL, ahnd, &surf);
 	intel_ctx_xe_sync(ctx, true);
 
@@ -369,7 +371,8 @@ static void block_copy(int xe,
 	blt_set_object_ext(&ext.dst, 0, width, height, SURFACE_TYPE_2D);
 	if (config->inplace) {
 		blt_set_object(&blt.dst, mid->handle, dst->size, mid->region, 0,
-			       T_LINEAR, COMPRESSION_DISABLED, comp_type);
+			       DEFAULT_PAT_INDEX, T_LINEAR, COMPRESSION_DISABLED,
+			       comp_type);
 		blt.dst.ptr = mid->ptr;
 	}
 
@@ -450,8 +453,8 @@ static void block_multicopy(int xe,
 
 	if (config->inplace) {
 		blt_set_object(&blt3.dst, mid->handle, dst->size, mid->region,
-			       mid->mocs_index, mid_tiling, COMPRESSION_DISABLED,
-			       comp_type);
+			       mid->mocs_index, DEFAULT_PAT_INDEX, mid_tiling,
+			       COMPRESSION_DISABLED, comp_type);
 		blt3.dst.ptr = mid->ptr;
 	}
 

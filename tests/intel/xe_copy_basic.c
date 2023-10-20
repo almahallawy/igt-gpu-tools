@@ -11,6 +11,7 @@
 #include "intel_blt.h"
 #include "lib/intel_cmds_info.h"
 #include "lib/intel_mocs.h"
+#include "lib/intel_pat.h"
 #include "lib/intel_reg.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
@@ -56,9 +57,11 @@ mem_copy(int fd, uint32_t src_handle, uint32_t dst_handle, const intel_ctx_t *ct
 
 	blt_mem_init(fd, &mem);
 	blt_set_mem_object(&mem.src, src_handle, size, 0, width, height,
-			   region, src_mocs, M_LINEAR, COMPRESSION_DISABLED);
+			   region, src_mocs, DEFAULT_PAT_INDEX, M_LINEAR,
+			   COMPRESSION_DISABLED);
 	blt_set_mem_object(&mem.dst, dst_handle, size, 0, width, height,
-			   region, dst_mocs, M_LINEAR, COMPRESSION_DISABLED);
+			   region, dst_mocs, DEFAULT_PAT_INDEX, M_LINEAR,
+			   COMPRESSION_DISABLED);
 	mem.src.ptr = xe_bo_map(fd, src_handle, size);
 	mem.dst.ptr = xe_bo_map(fd, dst_handle, size);
 
@@ -105,7 +108,7 @@ mem_set(int fd, uint32_t dst_handle, const intel_ctx_t *ctx, uint32_t size,
 	bb = xe_bo_create_flags(fd, 0, bb_size, region);
 	blt_mem_init(fd, &mem);
 	blt_set_mem_object(&mem.dst, dst_handle, size, 0, width, height, region,
-			   dst_mocs, M_LINEAR, COMPRESSION_DISABLED);
+			   dst_mocs, DEFAULT_PAT_INDEX, M_LINEAR, COMPRESSION_DISABLED);
 	mem.dst.ptr = xe_bo_map(fd, dst_handle, size);
 	blt_set_batch(&mem.bb, bb, bb_size, region);
 	blt_mem_set(fd, ctx, NULL, ahnd, &mem, fill_data);

@@ -14,6 +14,7 @@
 #include "igt_syncobj.h"
 #include "intel_blt.h"
 #include "intel_mocs.h"
+#include "intel_pat.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 #include "xe/xe_util.h"
@@ -849,10 +850,12 @@ uint64_t emit_blt_block_copy(int fd,
 	igt_assert_f(blt, "block-copy requires data to do blit\n");
 
 	alignment = get_default_alignment(fd, blt->driver);
-	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment)
-		     + blt->src.plane_offset;
-	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment)
-		     + blt->dst.plane_offset;
+	src_offset = get_offset_pat_index(ahnd, blt->src.handle, blt->src.size,
+					  alignment, blt->src.pat_index);
+	src_offset += blt->src.plane_offset;
+	dst_offset = get_offset_pat_index(ahnd, blt->dst.handle, blt->dst.size,
+					  alignment, blt->dst.pat_index);
+	dst_offset += blt->dst.plane_offset;
 	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
 
 	fill_data(&data, blt, src_offset, dst_offset, ext, ip_ver);
@@ -923,8 +926,10 @@ int blt_block_copy(int fd,
 	igt_assert_neq(blt->driver, 0);
 
 	alignment = get_default_alignment(fd, blt->driver);
-	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment);
-	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment);
+	src_offset = get_offset_pat_index(ahnd, blt->src.handle, blt->src.size,
+					  alignment, blt->src.pat_index);
+	dst_offset = get_offset_pat_index(ahnd, blt->dst.handle, blt->dst.size,
+					  alignment, blt->dst.pat_index);
 	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
 
 	emit_blt_block_copy(fd, ahnd, blt, ext, 0, true);
@@ -1128,8 +1133,10 @@ uint64_t emit_blt_ctrl_surf_copy(int fd,
 	igt_assert_f(surf, "ctrl-surf-copy requires data to do ctrl-surf-copy blit\n");
 
 	alignment = max_t(uint64_t, get_default_alignment(fd, surf->driver), 1ull << 16);
-	src_offset = get_offset(ahnd, surf->src.handle, surf->src.size, alignment);
-	dst_offset = get_offset(ahnd, surf->dst.handle, surf->dst.size, alignment);
+	src_offset = get_offset_pat_index(ahnd, surf->src.handle, surf->src.size,
+					  alignment, surf->src.pat_index);
+	dst_offset = get_offset_pat_index(ahnd, surf->dst.handle, surf->dst.size,
+					  alignment, surf->dst.pat_index);
 	bb_offset = get_offset(ahnd, surf->bb.handle, surf->bb.size, alignment);
 
 	if (ip_ver >= IP_VER(20, 0)) {
@@ -1230,8 +1237,10 @@ int blt_ctrl_surf_copy(int fd,
 	igt_assert_neq(surf->driver, 0);
 
 	alignment = max_t(uint64_t, get_default_alignment(fd, surf->driver), 1ull << 16);
-	src_offset = get_offset(ahnd, surf->src.handle, surf->src.size, alignment);
-	dst_offset = get_offset(ahnd, surf->dst.handle, surf->dst.size, alignment);
+	src_offset = get_offset_pat_index(ahnd, surf->src.handle, surf->src.size,
+					  alignment, surf->src.pat_index);
+	dst_offset = get_offset_pat_index(ahnd, surf->dst.handle, surf->dst.size,
+					  alignment, surf->dst.pat_index);
 	bb_offset = get_offset(ahnd, surf->bb.handle, surf->bb.size, alignment);
 
 	emit_blt_ctrl_surf_copy(fd, ahnd, surf, 0, true);
@@ -1470,10 +1479,12 @@ uint64_t emit_blt_fast_copy(int fd,
 	data.dw03.dst_x2 = blt->dst.x2;
 	data.dw03.dst_y2 = blt->dst.y2;
 
-	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment)
-		     + blt->src.plane_offset;
-	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment)
-		     + blt->dst.plane_offset;
+	src_offset = get_offset_pat_index(ahnd, blt->src.handle, blt->src.size,
+					  alignment, blt->src.pat_index);
+	src_offset += blt->src.plane_offset;
+	dst_offset = get_offset_pat_index(ahnd, blt->dst.handle, blt->dst.size, alignment,
+					  blt->dst.pat_index);
+	dst_offset += blt->dst.plane_offset;
 	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
 
 	data.dw04.dst_address_lo = dst_offset;
@@ -1547,8 +1558,10 @@ int blt_fast_copy(int fd,
 	igt_assert_neq(blt->driver, 0);
 
 	alignment = get_default_alignment(fd, blt->driver);
-	src_offset = get_offset(ahnd, blt->src.handle, blt->src.size, alignment);
-	dst_offset = get_offset(ahnd, blt->dst.handle, blt->dst.size, alignment);
+	src_offset = get_offset_pat_index(ahnd, blt->src.handle, blt->src.size,
+					  alignment, blt->src.pat_index);
+	dst_offset = get_offset_pat_index(ahnd, blt->dst.handle, blt->dst.size,
+					  alignment, blt->dst.pat_index);
 	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
 
 	emit_blt_fast_copy(fd, ahnd, blt, 0, true);
@@ -1603,8 +1616,10 @@ static void emit_blt_mem_copy(int fd, uint64_t ahnd, const struct blt_mem_data *
 	uint32_t optype;
 
 	alignment = get_default_alignment(fd, mem->driver);
-	src_offset = get_offset(ahnd, mem->src.handle, mem->src.size, alignment);
-	dst_offset = get_offset(ahnd, mem->dst.handle, mem->dst.size, alignment);
+	src_offset = get_offset_pat_index(ahnd, mem->src.handle, mem->src.size,
+					  alignment, mem->src.pat_index);
+	dst_offset = get_offset_pat_index(ahnd, mem->dst.handle, mem->dst.size,
+					  alignment, mem->dst.pat_index);
 
 	batch = bo_map(fd, mem->bb.handle, mem->bb.size, mem->driver);
 	optype = mem->src.type == M_MATRIX ? 1 << 17 : 0;
@@ -1649,8 +1664,10 @@ int blt_mem_copy(int fd, const intel_ctx_t *ctx,
 	int ret;
 
 	alignment = get_default_alignment(fd, mem->driver);
-	src_offset = get_offset(ahnd, mem->src.handle, mem->src.size, alignment);
-	dst_offset = get_offset(ahnd, mem->dst.handle, mem->dst.size, alignment);
+	src_offset = get_offset_pat_index(ahnd, mem->src.handle, mem->src.size,
+					  alignment, mem->src.pat_index);
+	dst_offset = get_offset_pat_index(ahnd, mem->dst.handle, mem->dst.size,
+					  alignment, mem->dst.pat_index);
 	bb_offset = get_offset(ahnd, mem->bb.handle, mem->bb.size, alignment);
 
 	emit_blt_mem_copy(fd, ahnd, mem);
@@ -1690,7 +1707,8 @@ static void emit_blt_mem_set(int fd, uint64_t ahnd, const struct blt_mem_data *m
 	uint32_t value;
 
 	alignment = get_default_alignment(fd, mem->driver);
-	dst_offset = get_offset(ahnd, mem->dst.handle, mem->dst.size, alignment);
+	dst_offset = get_offset_pat_index(ahnd, mem->dst.handle, mem->dst.size,
+					  alignment, mem->dst.pat_index);
 
 	batch = bo_map(fd, mem->bb.handle, mem->bb.size, mem->driver);
 	value = (uint32_t)fill_data << 24;
@@ -1733,7 +1751,8 @@ int blt_mem_set(int fd, const intel_ctx_t *ctx,
 	int ret;
 
 	alignment = get_default_alignment(fd, mem->driver);
-	dst_offset = get_offset(ahnd, mem->dst.handle, mem->dst.size, alignment);
+	dst_offset = get_offset_pat_index(ahnd, mem->dst.handle, mem->dst.size,
+					  alignment, mem->dst.pat_index);
 	bb_offset = get_offset(ahnd, mem->bb.handle, mem->bb.size, alignment);
 
 	emit_blt_mem_set(fd, ahnd, mem, fill_data);
@@ -1813,7 +1832,7 @@ blt_create_object(const struct blt_copy_data *blt, uint32_t region,
 							  &size, region) == 0);
 	}
 
-	blt_set_object(obj, handle, size, region, mocs_index, tiling,
+	blt_set_object(obj, handle, size, region, mocs_index, DEFAULT_PAT_INDEX, tiling,
 		       compression, compression_type);
 	blt_set_geom(obj, stride, 0, 0, width, height, 0, 0);
 
@@ -1847,7 +1866,7 @@ void blt_destroy_object_and_alloc_free(int fd, uint64_t ahnd,
 
 void blt_set_object(struct blt_copy_object *obj,
 		    uint32_t handle, uint64_t size, uint32_t region,
-		    uint8_t mocs_index, enum blt_tiling_type tiling,
+		    uint8_t mocs_index, uint8_t pat_index, enum blt_tiling_type tiling,
 		    enum blt_compression compression,
 		    enum blt_compression_type compression_type)
 {
@@ -1855,6 +1874,7 @@ void blt_set_object(struct blt_copy_object *obj,
 	obj->size = size;
 	obj->region = region;
 	obj->mocs_index = mocs_index;
+	obj->pat_index = pat_index;
 	obj->tiling = tiling;
 	obj->compression = compression;
 	obj->compression_type = compression_type;
@@ -1863,13 +1883,14 @@ void blt_set_object(struct blt_copy_object *obj,
 void blt_set_mem_object(struct blt_mem_object *obj,
 			uint32_t handle, uint64_t size, uint32_t pitch,
 			uint32_t width, uint32_t height, uint32_t region,
-			uint8_t mocs_index, enum blt_memop_type type,
-			enum blt_compression compression)
+			uint8_t mocs_index, uint8_t pat_index,
+			enum blt_memop_type type, enum blt_compression compression)
 {
 	obj->handle = handle;
 	obj->region = region;
 	obj->size = size;
 	obj->mocs_index = mocs_index;
+	obj->pat_index = pat_index;
 	obj->type = type;
 	obj->compression = compression;
 	obj->width = width;
@@ -1899,12 +1920,14 @@ void blt_set_copy_object(struct blt_copy_object *obj,
 
 void blt_set_ctrl_surf_object(struct blt_ctrl_surf_copy_object *obj,
 			      uint32_t handle, uint32_t region, uint64_t size,
-			      uint8_t mocs_index, enum blt_access_type access_type)
+			      uint8_t mocs_index, uint8_t pat_index,
+			      enum blt_access_type access_type)
 {
 	obj->handle = handle;
 	obj->region = region;
 	obj->size = size;
 	obj->mocs_index = mocs_index;
+	obj->pat_index = pat_index;
 	obj->access_type = access_type;
 }
 

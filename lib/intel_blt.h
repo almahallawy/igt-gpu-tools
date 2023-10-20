@@ -79,6 +79,7 @@ struct blt_copy_object {
 	uint32_t region;
 	uint64_t size;
 	uint8_t mocs_index;
+	uint8_t pat_index;
 	enum blt_tiling_type tiling;
 	enum blt_compression compression;  /* BC only */
 	enum blt_compression_type compression_type; /* BC only */
@@ -98,6 +99,7 @@ struct blt_mem_object {
 	uint32_t region;
 	uint64_t size;
 	uint8_t mocs_index;
+	uint8_t pat_index;
 	enum blt_memop_type type;
 	enum blt_compression compression;
 	uint32_t width;
@@ -172,6 +174,7 @@ struct blt_ctrl_surf_copy_object {
 	uint32_t region;
 	uint64_t size;
 	uint8_t mocs_index;
+	uint8_t pat_index;
 	enum blt_access_type access_type;
 };
 
@@ -281,15 +284,15 @@ void blt_destroy_object_and_alloc_free(int fd, uint64_t ahnd,
 				       struct blt_copy_object *obj);
 void blt_set_object(struct blt_copy_object *obj,
 		    uint32_t handle, uint64_t size, uint32_t region,
-		    uint8_t mocs_index, enum blt_tiling_type tiling,
+		    uint8_t mocs_index, uint8_t pat_index, enum blt_tiling_type tiling,
 		    enum blt_compression compression,
 		    enum blt_compression_type compression_type);
 
 void blt_set_mem_object(struct blt_mem_object *obj,
 			uint32_t handle, uint64_t size, uint32_t pitch,
 			uint32_t width, uint32_t height, uint32_t region,
-			uint8_t mocs_index, enum blt_memop_type type,
-			enum blt_compression compression);
+			uint8_t mocs_index, uint8_t pat_index,
+			enum blt_memop_type type, enum blt_compression compression);
 
 void blt_set_object_ext(struct blt_block_copy_object_ext *obj,
 			uint8_t compression_format,
@@ -299,7 +302,8 @@ void blt_set_copy_object(struct blt_copy_object *obj,
 			 const struct blt_copy_object *orig);
 void blt_set_ctrl_surf_object(struct blt_ctrl_surf_copy_object *obj,
 			      uint32_t handle, uint32_t region, uint64_t size,
-			      uint8_t mocs_index, enum blt_access_type access_type);
+			      uint8_t mocs_index, uint8_t pat_index,
+			      enum blt_access_type access_type);
 
 void blt_surface_info(const char *info,
 		      const struct blt_copy_object *obj);
