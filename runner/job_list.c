@@ -230,8 +230,28 @@ static bool job_list_from_test_list(struct job_list *job_list,
 			continue;
 
 		if (sscanf(line, "igt@%ms", &binary) == 1) {
-			if ((delim = strchr(binary, '@')) != NULL)
+			if ((delim = strchr(binary, '@')) != NULL) {
 				*delim++ = '\0';
+			} else {
+				/*
+				 * No subtests specified. Check
+				 * whether the user means "all
+				 * subtests" or if the test doesn't
+				 * have any.
+				 */
+				if (entry.binary) {
+					/* First flush the entry we're building for multiple-mode */
+					add_job_list_entry(job_list, entry.binary, entry.subtests, entry.subtest_count);
+					memset(&entry, 0, sizeof(entry));
+					any = true;
+				}
+
+				add_subtests(job_list, settings, binary,
+					     &settings->include_regexes,
+					     &settings->exclude_regexes);
+				any = true;
+				continue;
+			}
 
 			if (!settings->multiple_mode) {
 				char **subtests = NULL;
