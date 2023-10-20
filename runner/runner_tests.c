@@ -802,7 +802,7 @@ igt_main
 		char filename[] = "tmplistXXXXXX";
 		const char testlisttext[] = "igt@successtest@first-subtest\n"
 			"igt@successtest@second-subtest\n"
-			"igt@nosubtests\n";
+			"igt@no-subtests\n";
 		int multiple;
 		struct job_list *list = malloc(sizeof(*list));
 
@@ -830,7 +830,7 @@ igt_main
 
 				igt_assert_eqstr(list->entries[0].binary, "successtest");
 				if (!multiple) igt_assert_eqstr(list->entries[1].binary, "successtest");
-				igt_assert_eqstr(list->entries[multiple ? 1 : 2].binary, "nosubtests");
+				igt_assert_eqstr(list->entries[multiple ? 1 : 2].binary, "no-subtests");
 
 				igt_assert_eq(list->entries[0].subtest_count, multiple ? 2 : 1);
 				igt_assert_eq(list->entries[1].subtest_count, multiple ? 0 : 1);
