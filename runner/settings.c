@@ -687,6 +687,7 @@ bool parse_options(int argc, char **argv,
 			break;
 		case OPT_DRY_RUN:
 			settings->dry_run = true;
+			settings->allow_non_root = true;
 			break;
 		case OPT_ALLOW_NON_ROOT:
 			settings->allow_non_root = true;
