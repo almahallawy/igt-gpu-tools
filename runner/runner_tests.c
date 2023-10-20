@@ -1811,6 +1811,76 @@ igt_main
 	}
 
 	igt_subtest_group {
+		const char testlisttext[] = "igt@successtest";
+		const char blocktext[] = "igt@successtest@first";
+		struct job_list *list = malloc(sizeof(*list));
+		volatile int dirfd = -1;
+		char dirname[] = "tmpdirXXXXXX";
+		volatile int listfd;
+		volatile int blockfd;
+		char listfilename[] = "tmplistXXXXXX";
+		char blockfilename[] = "tmpblockXXXXXX";
+
+		igt_fixture {
+			igt_require(mkdtemp(dirname) != NULL);
+			rmdir(dirname);
+
+			igt_require((listfd = mkstemp(listfilename)) >= 0);
+			igt_require(write(listfd, testlisttext, strlen(testlisttext)) == strlen(testlisttext));
+			igt_require((blockfd = mkstemp(blockfilename)) >= 0);
+			igt_require(write(blockfd, blocktext, strlen(blocktext)) == strlen(blocktext));
+			close(listfd);
+			close(blockfd);
+
+			init_job_list(list);
+		}
+
+		igt_subtest("only-binary-name-in-testlist") {
+			const char *argv[] = { "runner",
+				"--allow-non-root",
+				"--test-list", listfilename,
+				testdatadir,
+				dirname,
+			};
+
+			igt_assert(parse_options(ARRAY_SIZE(argv), (char**)argv, settings));
+
+			igt_assert(create_job_list(list, settings));
+			/* No multi-mode, binary has two subtests, should be normalized to have individual subtests */
+			igt_assert_eq(list->size, 2);
+			igt_assert_eq(list->entries[0].subtest_count, 1);
+			igt_assert_eq(list->entries[1].subtest_count, 1);
+		}
+
+		igt_subtest("only-binary-name-in-testlist-with-blocks") {
+			const char *argv[] = { "runner",
+				"--allow-non-root",
+				"--test-list", listfilename,
+				"-b", blockfilename,
+				testdatadir,
+				dirname,
+			};
+
+			igt_assert(parse_options(ARRAY_SIZE(argv), (char**)argv, settings));
+
+			igt_assert(create_job_list(list, settings));
+			/* No multi-mode, binary has two subtests, one of them blocked */
+			igt_assert_eq(list->size, 1);
+			igt_assert_eq(list->entries[0].subtest_count, 1);
+			igt_assert_eqstr(list->entries[0].subtests[0], "second-subtest");
+		}
+
+		igt_fixture {
+			unlink(listfilename);
+			unlink(blockfilename);
+			close(dirfd);
+			clear_directory(dirname);
+			free_job_list(list);
+			free(list);
+		}
+	}
+
+	igt_subtest_group {
 		struct job_list *list = malloc(sizeof(*list));
 		volatile int dirfd = -1;
 		char dirname[] = "tmpdirXXXXXX";
