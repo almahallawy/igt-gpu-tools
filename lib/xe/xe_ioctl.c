@@ -226,13 +226,24 @@ void xe_vm_destroy(int fd, uint32_t vm)
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_VM_DESTROY, &destroy), 0);
 }
 
-uint32_t __xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags,
-			      uint32_t *handle)
+uint16_t __xe_default_cpu_caching_from_flags(int fd, uint32_t flags)
+{
+	if ((flags & all_memory_regions(fd)) != system_memory(fd) ||
+	    flags & DRM_XE_GEM_CREATE_FLAG_SCANOUT)
+		/* VRAM placements or scanout should always use WC */
+		return DRM_XE_GEM_CPU_CACHING_WC;
+
+	return DRM_XE_GEM_CPU_CACHING_WB;
+}
+
+static uint32_t ___xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags,
+				      uint16_t cpu_caching, uint32_t *handle)
 {
 	struct drm_xe_gem_create create = {
 		.vm_id = vm,
 		.size = size,
 		.flags = flags,
+		.cpu_caching = cpu_caching,
 	};
 	int err;
 
@@ -242,6 +253,15 @@ uint32_t __xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags
 
 	*handle = create.handle;
 	return 0;
+
+}
+
+uint32_t __xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags,
+			      uint32_t *handle)
+{
+	uint16_t cpu_caching = __xe_default_cpu_caching_from_flags(fd, flags);
+
+	return ___xe_bo_create_flags(fd, vm, size, flags, cpu_caching, handle);
 }
 
 uint32_t xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags)
@@ -253,19 +273,32 @@ uint32_t xe_bo_create_flags(int fd, uint32_t vm, uint64_t size, uint32_t flags)
 	return handle;
 }
 
+uint32_t __xe_bo_create_caching(int fd, uint32_t vm, uint64_t size, uint32_t flags,
+				uint16_t cpu_caching, uint32_t *handle)
+{
+	return ___xe_bo_create_flags(fd, vm, size, flags, cpu_caching,
+				     handle);
+}
+
+uint32_t xe_bo_create_caching(int fd, uint32_t vm, uint64_t size, uint32_t flags,
+			      uint16_t cpu_caching)
+{
+	uint32_t handle;
+
+	igt_assert_eq(__xe_bo_create_caching(fd, vm, size, flags,
+					     cpu_caching, &handle), 0);
+
+	return handle;
+}
+
 uint32_t xe_bo_create(int fd, int gt, uint32_t vm, uint64_t size)
 {
-	struct drm_xe_gem_create create = {
-		.vm_id = vm,
-		.size = size,
-		.flags = vram_if_possible(fd, gt),
-	};
-	int err;
+	uint32_t handle;
 
-	err = igt_ioctl(fd, DRM_IOCTL_XE_GEM_CREATE, &create);
-	igt_assert_eq(err, 0);
+	igt_assert_eq(__xe_bo_create_flags(fd, vm, size, vram_if_possible(fd, gt),
+					   &handle), 0);
 
-	return create.handle;
+	return handle;
 }
 
 uint32_t xe_bind_exec_queue_create(int fd, uint32_t vm, uint64_t ext, bool async)

@@ -25,6 +25,7 @@ static int __create_bo(int fd, uint32_t vm, uint64_t size, uint32_t flags,
 		.vm_id = vm,
 		.size = size,
 		.flags = flags,
+		.cpu_caching = __xe_default_cpu_caching_from_flags(fd, flags),
 	};
 	int ret = 0;
 
