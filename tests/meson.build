@@ -301,6 +301,7 @@ intel_xe_progs = [
 	'xe_mmap',
 	'xe_module_load',
 	'xe_noexec_ping_pong',
+	'xe_pat',
 	'xe_pm',
 	'xe_pm_residency',
 	'xe_prime_self_import',
