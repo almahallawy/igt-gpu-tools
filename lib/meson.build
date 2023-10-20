@@ -64,6 +64,7 @@ lib_sources = [
 	'intel_device_info.c',
 	'intel_mmio.c',
 	'intel_mocs.c',
+	'intel_pat.c',
 	'ioctl_wrappers.c',
 	'media_spin.c',
 	'media_fill.c',
