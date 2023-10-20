@@ -9,6 +9,7 @@
 #include "igt.h"
 #include "igt_aux.h"
 #include "intel_allocator.h"
+#include "intel_pat.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 
@@ -131,7 +132,8 @@ static void alloc_simple(int fd)
 
 	intel_allocator_get_address_range(ahnd, &start, &end);
 	offset0 = intel_allocator_alloc(ahnd, 1, end - start, 0);
-	offset1 = __intel_allocator_alloc(ahnd, 2, 4096, 0, ALLOC_STRATEGY_NONE);
+	offset1 = __intel_allocator_alloc(ahnd, 2, 4096, 0, DEFAULT_PAT_INDEX,
+					  ALLOC_STRATEGY_NONE);
 	igt_assert(offset1 == ALLOC_INVALID_ADDRESS);
 	intel_allocator_free(ahnd, 1);
 

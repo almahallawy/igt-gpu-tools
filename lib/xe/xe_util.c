@@ -6,6 +6,7 @@
 #include "igt.h"
 #include "igt_syncobj.h"
 #include "igt_sysfs.h"
+#include "intel_pat.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 #include "xe/xe_util.h"
@@ -111,7 +112,8 @@ char *xe_memregion_dynamic_subtest_name(int xe, struct igt_collection *set)
 #define bind_debug(...) {}
 #endif
 
-static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct igt_list_head *obj_list,
+static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(int xe,
+						   struct igt_list_head *obj_list,
 						   uint32_t *num_ops)
 {
 	struct drm_xe_vm_bind_op *bind_ops, *ops;
@@ -148,6 +150,10 @@ static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct igt_list_head *obj_lis
 		ops->addr = obj->offset;
 		ops->range = obj->size;
 		ops->prefetch_mem_region_instance = 0;
+		if (obj->pat_index == DEFAULT_PAT_INDEX)
+			ops->pat_index = intel_get_pat_idx_wb(xe);
+		else
+			ops->pat_index = obj->pat_index;
 
 		bind_info("  [%d]: [%6s] handle: %u, offset: %llx, size: %llx\n",
 			  i, obj->bind_op == XE_OBJECT_BIND ? "BIND" : "UNBIND",
@@ -187,7 +193,7 @@ void xe_bind_unbind_async(int xe, uint32_t vm, uint32_t bind_engine,
 	int num_syncs;
 
 	bind_info("[Binding to vm: %u]\n", vm);
-	bind_ops = xe_alloc_bind_ops(obj_list, &num_binds);
+	bind_ops = xe_alloc_bind_ops(xe, obj_list, &num_binds);
 
 	if (!num_binds) {
 		if (sync_out)

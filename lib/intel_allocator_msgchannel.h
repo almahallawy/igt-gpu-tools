@@ -60,6 +60,7 @@ struct alloc_req {
 			uint32_t handle;
 			uint64_t size;
 			uint64_t alignment;
+			uint8_t pat_index;
 			uint8_t strategy;
 		} alloc;
 

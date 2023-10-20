@@ -29,6 +29,7 @@ struct intel_allocator_record {
 	uint32_t handle;
 	uint64_t offset;
 	uint64_t size;
+	uint8_t pat_index;
 };
 
 /* Keep the low 256k clear, for negative deltas */
@@ -54,7 +55,7 @@ static void intel_allocator_reloc_get_address_range(struct intel_allocator *ial,
 
 static uint64_t intel_allocator_reloc_alloc(struct intel_allocator *ial,
 					    uint32_t handle, uint64_t size,
-					    uint64_t alignment,
+					    uint64_t alignment, uint8_t pat_index,
 					    enum allocator_strategy strategy)
 {
 	struct intel_allocator_record *rec;
@@ -67,6 +68,7 @@ static uint64_t intel_allocator_reloc_alloc(struct intel_allocator *ial,
 	if (rec) {
 		offset = rec->offset;
 		igt_assert(rec->size == size);
+		igt_assert(rec->pat_index == pat_index);
 	} else {
 		aligned_offset = ALIGN(ialr->offset, alignment);
 
@@ -84,6 +86,7 @@ static uint64_t intel_allocator_reloc_alloc(struct intel_allocator *ial,
 		rec->handle = handle;
 		rec->offset = offset;
 		rec->size = size;
+		rec->pat_index = pat_index;
 
 		igt_map_insert(ialr->objects, &rec->handle, rec);
 

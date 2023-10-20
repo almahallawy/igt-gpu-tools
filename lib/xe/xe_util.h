@@ -36,6 +36,7 @@ struct xe_object {
 	uint32_t handle;
 	uint64_t offset;
 	uint64_t size;
+	uint8_t pat_index;
 	enum xe_bind_op bind_op;
 	struct igt_list_head link;
 };

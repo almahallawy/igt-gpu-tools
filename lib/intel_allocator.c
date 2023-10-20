@@ -16,6 +16,7 @@
 #include "igt_map.h"
 #include "intel_allocator.h"
 #include "intel_allocator_msgchannel.h"
+#include "intel_pat.h"
 #include "xe/xe_query.h"
 #include "xe/xe_util.h"
 
@@ -92,6 +93,7 @@ struct allocator_object {
 	uint32_t handle;
 	uint64_t offset;
 	uint64_t size;
+	uint8_t pat_index;
 
 	enum allocator_bind_op bind_op;
 };
@@ -590,16 +592,17 @@ static int handle_request(struct alloc_req *req, struct alloc_resp *resp)
 							req->alloc.handle,
 							req->alloc.size,
 							req->alloc.alignment,
+							req->alloc.pat_index,
 							req->alloc.strategy);
 			alloc_info("<alloc> [tid: %ld] ahnd: %" PRIx64
 				   ", ctx: %u, vm: %u, handle: %u"
 				   ", size: 0x%" PRIx64 ", offset: 0x%" PRIx64
-				   ", alignment: 0x%" PRIx64 ", strategy: %u\n",
+				   ", alignment: 0x%" PRIx64 ", pat_index: %u, strategy: %u\n",
 				   (long) req->tid, req->allocator_handle,
 				   al->ctx, al->vm,
 				   req->alloc.handle, req->alloc.size,
 				   resp->alloc.offset, req->alloc.alignment,
-				   req->alloc.strategy);
+				   req->alloc.pat_index, req->alloc.strategy);
 			break;
 
 		case REQ_FREE:
@@ -1122,24 +1125,24 @@ void intel_allocator_get_address_range(uint64_t allocator_handle,
 
 static bool is_same(struct allocator_object *obj,
 		    uint32_t handle, uint64_t offset, uint64_t size,
-		    enum allocator_bind_op bind_op)
+		    uint8_t pat_index, enum allocator_bind_op bind_op)
 {
 	return obj->handle == handle &&	obj->offset == offset && obj->size == size &&
-	       (obj->bind_op == bind_op || obj->bind_op == BOUND);
+	       obj->pat_index == pat_index && (obj->bind_op == bind_op || obj->bind_op == BOUND);
 }
 
 static void track_object(uint64_t allocator_handle, uint32_t handle,
-			 uint64_t offset, uint64_t size,
+			 uint64_t offset, uint64_t size, uint8_t pat_index,
 			 enum allocator_bind_op bind_op)
 {
 	struct ahnd_info *ainfo;
 	struct allocator_object *obj;
 
-	bind_debug("[TRACK OBJECT]: [%s] pid: %d, tid: %d, ahnd: %llx, handle: %u, offset: %llx, size: %llx\n",
+	bind_debug("[TRACK OBJECT]: [%s] pid: %d, tid: %d, ahnd: %llx, handle: %u, offset: %llx, size: %llx, pat_index: %u\n",
 		   bind_op == TO_BIND ? "BIND" : "UNBIND",
 		   getpid(), gettid(),
 		   (long long)allocator_handle,
-		   handle, (long long)offset, (long long)size);
+		   handle, (long long)offset, (long long)size, pat_index);
 
 	if (offset == ALLOC_INVALID_ADDRESS) {
 		bind_debug("[TRACK OBJECT] => invalid address %llx, skipping tracking\n",
@@ -1165,7 +1168,7 @@ static void track_object(uint64_t allocator_handle, uint32_t handle,
 		 * bind_map.
 		 */
 		if (bind_op == TO_BIND) {
-			igt_assert_eq(is_same(obj, handle, offset, size, bind_op), true);
+			igt_assert_eq(is_same(obj, handle, offset, size, pat_index, bind_op), true);
 		} else if (bind_op == TO_UNBIND) {
 			if (obj->bind_op == TO_BIND)
 				igt_map_remove(ainfo->bind_map, &obj->handle, map_entry_free_func);
@@ -1181,6 +1184,7 @@ static void track_object(uint64_t allocator_handle, uint32_t handle,
 		obj->handle = handle;
 		obj->offset = offset;
 		obj->size = size;
+		obj->pat_index = pat_index;
 		obj->bind_op = bind_op;
 		igt_map_insert(ainfo->bind_map, &obj->handle, obj);
 	}
@@ -1194,6 +1198,8 @@ out:
  * @handle: handle to an object
  * @size: size of an object
  * @alignment: determines object alignment
+ * @pat_index: chosen pat_index for the binding
+ * @strategy: chosen allocator strategy
  *
  * Function finds and returns the most suitable offset with given @alignment
  * for an object with @size identified by the @handle.
@@ -1204,14 +1210,16 @@ out:
  */
 uint64_t __intel_allocator_alloc(uint64_t allocator_handle, uint32_t handle,
 				 uint64_t size, uint64_t alignment,
-				 enum allocator_strategy strategy)
+				 uint8_t pat_index, enum allocator_strategy strategy)
 {
 	struct alloc_req req = { .request_type = REQ_ALLOC,
 				 .allocator_handle = allocator_handle,
 				 .alloc.handle = handle,
 				 .alloc.size = size,
 				 .alloc.strategy = strategy,
-				 .alloc.alignment = alignment };
+				 .alloc.alignment = alignment,
+				 .alloc.pat_index = pat_index,
+	};
 	struct alloc_resp resp;
 
 	igt_assert((alignment & (alignment-1)) == 0);
@@ -1219,7 +1227,8 @@ uint64_t __intel_allocator_alloc(uint64_t allocator_handle, uint32_t handle,
 	igt_assert(handle_request(&req, &resp) == 0);
 	igt_assert(resp.response_type == RESP_ALLOC);
 
-	track_object(allocator_handle, handle, resp.alloc.offset, size, TO_BIND);
+	track_object(allocator_handle, handle, resp.alloc.offset, size, pat_index,
+		     TO_BIND);
 
 	return resp.alloc.offset;
 }
@@ -1241,7 +1250,7 @@ uint64_t intel_allocator_alloc(uint64_t allocator_handle, uint32_t handle,
 	uint64_t offset;
 
 	offset = __intel_allocator_alloc(allocator_handle, handle,
-					 size, alignment,
+					 size, alignment, DEFAULT_PAT_INDEX,
 					 ALLOC_STRATEGY_NONE);
 	igt_assert(offset != ALLOC_INVALID_ADDRESS);
 
@@ -1268,7 +1277,8 @@ uint64_t intel_allocator_alloc_with_strategy(uint64_t allocator_handle,
 	uint64_t offset;
 
 	offset = __intel_allocator_alloc(allocator_handle, handle,
-					 size, alignment, strategy);
+					 size, alignment, DEFAULT_PAT_INDEX,
+					 strategy);
 	igt_assert(offset != ALLOC_INVALID_ADDRESS);
 
 	return offset;
@@ -1298,7 +1308,7 @@ bool intel_allocator_free(uint64_t allocator_handle, uint32_t handle)
 	igt_assert(handle_request(&req, &resp) == 0);
 	igt_assert(resp.response_type == RESP_FREE);
 
-	track_object(allocator_handle, handle, 0, 0, TO_UNBIND);
+	track_object(allocator_handle, handle, 0, 0, 0, TO_UNBIND);
 
 	return resp.free.freed;
 }
@@ -1500,16 +1510,17 @@ static void __xe_op_bind(struct ahnd_info *ainfo, uint32_t sync_in, uint32_t syn
 		if (obj->bind_op == BOUND)
 			continue;
 
-		bind_info("= [vm: %u] %s => %u %lx %lx\n",
+		bind_info("= [vm: %u] %s => %u %lx %lx %u\n",
 			  ainfo->vm,
 			  obj->bind_op == TO_BIND ? "TO BIND" : "TO UNBIND",
 			  obj->handle, obj->offset,
-			  obj->size);
+			  obj->size, obj->pat_index);
 
 		entry = malloc(sizeof(*entry));
 		entry->handle = obj->handle;
 		entry->offset = obj->offset;
 		entry->size = obj->size;
+		entry->pat_index = obj->pat_index;
 		entry->bind_op = obj->bind_op == TO_BIND ? XE_OBJECT_BIND :
 							   XE_OBJECT_UNBIND;
 		igt_list_add(&entry->link, &obj_list);
@@ -1532,6 +1543,18 @@ static void __xe_op_bind(struct ahnd_info *ainfo, uint32_t sync_in, uint32_t syn
 		igt_list_del(&entry->link);
 		free(entry);
 	}
+}
+
+uint64_t get_offset_pat_index(uint64_t ahnd, uint32_t handle, uint64_t size,
+			      uint64_t alignment, uint8_t pat_index)
+{
+	uint64_t offset;
+
+	offset = __intel_allocator_alloc(ahnd, handle, size, alignment,
+					 pat_index, ALLOC_STRATEGY_NONE);
+	igt_assert(offset != ALLOC_INVALID_ADDRESS);
+
+	return offset;
 }
 
 /**

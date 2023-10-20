@@ -48,6 +48,7 @@ struct intel_allocator_record {
 	uint32_t handle;
 	uint64_t offset;
 	uint64_t size;
+	uint8_t pat_index;
 };
 
 #define simple_vma_foreach_hole(_hole, _heap) \
@@ -371,7 +372,7 @@ static bool simple_vma_heap_alloc_addr(struct intel_allocator_simple *ials,
 
 static uint64_t intel_allocator_simple_alloc(struct intel_allocator *ial,
 					     uint32_t handle, uint64_t size,
-					     uint64_t alignment,
+					     uint64_t alignment, uint8_t pat_index,
 					     enum allocator_strategy strategy)
 {
 	struct intel_allocator_record *rec;
@@ -387,6 +388,7 @@ static uint64_t intel_allocator_simple_alloc(struct intel_allocator *ial,
 	if (rec) {
 		offset = rec->offset;
 		igt_assert(rec->size == size);
+		igt_assert(rec->pat_index == pat_index);
 	} else {
 		if (!simple_vma_heap_alloc(&ials->heap, &offset,
 					   size, alignment, strategy))
@@ -396,6 +398,7 @@ static uint64_t intel_allocator_simple_alloc(struct intel_allocator *ial,
 		rec->handle = handle;
 		rec->offset = offset;
 		rec->size = size;
+		rec->pat_index = pat_index;
 
 		igt_map_insert(ials->objects, &rec->handle, rec);
 		ials->allocated_objects++;
