@@ -783,14 +783,6 @@ static void dump_bb_ext(struct gen12_block_copy_data_ext *data)
 		 data->dw21.src_array_index);
 }
 
-static uint64_t get_default_alignment(int fd, enum intel_driver driver)
-{
-	if (driver == INTEL_DRIVER_XE)
-		return xe_get_default_alignment(fd);
-
-	return gem_detect_safe_alignment(fd);
-}
-
 static void *bo_map(int fd, uint32_t handle, uint64_t size,
 		    enum intel_driver driver)
 {
@@ -842,21 +834,20 @@ uint64_t emit_blt_block_copy(int fd,
 	unsigned int ip_ver = intel_graphics_ver(intel_get_drm_devid(fd));
 	struct gen12_block_copy_data data = {};
 	struct gen12_block_copy_data_ext dext = {};
-	uint64_t dst_offset, src_offset, bb_offset, alignment;
+	uint64_t dst_offset, src_offset, bb_offset;
 	uint32_t bbe = MI_BATCH_BUFFER_END;
 	uint8_t *bb;
 
 	igt_assert_f(ahnd, "block-copy supports softpin only\n");
 	igt_assert_f(blt, "block-copy requires data to do blit\n");
 
-	alignment = get_default_alignment(fd, blt->driver);
 	src_offset = get_offset_pat_index(ahnd, blt->src.handle, blt->src.size,
-					  alignment, blt->src.pat_index);
+					  0, blt->src.pat_index);
 	src_offset += blt->src.plane_offset;
 	dst_offset = get_offset_pat_index(ahnd, blt->dst.handle, blt->dst.size,
-					  alignment, blt->dst.pat_index);
+					  0, blt->dst.pat_index);
 	dst_offset += blt->dst.plane_offset;
-	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
+	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, 0);
 
 	fill_data(&data, blt, src_offset, dst_offset, ext, ip_ver);
 
@@ -918,19 +909,18 @@ int blt_block_copy(int fd,
 {
 	struct drm_i915_gem_execbuffer2 execbuf = {};
 	struct drm_i915_gem_exec_object2 obj[3] = {};
-	uint64_t dst_offset, src_offset, bb_offset, alignment;
+	uint64_t dst_offset, src_offset, bb_offset;
 	int ret;
 
 	igt_assert_f(ahnd, "block-copy supports softpin only\n");
 	igt_assert_f(blt, "block-copy requires data to do blit\n");
 	igt_assert_neq(blt->driver, 0);
 
-	alignment = get_default_alignment(fd, blt->driver);
 	src_offset = get_offset_pat_index(ahnd, blt->src.handle, blt->src.size,
-					  alignment, blt->src.pat_index);
+					  0, blt->src.pat_index);
 	dst_offset = get_offset_pat_index(ahnd, blt->dst.handle, blt->dst.size,
-					  alignment, blt->dst.pat_index);
-	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
+					  0, blt->dst.pat_index);
+	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, 0);
 
 	emit_blt_block_copy(fd, ahnd, blt, ext, 0, true);
 
@@ -1132,7 +1122,7 @@ uint64_t emit_blt_ctrl_surf_copy(int fd,
 	igt_assert_f(ahnd, "ctrl-surf-copy supports softpin only\n");
 	igt_assert_f(surf, "ctrl-surf-copy requires data to do ctrl-surf-copy blit\n");
 
-	alignment = max_t(uint64_t, get_default_alignment(fd, surf->driver), 1ull << 16);
+	alignment = 1ull << 16;
 	src_offset = get_offset_pat_index(ahnd, surf->src.handle, surf->src.size,
 					  alignment, surf->src.pat_index);
 	dst_offset = get_offset_pat_index(ahnd, surf->dst.handle, surf->dst.size,
@@ -1236,7 +1226,7 @@ int blt_ctrl_surf_copy(int fd,
 	igt_assert_f(surf, "ctrl-surf-copy requires data to do ctrl-surf-copy blit\n");
 	igt_assert_neq(surf->driver, 0);
 
-	alignment = max_t(uint64_t, get_default_alignment(fd, surf->driver), 1ull << 16);
+	alignment = 1ull << 16;
 	src_offset = get_offset_pat_index(ahnd, surf->src.handle, surf->src.size,
 					  alignment, surf->src.pat_index);
 	dst_offset = get_offset_pat_index(ahnd, surf->dst.handle, surf->dst.size,
@@ -1443,12 +1433,9 @@ uint64_t emit_blt_fast_copy(int fd,
 {
 	unsigned int ip_ver = intel_graphics_ver(intel_get_drm_devid(fd));
 	struct gen12_fast_copy_data data = {};
-	uint64_t dst_offset, src_offset, bb_offset, alignment;
+	uint64_t dst_offset, src_offset, bb_offset;
 	uint32_t bbe = MI_BATCH_BUFFER_END;
 	uint32_t *bb;
-
-
-	alignment = get_default_alignment(fd, blt->driver);
 
 	data.dw00.client = 0x2;
 	data.dw00.opcode = 0x42;
@@ -1480,12 +1467,12 @@ uint64_t emit_blt_fast_copy(int fd,
 	data.dw03.dst_y2 = blt->dst.y2;
 
 	src_offset = get_offset_pat_index(ahnd, blt->src.handle, blt->src.size,
-					  alignment, blt->src.pat_index);
+					  0, blt->src.pat_index);
 	src_offset += blt->src.plane_offset;
-	dst_offset = get_offset_pat_index(ahnd, blt->dst.handle, blt->dst.size, alignment,
+	dst_offset = get_offset_pat_index(ahnd, blt->dst.handle, blt->dst.size, 0,
 					  blt->dst.pat_index);
 	dst_offset += blt->dst.plane_offset;
-	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
+	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, 0);
 
 	data.dw04.dst_address_lo = dst_offset;
 	data.dw05.dst_address_hi = dst_offset >> 32;
@@ -1550,19 +1537,18 @@ int blt_fast_copy(int fd,
 {
 	struct drm_i915_gem_execbuffer2 execbuf = {};
 	struct drm_i915_gem_exec_object2 obj[3] = {};
-	uint64_t dst_offset, src_offset, bb_offset, alignment;
+	uint64_t dst_offset, src_offset, bb_offset;
 	int ret;
 
 	igt_assert_f(ahnd, "fast-copy supports softpin only\n");
 	igt_assert_f(blt, "fast-copy requires data to do fast-copy blit\n");
 	igt_assert_neq(blt->driver, 0);
 
-	alignment = get_default_alignment(fd, blt->driver);
 	src_offset = get_offset_pat_index(ahnd, blt->src.handle, blt->src.size,
-					  alignment, blt->src.pat_index);
+					  0, blt->src.pat_index);
 	dst_offset = get_offset_pat_index(ahnd, blt->dst.handle, blt->dst.size,
-					  alignment, blt->dst.pat_index);
-	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, alignment);
+					  0, blt->dst.pat_index);
+	bb_offset = get_offset(ahnd, blt->bb.handle, blt->bb.size, 0);
 
 	emit_blt_fast_copy(fd, ahnd, blt, 0, true);
 
@@ -1610,16 +1596,15 @@ void blt_mem_init(int fd, struct blt_mem_data *mem)
 
 static void emit_blt_mem_copy(int fd, uint64_t ahnd, const struct blt_mem_data *mem)
 {
-	uint64_t dst_offset, src_offset, alignment;
+	uint64_t dst_offset, src_offset;
 	int i;
 	uint32_t *batch;
 	uint32_t optype;
 
-	alignment = get_default_alignment(fd, mem->driver);
 	src_offset = get_offset_pat_index(ahnd, mem->src.handle, mem->src.size,
-					  alignment, mem->src.pat_index);
+					  0, mem->src.pat_index);
 	dst_offset = get_offset_pat_index(ahnd, mem->dst.handle, mem->dst.size,
-					  alignment, mem->dst.pat_index);
+					  0, mem->dst.pat_index);
 
 	batch = bo_map(fd, mem->bb.handle, mem->bb.size, mem->driver);
 	optype = mem->src.type == M_MATRIX ? 1 << 17 : 0;
@@ -1660,15 +1645,14 @@ int blt_mem_copy(int fd, const intel_ctx_t *ctx,
 {
 	struct drm_i915_gem_execbuffer2 execbuf = {};
 	struct drm_i915_gem_exec_object2 obj[3] = {};
-	uint64_t dst_offset, src_offset, bb_offset, alignment;
+	uint64_t dst_offset, src_offset, bb_offset;
 	int ret;
 
-	alignment = get_default_alignment(fd, mem->driver);
 	src_offset = get_offset_pat_index(ahnd, mem->src.handle, mem->src.size,
-					  alignment, mem->src.pat_index);
+					  0, mem->src.pat_index);
 	dst_offset = get_offset_pat_index(ahnd, mem->dst.handle, mem->dst.size,
-					  alignment, mem->dst.pat_index);
-	bb_offset = get_offset(ahnd, mem->bb.handle, mem->bb.size, alignment);
+					  0, mem->dst.pat_index);
+	bb_offset = get_offset(ahnd, mem->bb.handle, mem->bb.size, 0);
 
 	emit_blt_mem_copy(fd, ahnd, mem);
 
@@ -1701,14 +1685,13 @@ int blt_mem_copy(int fd, const intel_ctx_t *ctx,
 static void emit_blt_mem_set(int fd, uint64_t ahnd, const struct blt_mem_data *mem,
 			     uint8_t fill_data)
 {
-	uint64_t dst_offset, alignment;
+	uint64_t dst_offset;
 	int b;
 	uint32_t *batch;
 	uint32_t value;
 
-	alignment = get_default_alignment(fd, mem->driver);
 	dst_offset = get_offset_pat_index(ahnd, mem->dst.handle, mem->dst.size,
-					  alignment, mem->dst.pat_index);
+					  0, mem->dst.pat_index);
 
 	batch = bo_map(fd, mem->bb.handle, mem->bb.size, mem->driver);
 	value = (uint32_t)fill_data << 24;
@@ -1747,13 +1730,12 @@ int blt_mem_set(int fd, const intel_ctx_t *ctx,
 {
 	struct drm_i915_gem_execbuffer2 execbuf = {};
 	struct drm_i915_gem_exec_object2 obj[2] = {};
-	uint64_t dst_offset, bb_offset, alignment;
+	uint64_t dst_offset, bb_offset;
 	int ret;
 
-	alignment = get_default_alignment(fd, mem->driver);
 	dst_offset = get_offset_pat_index(ahnd, mem->dst.handle, mem->dst.size,
-					  alignment, mem->dst.pat_index);
-	bb_offset = get_offset(ahnd, mem->bb.handle, mem->bb.size, alignment);
+					  0, mem->dst.pat_index);
+	bb_offset = get_offset(ahnd, mem->bb.handle, mem->bb.size, 0);
 
 	emit_blt_mem_set(fd, ahnd, mem, fill_data);
 
