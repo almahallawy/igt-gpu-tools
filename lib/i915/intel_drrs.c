@@ -69,6 +69,7 @@ static void drrs_set(int device, enum pipe pipe, unsigned int val)
 	dir = igt_debugfs_pipe_dir(device, pipe, O_DIRECTORY);
 	igt_require_fd(dir);
 	ret = igt_sysfs_write(dir, "i915_drrs_ctl", buf, sizeof(buf) - 1);
+	close(dir);
 
 	/*
 	 * drrs_enable() is called on DRRS capable platform only,
