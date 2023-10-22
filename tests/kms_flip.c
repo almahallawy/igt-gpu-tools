@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include "igt.h"
+#include "i915/intel_drrs.h"
 
 #include <cairo.h>
 #include <errno.h>
@@ -911,6 +912,9 @@ static int set_mode(struct test_output *o, uint32_t fb, int x, int y)
 				     conn, count, mode);
 		if (ret)
 			return ret;
+
+		if (is_intel_device(drm_fd))
+			intel_drrs_disable(drm_fd, o->pipe);
 	}
 
 	return 0;
