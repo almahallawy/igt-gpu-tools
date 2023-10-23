@@ -307,7 +307,7 @@ static void amdgpu_userptr_test(amdgpu_device_handle device)
 
 	ip_block->funcs->write_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 
-	 amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+	 amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 
 	r = ip_block->funcs->compare(ip_block->funcs, ring_context, 1);
 	igt_assert_eq(r, 0);
@@ -412,7 +412,7 @@ amdgpu_bo_eviction_test(amdgpu_device_handle device_handle)
 			ring_context->resources[2] = ring_context->boa_vram[loop2];
 			ring_context->resources[3] = ring_context->boa_gtt[loop2];
 			ip_block->funcs->copy_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
-			amdgpu_test_exec_cs_helper(device_handle, ip_block->type, ring_context);
+			amdgpu_test_exec_cs_helper(device_handle, ip_block->type, ring_context, 0);
 			/* fulfill PM4: test DMA copy linear */
 			r = ip_block->funcs->compare_pattern(ip_block->funcs, ring_context, sdma_write_length);
 			igt_assert_eq(r, 0);

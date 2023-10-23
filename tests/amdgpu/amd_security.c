@@ -110,7 +110,7 @@ amdgpu_bo_lcopy(amdgpu_device_handle device,
 
 	amdgpu_sdma_lcopy(ring_context->pm4, ring_context->bo_mc2,
 			ring_context->bo_mc, size, secure);
-	amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+	amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 	free(ring_context->pm4);
 }
 
@@ -155,7 +155,7 @@ amdgpu_bo_move(amdgpu_device_handle device, int fd,
 	 * it to the desired location.
 	 */
 	amdgpu_sdma_nop(ring_context->pm4, PACKET_NOP_SIZE);
-	amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+	amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 	free(ring_context->pm4);
 }
 

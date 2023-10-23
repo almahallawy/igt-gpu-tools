@@ -13,6 +13,7 @@
 #include "amd_memory.h"
 #include "amd_deadlock_helpers.h"
 #include "amd_ip_blocks.h"
+#include "lib/amdgpu/amd_command_submission.h"
 
 #define MAX_JOB_COUNT 200
 
@@ -247,4 +248,98 @@ bad_access_helper(amdgpu_device_handle device_handle, int reg_access, unsigned i
 					 ib_result_mc_address, 4096);
 	free_cmd_base(base_cmd);
 	amdgpu_cs_ctx_free(context_handle);
+}
+
+#define MAX_DMABUF_COUNT 0x20000
+#define MAX_DWORD_COUNT 256
+
+void
+amdgpu_hang_sdma_helper(amdgpu_device_handle device_handle, uint8_t hang_type)
+{
+	int j, r;
+	uint32_t *ptr, offset;
+	struct amdgpu_ring_context *ring_context;
+	struct amdgpu_cmd_base *base_cmd = get_cmd_base();
+	const struct amdgpu_ip_block_version *ip_block = get_ip_block(device_handle, AMDGPU_HW_IP_DMA);
+
+	ring_context = calloc(1, sizeof(*ring_context));
+	if (hang_type == DMA_CORRUPTED_HEADER_HANG) {
+		ring_context->write_length = 4096;
+		ring_context->pm4 = calloc(MAX_DWORD_COUNT, sizeof(*ring_context->pm4));
+		ring_context->pm4_size = MAX_DWORD_COUNT;
+	} else {
+		ring_context->write_length = MAX_DWORD_COUNT * 4 * MAX_DMABUF_COUNT;
+		ring_context->pm4 = calloc(MAX_DWORD_COUNT * MAX_DMABUF_COUNT, sizeof(*ring_context->pm4));
+		ring_context->pm4_size = MAX_DWORD_COUNT * MAX_DMABUF_COUNT;
+	}
+	ring_context->secure = false;
+	ring_context->res_cnt = 2;
+	igt_assert(ring_context->pm4);
+
+	r = amdgpu_cs_ctx_create(device_handle, &ring_context->context_handle);
+	igt_assert_eq(r, 0);
+
+	r = amdgpu_bo_alloc_and_map(device_handle, ring_context->write_length, 4096,
+					AMDGPU_GEM_DOMAIN_GTT, 0,
+					&ring_context->bo, (void **)&ring_context->bo_cpu,
+					&ring_context->bo_mc, &ring_context->va_handle);
+	igt_assert_eq(r, 0);
+
+	/* set bo */
+	memset((void *)ring_context->bo_cpu, 0, ring_context->write_length);
+	r = amdgpu_bo_alloc_and_map(device_handle,
+				    ring_context->write_length, 4096,
+				    AMDGPU_GEM_DOMAIN_GTT,
+				    0, &ring_context->bo2,
+				    (void **)&ring_context->bo2_cpu, &ring_context->bo_mc2,
+				    &ring_context->va_handle2);
+	igt_assert_eq(r, 0);
+
+	/* set bo2 */
+	memset((void *)ring_context->bo2_cpu, 0, ring_context->write_length);
+	ring_context->resources[0] = ring_context->bo;
+	ring_context->resources[1] = ring_context->bo2;
+	base_cmd->attach_buf(base_cmd, ring_context->pm4, ring_context->write_length);
+
+	/* fulfill PM4: with bad copy linear header */
+	if (hang_type == DMA_CORRUPTED_HEADER_HANG) {
+		ip_block->funcs->copy_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
+		base_cmd->emit_at_offset(base_cmd, 0x23decd3d, 0);
+	} else {
+		/* Save initialization pm4 */
+		ptr = ring_context->pm4;
+		for (j = 1; j < MAX_DMABUF_COUNT; j++) {
+			/* copy from buf1 to buf2 */
+			ip_block->funcs->copy_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
+			ring_context->pm4 += ring_context->pm4_dw;
+			ip_block->funcs->copy_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
+
+			offset = ring_context->pm4_dw * 2 * j;
+			/* override  addr of buf1 and buf 2 in order to copy from buf2 to buf1 */
+			base_cmd->emit_at_offset(base_cmd, (0xffffffff & ring_context->bo_mc2), (offset - 4));
+			base_cmd->emit_at_offset(base_cmd,
+					((0xffffffff00000000 & ring_context->bo_mc2) >> 32), (offset - 3));
+			base_cmd->emit_at_offset(base_cmd, (0xffffffff & ring_context->bo_mc), (offset - 2));
+			base_cmd->emit_at_offset(base_cmd,
+					((0xffffffff00000000 & ring_context->bo_mc) >> 32), (offset - 1));
+			ring_context->pm4 += ring_context->pm4_dw;
+		}
+		/* restore pm4 */
+		ring_context->pm4 = ptr;
+		/* update the total pm4_dw */
+		ring_context->pm4_dw = ring_context->pm4_dw * 2 * j;
+	}
+
+	amdgpu_test_exec_cs_helper(device_handle, ip_block->type, ring_context, 1);
+	amdgpu_bo_unmap_and_free(ring_context->bo, ring_context->va_handle, ring_context->bo_mc,
+						 ring_context->write_length);
+	amdgpu_bo_unmap_and_free(ring_context->bo2, ring_context->va_handle2, ring_context->bo_mc2,
+						 ring_context->write_length);
+	/* clean resources */
+	free(ring_context->pm4);
+	/* end of test */
+	//r = amdgpu_cs_ctx_free(context_handle);
+	r = amdgpu_cs_ctx_free(ring_context->context_handle);
+	igt_assert_eq(r, 0);
+	free_cmd_base(base_cmd);
 }

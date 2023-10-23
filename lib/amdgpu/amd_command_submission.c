@@ -18,7 +18,7 @@
  */
 
 void amdgpu_test_exec_cs_helper(amdgpu_device_handle device, unsigned int ip_type,
-				struct amdgpu_ring_context *ring_context)
+				struct amdgpu_ring_context *ring_context, int expect)
 {
 	int r;
 	uint32_t expired;
@@ -31,15 +31,23 @@ void amdgpu_test_exec_cs_helper(amdgpu_device_handle device, unsigned int ip_typ
 
 	amdgpu_bo_handle *all_res = alloca(sizeof(ring_context->resources[0]) * (ring_context->res_cnt + 1));
 
+	if (expect) {
+		/* allocate IB */
+		r = amdgpu_bo_alloc_and_map(device, ring_context->write_length, 4096,
+					    AMDGPU_GEM_DOMAIN_GTT, 0,
+					    &ib_result_handle, &ib_result_cpu,
+					    &ib_result_mc_address, &va_handle);
+	} else {
+		/* prepare CS */
+		igt_assert(ring_context->pm4_dw <= 1024);
+		/* allocate IB */
+		r = amdgpu_bo_alloc_and_map(device, 4096, 4096,
+					    AMDGPU_GEM_DOMAIN_GTT, 0,
+					    &ib_result_handle, &ib_result_cpu,
+					    &ib_result_mc_address, &va_handle);
 
-	/* prepare CS */
-	igt_assert(ring_context->pm4_dw <= 1024);
 
-	/* allocate IB */
-	r = amdgpu_bo_alloc_and_map(device, 4096, 4096,
-				    AMDGPU_GEM_DOMAIN_GTT, 0,
-				    &ib_result_handle, &ib_result_cpu,
-				    &ib_result_mc_address, &va_handle);
+	}
 	igt_assert_eq(r, 0);
 
 	/* copy PM4 packet to ring from caller */
@@ -81,9 +89,13 @@ void amdgpu_test_exec_cs_helper(amdgpu_device_handle device, unsigned int ip_typ
 	r = amdgpu_cs_query_fence_status(&fence_status,
 					 AMDGPU_TIMEOUT_INFINITE,
 					 0, &expired);
-	igt_assert_eq(r, 0);
-	igt_assert_eq(expired, true);
-
+	if (expect) {
+		igt_assert_neq(r, 0);
+		igt_assert_neq(expired, true);
+	} else {
+		igt_assert_eq(r, 0);
+		igt_assert_eq(expired, true);
+	}
 	amdgpu_bo_unmap_and_free(ib_result_handle, va_handle,
 				 ib_result_mc_address, 4096);
 }
@@ -145,7 +157,7 @@ void amdgpu_command_submission_write_linear_helper(amdgpu_device_handle device,
 
 			ring_context->ring_id = ring_id;
 
-			 amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+			 amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 
 			/* verify if SDMA test result meets with expected */
 			i = 0;
@@ -155,20 +167,20 @@ void amdgpu_command_submission_write_linear_helper(amdgpu_device_handle device,
 			} else if (ip_block->type == AMDGPU_HW_IP_GFX) {
 				ip_block->funcs->write_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 
-				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 
 			} else if (ip_block->type == AMDGPU_HW_IP_DMA) {
 				/* restore the bo_cpu to compare */
 				ring_context->bo_cpu_origin = ring_context->bo_cpu[0];
 				ip_block->funcs->write_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 
-				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 
 				/* restore again, here dest_data should be */
 				ring_context->bo_cpu_origin = ring_context->bo_cpu[0];
 				ip_block->funcs->write_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 
-				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 				/* here bo_cpu[0] should be unchanged, still is 0x12345678, otherwise failed*/
 				igt_assert_eq(ring_context->bo_cpu[0], ring_context->bo_cpu_origin);
 			}
@@ -236,7 +248,7 @@ void amdgpu_command_submission_const_fill_helper(amdgpu_device_handle device,
 			/* fulfill PM4: test DMA const fill */
 			ip_block->funcs->const_fill(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 
-			amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+			amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 
 			/* verify if SDMA test result meets with expected */
 			r = ip_block->funcs->compare(ip_block->funcs, ring_context, 4);
@@ -322,7 +334,7 @@ void amdgpu_command_submission_copy_linear_helper(amdgpu_device_handle device,
 
 				ip_block->funcs->copy_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 
-				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context);
+				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 
 				/* verify if SDMA test result meets with expected */
 				r = ip_block->funcs->compare_pattern(ip_block->funcs, ring_context, 4);

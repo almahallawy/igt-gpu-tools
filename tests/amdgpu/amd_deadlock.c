@@ -77,6 +77,22 @@ igt_main
 		}
 	}
 
+	igt_describe("Test-GPU-reset-by-sdma-corrupted-header-with-jobs");
+	igt_subtest_with_dynamic("amdgpu-deadlock-sdma-corrupted-header-test") {
+		if (arr_cap[AMD_IP_DMA]) {
+			igt_dynamic_f("amdgpu-deadlock-sdma-corrupted-header-test")
+			amdgpu_hang_sdma_helper(device, DMA_CORRUPTED_HEADER_HANG);
+		}
+	}
+
+	igt_describe("Test-GPU-reset-by-sdma-slow-linear-copy-with-jobs");
+	igt_subtest_with_dynamic("amdgpu-deadlock-sdma-slow-linear-copy") {
+		if (arr_cap[AMD_IP_DMA]) {
+			igt_dynamic_f("amdgpu-deadlock-sdma-slow-linear-copy")
+			amdgpu_hang_sdma_helper(device, DMA_SLOW_LINEARCOPY_HANG);
+		}
+	}
+
 	igt_fixture {
 		amdgpu_device_deinitialize(device);
 		drm_close_driver(fd);
