@@ -354,6 +354,13 @@ typedef enum {
 #define IGT_ROTATION_MASK \
 	(IGT_ROTATION_0 | IGT_ROTATION_90 | IGT_ROTATION_180 | IGT_ROTATION_270)
 
+/**
+ * igt_rotation_90_or_270:
+ * @rotation: Target rotation
+ *
+ * Returns: True if the given @rotation contains 90 or 270 degrees,
+ * else False.
+ */
 static inline bool igt_rotation_90_or_270(igt_rotation_t rotation)
 {
 	return rotation & (IGT_ROTATION_90 | IGT_ROTATION_270);
@@ -541,6 +548,13 @@ const char *igt_plane_rotation_name(igt_rotation_t rotation);
 void igt_wait_for_vblank(int drm_fd, int crtc_offset);
 void igt_wait_for_vblank_count(int drm_fd, int crtc_offset, int count);
 
+/**
+ * igt_output_is_connected:
+ * @output: #igt_output_t to check.
+ *
+ * Returns: True if given @output's connection status is CONNECTED,
+ * else False.
+ */
 static inline bool igt_output_is_connected(igt_output_t *output)
 {
 	/* Something went wrong during probe? */
@@ -682,10 +696,26 @@ igt_output_t **__igt_pipe_populate_outputs(igt_display_t *display,
 	for_each_connected_output((display), (output)) \
 		for_each_if (igt_pipe_connector_valid((pipe), (output)))
 
+/**
+ * for_each_plane_on_pipe:
+ * @display: a pointer to an #igt_display_t structure
+ * @pipe: Pipe to enumerate valid outputs over
+ * @plane: The enumerated plane.
+ *
+ * This for loop iterates over all planes associated to the given @pipe.
+ * If there are no valid planes for this pipe, nothing happens.
+ */
 #define for_each_plane_on_pipe(display, pipe, plane)			\
 	for (int j__ = 0; assert(igt_can_fail()), (plane) = &(display)->pipes[(pipe)].planes[j__], \
 		     j__ < (display)->pipes[(pipe)].n_planes; j__++)
 
+/**
+ * for_each_connector_mode:
+ * @output: Output to enumerate available modes.
+ *
+ * This for loop iterates over all modes associated to the given @output.
+ * If there are no mode available for this output, nothing happens.
+ */
 #define for_each_connector_mode(output)		\
 	for (int j__ = 0;  j__ < output->config.connector->count_modes; j__++)
 
@@ -708,15 +738,44 @@ igt_plane_has_prop(igt_plane_t *plane, enum igt_atomic_plane_properties prop)
 
 uint64_t igt_plane_get_prop(igt_plane_t *plane, enum igt_atomic_plane_properties prop);
 
+/**
+ * igt_plane_is_prop_changed:
+ * @plane: Plane to check.
+ * @prop: Property to check.
+ *
+ * Check whether a given @prop changed for the @plane.
+ */
 #define igt_plane_is_prop_changed(plane, prop) \
 	(!!((plane)->changed & (1 << (prop))))
 
+/**
+ * igt_plane_set_prop_changed:
+ * @plane: Plane to check.
+ * @prop: Property to check.
+ *
+ * Sets the given @prop for the @plane.
+ */
 #define igt_plane_set_prop_changed(plane, prop) \
 	(plane)->changed |= 1 << (prop)
 
+/**
+ * igt_plane_clear_prop_changed:
+ * @plane: Plane to check.
+ * @prop: Property to check.
+ *
+ * Clears the given @prop for the @plane.
+ */
 #define igt_plane_clear_prop_changed(plane, prop) \
 	(plane)->changed &= ~(1 << (prop))
 
+/**
+ * igt_plane_set_prop_value:
+ * @plane: Plane to check.
+ * @prop: Property to check.
+ * @value: Value to set.
+ *
+ * Sets the given @prop with the @value for the @plane.
+ */
 #define igt_plane_set_prop_value(plane, prop, value) \
 	do { \
 		plane->values[prop] = value; \
@@ -752,14 +811,44 @@ igt_output_has_prop(igt_output_t *output, enum igt_atomic_connector_properties p
 
 uint64_t igt_output_get_prop(igt_output_t *output, enum igt_atomic_connector_properties prop);
 
+/**
+ * igt_output_is_prop_changed:
+ * @output: Output to check.
+ * @prop: Property to check.
+ *
+ * Check whether a given @prop changed for the @Output.
+ */
 #define igt_output_is_prop_changed(output, prop) \
 	(!!((output)->changed & (1 << (prop))))
+
+/**
+ * igt_output_set_prop_changed:
+ * @output: Output to check.
+ * @prop: Property to check.
+ *
+ * Sets the given @prop for the @output.
+ */
 #define igt_output_set_prop_changed(output, prop) \
 	(output)->changed |= 1 << (prop)
 
+/**
+ * igt_output_clear_prop_changed:
+ * @output: Output to check.
+ * @prop: Property to check.
+ *
+ * Clears the given @prop for the @output.
+ */
 #define igt_output_clear_prop_changed(output, prop) \
 	(output)->changed &= ~(1 << (prop))
 
+/**
+ * igt_output_set_prop_value:
+ * @output: Output to check.
+ * @prop: Property to check.
+ * @value: Value to set.
+ *
+ * Sets the given @prop with the @value for the @output.
+ */
 #define igt_output_set_prop_value(output, prop, value) \
 	do { \
 		(output)->values[prop] = (value); \
@@ -830,30 +919,88 @@ igt_pipe_has_prop(igt_display_t *display, enum pipe pipe,
 	return display->pipes[pipe].props[prop];
 }
 
+/**
+ * igt_pipe_obj_is_prop_changed:
+ * @pipe_obj: Pipe object to check.
+ * @prop: Property to check.
+ *
+ * Check whether a given @prop changed for the @pipe_obj.
+ */
 #define igt_pipe_obj_is_prop_changed(pipe_obj, prop) \
 	(!!((pipe_obj)->changed & (1 << (prop))))
 
+/**
+ * igt_pipe_is_prop_changed:
+ * @pipe: Pipe object to check.
+ * @prop: Property to check.
+ *
+ * Check whether a given @prop changed for the @pipe.
+ */
 #define igt_pipe_is_prop_changed(display, pipe, prop) \
 	igt_pipe_obj_is_prop_changed(&(display)->pipes[(pipe)], prop)
 
+/**
+ * igt_pipe_obj_set_prop_changed:
+ * @pipe_obj: Pipe object to check.
+ * @prop: Property to check.
+ *
+ * Sets the given @prop for the @pipe_obj.
+ */
 #define igt_pipe_obj_set_prop_changed(pipe_obj, prop) \
 	(pipe_obj)->changed |= 1 << (prop)
 
+/**
+ * igt_pipe_set_prop_changed:
+ * @pipe: Pipe object to check.
+ * @prop: Property to check.
+ *
+ * Sets the given @prop for the @pipe.
+ */
 #define igt_pipe_set_prop_changed(display, pipe, prop) \
 	igt_pipe_obj_set_prop_changed(&(display)->pipes[(pipe)], prop)
 
+/**
+ * igt_pipe_obj_clear_prop_changed:
+ * @pipe_obj: Pipe object to check.
+ * @prop: Property to check.
+ *
+ * Clears the given @prop for the @pipe_obj.
+ */
 #define igt_pipe_obj_clear_prop_changed(pipe_obj, prop) \
 	(pipe_obj)->changed &= ~(1 << (prop))
 
+/**
+ * igt_pipe_clear_prop_changed:
+ * @pipe: Pipe object to check.
+ * @prop: Property to check.
+ *
+ * Clears the given @prop for the @pipe.
+ */
 #define igt_pipe_clear_prop_changed(display, pipe, prop) \
 	igt_pipe_obj_clear_prop_changed(&(display)->pipes[(pipe)], prop)
 
+/**
+ * igt_pipe_obj_set_prop_value:
+ * @pipe_obj: Pipe object to check.
+ * @prop: Property to check.
+ * @value: Value to set.
+ *
+ * Sets the given @prop with the @value for the @pipe_obj.
+ */
 #define igt_pipe_obj_set_prop_value(pipe_obj, prop, value) \
 	do { \
 		(pipe_obj)->values[prop] = (value); \
 		igt_pipe_obj_set_prop_changed(pipe_obj, prop); \
 	} while (0)
 
+/**
+ * igt_pipe_set_prop_value:
+ * @pipe: Pipe to check.
+ * @prop: Property to check.
+ * @value: Value to set.
+ *
+ * Sets the given @prop with the @value for the @pipe.
+ */
 #define igt_pipe_set_prop_value(display, pipe, prop, value) \
 	igt_pipe_obj_set_prop_value(&(display)->pipes[(pipe)], prop, value)
 
@@ -865,9 +1012,27 @@ extern void igt_pipe_obj_set_prop_enum(igt_pipe_t *pipe,
 				       enum igt_atomic_crtc_properties prop,
 				       const char *val);
 
+/**
+ * igt_pipe_try_prop_enum:
+ * @pipe: Target pipe.
+ * @prop: Property to check.
+ * @val: Value to set.
+ *
+ * Returns: False if the given @pipe doesn't have the enum @prop or
+ * failed to set the enum property @val else True.
+ */
 #define igt_pipe_try_prop_enum(display, pipe, prop, val) \
 	igt_pipe_obj_try_prop_enum(&(display)->pipes[(pipe)], prop, val)
 
+/**
+ * igt_pipe_set_prop_enum:
+ * @pipe: Target pipe.
+ * @prop: Property to check.
+ * @val: Value to set.
+ *
+ * This function tries to set given enum property @prop value @val to
+ * the given @pipe, and terminate the execution if its failed.
+ */
 #define igt_pipe_set_prop_enum(display, pipe, prop, val) \
 	igt_pipe_obj_set_prop_enum(&(display)->pipes[(pipe)], prop, val)
 
@@ -875,6 +1040,22 @@ extern void igt_pipe_obj_replace_prop_blob(igt_pipe_t *pipe,
 					   enum igt_atomic_crtc_properties prop,
 					   const void *ptr, size_t length);
 
+/**
+ * igt_pipe_replace_prop_blob:
+ * @pipe: pipe to set property on.
+ * @prop: property for which the blob will be replaced.
+ * @ptr: Pointer to contents for the property.
+ * @length: Length of contents.
+ *
+ * This function will destroy the old property blob for the given property,
+ * and will create a new property blob with the values passed to this function.
+ *
+ * The new property blob will be committed when you call igt_display_commit(),
+ * igt_display_commit2() or igt_display_commit_atomic().
+ *
+ * Please use igt_output_override_mode() if you want to set #IGT_CRTC_MODE_ID,
+ * it works better with legacy commit.
+ */
 #define igt_pipe_replace_prop_blob(display, pipe, prop, ptr, length) \
 	igt_pipe_obj_replace_prop_blob(&(display)->pipes[(pipe)], prop, ptr, length)
 

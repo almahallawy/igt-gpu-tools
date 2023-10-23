@@ -109,7 +109,7 @@ static struct {
  *  - 800x600 60Hz
  *  - 640x480 60Hz
  *
- * Returns: a basic edid block
+ * Returns: A basic edid block
  */
 const struct edid *igt_kms_get_base_edid(void)
 {
@@ -133,6 +133,20 @@ const struct edid *igt_kms_get_base_edid(void)
 	return &edid;
 }
 
+/**
+ * igt_kms_get_full_edid:
+ *
+ * Get the full edid block, which includes the following modes:
+ *
+ *  - 2288x1287 144Hz
+ *  - 1920x1080 60Hz
+ *  - 1280x720 60Hz
+ *  - 1024x768 60Hz
+ *  - 800x600 60Hz
+ *  - 640x480 60Hz
+ *
+ * Returns: A full edid block
+ */
 const struct edid *igt_kms_get_full_edid(void)
 {
 	static struct edid edid;
@@ -163,6 +177,20 @@ const struct edid *igt_kms_get_full_edid(void)
 	return &edid;
 }
 
+/**
+ * igt_kms_get_base_tile_edid:
+ *
+ * Get the base tile edid block, which includes the following modes:
+ *
+ *  - 1920x2160 60Hz
+ *  - 1920x1080 60Hz
+ *  - 1280x720 60Hz
+ *  - 1024x768 60Hz
+ *  - 800x600 60Hz
+ *  - 640x480 60Hz
+ *
+ * Returns: A basic tile edid block
+ */
 const struct edid *igt_kms_get_base_tile_edid(void)
 {
 	static struct edid edid;
@@ -195,7 +223,7 @@ const struct edid *igt_kms_get_base_tile_edid(void)
  *  - 800x600 60Hz
  *  - 640x480 60Hz
  *
- * Returns: an alternate edid block
+ * Returns: An alternate edid block
  */
 const struct edid *igt_kms_get_alt_edid(void)
 {
@@ -270,6 +298,13 @@ generate_audio_edid(unsigned char raw_edid[static AUDIO_EDID_SIZE],
 	return edid;
 }
 
+/**
+ * igt_kms_get_hdmi_audio_edid:
+ *
+ * Get a basic edid block, which includes the HDMI Audio
+ *
+ * Returns: A basic HDMI Audio edid block
+ */
 const struct edid *igt_kms_get_hdmi_audio_edid(void)
 {
 	int channels;
@@ -294,6 +329,13 @@ const struct edid *igt_kms_get_hdmi_audio_edid(void)
 	return generate_audio_edid(raw_edid, true, &sad, &speaker_alloc);
 }
 
+/**
+ * igt_kms_get_dp_audio_edid:
+ *
+ * Get a basic edid block, which includes the DP Audio
+ *
+ * Returns: A basic DP Audio edid block
+ */
 const struct edid *igt_kms_get_dp_audio_edid(void)
 {
 	int channels;
@@ -318,6 +360,15 @@ const struct edid *igt_kms_get_dp_audio_edid(void)
 	return generate_audio_edid(raw_edid, false, &sad, &speaker_alloc);
 }
 
+/**
+ * igt_kms_get_tiled_edid:
+ * @htile: Target H-tile
+ * @vtile: Target V-tile
+ *
+ * Get a basic edid block, which includes tiled display
+ *
+ * Returns: A basic tiled display edid block
+ */
 struct edid **igt_kms_get_tiled_edid(uint8_t htile, uint8_t vtile)
 {
 	uint8_t top[2];
@@ -405,6 +456,13 @@ static const uint8_t edid_4k_svds[] = {
 	19,                  /* 720p @ 50Hz */
 };
 
+/**
+ * igt_kms_get_4k_edid:
+ *
+ * Get a basic edid block, which includes 4K resolution
+ *
+ * Returns: A basic edid block with 4K resolution
+ */
 const struct edid *igt_kms_get_4k_edid(void)
 {
 	static unsigned char raw_edid[256] = {0};
@@ -457,6 +515,13 @@ const struct edid *igt_kms_get_4k_edid(void)
 	return edid;
 }
 
+/**
+ * igt_kms_get_3d_edid:
+ *
+ * Get a basic edid block, which includes 3D mode
+ *
+ * Returns: A basic edid block with 3D mode
+ */
 const struct edid *igt_kms_get_3d_edid(void)
 {
 	static unsigned char raw_edid[256] = {0};
@@ -525,7 +590,7 @@ static const uint8_t edid_ar_svds[] = {
  *  - 800x600 60Hz
  *  - 640x480 60Hz
  *
- * Returns: a basic edid block with aspect ratio block
+ * Returns: A basic edid block with aspect ratio block
  */
 const struct edid *igt_kms_get_aspect_ratio_edid(void)
 {
@@ -571,7 +636,7 @@ const struct edid *igt_kms_get_aspect_ratio_edid(void)
  * @edid: enum to specify which edid block is required
  * returns pointer to requested edid block
  *
- * Returns: required edid
+ * Returns: Required edid
  */
 const struct edid *igt_kms_get_custom_edid(enum igt_custom_edid_type edid)
 {
@@ -837,7 +902,7 @@ static igt_plane_t *igt_get_assigned_primary(igt_output_t *output, igt_pipe_t *p
  * kmstest_pipe_name:
  * @pipe: display pipe
  *
- * Returns: String representing @pipe, e.g. "A".
+ * Returns: A string representing @pipe, e.g. "A".
  */
 const char *kmstest_pipe_name(enum pipe pipe)
 {
@@ -859,7 +924,7 @@ const char *kmstest_pipe_name(enum pipe pipe)
  * kmstest_pipe_to_index:
  * @pipe: display pipe in string format
  *
- * Returns: index to corresponding pipe
+ * Returns: Index to corresponding pipe
  */
 int kmstest_pipe_to_index(char pipe)
 {
@@ -875,7 +940,7 @@ int kmstest_pipe_to_index(char pipe)
  * kmstest_plane_type_name:
  * @plane_type: display plane type
  *
- * Returns: String representing @plane_type, e.g. "overlay".
+ * Returns: A string representing @plane_type, e.g. "overlay".
  */
 const char *kmstest_plane_type_name(int plane_type)
 {
@@ -1177,7 +1242,7 @@ int kmstest_get_pipe_from_crtc_id(int fd, int crtc_id)
  * @connector: libdrm connector pointer
  * @crtc_blacklist_idx_mask: a mask of CRTC indexes that we can't return
  *
- * Returns: the CRTC ID for a CRTC that fits the connector, otherwise it asserts
+ * Returns: The CRTC ID for a CRTC that fits the connector, otherwise it asserts
  * false and never returns. The blacklist mask can be used in case you have
  * CRTCs that are already in use by other connectors.
  */
@@ -1246,6 +1311,7 @@ uint32_t kmstest_dumb_create(int fd, int width, int height, int bpp,
  * @handle: Offset in the file referred to by fd
  * @size: Length of the mapping, must be greater than 0
  * @prot: Describes the memory protection of the mapping
+ *
  * Returns: A pointer representing the start of the virtual mapping
  * Caller of this function should munmap the pointer returned, after its usage.
  */
@@ -1288,7 +1354,7 @@ void kmstest_dumb_destroy(int fd, uint32_t handle)
 }
 
 /*
- * Returns: the previous mode, or KD_GRAPHICS if no /dev/tty0 was
+ * Returns: The previous mode, or KD_GRAPHICS if no /dev/tty0 was
  * found and nothing was done.
  */
 static signed long set_vt_mode(unsigned long mode)
@@ -1398,6 +1464,13 @@ static char *kmstest_connector_dirname(int idx,
 	return name;
 }
 
+/**
+ * igt_connector_sysfs_open:
+ * @drm_fd: drm file descriptor
+ * @connector: drm connector
+ *
+ * Returns: The connector sysfs fd, or -1 on failure.
+ */
 int igt_connector_sysfs_open(int drm_fd,
 			     drmModeConnector *connector)
 {
@@ -1514,7 +1587,7 @@ static void dump_forced_connectors(void)
  *
  * Force the specified state on the specified connector.
  *
- * Returns: true on success
+ * Returns: True on success
  */
 bool kmstest_force_connector(int drm_fd, drmModeConnector *connector,
 			     enum kmstest_force_connector_state state)
@@ -1607,6 +1680,9 @@ void kmstest_force_edid(int drm_fd, drmModeConnector *connector,
  * @b: second element
  *
  * Comparator function for sorting DRM modes in descending order by clock.
+ *
+ * Returns: True if first element's clock is less than second element's clock,
+ * else False.
  */
 int sort_drm_modes_by_clk_dsc(const void *a, const void *b)
 {
@@ -1621,6 +1697,9 @@ int sort_drm_modes_by_clk_dsc(const void *a, const void *b)
  * @b: second element
  *
  * Comparator function for sorting DRM modes in ascending order by clock.
+ *
+ * Returns: True if first element's clock is greater than second element's clock,
+ * else False.
  */
 int sort_drm_modes_by_clk_asc(const void *a, const void *b)
 {
@@ -1635,6 +1714,9 @@ int sort_drm_modes_by_clk_asc(const void *a, const void *b)
  * @b: second element
  *
  * Comparator function for sorting DRM modes in descending order by resolution.
+ *
+ * Returns: True if first element's resolution is less than second element's
+ * resolution, else False.
  */
 int sort_drm_modes_by_res_dsc(const void *a, const void *b)
 {
@@ -1649,6 +1731,9 @@ int sort_drm_modes_by_res_dsc(const void *a, const void *b)
  * @b: second element
  *
  * Comparator function for sorting DRM modes in ascending order by resolution.
+ *
+ * Returns: True if first element's resolution is greater than second element's
+ * resolution, else False.
  */
 int sort_drm_modes_by_res_asc(const void *a, const void *b)
 {
@@ -1681,7 +1766,7 @@ void igt_sort_connector_modes(drmModeConnector *connector,
  *
  * Retrieves the default mode for @connector and stores it in @mode.
  *
- * Returns: true on success, false on failure
+ * Returns: True on success, false on failure
  */
 bool kmstest_get_connector_default_mode(int drm_fd, drmModeConnector *connector,
 					drmModeModeInfo *mode)
@@ -1790,6 +1875,9 @@ _kmstest_connector_config_find_encoder(int drm_fd, drmModeConnector *connector, 
  *
  * This tries to find a suitable configuration for the given connector and CRTC
  * constraint and fills it into @config.
+ *
+ * Returns: True if suitable configuration found for a given connector & CRTC,
+ * else False.
  */
 static bool _kmstest_connector_config(int drm_fd, uint32_t connector_id,
 				      unsigned long crtc_idx_mask,
@@ -1885,6 +1973,9 @@ err1:
  *
  * This tries to find a suitable configuration for the given connector and CRTC
  * constraint and fills it into @config.
+ *
+ * Returns: True if suitable configuration found for a given connector & CRTC,
+ * else False.
  */
 bool kmstest_get_connector_config(int drm_fd, uint32_t connector_id,
 				  unsigned long crtc_idx_mask,
@@ -1894,6 +1985,15 @@ bool kmstest_get_connector_config(int drm_fd, uint32_t connector_id,
 					 config, 0);
 }
 
+/**
+ * kmstest_get_path_blob:
+ * @drm_fd: DRM fd
+ * @connector_id: DRM connector id
+ *
+ * Finds a property with the name "PATH" on the connector object.
+ *
+ * Returns: Pointer to the connector's PATH property if found else NULL.
+ */
 drmModePropertyBlobPtr kmstest_get_path_blob(int drm_fd, uint32_t connector_id)
 {
 	uint64_t path_blob_id = 0;
@@ -1920,6 +2020,9 @@ drmModePropertyBlobPtr kmstest_get_path_blob(int drm_fd, uint32_t connector_id)
  * This tries to find a suitable configuration for the given connector and CRTC
  * constraint and fills it into @config, fully probing the connector in the
  * process.
+ *
+ * Returns: True if suitable configuration found for a given connector & CRTC,
+ * else False.
  */
 bool kmstest_probe_connector_config(int drm_fd, uint32_t connector_id,
 				    unsigned long crtc_idx_mask,
@@ -1995,7 +2098,7 @@ void kmstest_set_connector_dpms(int fd, drmModeConnector *connector, int mode)
  *
  * Finds a property with the given name on the given object.
  *
- * Returns: true in case we found something.
+ * Returns: True in case we found something.
  */
 bool
 kmstest_get_property(int drm_fd, uint32_t object_id, uint32_t object_type,
@@ -2062,6 +2165,8 @@ void kmstest_unset_all_crtcs(int drm_fd, drmModeResPtr resources)
  *
  * Get the CRTC index based on its ID. This is useful since a few places of
  * libdrm deal with CRTC masks.
+ *
+ * Returns: CRTC index for a given @crtc_id
  */
 int kmstest_get_crtc_idx(drmModeRes *res, uint32_t crtc_id)
 {
@@ -2144,7 +2249,7 @@ void kmstest_wait_for_pageflip(int fd)
  * Get the VBlank errno after an attempt to call drmWaitVBlank(). This
  * function is useful for checking if a driver has support or not for VBlank.
  *
- * Returns: true if target driver has VBlank support, otherwise return false.
+ * Returns: True if target driver has VBlank support, otherwise return false.
  */
 bool kms_has_vblank(int fd)
 {
@@ -2196,6 +2301,12 @@ static void igt_display_log_shift(igt_display_t *display, int shift)
 	igt_assert(display->log_shift >= 0);
 }
 
+/**
+ * igt_output_refresh:
+ * @output: Target output
+ *
+ * This function sets the given @output to a valid default pipe
+ */
 void igt_output_refresh(igt_output_t *output)
 {
 	igt_display_t *display = output->display;
@@ -2355,7 +2466,6 @@ static void igt_output_reset(igt_output_t *output)
 	if (igt_output_has_prop(output, IGT_CONNECTOR_DITHERING_MODE))
 		igt_output_set_prop_enum(output, IGT_CONNECTOR_DITHERING_MODE,
 					 "off");
-
 }
 
 /**
@@ -2510,7 +2620,7 @@ static void igt_handle_spurious_hpd(igt_display_t *display)
 }
 
 /**
- * igt_display_require:
+ * igt_display_reset_outputs:
  * @display: a pointer to an initialized #igt_display_t structure
  *
  * Initialize @display outputs with their connectors and pipes.
@@ -2834,7 +2944,7 @@ out:
  * igt_display_get_n_pipes:
  * @display: A pointer to an #igt_display_t structure
  *
- * Returns total number of pipes for the given @display
+ * Returns: Total number of pipes for the given @display
  */
 int igt_display_get_n_pipes(igt_display_t *display)
 {
@@ -2922,6 +3032,14 @@ igt_output_t *igt_output_from_connector(igt_display_t *display,
 	return found;
 }
 
+/**
+ * igt_std_1024_mode_get:
+ * @vrefresh: Required refresh rate for 1024 mode
+ *
+ * This function will create a standard drm mode with a given @vrefresh
+ *
+ * Returns: Standard 1024@vrefresh mode.
+ */
 drmModeModeInfo *igt_std_1024_mode_get(int vrefresh)
 {
 	const drmModeModeInfo std_1024_mode = {
@@ -3175,6 +3293,12 @@ igt_plane_t *igt_pipe_get_plane_type_index(igt_pipe_t *pipe, int plane_type,
 	return NULL;
 }
 
+/**
+ * output_is_internal_panel:
+ * @output: Target output
+ *
+ * Returns: True if the given @output type is internal else False.
+ */
 bool output_is_internal_panel(igt_output_t *output)
 {
 	switch (output->config.connector->connector_type) {
@@ -3800,6 +3924,15 @@ static bool igt_mode_object_get_prop_enum_value(int drm_fd, uint32_t id, const c
 	return false;
 }
 
+/**
+ * igt_plane_try_prop_enum:
+ * @plane: Target plane.
+ * @prop: Property to check.
+ * @val: Value to set.
+ *
+ * Returns: False if the given @plane doesn't have the enum @prop or
+ * failed to set the enum property @val else True.
+ */
 bool igt_plane_try_prop_enum(igt_plane_t *plane,
 			     enum igt_atomic_plane_properties prop,
 			     const char *val)
@@ -3817,6 +3950,15 @@ bool igt_plane_try_prop_enum(igt_plane_t *plane,
 	return true;
 }
 
+/**
+ * igt_plane_set_prop_enum:
+ * @plane: Target plane.
+ * @prop: Property to check.
+ * @val: Value to set.
+ *
+ * This function tries to set given enum property @prop value @val to
+ * the given @plane, and terminate the execution if its failed.
+ */
 void igt_plane_set_prop_enum(igt_plane_t *plane,
 			     enum igt_atomic_plane_properties prop,
 			     const char *val)
@@ -3875,6 +4017,15 @@ uint64_t igt_output_get_prop(igt_output_t *output, enum igt_atomic_connector_pro
 					output->id, output->props[prop]);
 }
 
+/**
+ * igt_output_try_prop_enum:
+ * @output: Target output.
+ * @prop: Property to check.
+ * @val: Value to set.
+ *
+ * Returns: False if the given @output doesn't have the enum @prop or
+ * failed to set the enum property @val else True.
+ */
 bool igt_output_try_prop_enum(igt_output_t *output,
 			      enum igt_atomic_connector_properties prop,
 			      const char *val)
@@ -3892,6 +4043,15 @@ bool igt_output_try_prop_enum(igt_output_t *output,
 	return true;
 }
 
+/**
+ * igt_output_set_prop_enum:
+ * @output: Target output.
+ * @prop: Property to check.
+ * @val: Value to set.
+ *
+ * This function tries to set given enum property @prop value @val to
+ * the given @output, and terminate the execution if its failed.
+ */
 void igt_output_set_prop_enum(igt_output_t *output,
 			      enum igt_atomic_connector_properties prop,
 			      const char *val)
@@ -3950,6 +4110,15 @@ uint64_t igt_pipe_obj_get_prop(igt_pipe_t *pipe, enum igt_atomic_crtc_properties
 					pipe->crtc_id, pipe->props[prop]);
 }
 
+/**
+ * igt_pipe_obj_try_prop_enum:
+ * @pipe_obj: Target pipe object.
+ * @prop: Property to check.
+ * @val: Value to set.
+ *
+ * Returns: False if the given @pipe_obj doesn't have the enum @prop or
+ * failed to set the enum property @val else True.
+ */
 bool igt_pipe_obj_try_prop_enum(igt_pipe_t *pipe_obj,
 				enum igt_atomic_crtc_properties prop,
 				const char *val)
@@ -3967,6 +4136,15 @@ bool igt_pipe_obj_try_prop_enum(igt_pipe_t *pipe_obj,
 	return true;
 }
 
+/**
+ * igt_pipe_obj_set_prop_enum:
+ * @pipe_obj: Target pipe object.
+ * @prop: Property to check.
+ * @val: Value to set.
+ *
+ * This function tries to set given enum property @prop value @val to
+ * the given @pipe_obj, and terminate the execution if its failed.
+ */
 void igt_pipe_obj_set_prop_enum(igt_pipe_t *pipe_obj,
 				enum igt_atomic_crtc_properties prop,
 				const char *val)
@@ -4485,7 +4663,7 @@ void igt_output_override_mode(igt_output_t *output, const drmModeModeInfo *mode)
  * igt_output_preferred_vrefresh:
  * @output: Output whose preferred vrefresh is queried
  *
- * Return the vertical refresh rate of @output's preferred
+ * Returns: The vertical refresh rate of @output's preferred
  * mode. If the output reports no modes return 60Hz as
  * a fallback.
  */
@@ -4598,7 +4776,7 @@ bool __override_all_active_output_modes_to_fit_bw(igt_display_t *display,
  * Override the mode on all active outputs (i.e. pending_pipe != PIPE_NONE)
  * on basis of bandwidth.
  *
- * Returns: true if a valid connector mode combo found, else false
+ * Returns: True if a valid connector mode combo found, else false
  */
 bool igt_override_all_active_output_modes_to_fit_bw(igt_display_t *display)
 {
@@ -4648,6 +4826,17 @@ void igt_pipe_refresh(igt_display_t *display, enum pipe pipe, bool force)
 		igt_pipe_obj_set_prop_changed(pipe_obj, IGT_CRTC_MODE_ID);
 }
 
+/**
+ * igt_output_get_plane:
+ * @output: Target output
+ * @plane_idx: Plane index
+ *
+ * Finds a driving pipe for the given @output otherwise and gets the valid
+ * plane associated with that pipe for the given @plane_idx. This function
+ * will terminate the execution if driving pipe is not for a given @output.
+ *
+ * Returns: A #igt_plane_t structure that matches the requested plane index
+ */
 igt_plane_t *igt_output_get_plane(igt_output_t *output, int plane_idx)
 {
 	igt_pipe_t *pipe;
@@ -4796,7 +4985,6 @@ void igt_plane_set_fence_fd(igt_plane_t *plane, int fence_fd)
  * igt_plane_set_pipe:
  * @plane: Target plane pointer
  * @pipe: The pipe to assign the plane to
- *
  */
 void igt_plane_set_pipe(igt_plane_t *plane, igt_pipe_t *pipe)
 {
@@ -5090,7 +5278,7 @@ void igt_reset_connectors(void)
  *
  * Begin monitoring udev for sysfs uevents.
  *
- * Returns: a udev monitor for detecting uevents on
+ * Returns: A udev monitor for detecting uevents on
  */
 struct udev_monitor *igt_watch_uevents(void)
 {
@@ -5168,7 +5356,7 @@ bool event_detected(struct udev_monitor *mon, int timeout_secs,
  *
  * Detect if a connector event is received for a given connector and property.
  *
- * Returns: true if the connector event was received, false if we timed out
+ * Returns: True if the connector event was received, false if we timed out
  */
 bool igt_connector_event_detected(struct udev_monitor *mon, uint32_t conn_id,
 				  uint32_t prop_id, int timeout_secs)
@@ -5187,7 +5375,7 @@ bool igt_connector_event_detected(struct udev_monitor *mon, uint32_t conn_id,
  *
  * Detect if a hotplug event was received since we last checked the monitor.
  *
- * Returns: true if a sysfs hotplug event was received, false if we timed out
+ * Returns: True if a sysfs hotplug event was received, false if we timed out
  */
 bool igt_hotplug_detected(struct udev_monitor *mon, int timeout_secs)
 {
@@ -5205,7 +5393,7 @@ bool igt_hotplug_detected(struct udev_monitor *mon, int timeout_secs)
  *
  * Detect if a lease change event was received since we last checked the monitor.
  *
- * Returns: true if a sysfs lease change event was received, false if we timed out
+ * Returns: True if a sysfs lease change event was received, false if we timed out
  */
 bool igt_lease_change_detected(struct udev_monitor *mon, int timeout_secs)
 {
@@ -5363,6 +5551,14 @@ static void igt_fill_plane_format_mod(igt_display_t *display, igt_plane_t *plane
 	igt_assert_eq(idx, plane->format_mod_count);
 }
 
+/**
+ * igt_plane_has_format_mod:
+ * @plane: Target plane
+ * @format: Target format
+ * @modifier: Target modifier
+ *
+ * Returns: True if @plane supports the given @format and @modifier, else false
+ */
 bool igt_plane_has_format_mod(igt_plane_t *plane, uint32_t format,
 			      uint64_t modifier)
 {
@@ -5439,6 +5635,14 @@ static void igt_fill_display_format_mod(igt_display_t *display)
 	}
 }
 
+/**
+ * igt_display_has_format_mod:
+ * @display: a pointer to an #igt_display_t structure
+ * @format: Target format
+ * @modifier: Target modifier
+ *
+ * Returns: True if @display supports the given @format and @modifier, else false
+ */
 bool igt_display_has_format_mod(igt_display_t *display, uint32_t format,
 				uint64_t modifier)
 {
@@ -5494,8 +5698,7 @@ void igt_parse_connector_tile_blob(drmModePropertyBlobPtr blob,
  * may not be supported by whatever device is being tested even if
  * some of the other formats in the class are supported.
  *
- * Returns:
- * The base format for @format
+ * Returns: The base format for @format
  */
 uint32_t igt_reduce_format(uint32_t format)
 {
@@ -5783,6 +5986,9 @@ void igt_assert_output_bpc_equal(int drmfd, enum pipe pipe,
  *
  * This is similar to igt_assert_output_bpc_equal, instead of assert
  * it'll return True if crtc has the correct requested bpc, else False.
+ *
+ * Returns: True if crtc's current bpc is matched with the requested bpc,
+ * else False.
  */
 bool igt_check_output_bpc_equal(int drmfd, enum pipe pipe,
 				char *output_name, unsigned int bpc)
@@ -5793,7 +5999,7 @@ bool igt_check_output_bpc_equal(int drmfd, enum pipe pipe,
 }
 
 /**
- * igt_max_bpc_constraint
+ * igt_max_bpc_constraint:
  * @display: a pointer to an #igt_display_t structure
  * @pipe: Display pipe
  * @output: Target output
@@ -5907,7 +6113,7 @@ bool igt_bigjoiner_possible(drmModeModeInfo *mode, int max_dotclock)
  *  * Pipe-D can't support mode > 5K
  *  * To use 8K mode on a pipe then consecutive pipe must be free.
  *
- * Returns: true if a valid crtc/connector mode combo found, else false
+ * Returns: True if a valid crtc/connector mode combo found, else false
  */
 bool igt_check_bigjoiner_support(igt_display_t *display)
 {
@@ -5981,7 +6187,7 @@ bool igt_check_bigjoiner_support(igt_display_t *display)
  * Format: clock(MHz),hdisp,hsync-start,hsync-end,htotal,vdisp,vsync-start,
  * vsync-end,vtotal
  *
- * Returns: true if the correct number of arguments are entered, else false.
+ * Returns: True if the correct number of arguments are entered, else false.
  */
 bool igt_parse_mode_string(const char *mode_string, drmModeModeInfo *mode)
 {
@@ -6014,7 +6220,7 @@ bool igt_parse_mode_string(const char *mode_string, drmModeModeInfo *mode)
  *  * To use 8K mode on a pipe then consecutive pipe must be free.
  *  * MSO is supported only on PIPE_A/PIPE_B.
  *
- * Returns: true if a valid pipe/output mode combo found, else false
+ * Returns: True if a valid pipe/output mode combo found, else false
  */
 bool i915_pipe_output_combo_valid(igt_display_t *display)
 {
@@ -6045,7 +6251,7 @@ bool i915_pipe_output_combo_valid(igt_display_t *display)
  * igt_check_output_is_dp_mst:
  * @output: Target output
  *
- * Returns: true if output is dp-mst, else false.
+ * Returns: True if output is dp-mst, else false.
  */
 bool igt_check_output_is_dp_mst(igt_output_t *output)
 {
@@ -6069,7 +6275,7 @@ static int parse_path_connector(char *connector_path)
  * igt_get_dp_mst_connector_id:
  * @output: Target output
  *
- * Returns: connector id if output is dp-mst, else -EINVAL.
+ * Returns: Connector id if output is dp-mst, else -EINVAL.
  */
 int igt_get_dp_mst_connector_id(igt_output_t *output)
 {
@@ -6090,7 +6296,7 @@ int igt_get_dp_mst_connector_id(igt_output_t *output)
  * @drm_fd: drm file descriptor
  * @pipe: display pipe
  *
- * Returns: num_scalers supported/pipe.
+ * Returns: Number of scalers supported per pipe.
  */
 int get_num_scalers(int drm_fd, enum pipe pipe)
 {
