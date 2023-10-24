@@ -1813,13 +1813,16 @@ igt_main
 	igt_subtest_group {
 		const char testlisttext[] = "igt@successtest";
 		const char blocktext[] = "igt@successtest@first";
+		const char blocktext_upper[] = "igt@successTEST@first";
 		struct job_list *list = malloc(sizeof(*list));
 		volatile int dirfd = -1;
 		char dirname[] = "tmpdirXXXXXX";
 		volatile int listfd;
 		volatile int blockfd;
+		volatile int blockfd_upper;
 		char listfilename[] = "tmplistXXXXXX";
 		char blockfilename[] = "tmpblockXXXXXX";
+		char blockfilename_upper[] = "tmpBLOCKXXXXXX";
 
 		igt_fixture {
 			igt_require(mkdtemp(dirname) != NULL);
@@ -1829,8 +1832,11 @@ igt_main
 			igt_require(write(listfd, testlisttext, strlen(testlisttext)) == strlen(testlisttext));
 			igt_require((blockfd = mkstemp(blockfilename)) >= 0);
 			igt_require(write(blockfd, blocktext, strlen(blocktext)) == strlen(blocktext));
+			igt_require((blockfd_upper = mkstemp(blockfilename_upper)) >= 0);
+			igt_require(write(blockfd_upper, blocktext_upper, strlen(blocktext_upper)) == strlen(blocktext_upper));
 			close(listfd);
 			close(blockfd);
+			close(blockfd_upper);
 
 			init_job_list(list);
 		}
@@ -1870,9 +1876,28 @@ igt_main
 			igt_assert_eqstr(list->entries[0].subtests[0], "second-subtest");
 		}
 
+		igt_subtest("only-binary-name-in-testlist-with-case-insensitive-blocklist") {
+			const char *argv[] = { "runner",
+				"--allow-non-root",
+				"--test-list", listfilename,
+				"-b", blockfilename_upper,
+				testdatadir,
+				dirname,
+			};
+
+			igt_assert(parse_options(ARRAY_SIZE(argv), (char**)argv, settings));
+
+			igt_assert(create_job_list(list, settings));
+			/* No multi-mode, binary has two subtests, one of them blocked */
+			igt_assert_eq(list->size, 1);
+			igt_assert_eq(list->entries[0].subtest_count, 1);
+			igt_assert_eqstr(list->entries[0].subtests[0], "second-subtest");
+		}
+
 		igt_fixture {
 			unlink(listfilename);
 			unlink(blockfilename);
+			unlink(blockfilename_upper);
 			close(dirfd);
 			clear_directory(dirname);
 			free_job_list(list);
