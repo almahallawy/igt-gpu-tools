@@ -1818,13 +1818,26 @@ blt_create_object(const struct blt_copy_data *blt, uint32_t region,
 	return obj;
 }
 
-void blt_destroy_object(int fd, struct blt_copy_object *obj)
+static void __blt_destroy_object(int fd, uint64_t ahnd, struct blt_copy_object *obj)
 {
 	if (obj->ptr)
 		munmap(obj->ptr, obj->size);
 
 	gem_close(fd, obj->handle);
+	if (ahnd)
+		intel_allocator_free(ahnd, obj->handle);
 	free(obj);
+}
+
+void blt_destroy_object(int fd, struct blt_copy_object *obj)
+{
+	__blt_destroy_object(fd, 0, obj);
+}
+
+void blt_destroy_object_and_alloc_free(int fd, uint64_t ahnd,
+				       struct blt_copy_object *obj)
+{
+	__blt_destroy_object(fd, ahnd, obj);
 }
 
 void blt_set_object(struct blt_copy_object *obj,

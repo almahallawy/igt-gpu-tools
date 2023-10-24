@@ -277,6 +277,8 @@ blt_create_object(const struct blt_copy_data *blt, uint32_t region,
 		  enum blt_compression_type compression_type,
 		  bool create_mapping);
 void blt_destroy_object(int fd, struct blt_copy_object *obj);
+void blt_destroy_object_and_alloc_free(int fd, uint64_t ahnd,
+				       struct blt_copy_object *obj);
 void blt_set_object(struct blt_copy_object *obj,
 		    uint32_t handle, uint64_t size, uint32_t region,
 		    uint8_t mocs_index, enum blt_tiling_type tiling,
