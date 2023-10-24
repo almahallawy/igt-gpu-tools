@@ -1315,11 +1315,10 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 	if (flags & MAP_FLAG_HAMMER_FIRST_PAGE) {
 		t.fd = fd;
 		t.vm = vm;
-#define PAGE_SIZE	4096
-		t.addr = addr + PAGE_SIZE / 2;
+		t.addr = addr + page_size / 2;
 		t.eci = eci;
 		t.exit = &exit;
-		t.map = map + PAGE_SIZE / 2;
+		t.map = map + page_size / 2;
 		t.barrier = &barrier;
 		pthread_barrier_init(&barrier, NULL, 2);
 		pthread_create(&t.thread, 0, hammer_thread, &t);
@@ -1372,8 +1371,8 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 		igt_assert_eq(data->data, 0xc0ffee);
 	}
 	if (flags & MAP_FLAG_HAMMER_FIRST_PAGE) {
-		memset(map, 0, PAGE_SIZE / 2);
-		memset(map + PAGE_SIZE, 0, bo_size - PAGE_SIZE);
+		memset(map, 0, page_size / 2);
+		memset(map + page_size, 0, bo_size - page_size);
 	} else {
 		memset(map, 0, bo_size);
 	}
@@ -1422,8 +1421,8 @@ try_again_after_invalidate:
 		}
 	}
 	if (flags & MAP_FLAG_HAMMER_FIRST_PAGE) {
-		memset(map, 0, PAGE_SIZE / 2);
-		memset(map + PAGE_SIZE, 0, bo_size - PAGE_SIZE);
+		memset(map, 0, page_size / 2);
+		memset(map + page_size, 0, bo_size - page_size);
 	} else {
 		memset(map, 0, bo_size);
 	}

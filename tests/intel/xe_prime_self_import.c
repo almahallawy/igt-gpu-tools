@@ -59,14 +59,19 @@ IGT_TEST_DESCRIPTION("Check whether prime import/export works on the same"
 static char counter;
 static int g_time_out = 5;
 static pthread_barrier_t g_barrier;
-static size_t bo_size;
+
+static size_t get_min_bo_size(int fd1, int fd2)
+{
+	return 4 * max(xe_get_default_alignment(fd1),
+		       xe_get_default_alignment(fd2));
+}
 
 static void
 check_bo(int fd1, uint32_t handle1, int fd2, uint32_t handle2)
 {
+	size_t bo_size = get_min_bo_size(fd1, fd2);
 	char *ptr1, *ptr2;
 	int i;
-
 
 	ptr1 = xe_bo_map(fd1, handle1, bo_size);
 	ptr2 = xe_bo_map(fd2, handle2, bo_size);
@@ -97,6 +102,7 @@ check_bo(int fd1, uint32_t handle1, int fd2, uint32_t handle2)
 static void test_with_fd_dup(void)
 {
 	int fd1, fd2;
+	size_t bo_size;
 	uint32_t handle, handle_import;
 	int dma_buf_fd1, dma_buf_fd2;
 
@@ -104,6 +110,8 @@ static void test_with_fd_dup(void)
 
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
+
+	bo_size = get_min_bo_size(fd1, fd2);
 
 	handle = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0),
 			      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
@@ -131,6 +139,7 @@ static void test_with_fd_dup(void)
 static void test_with_two_bos(void)
 {
 	int fd1, fd2;
+	size_t bo_size;
 	uint32_t handle1, handle2, handle_import;
 	int dma_buf_fd;
 
@@ -138,6 +147,8 @@ static void test_with_two_bos(void)
 
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
+
+	bo_size = get_min_bo_size(fd1, fd2);
 
 	handle1 = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0),
 			       DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
@@ -171,11 +182,14 @@ static void test_with_two_bos(void)
 static void test_with_one_bo_two_files(void)
 {
 	int fd1, fd2;
+	size_t bo_size;
 	uint32_t handle_import, handle_open, handle_orig, flink_name;
 	int dma_buf_fd1, dma_buf_fd2;
 
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
+
+	bo_size = get_min_bo_size(fd1, fd2);
 
 	handle_orig = xe_bo_create(fd1, 0, bo_size,
 				   vram_if_possible(fd1, 0),
@@ -205,11 +219,14 @@ static void test_with_one_bo_two_files(void)
 static void test_with_one_bo(void)
 {
 	int fd1, fd2;
+	size_t bo_size;
 	uint32_t handle, handle_import1, handle_import2, handle_selfimport;
 	int dma_buf_fd;
 
 	fd1 = drm_open_driver(DRIVER_XE);
 	fd2 = drm_open_driver(DRIVER_XE);
+
+	bo_size = get_min_bo_size(fd1, fd2);
 
 	handle = xe_bo_create(fd1, 0, bo_size, vram_if_possible(fd1, 0),
 			      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
@@ -279,6 +296,7 @@ static void *thread_fn_reimport_vs_close(void *p)
 	pthread_t *threads;
 	int r, i, num_threads;
 	int fds[2];
+	size_t bo_size;
 	int obj_count;
 	void *status;
 	uint32_t handle;
@@ -297,6 +315,8 @@ static void *thread_fn_reimport_vs_close(void *p)
 	threads = calloc(num_threads, sizeof(pthread_t));
 
 	fds[0] = drm_open_driver(DRIVER_XE);
+
+	bo_size = xe_get_default_alignment(fds[0]);
 
 	handle = xe_bo_create(fds[0], 0, bo_size,
 			      vram_if_possible(fds[0], 0),
@@ -336,6 +356,7 @@ static void *thread_fn_export_vs_close(void *p)
 	struct drm_prime_handle prime_h2f;
 	struct drm_gem_close close_bo;
 	int fd = (uintptr_t)p;
+	size_t bo_size = xe_get_default_alignment(fd);
 	uint32_t handle;
 
 	pthread_barrier_wait(&g_barrier);
@@ -463,6 +484,7 @@ static void test_llseek_size(void)
 static void test_llseek_bad(void)
 {
 	int fd;
+	size_t bo_size;
 	uint32_t handle;
 	int dma_buf_fd;
 
@@ -470,6 +492,7 @@ static void test_llseek_bad(void)
 
 	fd = drm_open_driver(DRIVER_XE);
 
+	bo_size = 4 * xe_get_default_alignment(fd);
 	handle = xe_bo_create(fd, 0, bo_size,
 			      vram_if_possible(fd, 0),
 			      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
@@ -510,7 +533,6 @@ igt_main
 
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
-		bo_size = xe_get_default_alignment(fd);
 	}
 
 	for (i = 0; i < ARRAY_SIZE(tests); i++) {

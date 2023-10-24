@@ -47,17 +47,18 @@
 static void
 test_mmap(int fd, uint32_t placement, uint32_t flags)
 {
+	size_t bo_size = xe_get_default_alignment(fd);
 	uint32_t bo;
 	void *map;
 
 	igt_require_f(placement, "Device doesn't support such memory region\n");
 
-	bo = xe_bo_create(fd, 0, 4096, placement, flags);
+	bo = xe_bo_create(fd, 0, bo_size, placement, flags);
 
-	map = xe_bo_map(fd, bo, 4096);
+	map = xe_bo_map(fd, bo, bo_size);
 	strcpy(map, "Write some data to the BO!");
 
-	munmap(map, 4096);
+	munmap(map, bo_size);
 
 	gem_close(fd, bo);
 }
@@ -156,13 +157,14 @@ static void trap_sigbus(uint32_t *ptr)
  */
 static void test_small_bar(int fd)
 {
+	size_t page_size = xe_get_default_alignment(fd);
 	uint32_t visible_size = xe_visible_vram_size(fd, 0);
 	uint32_t bo;
 	uint64_t mmo;
 	uint32_t *map;
 
 	/* 2BIG invalid case */
-	igt_assert_neq(__xe_bo_create(fd, 0, visible_size + 4096,
+	igt_assert_neq(__xe_bo_create(fd, 0, visible_size + page_size,
 				      vram_memory(fd, 0),
 				      DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM,
 				      &bo),
@@ -172,12 +174,12 @@ static void test_small_bar(int fd)
 	bo = xe_bo_create(fd, 0, visible_size / 4, vram_memory(fd, 0),
 			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	mmo = xe_bo_mmap_offset(fd, bo);
-	map = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, fd, mmo);
+	map = mmap(NULL, page_size, PROT_WRITE, MAP_SHARED, fd, mmo);
 	igt_assert(map != MAP_FAILED);
 
 	map[0] = 0xdeadbeaf;
 
-	munmap(map, 4096);
+	munmap(map, page_size);
 	gem_close(fd, bo);
 
 	/* Normal operation with system memory spilling */
@@ -186,18 +188,18 @@ static void test_small_bar(int fd)
 			  system_memory(fd),
 			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	mmo = xe_bo_mmap_offset(fd, bo);
-	map = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, fd, mmo);
+	map = mmap(NULL, page_size, PROT_WRITE, MAP_SHARED, fd, mmo);
 	igt_assert(map != MAP_FAILED);
 
 	map[0] = 0xdeadbeaf;
 
-	munmap(map, 4096);
+	munmap(map, page_size);
 	gem_close(fd, bo);
 
 	/* Bogus operation with SIGBUS */
-	bo = xe_bo_create(fd, 0, visible_size + 4096, vram_memory(fd, 0), 0);
+	bo = xe_bo_create(fd, 0, visible_size + page_size, vram_memory(fd, 0), 0);
 	mmo = xe_bo_mmap_offset(fd, bo);
-	map = mmap(NULL, 4096, PROT_WRITE, MAP_SHARED, fd, mmo);
+	map = mmap(NULL, page_size, PROT_WRITE, MAP_SHARED, fd, mmo);
 	igt_assert(map != MAP_FAILED);
 
 	trap_sigbus(map);
