@@ -39,6 +39,7 @@
 #include "igt_params.h"
 #include "igt_pipe_crc.h"
 #include "igt_pm.h"
+#include "igt_sizes.h"
 #include "igt_stats.h"
 #include "igt_dsc.h"
 #ifdef HAVE_CHAMELIUM

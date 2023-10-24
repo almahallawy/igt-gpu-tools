@@ -198,7 +198,6 @@ IGT_TEST_DESCRIPTION("Exercise local memory swapping.");
 #define round_up(x, y) ((((x) - 1) | __round_mask(x, y)) + 1)
 
 #define PAGE_SIZE  (1ULL << 12)
-#define SZ_64K	   (16 * PAGE_SIZE)
 
 static const char *readable_unit(uint64_t size)
 {

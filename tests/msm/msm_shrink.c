@@ -30,8 +30,6 @@
 #include "igt_os.h"
 #include "igt_sysfs.h"
 
-#define SZ_1M (1024 * 1024)
-
 static void leak(uint64_t alloc)
 {
 	char *ptr;

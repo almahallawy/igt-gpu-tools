@@ -41,8 +41,6 @@
 
 IGT_TEST_DESCRIPTION("Check that we can issue concurrent writes across the engines.");
 
-#define SZ_1M (1024 * 1024)
-
 static void store_dword(int fd, int id, const intel_ctx_t *ctx,
 			 unsigned ring, uint32_t target, uint64_t target_offset,
 			 uint32_t offset, uint32_t value)

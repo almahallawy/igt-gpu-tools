@@ -12,9 +12,7 @@
 #include <stdint.h>
 #include <xe_drm.h>
 #include "igt_list.h"
-
-#define SZ_4K	0x1000
-#define SZ_64K	0x10000
+#include "igt_sizes.h"
 
 #define XE_DEFAULT_ALIGNMENT           SZ_4K
 #define XE_DEFAULT_ALIGNMENT_64K       SZ_64K

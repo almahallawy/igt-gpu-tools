@@ -863,7 +863,6 @@ static void test_query_regions_sanity_check(int fd)
 }
 
 #define rounddown(x, y) (x - (x % y))
-#define SZ_64K (1ULL << 16)
 
 static void fill_unallocated(int fd, struct drm_i915_query_item *item, int idx,
 			     bool cpu_access)

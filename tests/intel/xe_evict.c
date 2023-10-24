@@ -448,9 +448,6 @@ threads(int fd, struct drm_xe_engine_class_instance *eci,
 		pthread_join(threads_data[i].thread, NULL);
 }
 
-#define SZ_256M 0x10000000
-#define SZ_1G   0x40000000
-
 static uint64_t calc_bo_size(uint64_t vram_size, int mul, int div)
 {
 	if (vram_size >= SZ_1G)
