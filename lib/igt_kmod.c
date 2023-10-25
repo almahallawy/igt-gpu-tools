@@ -22,12 +22,15 @@
  */
 
 #include <ctype.h>
-#include <signal.h>
+#include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/utsname.h>
 #include <unistd.h>
 
@@ -435,6 +438,58 @@ igt_intel_driver_load(const char *opts, const char *driver)
 	igt_kmod_load("snd_hda_intel", NULL);
 
 	return 0;
+}
+
+/**
+ * kick_snd_hda_intel:
+ *
+ * This function unbinds the snd_hda_intel driver so the module can be
+ * unloaded.
+ *
+ */
+static void kick_snd_hda_intel(void)
+{
+	DIR *dir;
+	struct dirent *snd_hda;
+	int fd; size_t len;
+
+	const char *dpath = "/sys/bus/pci/drivers/snd_hda_intel";
+	const char *path = "/sys/bus/pci/drivers/snd_hda_intel/unbind";
+	const char *devid = "0000:";
+
+	fd = open(path, O_WRONLY);
+	if (fd < 0) {
+		return;
+	}
+
+	dir = opendir(dpath);
+	if (!dir)
+		goto out;
+
+	len = strlen(devid);
+	while ((snd_hda = readdir(dir))) {
+		struct stat st;
+		char fpath[PATH_MAX];
+
+		if (*snd_hda->d_name == '.')
+			continue;
+
+		snprintf(fpath, sizeof(fpath), "%s/%s", dpath, snd_hda->d_name);
+		if (lstat(fpath, &st))
+			continue;
+
+		if (!S_ISLNK(st.st_mode))
+			continue;
+
+		if (!strncmp(devid, snd_hda->d_name, len)) {
+			igt_ignore_warn(write(fd, snd_hda->d_name,
+					strlen(snd_hda->d_name)));
+		}
+	}
+
+	closedir(dir);
+out:
+	close(fd);
 }
 
 static int igt_always_unload_audio_driver(char **who)
