@@ -113,13 +113,14 @@ mem_set(int fd, uint32_t dst_handle, const intel_ctx_t *ctx, uint32_t size,
 	result = (uint8_t *)mem.dst.ptr;
 
 	intel_allocator_bind(ahnd, 0, 0);
-	munmap(mem.dst.ptr, size);
 	gem_close(fd, bb);
 	put_ahnd(ahnd);
 
 	igt_assert(result[0] == fill_data);
 	igt_assert(result[width - 1] == fill_data);
 	igt_assert(result[width] != fill_data);
+
+	munmap(mem.dst.ptr, size);
 }
 
 static void copy_test(int fd, uint32_t size, enum blt_cmd_type cmd, uint32_t region)
