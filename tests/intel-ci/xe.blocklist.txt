@@ -69,7 +69,6 @@ igt@kms_rotation_crc@exhaust-fences
 ##################################################################
 # KMS: Yet to add/missing XE support
 ##################################################################
-igt@kms_fb_coherency@memset-crc
 igt@kms_prime@.*
 ##################################################################
 # KMS: Non-Intel tests
