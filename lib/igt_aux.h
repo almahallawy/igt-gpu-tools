@@ -329,7 +329,7 @@ void pipewire_pulse_stop_reserve(void);
 						64 - __builtin_clzll(x), \
 						32 - __builtin_clz(x)) : 0)
 
-#define roundup_power_of_two(x) ((x) != 0 ? 1 << igt_fls((x) - 1) : 0)
+#define roundup_power_of_two(x) ((x) != 0 ? 1ULL << igt_fls((x) - 1) : 0)
 
 #define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
 
