@@ -1675,7 +1675,7 @@ __intel_bb_add_object(struct intel_bb *ibb, uint32_t handle, uint64_t size,
 			offset = __intel_bb_get_offset(ibb, handle, size,
 						       alignment);
 		} else {
-			offset = offset & (ibb->gtt_size - 1);
+			offset = offset & (roundup_power_of_two(ibb->gtt_size) - 1);
 
 			/*
 			 * For simple allocator check entry consistency
