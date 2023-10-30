@@ -9,6 +9,7 @@
 #include "ioctl_wrappers.h"
 
 #include "i915/gem_mman.h"
+#include "xe/xe_ioctl.h"
 
 #define BITMASK(e, s)		((~0ULL << (s)) & \
 				 (~0ULL >> (BITS_PER_LONG_LONG - 1 - (e))))
@@ -371,10 +372,13 @@ pgt_populate_entries_for_buf(struct pgtable *pgt,
 	}
 }
 
-static void pgt_map(int i915, struct pgtable *pgt)
+static void pgt_map(int drm_fd, struct pgtable *pgt)
 {
-	pgt->ptr = gem_mmap__device_coherent(i915, pgt->buf->handle, 0,
-					     pgt->size, PROT_READ | PROT_WRITE);
+	pgt->ptr = is_i915_device(drm_fd) ?
+			gem_mmap__device_coherent(drm_fd, pgt->buf->handle, 0,
+						  pgt->size, PROT_READ | PROT_WRITE):
+			xe_bo_mmap_ext(drm_fd, pgt->buf->handle,
+				       pgt->size, PROT_READ | PROT_WRITE);
 }
 
 static void pgt_unmap(struct pgtable *pgt)
