@@ -476,6 +476,8 @@ class TestList:
                 test = match.group(1)
                 subtest = match.group(2)
                 test_name = f"{test}{subtest}"
+                if not test_name.endswith("$"):
+                    test_name += r"(\@.*)?$"
 
                 if match_type in match_type_regex:
                     testlist[name].append(re.compile(test_name, flags))
