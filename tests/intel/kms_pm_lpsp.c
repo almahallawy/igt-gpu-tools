@@ -174,9 +174,11 @@ static bool test_constraint(data_t *data)
 
 			return true;
 		}
+
+		return false;
 	}
 
-	return false;
+	return true;
 }
 
 static void test_lpsp(data_t *data)
