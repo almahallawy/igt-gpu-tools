@@ -165,20 +165,19 @@ void amdgpu_command_submission_write_linear_helper(amdgpu_device_handle device,
 				r = ip_block->funcs->compare(ip_block->funcs, ring_context, 1);
 				igt_assert_eq(r, 0);
 			} else if (ip_block->type == AMDGPU_HW_IP_GFX) {
-				ip_block->funcs->write_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
-
+				ip_block->funcs->write_linear_atomic(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
-
 			} else if (ip_block->type == AMDGPU_HW_IP_DMA) {
 				/* restore the bo_cpu to compare */
 				ring_context->bo_cpu_origin = ring_context->bo_cpu[0];
-				ip_block->funcs->write_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
+				ip_block->funcs->write_linear_atomic(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 
 				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 
+				igt_assert_neq(ring_context->bo_cpu[0], ring_context->bo_cpu_origin);
 				/* restore again, here dest_data should be */
 				ring_context->bo_cpu_origin = ring_context->bo_cpu[0];
-				ip_block->funcs->write_linear(ip_block->funcs, ring_context, &ring_context->pm4_dw);
+				ip_block->funcs->write_linear_atomic(ip_block->funcs, ring_context, &ring_context->pm4_dw);
 
 				amdgpu_test_exec_cs_helper(device, ip_block->type, ring_context, 0);
 				/* here bo_cpu[0] should be unchanged, still is 0x12345678, otherwise failed*/

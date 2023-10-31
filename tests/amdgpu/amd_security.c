@@ -351,17 +351,22 @@ igt_main
 		igt_skip_on(!is_security_tests_enable(device, &gpu_info, major, minor));
 	}
 
-	igt_describe("amdgpu_security_alloc_buf_test");
+	igt_describe("amdgpu security alloc buf test");
 	igt_subtest("amdgpu-security-alloc-buf-test")
 	amdgpu_security_alloc_buf_test(device);
 
-	igt_describe("amdgpu_command_submission_write_linear_helper");
-	igt_subtest("write-linear-helper-secure")
+	igt_describe("amdgpu sdma command submission write linear helper");
+	igt_subtest("sdma-write-linear-helper-secure")
 	amdgpu_command_submission_write_linear_helper(device,
 			get_ip_block(device, AMDGPU_HW_IP_DMA), is_secure);
 
+	igt_describe("amdgpu gfx command submission write linear helper");
+	igt_subtest("gfx-write-linear-helper-secure")
+	 amdgpu_command_submission_write_linear_helper(device,
+			get_ip_block(device, AMDGPU_HW_IP_GFX), is_secure);
+
 	/* dynamic test based on sdma_info.available rings */
-	igt_describe("amdgpu_secure_bounce");
+	igt_describe("amdgpu secure bounce");
 	igt_subtest("amdgpu-secure-bounce")
 	amdgpu_secure_bounce(device, fd, &sdma_info, get_ip_block(device,
 			AMDGPU_HW_IP_DMA), is_secure);

@@ -18,6 +18,7 @@
 #include "amdgpu_asic_addr.h"
 #include "amd_family.h"
 #include "amd_gfx_v8_0.h"
+#include "ioctl_wrappers.h"
 
 /*
  * SDMA functions:
@@ -34,48 +35,58 @@ sdma_ring_write_linear(const struct amdgpu_ip_funcs *func,
 
 	i = 0;
 	j = 0;
-	if (ring_context->secure == false) {
-		if (func->family_id == AMDGPU_FAMILY_SI)
-			ring_context->pm4[i++] = SDMA_PACKET_SI(SDMA_OPCODE_WRITE, 0, 0, 0,
-						 ring_context->write_length);
-		else
-			ring_context->pm4[i++] = SDMA_PACKET(SDMA_OPCODE_WRITE,
-						 SDMA_WRITE_SUB_OPCODE_LINEAR,
-						 ring_context->secure ? SDMA_ATOMIC_TMZ(1) : 0);
+	if (func->family_id == AMDGPU_FAMILY_SI)
+		ring_context->pm4[i++] = SDMA_PACKET_SI(SDMA_OPCODE_WRITE, 0, 0, 0,
+					 ring_context->write_length);
+	else
+		ring_context->pm4[i++] = SDMA_PACKET(SDMA_OPCODE_WRITE,
+					 SDMA_WRITE_SUB_OPCODE_LINEAR,
+					 ring_context->secure ? SDMA_ATOMIC_TMZ(1) : 0);
 
-		ring_context->pm4[i++] = 0xfffffffc & ring_context->bo_mc;
-		ring_context->pm4[i++] = (0xffffffff00000000 & ring_context->bo_mc) >> 32;
-		if (func->family_id >= AMDGPU_FAMILY_AI)
-			ring_context->pm4[i++] = ring_context->write_length - 1;
-		else
-			ring_context->pm4[i++] = ring_context->write_length;
+	ring_context->pm4[i++] = lower_32_bits(ring_context->bo_mc);
+	ring_context->pm4[i++] = upper_32_bits(ring_context->bo_mc);
+	if (func->family_id >= AMDGPU_FAMILY_AI)
+		ring_context->pm4[i++] = ring_context->write_length - 1;
+	else
+		ring_context->pm4[i++] = ring_context->write_length;
 
-		while (j++ < ring_context->write_length)
-			ring_context->pm4[i++] = func->deadbeaf;
-	} else {
-		memset(ring_context->pm4, 0, ring_context->pm4_size * sizeof(uint32_t));
+	while (j++ < ring_context->write_length)
+		ring_context->pm4[i++] = func->deadbeaf;
+
+	*pm4_dw = i;
+
+	return 0;
+}
+
+static int
+sdma_ring_atomic(const struct amdgpu_ip_funcs *func,
+		       const struct amdgpu_ring_context *ring_context,
+		       uint32_t *pm4_dw)
+{
+	uint32_t i = 0;
+
+	memset(ring_context->pm4, 0, ring_context->pm4_size * sizeof(uint32_t));
 
 		/* atomic opcode for 32b w/ RTN and ATOMIC_SWAPCMP_RTN
 		 * loop, 1-loop_until_compare_satisfied.
 		 * single_pass_atomic, 0-lru
 		 */
-		ring_context->pm4[i++] = SDMA_PACKET(SDMA_OPCODE_ATOMIC,
-					       0,
-					       SDMA_ATOMIC_LOOP(1) |
-					       SDMA_ATOMIC_TMZ(1) |
-					       SDMA_ATOMIC_OPCODE(TC_OP_ATOMIC_CMPSWAP_RTN_32));
-		ring_context->pm4[i++] = 0xfffffffc & ring_context->bo_mc;
-		ring_context->pm4[i++] = (0xffffffff00000000 & ring_context->bo_mc) >> 32;
-		ring_context->pm4[i++] = 0x12345678;
-		ring_context->pm4[i++] = 0x0;
-		ring_context->pm4[i++] = func->deadbeaf;
-		ring_context->pm4[i++] = 0x0;
-		ring_context->pm4[i++] = 0x100;
-	}
-
+	ring_context->pm4[i++] = SDMA_PACKET(SDMA_OPCODE_ATOMIC,
+				       0,
+				       SDMA_ATOMIC_LOOP(1) |
+				       (ring_context->secure ? SDMA_ATOMIC_TMZ(1) : SDMA_ATOMIC_TMZ(0)) |
+				       SDMA_ATOMIC_OPCODE(TC_OP_ATOMIC_CMPSWAP_RTN_32));
+	ring_context->pm4[i++] = lower_32_bits(ring_context->bo_mc);
+	ring_context->pm4[i++] = upper_32_bits(ring_context->bo_mc);
+	ring_context->pm4[i++] = 0x12345678;
+	ring_context->pm4[i++] = 0x0;
+	ring_context->pm4[i++] = func->deadbeaf;
+	ring_context->pm4[i++] = 0x0;
+	ring_context->pm4[i++] = 0x100;
 	*pm4_dw = i;
 
 	return 0;
+
 }
 
 static int
@@ -89,14 +100,14 @@ sdma_ring_const_fill(const struct amdgpu_ip_funcs *func,
 	if (func->family_id == AMDGPU_FAMILY_SI) {
 		context->pm4[i++] = SDMA_PACKET_SI(SDMA_OPCODE_CONSTANT_FILL_SI,
 						   0, 0, 0, context->write_length / 4);
-		context->pm4[i++] = 0xfffffffc & context->bo_mc;
+		context->pm4[i++] = lower_32_bits(context->bo_mc);
 		context->pm4[i++] = 0xdeadbeaf;
-		context->pm4[i++] = (0xffffffff00000000 & context->bo_mc) >> 16;
+		context->pm4[i++] = upper_32_bits(context->bo_mc) >> 16;
 	} else {
 		context->pm4[i++] = SDMA_PACKET(SDMA_OPCODE_CONSTANT_FILL, 0,
 						SDMA_CONSTANT_FILL_EXTRA_SIZE(2));
-		context->pm4[i++] = 0xffffffff & context->bo_mc;
-		context->pm4[i++] = (0xffffffff00000000 & context->bo_mc) >> 32;
+		context->pm4[i++] = lower_32_bits(context->bo_mc);
+		context->pm4[i++] = upper_32_bits(context->bo_mc);
 		context->pm4[i++] = func->deadbeaf;
 
 		if (func->family_id >= AMDGPU_FAMILY_AI)
@@ -121,10 +132,10 @@ sdma_ring_copy_linear(const struct amdgpu_ip_funcs *func,
 		context->pm4[i++] = SDMA_PACKET_SI(SDMA_OPCODE_COPY_SI,
 					  0, 0, 0,
 					  context->write_length);
-		context->pm4[i++] = 0xffffffff & context->bo_mc;
-		context->pm4[i++] = (0xffffffff00000000 & context->bo_mc) >> 32;
-		context->pm4[i++] = 0xffffffff & context->bo_mc2;
-		context->pm4[i++] = (0xffffffff00000000 & context->bo_mc2) >> 32;
+		context->pm4[i++] = lower_32_bits(context->bo_mc);
+		context->pm4[i++] = upper_32_bits(context->bo_mc);
+		context->pm4[i++] = lower_32_bits(context->bo_mc2);
+		context->pm4[i++] = upper_32_bits(context->bo_mc2);
 	} else {
 		context->pm4[i++] = SDMA_PACKET(SDMA_OPCODE_COPY,
 				       SDMA_COPY_SUB_OPCODE_LINEAR,
@@ -134,10 +145,10 @@ sdma_ring_copy_linear(const struct amdgpu_ip_funcs *func,
 		else
 			context->pm4[i++] = context->write_length;
 		context->pm4[i++] = 0;
-		context->pm4[i++] = 0xffffffff & context->bo_mc;
-		context->pm4[i++] = (0xffffffff00000000 & context->bo_mc) >> 32;
-		context->pm4[i++] = 0xffffffff & context->bo_mc2;
-		context->pm4[i++] = (0xffffffff00000000 & context->bo_mc2) >> 32;
+		context->pm4[i++] = lower_32_bits(context->bo_mc);
+		context->pm4[i++] = upper_32_bits(context->bo_mc);
+		context->pm4[i++] = lower_32_bits(context->bo_mc2);
+		context->pm4[i++] = upper_32_bits(context->bo_mc2);
 	}
 
 	*pm4_dw = i;
@@ -163,37 +174,45 @@ gfx_ring_write_linear(const struct amdgpu_ip_funcs *func,
 	i = 0;
 	j = 0;
 
-	if (ring_context->secure == false) {
-		ring_context->pm4[i++] = PACKET3(PACKET3_WRITE_DATA, 2 +  ring_context->write_length);
-		ring_context->pm4[i++] = WRITE_DATA_DST_SEL(5) | WR_CONFIRM;
-		ring_context->pm4[i++] = 0xfffffffc & ring_context->bo_mc;
-		ring_context->pm4[i++] = (0xffffffff00000000 & ring_context->bo_mc) >> 32;
-		while (j++ < ring_context->write_length)
-			ring_context->pm4[i++] = func->deadbeaf;
-	} else {
-		memset(ring_context->pm4, 0, ring_context->pm4_size * sizeof(uint32_t));
-		ring_context->pm4[i++] = PACKET3(PACKET3_ATOMIC_MEM, 7);
-
-		/* atomic opcode for 32b w/ RTN and ATOMIC_SWAPCMP_RTN
-		 * command, 1-loop_until_compare_satisfied.
-		 * single_pass_atomic, 0-lru
-		 * engine_sel, 0-micro_engine
-		 */
-		ring_context->pm4[i++] = (TC_OP_ATOMIC_CMPSWAP_RTN_32 |
-					ATOMIC_MEM_COMMAND(1) |
-					ATOMIC_MEM_CACHEPOLICAY(0) |
-					ATOMIC_MEM_ENGINESEL(0));
-		ring_context->pm4[i++] = 0xfffffffc & ring_context->bo_mc;
-		ring_context->pm4[i++] = (0xffffffff00000000 & ring_context->bo_mc) >> 32;
-		ring_context->pm4[i++] = 0x12345678;
-		ring_context->pm4[i++] = 0x0;
-		ring_context->pm4[i++] = 0xdeadbeaf;
-		ring_context->pm4[i++] = 0x0;
-		ring_context->pm4[i++] = 0x100;
-	}
+	ring_context->pm4[i++] = PACKET3(PACKET3_WRITE_DATA, 2 +  ring_context->write_length);
+	ring_context->pm4[i++] = WRITE_DATA_DST_SEL(5) | WR_CONFIRM;
+	ring_context->pm4[i++] = lower_32_bits(ring_context->bo_mc);
+	ring_context->pm4[i++] = upper_32_bits(ring_context->bo_mc);
+	while (j++ < ring_context->write_length)
+		ring_context->pm4[i++] = func->deadbeaf;
 
 	*pm4_dw = i;
+	return 0;
+}
 
+static int
+gfx_ring_atomic(const struct amdgpu_ip_funcs *func,
+		      const struct amdgpu_ring_context *ring_context,
+		      uint32_t *pm4_dw)
+{
+	uint32_t i = 0;
+
+	memset(ring_context->pm4, 0, ring_context->pm4_size * sizeof(uint32_t));
+		ring_context->pm4[i++] = PACKET3(PACKET3_ATOMIC_MEM, 7);
+
+	/* atomic opcode for 32b w/ RTN and ATOMIC_SWAPCMP_RTN
+	 * command, 1-loop_until_compare_satisfied.
+	 * single_pass_atomic, 0-lru
+	 * engine_sel, 0-micro_engine
+	 */
+	ring_context->pm4[i++] = (TC_OP_ATOMIC_CMPSWAP_RTN_32 |
+				ATOMIC_MEM_COMMAND(1) |
+				ATOMIC_MEM_CACHEPOLICAY(0) |
+				ATOMIC_MEM_ENGINESEL(0));
+	ring_context->pm4[i++] = lower_32_bits(ring_context->bo_mc);
+	ring_context->pm4[i++] = upper_32_bits(ring_context->bo_mc);
+	ring_context->pm4[i++] = 0x12345678;
+	ring_context->pm4[i++] = 0x0;
+	ring_context->pm4[i++] = 0xdeadbeaf;
+	ring_context->pm4[i++] = 0x0;
+	ring_context->pm4[i++] = 0x100;
+
+	*pm4_dw = i;
 	return 0;
 }
 
@@ -212,8 +231,8 @@ gfx_ring_const_fill(const struct amdgpu_ip_funcs *func,
 					 PACKET3_DMA_DATA_SI_DST_SEL(0) |
 					 PACKET3_DMA_DATA_SI_SRC_SEL(2) |
 					 PACKET3_DMA_DATA_SI_CP_SYNC;
-		ring_context->pm4[i++] = 0xffffffff & ring_context->bo_mc;
-		ring_context->pm4[i++] = (0xffffffff00000000 & ring_context->bo_mc) >> 32;
+		ring_context->pm4[i++] = lower_32_bits(ring_context->bo_mc);
+		ring_context->pm4[i++] = upper_32_bits(ring_context->bo_mc);
 		ring_context->pm4[i++] = ring_context->write_length;
 	} else {
 		ring_context->pm4[i++] = PACKET3(PACKET3_DMA_DATA, 5);
@@ -223,8 +242,8 @@ gfx_ring_const_fill(const struct amdgpu_ip_funcs *func,
 					 PACKET3_DMA_DATA_CP_SYNC;
 		ring_context->pm4[i++] = func->deadbeaf;
 		ring_context->pm4[i++] = 0;
-		ring_context->pm4[i++] = 0xfffffffc & ring_context->bo_mc;
-		ring_context->pm4[i++] = (0xffffffff00000000 & ring_context->bo_mc) >> 32;
+		ring_context->pm4[i++] = lower_32_bits(ring_context->bo_mc);
+		ring_context->pm4[i++] = upper_32_bits(ring_context->bo_mc);
 		ring_context->pm4[i++] = ring_context->write_length;
 	}
 	*pm4_dw = i;
@@ -242,14 +261,14 @@ gfx_ring_copy_linear(const struct amdgpu_ip_funcs *func,
 	i = 0;
 	if (func->family_id == AMDGPU_FAMILY_SI) {
 		context->pm4[i++] = PACKET3(PACKET3_DMA_DATA_SI, 4);
-		context->pm4[i++] = 0xfffffffc & context->bo_mc;
+		context->pm4[i++] = lower_32_bits(context->bo_mc);
 		context->pm4[i++] = PACKET3_DMA_DATA_SI_ENGINE(0) |
 			   PACKET3_DMA_DATA_SI_DST_SEL(0) |
 			   PACKET3_DMA_DATA_SI_SRC_SEL(0) |
 			   PACKET3_DMA_DATA_SI_CP_SYNC |
-			   (0xffff00000000 & context->bo_mc) >> 32;
-		context->pm4[i++] = 0xfffffffc & context->bo_mc2;
-		context->pm4[i++] = (0xffffffff00000000 & context->bo_mc2) >> 32;
+			   upper_32_bits(context->bo_mc);
+		context->pm4[i++] = lower_32_bits(context->bo_mc2);
+		context->pm4[i++] = upper_32_bits(context->bo_mc2);
 		context->pm4[i++] = context->write_length;
 	} else {
 		context->pm4[i++] = PACKET3(PACKET3_DMA_DATA, 5);
@@ -257,10 +276,10 @@ gfx_ring_copy_linear(const struct amdgpu_ip_funcs *func,
 			   PACKET3_DMA_DATA_DST_SEL(0) |
 			   PACKET3_DMA_DATA_SRC_SEL(0) |
 			   PACKET3_DMA_DATA_CP_SYNC;
-		context->pm4[i++] = 0xfffffffc & context->bo_mc;
-		context->pm4[i++] = (0xffffffff00000000 & context->bo_mc) >> 32;
-		context->pm4[i++] = 0xfffffffc & context->bo_mc2;
-		context->pm4[i++] = (0xffffffff00000000 & context->bo_mc2) >> 32;
+		context->pm4[i++] = lower_32_bits(context->bo_mc);
+		context->pm4[i++] = upper_32_bits(context->bo_mc);
+		context->pm4[i++] = lower_32_bits(context->bo_mc2);
+		context->pm4[i++] = upper_32_bits(context->bo_mc2);
 		context->pm4[i++] = context->write_length;
 	}
 
@@ -311,6 +330,7 @@ static struct amdgpu_ip_funcs gfx_v8_x_ip_funcs = {
 	.deadbeaf = 0xdeadbeaf,
 	.pattern = 0xaaaaaaaa,
 	.write_linear = gfx_ring_write_linear,
+	.write_linear_atomic = gfx_ring_atomic,
 	.const_fill = gfx_ring_const_fill,
 	.copy_linear = gfx_ring_copy_linear,
 	.compare = x_compare,
@@ -325,6 +345,7 @@ static struct amdgpu_ip_funcs sdma_v3_x_ip_funcs = {
 	.deadbeaf = 0xdeadbeaf,
 	.pattern = 0xaaaaaaaa,
 	.write_linear = sdma_ring_write_linear,
+	.write_linear_atomic = sdma_ring_atomic,
 	.const_fill = sdma_ring_const_fill,
 	.copy_linear = sdma_ring_copy_linear,
 	.compare = x_compare,
