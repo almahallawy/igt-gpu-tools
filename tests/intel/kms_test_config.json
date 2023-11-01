@@ -23,7 +23,7 @@
                 "_properties_": {
                     "description": "Defines what category of testlist it belongs",
                     "update-from-file": {
-                        "append-value-if-not-excluded": "FULL",
+                        "append-value-if-not-excluded": "Xe FULL, i915 FULL",
                         "match-type": "subtest-match",
                         "include": [
                             { "i915 BAT": "../intel-ci/fast-feedback.testlist" },
@@ -34,8 +34,8 @@
                             { "Xe BAT chamelium": "../intel-ci/xe-fast-feedback-chamelium-only.testlist" }
                         ],
                         "exclude": [
-                            { "i915 BAT, i915 BAT chamelium, i915 chamelium, FULL": "../intel-ci/blacklist.txt" },
-                            { "Xe BAT, Xe BAT chamelium, FULL": "../intel-ci/xe.blocklist.txt" }
+                            { "i915 BAT, i915 BAT chamelium, i915 chamelium, i915 FULL": "../intel-ci/blacklist.txt" },
+                            { "Xe BAT, Xe BAT chamelium, Xe FULL": "../intel-ci/xe.blocklist.txt" }
                         ]
                     }
                 }

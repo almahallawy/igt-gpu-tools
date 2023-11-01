@@ -35,12 +35,13 @@
                             "default-testlist": "FULL",
                             "update-from-file": {
                                 "type": "subtest-match",
+                                "append-value-if-not-excluded": "Xe FULL",
                                 "include": [
                                     { "Xe BAT": "../intel-ci/xe-fast-feedback.testlist" }
                                 ],
                                 "exclude": [
-                                    { "Xe BAT": "../intel-ci/xe.blocklist.txt" }
-                                ],
+                                    { "Xe BAT, Xe FULL": "../intel-ci/xe.blocklist.txt" }
+                                ]
                             },
                             "order": [
                                 "boot",
