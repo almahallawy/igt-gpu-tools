@@ -512,6 +512,8 @@ class TestList:
         return False
 
     def update_testlist_field(self, subtest_dict):
+        expand = re.compile(",\s*")
+
         for field in self.props.keys():
             if "_properties_" not in self.props[field]:
                 continue
@@ -528,16 +530,16 @@ class TestList:
 
             value = subtest_dict.get(field)
             if value:
-                values = set(re.split(",\s*", value))
+                values = set(expand.split(value))
             else:
                 values = set()
 
             if append_value:
-                include_names = set(re.split(",\s*", append_value))
+                include_names = set(expand.split(append_value))
                 values.update(include_names)
 
             for names, regex_array in update.get("include", {}).items():
-                name = set(re.split(",\s*", names))
+                name = set(expand.split(names))
                 for regex in regex_array:
                     if regex.fullmatch(testname):
                         values.update(name)
@@ -546,7 +548,7 @@ class TestList:
             # If test is at a global blocklist, ignore it
             set_default = True
             for names, regex_array in update.get("exclude", {}).items():
-                deleted_names = set(re.split(",\s*", names))
+                deleted_names = set(expand.split(names))
                 for regex in regex_array:
                     if regex.fullmatch(testname):
                         if sorted(deleted_names) == sorted(values):
