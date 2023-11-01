@@ -22,20 +22,22 @@
             "Run type": {
                 "_properties_": {
                     "description": "Defines what category of testlist it belongs",
-                    "default-testlist": "FULL",
-                    "match-type": "subtest-match",
-                    "include": [
-                        { "i915 BAT": "../intel-ci/fast-feedback.testlist" },
-                        { "i915 BAT chamelium": "../intel-ci/fast-feedback-chamelium-only.testlist" },
-                        { "i915 chamelium": "../intel-ci/chamelium-only.testlist" },
+                    "update-from-file": {
+                        "append-value-if-not-excluded": "FULL",
+                        "match-type": "subtest-match",
+                        "include": [
+                            { "i915 BAT": "../intel-ci/fast-feedback.testlist" },
+                            { "i915 BAT chamelium": "../intel-ci/fast-feedback-chamelium-only.testlist" },
+                            { "i915 chamelium": "../intel-ci/chamelium-only.testlist" },
 
-                        { "Xe BAT": "../intel-ci/xe-fast-feedback.testlist" },
-                        { "Xe BAT chamelium": "../intel-ci/xe-fast-feedback-chamelium-only.testlist" }
-                    ],
-                    "exclude": [
-                        { "i915 BAT, i915 BAT chamelium, i915 chamelium": "../intel-ci/blacklist.txt" },
-                        { "Xe BAT, Xe BAT chamelium": "../intel-ci/xe.blocklist.txt" }
-                    ]
+                            { "Xe BAT": "../intel-ci/xe-fast-feedback.testlist" },
+                            { "Xe BAT chamelium": "../intel-ci/xe-fast-feedback-chamelium-only.testlist" }
+                        ],
+                        "exclude": [
+                            { "i915 BAT, i915 BAT chamelium, i915 chamelium, FULL": "../intel-ci/blacklist.txt" },
+                            { "Xe BAT, Xe BAT chamelium, FULL": "../intel-ci/xe.blocklist.txt" }
+                        ]
+                    }
                 }
             }
         },

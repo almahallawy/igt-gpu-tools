@@ -328,23 +328,25 @@ class TestList:
                     del item["_properties_"]["level"]
                     del item["_properties_"]["sublevel"]
 
-            # Read testlist files if any
-            if "include" in item["_properties_"]:
-                testlist = {}
-                for value in item["_properties_"]["include"]:
-                    for name in value.keys():
-                        self.read_testlist(field, item, testlist, name, cfg_path + value[name])
+            update = self.props[field]["_properties_"].get("update-from-file")
+            if update:
+                # Read testlist files if any
+                if "include" in update:
+                    testlist = {}
+                    for value in update["include"]:
+                        for name in value.keys():
+                            self.read_testlist(update, field, item, testlist, name, cfg_path + value[name])
 
-                item["_properties_"]["include"] = testlist
+                    update["include"] = testlist
 
-            # Read blocklist files if any
-            if "exclude" in item["_properties_"]:
-                testlist = {}
-                for value in item["_properties_"]["exclude"]:
-                    for name in value.keys():
-                        self.read_testlist(field, item, testlist, name, cfg_path + value[name])
+                # Read blocklist files if any
+                if "exclude" in update:
+                    testlist = {}
+                    for value in update["exclude"]:
+                        for name in value.keys():
+                            self.read_testlist(update, field, item, testlist, name, cfg_path + value[name])
 
-                item["_properties_"]["exclude"] = testlist
+                    update["exclude"] = testlist
 
         if "_properties_" in self.props:
             del self.props["_properties_"]
@@ -446,9 +448,9 @@ class TestList:
 
             self.__add_field(key, sublevel, hierarchy_level, field[key])
 
-    def read_testlist(self, field, item, testlist, name, filename):
+    def read_testlist(self, update, field, item, testlist, name, filename):
 
-        match_type = item["_properties_"].get("match-type", "subtest-match")
+        match_type = update.get("type", "subtest-match")
 
         match_type_regex = set(["regex", "regex-ignorecase"])
         match_type_str = set(["subtest-match"])
@@ -514,10 +516,13 @@ class TestList:
             if "_properties_" not in self.props[field]:
                 continue
 
-            if "include" not in self.props[field]["_properties_"]:
+            update = self.props[field]["_properties_"].get("update-from-file")
+            if not update:
                 continue
 
-            default_value = self.props[field]["_properties_"].get("default-testlist")
+            match_type = update.get("type", "subtest-match")
+            default_value = update.get("default--if-not-excluded")
+            append_value = update.get("append-value-if-not-excluded")
 
             testname = subtest_dict["_summary_"]
 
@@ -527,7 +532,11 @@ class TestList:
             else:
                 values = set()
 
-            for names, regex_array in self.props[field]["_properties_"]["include"].items():
+            if append_value:
+                include_names = set(re.split(",\s*", append_value))
+                values.update(include_names)
+
+            for names, regex_array in update.get("include", {}).items():
                 name = set(re.split(",\s*", names))
                 for regex in regex_array:
                     if regex.fullmatch(testname):
@@ -535,20 +544,19 @@ class TestList:
                         break
 
             # If test is at a global blocklist, ignore it
-            set_full_if_empty = True
-            if "exclude" in self.props[field]["_properties_"]:
-                for names, regex_array in self.props[field]["_properties_"]["exclude"].items():
-                    deleted_names = set(re.split(",\s*", names))
-                    for regex in regex_array:
-                        if regex.fullmatch(testname):
-                            if sorted(deleted_names) == sorted(values):
-                                set_full_if_empty = False
-                            values.discard(deleted_names)
+            set_default = True
+            for names, regex_array in update.get("exclude", {}).items():
+                deleted_names = set(re.split(",\s*", names))
+                for regex in regex_array:
+                    if regex.fullmatch(testname):
+                        if sorted(deleted_names) == sorted(values):
+                            set_default = False
+                        values -= deleted_names
 
-            if default_value and set_full_if_empty and not values:
-                values = set([default_value])
+            if default_value and set_default and not values:
+                values.update([default_value])
 
-            if values:
+            if values or self.props[field]["_properties_"].get("mandatory"):
                 subtest_dict[field] = ", ".join(sorted(values))
 
     def expand_subtest(self, fname, test_name, test, allow_inherit, with_lines = False, with_subtest_nr = False):
