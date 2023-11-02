@@ -34,7 +34,7 @@
                             "description": "Defines what category of testlist it belongs",
                             "default-testlist": "FULL",
                             "update-from-file": {
-                                "type": "subtest-match",
+                                "exclude-type": "regex-ignorecase",
                                 "append-value-if-not-excluded": "Xe FULL",
                                 "include": [
                                     { "Xe BAT": "../intel-ci/xe-fast-feedback.testlist" }

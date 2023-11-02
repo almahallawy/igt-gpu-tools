@@ -24,7 +24,7 @@
                     "description": "Defines what category of testlist it belongs",
                     "update-from-file": {
                         "append-value-if-not-excluded": "Xe FULL, i915 FULL",
-                        "match-type": "subtest-match",
+                        "exclude-type": "regex-ignorecase",
                         "include": [
                             { "i915 BAT": "../intel-ci/fast-feedback.testlist" },
                             { "i915 BAT chamelium": "../intel-ci/fast-feedback-chamelium-only.testlist" },

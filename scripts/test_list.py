@@ -335,7 +335,9 @@ class TestList:
                     testlist = {}
                     for value in update["include"]:
                         for name in value.keys():
-                            self.read_testlist(update, field, item, testlist, name, cfg_path + value[name])
+                            match_type = update.get("include-type", "subtest-match")
+
+                            self.read_testlist(update, match_type, field, item, testlist, name, cfg_path + value[name])
 
                     update["include"] = testlist
 
@@ -344,7 +346,9 @@ class TestList:
                     testlist = {}
                     for value in update["exclude"]:
                         for name in value.keys():
-                            self.read_testlist(update, field, item, testlist, name, cfg_path + value[name])
+                            match_type = update.get("exclude-type", "subtest-match")
+
+                            self.read_testlist(update, match_type, field, item, testlist, name, cfg_path + value[name])
 
                     update["exclude"] = testlist
 
@@ -448,9 +452,7 @@ class TestList:
 
             self.__add_field(key, sublevel, hierarchy_level, field[key])
 
-    def read_testlist(self, update, field, item, testlist, name, filename):
-
-        match_type = update.get("type", "subtest-match")
+    def read_testlist(self, update, match_type, field, item, testlist, name, filename):
 
         match_type_regex = set(["regex", "regex-ignorecase"])
         match_type_str = set(["subtest-match"])
