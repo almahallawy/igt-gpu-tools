@@ -500,10 +500,10 @@ class TestList:
 
         for filter_field, regex in self.filters.items():
             if filter_field in subtest:
-                if not regex.match(subtest[filter_field]):
+                if not regex.search(subtest[filter_field]):
                     return True
             elif filter_field in test:
-                if not regex.match(test[filter_field]):
+                if not regex.search(test[filter_field]):
                     return True
             else:
                 return field_not_found_value
