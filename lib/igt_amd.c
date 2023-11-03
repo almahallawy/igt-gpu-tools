@@ -45,6 +45,8 @@
 #define Y6 64
 #define Y7 128
 
+#define subvp_supported "sub-viewport supported: yes"
+#define subvp_enabled "sub-viewport supported: yes, enabled: yes"
 #define mall_supported "mall supported: yes"
 #define mall_enabled "mall supported: yes, enabled: yes"
 
@@ -1200,6 +1202,33 @@ void igt_amd_get_mall_status(int drm_fd, bool *supported, bool *enabled)
 
 	mall_loc = strstr(buf, mall_enabled);
 	if (mall_loc && *supported)
+		*enabled = true;
+}
+
+/**
+ * @brief check if AMDGPU sub-viewport support exists
+ *
+ * @param drm_fd DRM file descriptor
+ * @param supported set to true if harwdare supports subviewport
+ * @param enabled set tot true if subviewport is currently in use
+ */
+void igt_amd_get_subvp_status(int drm_fd, bool *supported, bool *enabled)
+{
+	char buf[1024];
+	char *subvp_loc;
+
+	*supported = false;
+	*enabled = false;
+
+	if (!get_dm_capabilities(drm_fd, buf, 1024))
+		return;
+
+	subvp_loc = strstr(buf, subvp_supported);
+	if (subvp_loc)
+		*supported = true;
+
+	subvp_loc = strstr(buf, subvp_enabled);
+	if (subvp_loc && *supported)
 		*enabled = true;
 }
 

@@ -200,5 +200,6 @@ int  igt_amd_get_visual_confirm(int drm_fd);
 bool igt_amd_set_visual_confirm(int drm_fd, enum amdgpu_debug_visual_confirm option);
 
 void igt_amd_get_mall_status(int drm_fd, bool *supported, bool *enabled);
+void igt_amd_get_subvp_status(int drm_fd, bool *supported, bool *enabled);
 bool igt_amd_output_has_odm_combine_segments(int drm_fd, char *connector_name);
 #endif /* IGT_AMD_H */
