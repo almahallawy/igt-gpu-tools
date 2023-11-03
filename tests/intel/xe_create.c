@@ -191,6 +191,13 @@ static void create_execqueues(int fd, enum exec_queue_destroy ed)
  * Test category: functionality test
  * Description: Verifies xe bo create returns expected error code on massive
  *              buffer sizes.
+ *
+ * SUBTEST: multigpu-create-massive-size
+ * Functionality: ioctl
+ * Test category: functionality test
+ * Feature: multigpu
+ * Description: Verifies xe bo create with massive buffer sizes runs correctly
+ *		on two or more GPUs.
  */
 static void create_massive_size(int fd)
 {
@@ -227,6 +234,25 @@ igt_main
 	igt_subtest("create-massive-size") {
 		create_massive_size(xe);
 	}
+
+	igt_subtest("multigpu-create-massive-size") {
+		int gpu_count = drm_prepare_filtered_multigpu(DRIVER_XE);
+
+		igt_require(xe > 0);
+		igt_require(gpu_count >= 2);
+		igt_multi_fork(child, gpu_count) {
+			int gpu_fd;
+
+			gpu_fd = drm_open_filtered_card(child);
+			igt_assert_f(gpu_fd > 0, "cannot open gpu-%d, errno=%d\n", child, errno);
+			igt_assert(is_xe_device(gpu_fd));
+
+			create_massive_size(gpu_fd);
+			drm_close_driver(gpu_fd);
+		}
+		igt_waitchildren();
+	}
+
 
 	igt_fixture
 		drm_close_driver(xe);
