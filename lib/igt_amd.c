@@ -45,6 +45,8 @@
 #define Y6 64
 #define Y7 128
 
+#define mall_supported "mall supported: yes"
+#define mall_enabled "mall supported: yes, enabled: yes"
 
 uint32_t igt_amd_create_bo(int fd, uint64_t size)
 {
@@ -1192,11 +1194,11 @@ void igt_amd_get_mall_status(int drm_fd, bool *supported, bool *enabled)
 	if (!get_dm_capabilities(drm_fd, buf, 1024))
 		return;
 
-	mall_loc = strstr(buf, "mall supported: yes");
+	mall_loc = strstr(buf, mall_supported);
 	if (mall_loc)
 		*supported = true;
 
-	mall_loc = strstr(buf, "enabled: yes");
+	mall_loc = strstr(buf, mall_enabled);
 	if (mall_loc && *supported)
 		*enabled = true;
 }
