@@ -630,6 +630,11 @@ static const char *chipset_to_str(int chipset)
 	}
 }
 
+static const char *chipset_to_vendor_str(int chipset)
+{
+	return chipset == DRIVER_XE ? chipset_to_str(DRIVER_INTEL) : chipset_to_str(chipset);
+}
+
 /**
  * drm_open_driver:
  * @chipset: OR'd flags for each chipset to search, eg. #DRIVER_INTEL
@@ -776,6 +781,50 @@ int drm_reopen_driver(int fd)
 
 	if (is_xe_device(fd))
 		xe_device_get(fd);
+
+	return fd;
+}
+
+int drm_prepare_filtered_multigpu(int chipset)
+{
+	const char *vendor = chipset_to_vendor_str(chipset);
+
+	return igt_device_prepare_filtered_view(vendor);
+}
+
+/**
+ * drm_open_filtered_card:
+ * @idx: index for GPU to open
+ *
+ * Open N-th GPU from filtered list
+ *
+ * Returns:
+ * Opened device or -1 if error.
+ */
+int drm_open_filtered_card(int idx)
+{
+	struct igt_device_card card;
+	const char *filter;
+	int fd = -1;
+
+	if (idx < 0 || idx >= igt_device_filter_count()) {
+		igt_debug("Invalid filter index %d\n", idx);
+		return -1;
+	}
+
+	filter = igt_device_filter_get(idx);
+	if (igt_device_card_match(filter, &card))
+		fd = igt_open_card(&card);
+
+	if (fd >= 0) {
+		igt_debug("Opened GPU%d card: %s\n", idx, card.card);
+		log_opened_device_path(card.card);
+		/* Cache xe_device struct. */
+		if (is_xe_device(fd))
+			xe_device_get(fd);
+	} else {
+		igt_debug("Opening GPU%d failed, card: %s\n", idx, card.card);
+	}
 
 	return fd;
 }

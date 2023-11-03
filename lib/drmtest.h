@@ -109,6 +109,9 @@ int drm_close_driver(int fd);
 
 int drm_reopen_driver(int fd);
 
+int drm_prepare_filtered_multigpu(int chipset);
+int drm_open_filtered_card(int idx);
+
 void igt_require_amdgpu(int fd);
 void igt_require_intel(int fd);
 void igt_require_i915(int fd);
