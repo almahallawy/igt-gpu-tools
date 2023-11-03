@@ -1178,8 +1178,8 @@ static bool get_dm_capabilities(int drm_fd, char *buf, size_t size)
  * @brief check if AMDGPU mall_capable interface entry exist and defined
  *
  * @param drm_fd DRM file descriptor
- * @return true if dm capabilities interface exists and MALL is supported
- * @return false if capabilities could not be read.
+ * @param supported will be set to true if hardware supports MALL
+ * @param enabled will be set to true if MALL is currently in use
  */
 void igt_amd_get_mall_status(int drm_fd, bool *supported, bool *enabled)
 {
