@@ -93,4 +93,7 @@ char *igt_device_get_pretty_name(struct igt_device_card *card, bool numeric);
 int igt_open_card(struct igt_device_card *card);
 int igt_open_render(struct igt_device_card *card);
 
+/* Add or use filters to match multiGPU devices */
+int igt_device_prepare_filtered_view(const char *vendor);
+
 #endif /* __IGT_DEVICE_SCAN_H__ */

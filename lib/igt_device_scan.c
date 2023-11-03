@@ -2065,3 +2065,65 @@ int igt_open_render(struct igt_device_card *card)
 
 	return open(card->render, O_RDWR);
 }
+
+/**
+ * igt_device_prepare_filtered_view:
+ * @vendor: name for GPUs vendor to search, eg. "intel"
+ *
+ * Filter GPU devices for given vendor or with supplied --device
+ * option or IGT_DEVICE environment variable.
+ *
+ * Returns:
+ * Number of filtered GPUs for a vendor or number of filters.
+ */
+int igt_device_prepare_filtered_view(const char *vendor)
+{
+	int gpu_count;
+
+	gpu_count = igt_device_filter_count();
+	if (!gpu_count) {
+		char gpu_filter[256];
+
+		igt_assert(vendor);
+		if (!strcmp(vendor, "vgem") || !strcmp(vendor, "other")) {
+			igt_debug("Unsupported vendor: %s\n", vendor);
+			return 0;
+		}
+
+		if (!strcmp(vendor, "any")) {
+			igt_debug("Chipset DRIVER_ANY unsupported without --device filters\n");
+			return 0;
+		}
+
+		igt_assert(snprintf(gpu_filter, sizeof(gpu_filter), "pci:vendor=%s,card=all",
+				    vendor) < sizeof(gpu_filter));
+
+		igt_device_filter_add(gpu_filter); // fill-in filters for all GPUs
+		gpu_count = igt_device_filter_count();
+		igt_debug("Found %d GPUs for vendor: %s\n", gpu_count, vendor);
+	} else {
+		struct igt_device_card card;
+		bool found;
+		int count = 0;
+
+		for (int i = 0; i < gpu_count; i++) {
+			const char *filter;
+
+			filter = igt_device_filter_get(i);
+			found = igt_device_card_match(filter, &card);
+			if (found && strlen(card.card)) {
+				igt_debug("Found GPU%d card %s\n", i, card.card);
+				++count;
+			}
+		}
+
+		if (count < gpu_count) {
+			igt_debug("Counted GPUs %d lower than number of filters %d\n", count, gpu_count);
+			gpu_count = count;
+		} else {
+			igt_debug("Found %d GPUs\n", gpu_count);
+		}
+	}
+
+	return gpu_count;
+}
