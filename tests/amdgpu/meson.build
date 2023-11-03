@@ -36,6 +36,7 @@ if libdrm_amdgpu.found()
 			  'amd_vrr_range',
 			  'amd_mall',
 			  'amd_odm',
+			  'amd_subvp',
 			]
 	if libdrm_amdgpu.version().version_compare('> 2.4.97')
 		amdgpu_progs +=[ 'amd_syncobj', ]
