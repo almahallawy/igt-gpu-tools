@@ -45,11 +45,6 @@
 #define Y6 64
 #define Y7 128
 
-struct dim2d
-{
-    int w;
-    int h;
-};
 
 uint32_t igt_amd_create_bo(int fd, uint64_t size)
 {
