@@ -75,4 +75,10 @@ xehpc_gpgpu_fillfunc(int i915,
 		     unsigned int width, unsigned int height,
 		     uint8_t color);
 
+void xe2lpg_gpgpu_fillfunc(int i915,
+			   struct intel_buf *buf,
+			   unsigned int x, unsigned int y,
+			   unsigned int width, unsigned int height,
+			   uint8_t color);
+
 #endif /* GPGPU_FILL_H */

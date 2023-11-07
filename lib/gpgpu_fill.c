@@ -124,6 +124,18 @@ static const uint32_t xehpc_gpgpu_kernel[][4] = {
 	{ 0x000c0031, 0x00000004, 0x3000500c, 0x00000000 },
 };
 
+static const uint32_t xe2lpg_gpgpu_kernel[][4] = {
+	{ 0x00080061, 0x01050000, 0x00000104, 0x00000000 },
+	{ 0x00000069, 0x02058220, 0x02000014, 0x00000004 },
+	{ 0x00000061, 0x02150220, 0x00000064, 0x00000000 },
+	{ 0x00100061, 0x04054220, 0x00000000, 0x00000000 },
+	{ 0x00041a61, 0x04550220, 0x00220205, 0x00000000 },
+	{ 0x00000061, 0x04754550, 0x00000000, 0x000f000f },
+	{ 0x00101e61, 0x05050220, 0x00000104, 0x00000000 },
+	{ 0x00132031, 0x00000000, 0xd00e0494, 0x04000000 },
+	{ 0x000c0031, 0x00000004, 0x3000500c, 0x00000000 },
+};
+
 /*
  * This sets up the gpgpu pipeline,
  *
@@ -397,4 +409,15 @@ void xehpc_gpgpu_fillfunc(int i915,
 	__xehp_gpgpu_fillfunc(i915, buf, x, y, width, height, color,
 			      xehpc_gpgpu_kernel,
 			      sizeof(xehpc_gpgpu_kernel));
+}
+
+void xe2lpg_gpgpu_fillfunc(int i915,
+			   struct intel_buf *buf,
+			   unsigned int x, unsigned int y,
+			   unsigned int width, unsigned int height,
+			   uint8_t color)
+{
+	__xehp_gpgpu_fillfunc(i915, buf, x, y, width, height, color,
+			      xe2lpg_gpgpu_kernel,
+			      sizeof(xe2lpg_gpgpu_kernel));
 }

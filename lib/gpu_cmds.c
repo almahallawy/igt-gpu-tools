@@ -328,18 +328,41 @@ fill_binding_table(struct intel_bb *ibb, struct intel_buf *buf)
 	binding_table = intel_bb_ptr(ibb);
 	intel_bb_ptr_add(ibb, 64);
 
-	if (intel_graphics_ver(devid) >= IP_VER(12, 50))
+	if (intel_graphics_ver(devid) >= IP_VER(20, 0)) {
+		/*
+		 * Up until now, SURFACEFORMAT_R8_UNROM was used regardless of the 'bpp' value.
+		 * For bpp 32 this results in a surface that is 4x narrower than expected. However
+		 * it worked, because the 'Media Block Read/Write' message assumes the surface width
+		 * is always in units of dwords.
+		 *
+		 * Since Xe2 the Media Block Write message got replaced with 'Typed 2D Block
+		 * Load/Store Message' which correctly interprets the surface format.
+		 */
+		if (buf->bpp == 32)
+			binding_table[0] = xehp_fill_surface_state(ibb, buf,
+								      SURFACEFORMAT_R8G8B8A8_UNORM,
+								      1);
+		else if (buf->bpp == 8)
+			binding_table[0] = xehp_fill_surface_state(ibb, buf,
+								      SURFACEFORMAT_R8_UNORM,
+								      1);
+		else
+			igt_assert_f(false,
+				     "Surface state for bpp = %u not implemented",
+				     buf->bpp);
+	} else if (intel_graphics_ver(devid) >= IP_VER(12, 50)) {
 		binding_table[0] = xehp_fill_surface_state(ibb, buf,
 							   SURFACEFORMAT_R8_UNORM, 1);
-	else if (intel_graphics_ver(devid) >= IP_VER(9, 0))
+	} else if (intel_graphics_ver(devid) >= IP_VER(9, 0)) {
 		binding_table[0] = gen9_fill_surface_state(ibb, buf,
 							   SURFACEFORMAT_R8_UNORM, 1);
-	else if (intel_graphics_ver(devid) >= IP_VER(8, 0))
+	} else if (intel_graphics_ver(devid) >= IP_VER(8, 0)) {
 		binding_table[0] = gen8_fill_surface_state(ibb, buf,
 							   SURFACEFORMAT_R8_UNORM, 1);
-	else
+	} else {
 		binding_table[0] = gen7_fill_surface_state(ibb, buf,
 							   SURFACEFORMAT_R8_UNORM, 1);
+	}
 
 	return binding_table_offset;
 }
@@ -959,8 +982,14 @@ xehp_emit_cfe_state(struct intel_bb *ibb, uint32_t threads)
 void
 xehp_emit_state_compute_mode(struct intel_bb *ibb)
 {
-	intel_bb_out(ibb, XEHP_STATE_COMPUTE_MODE);
+
+	uint32_t dword_length = intel_graphics_ver(ibb->devid) >= IP_VER(20, 0);
+
+	intel_bb_out(ibb, XEHP_STATE_COMPUTE_MODE | dword_length);
 	intel_bb_out(ibb, 0);
+
+	if (dword_length)
+		intel_bb_out(ibb, 0);
 }
 
 void
@@ -976,6 +1005,8 @@ xehp_emit_state_binding_table_pool_alloc(struct intel_bb *ibb)
 void
 xehp_emit_state_base_address(struct intel_bb *ibb)
 {
+	uint32_t tmp;
+
 	intel_bb_out(ibb, GEN8_STATE_BASE_ADDRESS | 0x14);            //dw0
 
 	/* general */
@@ -983,7 +1014,8 @@ xehp_emit_state_base_address(struct intel_bb *ibb)
 	intel_bb_out(ibb, 0);
 
 	/* stateless data port */
-	intel_bb_out(ibb, 0 | BASE_ADDRESS_MODIFY);                   //dw3
+	tmp = intel_graphics_ver(ibb->devid) == IP_VER(20, 0) ? 0 : BASE_ADDRESS_MODIFY;
+	intel_bb_out(ibb, 0 | tmp);                  //dw3
 
 	/* surface */
 	intel_bb_emit_reloc(ibb, ibb->handle, I915_GEM_DOMAIN_SAMPLER, //dw4-dw5
@@ -1008,7 +1040,10 @@ xehp_emit_state_base_address(struct intel_bb *ibb)
 	/* dynamic state buffer size */
 	intel_bb_out(ibb, 1 << 12 | 1);                             //dw13
 	/* indirect object buffer size */
-	intel_bb_out(ibb, 0xfffff000 | 1);                          //dw14
+	if (intel_graphics_ver(ibb->devid) == IP_VER(20, 0))	    //dw14
+		intel_bb_out(ibb, 0);
+	else
+		intel_bb_out(ibb, 0xfffff000 | 1);
 	/* intruction buffer size */
 	intel_bb_out(ibb, 1 << 12 | 1);                             //dw15
 
@@ -1030,7 +1065,7 @@ xehp_emit_compute_walk(struct intel_bb *ibb,
 		       struct xehp_interface_descriptor_data *pidd,
 		       uint8_t color)
 {
-	uint32_t x_dim, y_dim, mask;
+	uint32_t x_dim, y_dim, mask, dword_length;
 
 	/*
 	 * Simply do SIMD16 based dispatch, so every thread uses
@@ -1052,7 +1087,8 @@ xehp_emit_compute_walk(struct intel_bb *ibb,
 	else
 		mask = (1 << mask) - 1;
 
-	intel_bb_out(ibb, XEHP_COMPUTE_WALKER | 0x25);
+	dword_length = intel_graphics_ver(ibb->devid) >= IP_VER(20, 0) ? 0x26 : 0x25;
+	intel_bb_out(ibb, XEHP_COMPUTE_WALKER | dword_length);
 
 	intel_bb_out(ibb, 0); /* debug object */		//dw1
 	intel_bb_out(ibb, 0); /* indirect data length */	//dw2
@@ -1091,8 +1127,10 @@ xehp_emit_compute_walk(struct intel_bb *ibb,
 	intel_bb_out(ibb, 0);					//dw16
 	intel_bb_out(ibb, 0);					//dw17
 
+	if (intel_graphics_ver(ibb->devid) >= IP_VER(20, 0))	//Xe2:dw18
+		intel_bb_out(ibb, 0);
 	/* Interface descriptor data */
-	for (int i = 0; i < 8; i++) {			       //dw18-25
+	for (int i = 0; i < 8; i++) {			       //dw18-25 (Xe2:dw19-26)
 		intel_bb_out(ibb, ((uint32_t *) pidd)[i]);
 	}
 
