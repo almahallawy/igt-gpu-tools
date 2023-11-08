@@ -54,6 +54,11 @@ struct mmd_context {
 	bool enc_ring;
 	/* jpeg */
 	bool jpeg_direct_reg;
+
+	/*vpe*/
+	uint32_t vpe_ip_version_major;
+	uint32_t vpe_ip_version_minor;
+	bool vpe_ring;
 };
 
 struct amdgpu_mmd_bo {
