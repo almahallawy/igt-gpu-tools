@@ -98,6 +98,43 @@ waitfence(int fd, enum waittype wt)
 	}
 }
 
+/**
+ * TEST: Negative test for wait ufence ioctl
+ * Category: Software building block
+ * Sub-category: waitfence
+ * Functionality: waitfence
+ * Run type: FULL
+ * Test category: negative test
+ *
+ * SUBTEST: invalid-flag
+ * Description: Check query with invalid flag returns expected error code
+ */
+
+static void
+invalid_flag(int fd)
+{
+	uint32_t bo;
+
+	struct drm_xe_wait_user_fence wait = {
+		.addr = to_user_pointer(&wait_fence),
+		.op = DRM_XE_UFENCE_WAIT_EQ,
+		.flags = -1,
+		.value = 1,
+		.mask = DRM_XE_UFENCE_WAIT_U64,
+		.timeout = -1,
+		.num_engines = 0,
+		.instances = 0,
+	};
+
+	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+
+	bo = xe_bo_create_flags(fd, vm, 0x40000, MY_FLAG);
+
+	do_bind(fd, vm, bo, 0, 0x200000, 0x40000, 1);
+
+	do_ioctl_err(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait, EINVAL);
+}
+
 igt_main
 {
 	int fd;
@@ -110,6 +147,9 @@ igt_main
 
 	igt_subtest("abstime")
 		waitfence(fd, ABSTIME);
+
+	igt_subtest("invalid-flag")
+		invalid_flag(fd);
 
 	igt_fixture
 		drm_close_driver(fd);
