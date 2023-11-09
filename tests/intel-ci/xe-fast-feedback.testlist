@@ -26,8 +26,8 @@ igt@xe_evict@evict-small-external-cm
 igt@xe_evict@evict-small-multi-vm
 igt@xe_evict@evict-small-multi-vm-cm
 igt@xe_evict@evict-threads-small
-igt@xe_evict_ccs@evict-ccs-overcommit-simple
-igt@xe_evict_ccs@evict-ccs-overcommit-parallel-nofree-samefd
+igt@xe_evict_ccs@evict-overcommit-simple
+igt@xe_evict_ccs@evict-overcommit-parallel-nofree-samefd
 igt@xe_exec_balancer@twice-virtual-basic
 igt@xe_exec_balancer@no-exec-virtual-basic
 igt@xe_exec_balancer@twice-cm-virtual-basic

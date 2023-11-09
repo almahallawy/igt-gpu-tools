@@ -380,15 +380,15 @@ static void evict_ccs(int fd, uint32_t flags, const struct param *param)
 
 /**
  *
- * SUBTEST: evict-ccs-overcommit-simple
- * Description: FlatCCS eviction test.
+ * SUBTEST: evict-overcommit-simple
+ * Description: Eviction test - exercises FlatCCS if possible.
  * Feature: flatccs
  * Test category: stress test
  */
 /**
  *
- * SUBTEST: evict-ccs-overcommit-%s-%s-%s
- * Description: FlatCCS eviction test.
+ * SUBTEST: evict-overcommit-%s-%s-%s
+ * Description: Eviction test - exercises FlatCCS if possible.
  * Feature: flatccs
  * Test category: stress test
  *
@@ -490,6 +490,7 @@ igt_main_args("bdDn:p:s:S:V", NULL, help_str, opt_handler, NULL)
 		{ },
 	};
 	uint64_t vram_size;
+	bool has_flatccs;
 	int fd;
 
 	igt_fixture {
@@ -497,14 +498,20 @@ igt_main_args("bdDn:p:s:S:V", NULL, help_str, opt_handler, NULL)
 		igt_require(xe_has_vram(fd));
 		vram_size = xe_visible_vram_size(fd, 0);
 		igt_assert(vram_size);
+		has_flatccs = HAS_FLATCCS(intel_get_drm_devid(fd));
 	}
 
 	igt_fixture
 		intel_allocator_multiprocess_start();
 
 	for (const struct ccs *s = ccs; s->name; s++) {
-		igt_subtest_f("evict-ccs-overcommit-%s", s->name)
+		igt_subtest_f("evict-overcommit-%s", s->name) {
+			if (!params.disable_compression && !has_flatccs) {
+				igt_info("Device has no flatccs, disabling compression\n");
+				params.disable_compression = true;
+			}
 			evict_ccs(fd, s->flags, &params);
+		}
 	}
 
 	igt_fixture {
