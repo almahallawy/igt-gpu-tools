@@ -417,6 +417,9 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
 
+	if (addr_stride <= bo_size)
+		addr_stride = addr_stride + bo_size;
+
 	for (i = 0; i < n_bo; ++i) {
 		bo[i] = xe_bo_create_flags(fd, vm, bo_size,
 					   visible_vram_if_possible(fd, eci->gt_id));
