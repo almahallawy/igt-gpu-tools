@@ -23,15 +23,15 @@
 #include <string.h>
 
 #define MAX_N_EXEC_QUEUES	16
-#define USERPTR				(0x1 << 0)
-#define REBIND				(0x1 << 1)
-#define INVALIDATE			(0x1 << 2)
-#define RACE				(0x1 << 3)
-#define BIND_EXEC_QUEUE		(0x1 << 4)
-#define WAIT_ATOMIC			(0x1 << 5)
-#define IMMEDIATE			(0x1 << 6)
-#define PREFETCH			(0x1 << 7)
-#define INVALID_FAULT		(0x1 << 8)
+
+#define USERPTR		(0x1 << 0)
+#define REBIND		(0x1 << 1)
+#define INVALIDATE	(0x1 << 2)
+#define RACE		(0x1 << 3)
+#define BIND_EXEC_QUEUE	(0x1 << 4)
+#define IMMEDIATE	(0x1 << 5)
+#define PREFETCH	(0x1 << 6)
+#define INVALID_FAULT	(0x1 << 7)
 
 /**
  * SUBTEST: once-%s
@@ -317,146 +317,6 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		close(map_fd);
 }
 
-#define   MI_ATOMIC_INLINE_DATA         (1 << 18)
-#define   MI_ATOMIC_ADD                 (0x7 << 8)
-
-/**
- * SUBTEST: atomic-once
- * Description: Run atomic fault mode test only once
- * Test category: functionality test
- *
- * SUBTEST: atomic-once-wait
- * Description: Run atomic wait fault mode test once
- * Test category: functionality test
- *
- * SUBTEST: atomic-many
- * Description: Run atomic fault mode test many times
- * Description: atomic many
- * Test category: functionality test
- *
- * SUBTEST: atomic-many-wait
- * Description: Run atomic wait fault mode test many times
- * Test category: functionality test
- *
- */
-static void
-test_atomic(int fd, struct drm_xe_engine_class_instance *eci,
-	    int n_atomic, unsigned int flags)
-{
-	uint32_t vm;
-	uint64_t addr = 0x1a0000, addr_wait;
-#define USER_FENCE_VALUE	0xdeadbeefdeadbeefull
-	struct drm_xe_sync sync[1] = {
-		{ .flags = DRM_XE_SYNC_USER_FENCE | DRM_XE_SYNC_SIGNAL,
-	          .timeline_value = USER_FENCE_VALUE },
-	};
-	struct drm_xe_exec exec = {
-		.num_batch_buffer = 1,
-		.num_syncs = 1,
-		.syncs = to_user_pointer(sync),
-	};
-	uint32_t exec_queue;
-	size_t bo_size;
-	uint32_t bo, bo_wait;
-	struct {
-		uint32_t batch[16];
-		uint64_t pad;
-		uint64_t vm_sync;
-		uint64_t exec_sync;
-		uint32_t data;
-	} *data;
-	struct {
-		uint32_t batch[16];
-		uint64_t pad;
-		uint64_t vm_sync;
-		uint64_t exec_sync;
-		uint32_t data;
-	} *wait;
-	uint32_t *ptr;
-	int i, b, wait_idx = 0;
-
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT |
-			  DRM_XE_VM_CREATE_FAULT_MODE, 0);
-	bo_size = sizeof(*data) * n_atomic;
-	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
-			xe_get_default_alignment(fd));
-	addr_wait = addr + bo_size;
-
-	bo = xe_bo_create_flags(fd, vm, bo_size,
-				all_memory_regions(fd) |
-				visible_vram_if_possible(fd, 0));
-	bo_wait = xe_bo_create_flags(fd, vm, bo_size,
-				     visible_vram_if_possible(fd, eci->gt_id));
-	data = xe_bo_map(fd, bo, bo_size);
-	wait = xe_bo_map(fd, bo_wait, bo_size);
-	ptr = &data[0].data;
-	memset(data, 0, bo_size);
-	memset(wait, 0, bo_size);
-
-	exec_queue = xe_exec_queue_create(fd, vm, eci, 0);
-
-	sync[0].addr = to_user_pointer(&wait[wait_idx].vm_sync);
-	xe_vm_bind_async(fd, vm, 0, bo, 0, addr, bo_size, sync, 1);
-	xe_wait_ufence(fd, &wait[wait_idx++].vm_sync, USER_FENCE_VALUE, NULL,
-		       ONE_SEC);
-
-	sync[0].addr = to_user_pointer(&wait[wait_idx].vm_sync);
-	xe_vm_bind_async(fd, vm, 0, bo_wait, 0, addr_wait, bo_size, sync, 1);
-	xe_wait_ufence(fd, &wait[wait_idx++].vm_sync, USER_FENCE_VALUE, NULL,
-		       ONE_SEC);
-
-	xe_vm_madvise(fd, vm, addr, bo_size, DRM_XE_VM_MADVISE_CPU_ATOMIC, 1);
-	xe_vm_madvise(fd, vm, addr, bo_size, DRM_XE_VM_MADVISE_DEVICE_ATOMIC, 1);
-
-	for (i = 0; i < n_atomic; i++) {
-		uint64_t batch_offset = (char *)&data[i].batch - (char *)data;
-		uint64_t batch_addr = addr + batch_offset;
-		uint64_t sdi_offset = (char *)&data[0].data - (char *)data;
-		uint64_t sdi_addr = addr + sdi_offset;
-
-		b = 0;
-		data[i].batch[b++] = MI_ATOMIC | MI_ATOMIC_INLINE_DATA |
-			MI_ATOMIC_ADD;
-		data[i].batch[b++] = sdi_addr;
-		data[i].batch[b++] = sdi_addr >> 32;
-		data[i].batch[b++] = 1;
-		data[i].batch[b++] = MI_BATCH_BUFFER_END;
-
-		sync[0].addr = addr_wait +
-			(char *)&wait[i].exec_sync - (char *)wait;
-
-		exec.exec_queue_id = exec_queue;
-		exec.address = batch_addr;
-		xe_exec(fd, &exec);
-
-		if (flags & WAIT_ATOMIC)
-			xe_wait_ufence(fd, &wait[i].exec_sync, USER_FENCE_VALUE,
-				       NULL, ONE_SEC);
-		__atomic_add_fetch(ptr, 1, __ATOMIC_SEQ_CST);
-	}
-
-	xe_wait_ufence(fd, &wait[n_atomic - 1].exec_sync, USER_FENCE_VALUE,
-		       NULL, ONE_SEC);
-	igt_assert(*ptr == n_atomic * 2);
-
-	sync[0].addr = to_user_pointer(&wait[wait_idx].vm_sync);
-	xe_vm_unbind_async(fd, vm, 0, 0, addr, bo_size, sync, 1);
-	xe_wait_ufence(fd, &wait[wait_idx++].vm_sync, USER_FENCE_VALUE, NULL,
-		       ONE_SEC);
-
-	sync[0].addr = to_user_pointer(&wait[wait_idx].vm_sync);
-	xe_vm_unbind_async(fd, vm, 0, 0, addr_wait, bo_size, sync, 1);
-	xe_wait_ufence(fd, &wait[wait_idx++].vm_sync, USER_FENCE_VALUE, NULL,
-		       ONE_SEC);
-
-	xe_exec_queue_destroy(fd, exec_queue);
-	munmap(data, bo_size);
-	munmap(wait, bo_size);
-	gem_close(fd, bo);
-	gem_close(fd, bo_wait);
-	xe_vm_destroy(fd, vm);
-}
-
 igt_main
 {
 	struct drm_xe_engine_class_instance *hwe;
@@ -545,22 +405,6 @@ igt_main
 					  64 : 128,
 					  s->flags);
 	}
-
-	igt_subtest("atomic-once")
-		xe_for_each_hw_engine(fd, hwe)
-			test_atomic(fd, hwe, 1, 0);
-
-	igt_subtest("atomic-once-wait")
-		xe_for_each_hw_engine(fd, hwe)
-			test_atomic(fd, hwe, 1, WAIT_ATOMIC);
-
-	igt_subtest("atomic-many")
-		xe_for_each_hw_engine(fd, hwe)
-			test_atomic(fd, hwe, 8, 0);
-
-	igt_subtest("atomic-many-wait")
-		xe_for_each_hw_engine(fd, hwe)
-			test_atomic(fd, hwe, 8, WAIT_ATOMIC);
 
 	igt_fixture
 		drm_close_driver(fd);

@@ -90,7 +90,5 @@ int64_t xe_wait_ufence_abstime(int fd, uint64_t *addr, uint64_t value,
 			       struct drm_xe_engine_class_instance *eci,
 			       int64_t timeout);
 void xe_force_gt_reset(int fd, int gt);
-void xe_vm_madvise(int fd, uint32_t vm, uint64_t addr, uint64_t size,
-		   uint32_t property, uint32_t value);
 
 #endif /* XE_IOCTL_H */

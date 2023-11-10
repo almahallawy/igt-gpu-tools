@@ -475,17 +475,3 @@ void xe_force_gt_reset(int fd, int gt)
 		 minor(st.st_rdev), gt);
 	system(reset_string);
 }
-
-void xe_vm_madvise(int fd, uint32_t vm, uint64_t addr, uint64_t size,
-		   uint32_t property, uint32_t value)
-{
-	struct drm_xe_vm_madvise madvise = {
-		.vm_id = vm,
-		.range = size,
-		.addr = addr,
-		.property = property,
-		.value = value,
-	};
-
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_VM_MADVISE, &madvise), 0);
-}
