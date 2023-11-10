@@ -285,8 +285,6 @@ test_query_gt_list(int fd)
 		       gt_list->gt_list[i].native_mem_regions);
 		igt_info("slow_mem_regions: 0x%016llx\n",
 		       gt_list->gt_list[i].slow_mem_regions);
-		igt_info("inaccessible_mem_regions: 0x%016llx\n",
-		       gt_list->gt_list[i].inaccessible_mem_regions);
 	}
 }
 
