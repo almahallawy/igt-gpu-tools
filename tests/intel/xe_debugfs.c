@@ -121,8 +121,6 @@ test_base(int fd, struct drm_xe_query_config *config)
 	igt_assert(igt_debugfs_search(fd, "info", reference));
 
 	igt_assert(igt_debugfs_exists(fd, "gt0", O_RDONLY));
-	if (config->info[XE_QUERY_CONFIG_GT_COUNT] > 1)
-		igt_assert(igt_debugfs_exists(fd, "gt1", O_RDONLY));
 
 	igt_assert(igt_debugfs_exists(fd, "gtt_mm", O_RDONLY));
 	igt_debugfs_dump(fd, "gtt_mm");

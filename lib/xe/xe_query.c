@@ -249,16 +249,15 @@ struct xe_device *xe_device_get(int fd)
 
 	xe_dev->fd = fd;
 	xe_dev->config = xe_query_config_new(fd);
-	xe_dev->number_gt = xe_dev->config->info[XE_QUERY_CONFIG_GT_COUNT];
 	xe_dev->va_bits = xe_dev->config->info[XE_QUERY_CONFIG_VA_BITS];
 	xe_dev->dev_id = xe_dev->config->info[XE_QUERY_CONFIG_REV_AND_DEVICE_ID] & 0xffff;
 	xe_dev->gt_list = xe_query_gt_list_new(fd);
 	xe_dev->memory_regions = __memory_regions(xe_dev->gt_list);
 	xe_dev->hw_engines = xe_query_engines_new(fd, &xe_dev->number_hw_engines);
 	xe_dev->mem_usage = xe_query_mem_usage_new(fd);
-	xe_dev->vram_size = calloc(xe_dev->number_gt, sizeof(*xe_dev->vram_size));
-	xe_dev->visible_vram_size = calloc(xe_dev->number_gt, sizeof(*xe_dev->visible_vram_size));
-	for (int gt = 0; gt < xe_dev->number_gt; gt++) {
+	xe_dev->vram_size = calloc(xe_dev->gt_list->num_gt, sizeof(*xe_dev->vram_size));
+	xe_dev->visible_vram_size = calloc(xe_dev->gt_list->num_gt, sizeof(*xe_dev->visible_vram_size));
+	for (int gt = 0; gt < xe_dev->gt_list->num_gt; gt++) {
 		xe_dev->vram_size[gt] = gt_vram_size(xe_dev->mem_usage,
 						     xe_dev->gt_list, gt);
 		xe_dev->visible_vram_size[gt] =
@@ -358,7 +357,7 @@ _TYPE _NAME(int fd)			\
  *
  * Return number of gt_list for xe device fd.
  */
-xe_dev_FN(xe_number_gt, number_gt, unsigned int);
+xe_dev_FN(xe_number_gt, gt_list->num_gt, unsigned int);
 
 /**
  * all_memory_regions:
@@ -394,7 +393,7 @@ uint64_t vram_memory(int fd, int gt)
 
 	xe_dev = find_in_cache(fd);
 	igt_assert(xe_dev);
-	igt_assert(gt >= 0 && gt < xe_dev->number_gt);
+	igt_assert(gt >= 0 && gt < xe_dev->gt_list->num_gt);
 
 	return xe_has_vram(fd) ? native_region_for_gt(xe_dev->gt_list, gt) : 0;
 }

@@ -27,9 +27,6 @@ struct xe_device {
 	/** @gt_list: gt info */
 	struct drm_xe_query_gt_list *gt_list;
 
-	/** @number_gt: number of gt */
-	unsigned int number_gt;
-
 	/** @gt_list: bitmask of all memory regions */
 	uint64_t memory_regions;
 
