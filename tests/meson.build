@@ -287,6 +287,7 @@ intel_xe_progs = [
 	'xe_exec_basic',
 	'xe_exec_compute_mode',
 	'xe_exec_fault_mode',
+	'xe_exec_queue_property',
 	'xe_exec_reset',
 	'xe_exec_store',
 	'xe_exec_threads',
