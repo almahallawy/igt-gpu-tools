@@ -236,7 +236,7 @@ static void run_extendedmode_test(data_t *data) {
 					igt_output_set_pipe(output1, pipe1);
 					igt_output_set_pipe(output2, pipe2);
 
-					if (!i915_pipe_output_combo_valid(display))
+					if (!intel_pipe_output_combo_valid(display))
 						continue;
 
 					igt_dynamic_f("pipe-%s-%s-pipe-%s-%s",
@@ -299,7 +299,7 @@ static void run_extendedmode_negative(data_t *data, int pipe1, int pipe2)
 	igt_output_override_mode(data->mst_output[0], &data->mode_mst[0]);
 	igt_output_override_mode(data->mst_output[1], &data->mode_mst[1]);
 
-	igt_require(i915_pipe_output_combo_valid(display));
+	igt_require(intel_pipe_output_combo_valid(display));
 	ret = igt_display_try_commit2(display, COMMIT_ATOMIC);
 	igt_assert(ret != 0 && errno == ENOSPC);
 }

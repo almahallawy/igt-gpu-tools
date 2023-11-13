@@ -220,7 +220,7 @@ static void prepare_crtc(data_t *data, igt_output_t *output, enum pipe pipe,
 	cleanup_crtc(data);
 
 	igt_output_set_pipe(output, pipe);
-	igt_require(i915_pipe_output_combo_valid(display));
+	igt_require(intel_pipe_output_combo_valid(display));
 
 	igt_plane_set_rotation(plane, IGT_ROTATION_0);
 
@@ -594,7 +594,7 @@ static void test_plane_rotation(data_t *data, int plane_type, bool test_bad_form
 		igt_display_reset(display);
 
 		igt_output_set_pipe(output, pipe);
-		if (!i915_pipe_output_combo_valid(display))
+		if (!intel_pipe_output_combo_valid(display))
 			continue;
 
 		found = true;
@@ -952,7 +952,7 @@ static void test_multi_plane_rotation(data_t *data, enum pipe pipe)
 		igt_display_reset(display);
 
 		igt_output_set_pipe(output, pipe);
-		if (!i915_pipe_output_combo_valid(display))
+		if (!intel_pipe_output_combo_valid(display))
 			continue;
 
 		found = true;

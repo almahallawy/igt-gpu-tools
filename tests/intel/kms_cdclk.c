@@ -297,7 +297,7 @@ static void test_mode_transition_on_all_outputs(data_t *data)
 		igt_output_override_mode(output, mode_hi);
 		i++;
 	}
-	igt_require(i915_pipe_output_combo_valid(display));
+	igt_require(intel_pipe_output_combo_valid(display));
 	igt_display_reset(display);
 
 	igt_create_pattern_fb(data->drm_fd, width, height, DRM_FORMAT_XRGB8888,
@@ -381,7 +381,7 @@ static void run_cdclk_test(data_t *data, uint32_t flags)
 
 	for_each_pipe_with_valid_output(display, pipe, output) {
 		igt_output_set_pipe(output, pipe);
-		if (!i915_pipe_output_combo_valid(display)) {
+		if (!intel_pipe_output_combo_valid(display)) {
 			igt_output_set_pipe(output, PIPE_NONE);
 			continue;
 		}

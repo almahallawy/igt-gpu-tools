@@ -1365,7 +1365,7 @@ igt_main
 					igt_display_reset(display);
 
 					igt_output_set_pipe(output, data.pipe);
-					if (!i915_pipe_output_combo_valid(display))
+					if (!intel_pipe_output_combo_valid(display))
 						continue;
 
 					igt_dynamic_f("pipe-%s-%s", kmstest_pipe_name(data.pipe),

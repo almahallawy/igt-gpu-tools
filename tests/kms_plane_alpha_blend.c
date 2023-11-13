@@ -706,7 +706,7 @@ static void run_subtests(data_t *data)
 				igt_display_reset(&data->display);
 
 				igt_output_set_pipe(output, pipe);
-				if (!i915_pipe_output_combo_valid(&data->display))
+				if (!intel_pipe_output_combo_valid(&data->display))
 					continue;
 
 				prepare_crtc(data, output, pipe);

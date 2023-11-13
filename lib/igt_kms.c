@@ -6204,7 +6204,7 @@ bool igt_parse_mode_string(const char *mode_string, drmModeModeInfo *mode)
 }
 
 /**
- * i915_pipe_output_combo_valid:
+ * intel_pipe_output_combo_valid:
  * @display: a pointer to an #igt_display_t structure
  *
  * Every individual test must use igt_output_set_pipe() before calling this
@@ -6222,7 +6222,7 @@ bool igt_parse_mode_string(const char *mode_string, drmModeModeInfo *mode)
  *
  * Returns: True if a valid pipe/output mode combo found, else false
  */
-bool i915_pipe_output_combo_valid(igt_display_t *display)
+bool intel_pipe_output_combo_valid(igt_display_t *display)
 {
 	int combo = 0;
 	igt_output_t *output;

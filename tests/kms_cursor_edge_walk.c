@@ -401,7 +401,7 @@ igt_main_args("", long_opts, help_str, opt_handler, &data)
 
 					igt_display_reset(&data.display);
 					igt_output_set_pipe(data.output, data.pipe);
-					if (!i915_pipe_output_combo_valid(&data.display))
+					if (!intel_pipe_output_combo_valid(&data.display))
 						continue;
 
 					igt_output_set_pipe(data.output, PIPE_NONE);

@@ -214,7 +214,7 @@ static void run_test(data_t *data)
 		igt_display_reset(display);
 
 		igt_output_set_pipe(output, p);
-		if (!i915_pipe_output_combo_valid(display))
+		if (!intel_pipe_output_combo_valid(display))
 			continue;
 
 		run_single_test(data, p, output);

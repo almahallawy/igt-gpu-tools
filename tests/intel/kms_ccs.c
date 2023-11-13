@@ -738,7 +738,7 @@ static void test_output(data_t *data, const int testnum)
 			igt_display_reset(&data->display);
 
 			igt_output_set_pipe(data->output, data->pipe);
-			if (i915_pipe_output_combo_valid(&data->display)) {
+			if (intel_pipe_output_combo_valid(&data->display)) {
 				found = true;
 				break;
 			}

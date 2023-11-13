@@ -719,7 +719,7 @@ static void test_scanout(data_t *data)
 		igt_display_reset(&data->display);
 
 		igt_output_set_pipe(data->output, data->pipe);
-		if (!i915_pipe_output_combo_valid(&data->display))
+		if (!intel_pipe_output_combo_valid(&data->display))
 			continue;
 
 		if (data->async_flip_test) {

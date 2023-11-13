@@ -849,7 +849,7 @@ static unsigned set_combinations(data_t *data, unsigned mask, struct igt_fb *fb)
 				continue;
 
 			igt_output_set_pipe(output, pipe);
-			if (i915_pipe_output_combo_valid(&data->display)) {
+			if (intel_pipe_output_combo_valid(&data->display)) {
 				mode = igt_output_get_mode(output);
 				break;
 			} else {
@@ -939,7 +939,7 @@ retry:
 				continue;
 
 			igt_output_set_pipe(output, i);
-			if (i915_pipe_output_combo_valid(&data->display)) {
+			if (intel_pipe_output_combo_valid(&data->display)) {
 				mode = igt_output_get_mode(output);
 
 				igt_info("(pipe %s + %s), mode:",
@@ -1110,7 +1110,7 @@ static bool pipe_output_combo_valid(igt_display_t *display,
 	igt_display_reset(display);
 
 	igt_output_set_pipe(output, pipe);
-	if (!i915_pipe_output_combo_valid(display))
+	if (!intel_pipe_output_combo_valid(display))
 		ret = false;
 	igt_output_set_pipe(output, PIPE_NONE);
 

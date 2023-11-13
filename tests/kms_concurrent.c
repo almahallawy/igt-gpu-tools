@@ -342,7 +342,7 @@ run_tests_for_pipe(data_t *data)
 			igt_display_reset(&data->display);
 
 			igt_output_set_pipe(output, pipe);
-			if (!i915_pipe_output_combo_valid(&data->display))
+			if (!intel_pipe_output_combo_valid(&data->display))
 				continue;
 
 			igt_require(data->display.pipes[pipe].n_planes > 0);

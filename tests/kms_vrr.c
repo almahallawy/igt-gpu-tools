@@ -520,7 +520,7 @@ run_vrr_test(data_t *data, test_t test, uint32_t flags)
 				igt_display_reset(&data->display);
 
 				igt_output_set_pipe(output, pipe);
-				if (!i915_pipe_output_combo_valid(&data->display))
+				if (!intel_pipe_output_combo_valid(&data->display))
 					continue;
 
 				igt_dynamic_f("pipe-%s-%s",

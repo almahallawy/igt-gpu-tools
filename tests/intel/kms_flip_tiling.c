@@ -211,7 +211,7 @@ igt_main
 			pipe_crc_free(&data);
 
 			igt_output_set_pipe(output, pipe);
-			if (!i915_pipe_output_combo_valid(&data.display))
+			if (!intel_pipe_output_combo_valid(&data.display))
 				continue;
 
 			plane = igt_output_get_plane_type(output, DRM_PLANE_TYPE_PRIMARY);

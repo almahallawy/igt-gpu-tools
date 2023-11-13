@@ -773,7 +773,7 @@ static bool valid_pipe_output_combo(data_t *data)
 	igt_display_reset(display);
 	igt_output_set_pipe(data->output, data->pipe);
 
-	if (i915_pipe_output_combo_valid(display))
+	if (intel_pipe_output_combo_valid(display))
 		ret = true;
 
 	igt_output_set_pipe(data->output, PIPE_NONE);

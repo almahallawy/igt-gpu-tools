@@ -375,7 +375,7 @@ pipe_output_combo_valid(igt_display_t *dpy,
 	igt_display_reset(dpy);
 
 	igt_output_set_pipe(output, pipe);
-	if (!i915_pipe_output_combo_valid(dpy))
+	if (!intel_pipe_output_combo_valid(dpy))
 		ret = false;
 	igt_output_set_pipe(output, PIPE_NONE);
 

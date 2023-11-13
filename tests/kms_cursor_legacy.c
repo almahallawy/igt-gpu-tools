@@ -280,7 +280,7 @@ find_connected_pipe(igt_display_t *display, bool second, igt_output_t **output)
 				continue;
 
 			igt_output_set_pipe(*output, pipe);
-			if (i915_pipe_output_combo_valid(display)) {
+			if (intel_pipe_output_combo_valid(display)) {
 				found = true;
 
 				if (second) {

@@ -336,7 +336,7 @@ igt_main
 				igt_display_reset(display);
 
 				igt_output_set_pipe(output, pipe);
-				if (!i915_pipe_output_combo_valid(display))
+				if (!intel_pipe_output_combo_valid(display))
 					continue;
 
 				test_init(&data, pipe, output);

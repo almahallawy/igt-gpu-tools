@@ -432,7 +432,7 @@ static bool find_connector(bool edp_only, bool pipe_a,
 
 		igt_output_set_pipe(output, pipe);
 		igt_output_override_mode(output, connector_get_mode(output));
-		if (i915_pipe_output_combo_valid(&drm.display)) {
+		if (intel_pipe_output_combo_valid(&drm.display)) {
 			*ret_output = output;
 			*ret_pipe = pipe;
 			return true;
