@@ -44,11 +44,11 @@ igt@syncobj_.*
 igt@template
 igt@tools_test
 ##################################################################
-# KMS: Pipe E, F, G and H are not available on Intel hardware,
+# KMS: Pipe E to Pipe P are not available on Intel hardware,
 # hence can't use more than 4 displays.
 ##################################################################
-igt@.*@.*pipe-(e|f|g|h).*
-igt@kms_bw@.*-(5|6|7|8)-displays-.*
+igt@.*@.*pipe-[e-pE-P].*
+igt@kms_bw@.*-([5-9]|1[0-6])-displays-.*
 ##################################################################
 # KMS: Tests specific to i915 driver
 ##################################################################

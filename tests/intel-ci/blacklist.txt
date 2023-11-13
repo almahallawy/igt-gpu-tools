@@ -117,12 +117,9 @@ igt@gem_ctx_isolation@.*-s4
 ###############################################
 igt@i915_suspend@shrink
 ###############################################
-# pipe-e, pipe-f, pipe-g, pipe-h no current HW support
+# pipe-e to pipe-p no current HW support
 ###############################################
-igt@.*@.*pipe-e($|-.*)
-igt@.*@.*pipe-f($|-.*)
-igt@.*@.*pipe-g($|-.*)
-igt@.*@.*pipe-h($|-.*)
+igt@.*@.*pipe-[e-pE-P]($|-.*)
 
 ###############################################
 # Temporary workarounds for CI-impacting bugs
