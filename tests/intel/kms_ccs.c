@@ -53,6 +53,14 @@
  * @pipe-F:                    Pipe F
  * @pipe-G:                    Pipe G
  * @pipe-H:                    Pipe H
+ * @pipe-I:                    Pipe I
+ * @pipe-J:                    Pipe J
+ * @pipe-K:                    Pipe K
+ * @pipe-L:                    Pipe L
+ * @pipe-M:                    Pipe M
+ * @pipe-N:                    Pipe N
+ * @pipe-O:                    Pipe O
+ * @pipe-P:                    Pipe P
  *
  * arg[2]:
  *
@@ -90,6 +98,14 @@
  * @pipe-F:                      Pipe F
  * @pipe-G:                      Pipe G
  * @pipe-H:                      Pipe H
+ * @pipe-I:                      Pipe I
+ * @pipe-J:                      Pipe J
+ * @pipe-K:                      Pipe K
+ * @pipe-L:                      Pipe L
+ * @pipe-M:                      Pipe M
+ * @pipe-N:                      Pipe N
+ * @pipe-O:                      Pipe O
+ * @pipe-P:                      Pipe P
  *
  * arg[2]:
  *
@@ -131,6 +147,14 @@
  * @pipe-F:                      Pipe F
  * @pipe-G:                      Pipe G
  * @pipe-H:                      Pipe H
+ * @pipe-I:                      Pipe I
+ * @pipe-J:                      Pipe J
+ * @pipe-K:                      Pipe K
+ * @pipe-L:                      Pipe L
+ * @pipe-M:                      Pipe M
+ * @pipe-N:                      Pipe N
+ * @pipe-O:                      Pipe O
+ * @pipe-P:                      Pipe P
  *
  * arg[2]:
  *
