@@ -1782,7 +1782,7 @@ igt_main
 						WAIT_SIGNALED)) != 1)
 			continue;
 
-		if ((flags & WAIT_UNSUBMITTED) && !((flags & WAIT_FOR_SUBMIT) || (flags & WAIT_AVAILABLE)))
+		if ((flags & WAIT_UNSUBMITTED) && !(flags & WAIT_FOR_SUBMIT))
 			err = -EINVAL;
 		else if (!(flags & WAIT_SIGNALED) && !((flags & WAIT_SUBMITTED) && (flags & WAIT_AVAILABLE)))
 			err = -ETIME;
@@ -1851,7 +1851,7 @@ igt_main
 			continue;
 
 		err = 0;
-		if ((flags & WAIT_UNSUBMITTED) && !((flags & WAIT_FOR_SUBMIT) || (flags & WAIT_AVAILABLE))) {
+		if ((flags & WAIT_UNSUBMITTED) && !(flags & WAIT_FOR_SUBMIT)) {
 			err = -EINVAL;
 		} else if (flags & WAIT_ALL) {
 			if (flags & (WAIT_UNSUBMITTED | WAIT_SUBMITTED))
