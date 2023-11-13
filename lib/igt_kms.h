@@ -57,6 +57,16 @@
  * @PIPE_D: Fourth crtc.
  * @PIPE_E: Fifth crtc.
  * @PIPE_F: Sixth crtc.
+ * @PIPE_G: Seventh crtc.
+ * @PIPE_H: Eighth crtc.
+ * @PIPE_I: Ninth crtc.
+ * @PIPE_J: Tenth crtc.
+ * @PIPE_K: Eleventh crtc.
+ * @PIPE_L: Twelfth crtc.
+ * @PIPE_M: Thirteenth crtc.
+ * @PIPE_N: Fourteenth crtc.
+ * @PIPE_O: Fifteenth crtc.
+ * @PIPE_P: Sixteenth crtc.
  * @IGT_MAX_PIPES: Max number of pipes allowed.
  */
 enum pipe {
@@ -68,8 +78,16 @@ enum pipe {
         PIPE_D,
         PIPE_E,
         PIPE_F,
-	PIPE_G,
-	PIPE_H,
+        PIPE_G,
+        PIPE_H,
+        PIPE_I,
+        PIPE_J,
+        PIPE_K,
+        PIPE_L,
+        PIPE_M,
+        PIPE_N,
+        PIPE_O,
+        PIPE_P,
         IGT_MAX_PIPES
 };
 const char *kmstest_pipe_name(enum pipe pipe);
