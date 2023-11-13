@@ -457,9 +457,22 @@ void xe_exec_wait(int fd, uint32_t exec_queue, uint64_t addr)
 	syncobj_destroy(fd, sync.handle);
 }
 
-int64_t xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
-		       struct drm_xe_engine_class_instance *eci,
-		       int64_t timeout)
+/**
+ * __xe_wait_ufence:
+ * @fd: xe device fd
+ * @addr: address of value to compare
+ * @value: expected value (equal) in @address
+ * @eci: engine class instance
+ * @timeout: pointer to time to wait in nanoseconds
+ *
+ * Function compares @value with memory pointed by @addr until they are equal.
+ *
+ * Returns (in @timeout), the elapsed time in nanoseconds if user fence was
+ * signalled. Returns 0 on success, -errno of ioctl on error.
+ */
+int __xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
+		     struct drm_xe_engine_class_instance *eci,
+		     int64_t *timeout)
 {
 	struct drm_xe_wait_user_fence wait = {
 		.addr = to_user_pointer(addr),
@@ -467,14 +480,39 @@ int64_t xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
 		.flags = !eci ? DRM_XE_UFENCE_WAIT_FLAG_SOFT_OP : 0,
 		.value = value,
 		.mask = DRM_XE_UFENCE_WAIT_MASK_U64,
-		.timeout = timeout,
 		.num_engines = eci ? 1 :0,
 		.instances = eci ? to_user_pointer(eci) : 0,
 	};
 
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait), 0);
+	igt_assert(timeout);
+	wait.timeout = *timeout;
 
-	return wait.timeout;
+	if (igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait))
+		return -errno;
+
+	*timeout = wait.timeout;
+	return 0;
+}
+
+/**
+ * xe_wait_ufence:
+ * @fd: xe device fd
+ * @addr: address of value to compare
+ * @value: expected value (equal) in @address
+ * @eci: engine class instance
+ * @timeout: time to wait in nanoseconds
+ *
+ * Function compares @value with memory pointed by @addr until they are equal.
+ * Asserts that ioctl returned without error.
+ *
+ * Returns elapsed time in nanoseconds if user fence was signalled.
+ */
+int64_t xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
+		       struct drm_xe_engine_class_instance *eci,
+		       int64_t timeout)
+{
+	igt_assert_eq(__xe_wait_ufence(fd, addr, value, eci, &timeout), 0);
+	return timeout;
 }
 
 /**
@@ -486,6 +524,7 @@ int64_t xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
  * @timeout: absolute time when wait expire
  *
  * Function compares @value with memory pointed by @addr until they are equal.
+ * Asserts that ioctl returned without error.
  *
  * Returns elapsed time in nanoseconds if user fence was signalled.
  */
