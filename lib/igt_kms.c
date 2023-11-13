@@ -6024,7 +6024,7 @@ bool igt_max_bpc_constraint(igt_display_t *display, enum pipe pipe,
 	for_each_connector_mode(output) {
 		igt_output_override_mode(output, &connector->modes[j__]);
 
-		if (is_i915_device(display->drm_fd) &&
+		if (is_intel_device(display->drm_fd) &&
 		    !igt_check_bigjoiner_support(display))
 			continue;
 
@@ -6227,7 +6227,7 @@ bool intel_pipe_output_combo_valid(igt_display_t *display)
 	int combo = 0;
 	igt_output_t *output;
 
-	if (!is_i915_device(display->drm_fd))
+	if (!is_intel_device(display->drm_fd))
 		return true;
 
 	for_each_connected_output(display, output) {
