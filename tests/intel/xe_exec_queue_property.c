@@ -4,7 +4,7 @@
  */
 
 /**
- * TEST: Basic tests to check exec_queue set property functionality
+ * TEST: Basic tests to check exec_queue set/get property functionality
  * Category: Software building block
  * Sub-category: exec queue property
  * Functionality: exec queue set property
@@ -108,6 +108,72 @@ static void test_property_min_max(int xe, int engine, const char **property)
 	test_set_property(xe, property_name, min - 1, -EINVAL);
 }
 
+/**
+ * SUBTEST: Invalid-exec-queue
+ * Description: Negative test to check the expected behaviour with invalid exec_queue_id.
+ * Test category: functionality test
+ */
+static void Invalid_exec_queue_id(int xe)
+{
+	struct drm_xe_exec_queue_get_property args = {
+		.exec_queue_id = 0xffff,
+		.property = XE_EXEC_QUEUE_GET_PROPERTY_BAN,
+	};
+
+	do_ioctl_err(xe, DRM_IOCTL_XE_EXEC_QUEUE_GET_PROPERTY, &args, ENOENT);
+}
+
+/**
+ * SUBTEST: non-zero-reserved
+ * Description: Negative test to check the expected behaviour with non-zero reserved.
+ * Test category: functionality test
+ */
+static void non_zero_reserved(int xe)
+{
+	struct drm_xe_exec_queue_get_property args = {
+		.reserved[0] = 0xffff,
+		.property = XE_EXEC_QUEUE_GET_PROPERTY_BAN,
+	};
+	uint32_t vm;
+	uint32_t exec_queue;
+
+	vm = xe_vm_create(xe, 0, 0);
+	exec_queue = xe_exec_queue_create_class(xe, vm, DRM_XE_ENGINE_CLASS_COPY);
+	args.exec_queue_id = exec_queue;
+
+	do_ioctl_err(xe, DRM_IOCTL_XE_EXEC_QUEUE_GET_PROPERTY, &args, EINVAL);
+
+	xe_exec_queue_destroy(xe, exec_queue);
+	xe_vm_destroy(xe, vm);
+}
+
+/**
+ * SUBTEST: basic-get-property
+ * Description: Basic test to check if get property value works fine.
+ * Test category: functionality test
+ */
+static void basic_get_property(int xe)
+{
+	struct drm_xe_exec_queue_get_property args = {
+		.value = -1,
+		.reserved[0] = 0,
+		.property = XE_EXEC_QUEUE_GET_PROPERTY_BAN,
+	};
+
+	uint32_t exec_queue;
+	uint32_t vm;
+
+	vm = xe_vm_create(xe, 0, 0);
+	exec_queue = xe_exec_queue_create_class(xe, vm, DRM_XE_ENGINE_CLASS_COPY);
+	args.exec_queue_id = exec_queue;
+
+	do_ioctl(xe, DRM_IOCTL_XE_EXEC_QUEUE_GET_PROPERTY, &args);
+	igt_assert(args.value == 0);
+
+	xe_exec_queue_destroy(xe, exec_queue);
+	xe_vm_destroy(xe, vm);
+}
+
 igt_main
 {
 	static const struct {
@@ -181,6 +247,15 @@ igt_main
 			}
 		}
 	}
+
+	igt_subtest("Invalid-exec-queue")
+		Invalid_exec_queue_id(xe);
+
+	igt_subtest("non-zero-reserved")
+		non_zero_reserved(xe);
+
+	igt_subtest("basic-get-property")
+		basic_get_property(xe);
 
 	igt_fixture {
 		xe_device_put(xe);
