@@ -1772,21 +1772,21 @@ xe_alloc_step_batch(struct workload *wrk, struct w_step *w)
 	i = 0;
 	/* out fence */
 	w->xe.syncs[i].handle = syncobj_create(fd, 0);
-	w->xe.syncs[i++].flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL;
+	w->xe.syncs[i++].flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL;
 	/* in fence(s) */
 	for_each_dep(dep, w->data_deps) {
 		int dep_idx = w->idx + dep->target;
 
 		igt_assert(wrk->steps[dep_idx].xe.syncs && wrk->steps[dep_idx].xe.syncs[0].handle);
 		w->xe.syncs[i].handle = wrk->steps[dep_idx].xe.syncs[0].handle;
-		w->xe.syncs[i++].flags = DRM_XE_SYNC_SYNCOBJ;
+		w->xe.syncs[i++].flags = DRM_XE_SYNC_FLAG_SYNCOBJ;
 	}
 	for_each_dep(dep, w->fence_deps) {
 		int dep_idx = w->idx + dep->target;
 
 		igt_assert(wrk->steps[dep_idx].xe.syncs && wrk->steps[dep_idx].xe.syncs[0].handle);
 		w->xe.syncs[i].handle = wrk->steps[dep_idx].xe.syncs[0].handle;
-		w->xe.syncs[i++].flags = DRM_XE_SYNC_SYNCOBJ;
+		w->xe.syncs[i++].flags = DRM_XE_SYNC_FLAG_SYNCOBJ;
 	}
 	w->xe.exec.syncs = to_user_pointer(w->xe.syncs);
 }
@@ -2024,8 +2024,8 @@ static void xe_vm_create_(struct xe_vm *vm)
 	uint32_t flags = 0;
 
 	if (vm->compute_mode)
-		flags |= DRM_XE_VM_CREATE_ASYNC_DEFAULT |
-			 DRM_XE_VM_CREATE_COMPUTE_MODE;
+		flags |= DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
+			 DRM_XE_VM_CREATE_FLAG_COMPUTE_MODE;
 
 	vm->id = xe_vm_create(fd, flags, 0);
 }
@@ -2363,7 +2363,7 @@ static int xe_prepare_contexts(unsigned int id, struct workload *wrk)
 		if (w->type == SW_FENCE) {
 			w->xe.syncs = calloc(1, sizeof(struct drm_xe_sync));
 			w->xe.syncs[0].handle = syncobj_create(fd, 0);
-			w->xe.syncs[0].flags = DRM_XE_SYNC_SYNCOBJ;
+			w->xe.syncs[0].flags = DRM_XE_SYNC_FLAG_SYNCOBJ;
 		}
 
 	return 0;

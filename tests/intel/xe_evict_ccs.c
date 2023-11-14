@@ -226,7 +226,7 @@ static void evict_single(int fd, int child, const struct config *config)
 	uint32_t kb_left = config->mb_per_proc * SZ_1K;
 	uint32_t min_alloc_kb = config->param->min_size_kb;
 	uint32_t max_alloc_kb = config->param->max_size_kb;
-	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	uint64_t ahnd = intel_allocator_open(fd, vm, INTEL_ALLOCATOR_RELOC);
 	uint8_t uc_mocs = intel_get_uc_mocs_index(fd);
 	struct object *obj, *tmp;

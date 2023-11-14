@@ -144,8 +144,8 @@ test_export_dma_buf(struct drm_xe_engine_class_instance *hwe0,
 		uint64_t sdi_addr = addr + sdi_offset;
 		uint64_t spin_offset = (char *)&data[i]->spin - (char *)data[i];
 		struct drm_xe_sync sync[2] = {
-			{ .flags = DRM_XE_SYNC_SYNCOBJ, },
-			{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+			{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ, },
+			{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 		};
 		struct drm_xe_exec exec = {
 			.num_batch_buffer = 1,

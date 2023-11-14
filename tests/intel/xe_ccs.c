@@ -343,7 +343,7 @@ static void block_copy(int xe,
 		uint32_t vm, exec_queue;
 
 		if (config->new_ctx) {
-			vm = xe_vm_create(xe, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+			vm = xe_vm_create(xe, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 			exec_queue = xe_exec_queue_create(xe, vm, &inst, 0);
 			surf_ctx = intel_ctx_xe(xe, vm, exec_queue, 0, 0, 0);
 			surf_ahnd = intel_allocator_open(xe, surf_ctx->vm,
@@ -550,7 +550,7 @@ static void block_copy_test(int xe,
 				      copyfns[copy_function].suffix) {
 				uint32_t sync_bind, sync_out;
 
-				vm = xe_vm_create(xe, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+				vm = xe_vm_create(xe, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 				exec_queue = xe_exec_queue_create(xe, vm, &inst, 0);
 				sync_bind = syncobj_create(xe, 0);
 				sync_out = syncobj_create(xe, 0);

@@ -47,8 +47,8 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 	      int class, int n_exec_queues, int n_execs, unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_sync sync_all[MAX_N_EXEC_QUEUES];
 	struct drm_xe_exec exec = {
@@ -77,7 +77,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 	}
 
 	if (!vm) {
-		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 		owns_vm = true;
 	}
 
@@ -125,7 +125,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 					&create), 0);
 		exec_queues[i] = create.exec_queue_id;
 		syncobjs[i] = syncobj_create(fd, 0);
-		sync_all[i].flags = DRM_XE_SYNC_SYNCOBJ;
+		sync_all[i].flags = DRM_XE_SYNC_FLAG_SYNCOBJ;
 		sync_all[i].handle = syncobjs[i];
 	};
 	exec.num_batch_buffer = flags & PARALLEL ? num_placements : 1;
@@ -158,8 +158,8 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 		data[i].batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
 		exec.exec_queue_id = exec_queues[e];
@@ -173,7 +173,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 			xe_vm_unbind_async(fd, vm, 0, 0, addr, bo_size,
 					   sync_all, n_exec_queues);
 
-			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+			sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 			addr += bo_size;
 			if (bo)
 				xe_vm_bind_async(fd, vm, 0, bo, 0, addr,
@@ -221,7 +221,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 					NULL));
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 
-	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+	sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 	xe_vm_unbind_async(fd, vm, 0, 0, addr, bo_size, sync, 1);
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 
@@ -254,7 +254,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 {
 #define USER_FENCE_VALUE	0xdeadbeefdeadbeefull
 	struct drm_xe_sync sync[1] = {
-		{ .flags = DRM_XE_SYNC_USER_FENCE | DRM_XE_SYNC_SIGNAL,
+		{ .flags = DRM_XE_SYNC_FLAG_USER_FENCE | DRM_XE_SYNC_FLAG_SIGNAL,
 	          .timeline_value = USER_FENCE_VALUE },
 	};
 	struct drm_xe_exec exec = {
@@ -285,8 +285,8 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 	}
 
 	if (!vm) {
-		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT |
-				  DRM_XE_VM_CREATE_COMPUTE_MODE, 0);
+		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
+				  DRM_XE_VM_CREATE_FLAG_COMPUTE_MODE, 0);
 		owns_vm = true;
 	}
 
@@ -457,8 +457,8 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		 int n_execs, unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_sync sync_all[MAX_N_EXEC_QUEUES];
 	struct drm_xe_exec exec = {
@@ -489,7 +489,7 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 	}
 
 	if (!vm) {
-		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 		owns_vm = true;
 	}
 
@@ -536,7 +536,7 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 		else
 			bind_exec_queues[i] = 0;
 		syncobjs[i] = syncobj_create(fd, 0);
-		sync_all[i].flags = DRM_XE_SYNC_SYNCOBJ;
+		sync_all[i].flags = DRM_XE_SYNC_FLAG_SYNCOBJ;
 		sync_all[i].handle = syncobjs[i];
 	};
 
@@ -576,8 +576,8 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 			exec_addr = batch_addr;
 		}
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
 		exec.exec_queue_id = exec_queues[e];
@@ -599,7 +599,7 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 					   0, addr, bo_size,
 					   sync_all, n_exec_queues);
 
-			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+			sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 			addr += bo_size;
 			if (bo)
 				xe_vm_bind_async(fd, vm, bind_exec_queues[e],
@@ -649,7 +649,7 @@ test_legacy_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 					NULL));
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 
-	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+	sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 	xe_vm_unbind_async(fd, vm, bind_exec_queues[0], 0, addr,
 			   bo_size, sync, 1);
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
@@ -1001,11 +1001,11 @@ static void threads(int fd, int flags)
 
 	if (flags & SHARED_VM) {
 		vm_legacy_mode = xe_vm_create(fd,
-					      DRM_XE_VM_CREATE_ASYNC_DEFAULT,
+					      DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT,
 					      0);
 		vm_compute_mode = xe_vm_create(fd,
-					       DRM_XE_VM_CREATE_ASYNC_DEFAULT |
-					       DRM_XE_VM_CREATE_COMPUTE_MODE,
+					       DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
+					       DRM_XE_VM_CREATE_FLAG_COMPUTE_MODE,
 					       0);
 	}
 

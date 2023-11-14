@@ -80,7 +80,7 @@ static void bo_execenv_create(int fd, struct bo_execenv *execenv)
 		else
 			engine_class = DRM_XE_ENGINE_CLASS_COMPUTE;
 
-		execenv->vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+		execenv->vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 		execenv->exec_queue = xe_exec_queue_create_class(fd, execenv->vm,
 								 engine_class);
 	}
@@ -106,7 +106,7 @@ static void bo_execenv_bind(struct bo_execenv *execenv,
 		uint64_t alignment = xe_get_default_alignment(fd);
 		struct drm_xe_sync sync = { 0 };
 
-		sync.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL;
+		sync.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL;
 		sync.handle = syncobj_create(fd, 0);
 
 		for (int i = 0; i < entries; i++) {
@@ -162,7 +162,7 @@ static void bo_execenv_unbind(struct bo_execenv *execenv,
 		uint32_t vm = execenv->vm;
 		struct drm_xe_sync sync = { 0 };
 
-		sync.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL;
+		sync.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL;
 		sync.handle = syncobj_create(fd, 0);
 
 		for (int i = 0; i < entries; i++) {

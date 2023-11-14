@@ -81,8 +81,8 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 	  int n_exec_queues, int n_execs, int n_vm, unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -109,7 +109,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 	igt_assert(n_vm <= MAX_N_EXEC_QUEUES);
 
 	for (i = 0; i < n_vm; ++i)
-		vm[i] = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+		vm[i] = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*data) * n_execs;
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -199,9 +199,9 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		data[i].batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 		sync[0].handle = bind_syncobjs[cur_vm];
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
 		exec.exec_queue_id = exec_queues[e];
@@ -213,11 +213,11 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		if (flags & REBIND && i + 1 != n_execs) {
 			uint32_t __vm = vm[cur_vm];
 
-			sync[1].flags &= ~DRM_XE_SYNC_SIGNAL;
+			sync[1].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 			xe_vm_unbind_async(fd, __vm, bind_exec_queues[e], 0,
 					   __addr, bo_size, sync + 1, 1);
 
-			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+			sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 			addr[i % n_vm] += bo_size;
 			__addr = addr[i % n_vm];
 			if (bo)
@@ -266,7 +266,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		igt_assert(syncobj_wait(fd, &bind_syncobjs[i], 1, INT64_MAX, 0,
 					NULL));
 
-	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+	sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 	for (i = 0; i < n_vm; ++i) {
 		syncobj_reset(fd, &sync[0].handle, 1);
 		xe_vm_unbind_async(fd, vm[i], bind_exec_queues[i], 0, addr[i],

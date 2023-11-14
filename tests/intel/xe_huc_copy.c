@@ -118,7 +118,7 @@ __test_huc_copy(int fd, uint32_t vm, struct drm_xe_engine_class_instance *hwe)
 	};
 
 	exec_queue = xe_exec_queue_create(fd, vm, hwe, 0);
-	sync.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL;
+	sync.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL;
 	sync.handle = syncobj_create(fd, 0);
 
 	for(int i = 0; i < BO_DICT_ENTRIES; i++) {
@@ -156,7 +156,7 @@ test_huc_copy(int fd)
 	uint32_t vm;
 	uint32_t tested_gts = 0;
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 
 	xe_for_each_hw_engine(fd, hwe) {
 		if (hwe->engine_class == DRM_XE_ENGINE_CLASS_VIDEO_DECODE &&

@@ -399,7 +399,7 @@ void xe_exec_sync(int fd, uint32_t exec_queue, uint64_t addr,
 void xe_exec_wait(int fd, uint32_t exec_queue, uint64_t addr)
 {
 	struct drm_xe_sync sync = {
-		.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL,
+		.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL,
 		.handle = syncobj_create(fd, 0),
 	};
 
@@ -416,7 +416,7 @@ int64_t xe_wait_ufence(int fd, uint64_t *addr, uint64_t value,
 	struct drm_xe_wait_user_fence wait = {
 		.addr = to_user_pointer(addr),
 		.op = DRM_XE_UFENCE_WAIT_EQ,
-		.flags = !eci ? DRM_XE_UFENCE_WAIT_SOFT_OP : 0,
+		.flags = !eci ? DRM_XE_UFENCE_WAIT_FLAG_SOFT_OP : 0,
 		.value = value,
 		.mask = DRM_XE_UFENCE_WAIT_U64,
 		.timeout = timeout,
@@ -448,7 +448,7 @@ int64_t xe_wait_ufence_abstime(int fd, uint64_t *addr, uint64_t value,
 	struct drm_xe_wait_user_fence wait = {
 		.addr = to_user_pointer(addr),
 		.op = DRM_XE_UFENCE_WAIT_EQ,
-		.flags = !eci ? DRM_XE_UFENCE_WAIT_SOFT_OP | DRM_XE_UFENCE_WAIT_ABSTIME : 0,
+		.flags = !eci ? DRM_XE_UFENCE_WAIT_FLAG_SOFT_OP | DRM_XE_UFENCE_WAIT_FLAG_ABSTIME : 0,
 		.value = value,
 		.mask = DRM_XE_UFENCE_WAIT_U64,
 		.timeout = timeout,

@@ -38,8 +38,8 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 	uint32_t bind_exec_queues[3] = { 0, 0, 0 };
 	uint64_t addr = 0x100000000, base_addr = 0x100000000;
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -63,12 +63,12 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 
 	fd = drm_open_driver(DRIVER_XE);
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	if (flags & BIND_EXEC_QUEUE)
 		bind_exec_queues[0] = xe_bind_exec_queue_create(fd, vm, 0, true);
 	if (flags & MULTI_VM) {
-		vm2 = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
-		vm3 = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+		vm2 = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
+		vm3 = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 		if (flags & BIND_EXEC_QUEUE) {
 			bind_exec_queues[1] = xe_bind_exec_queue_create(fd, vm2,
 									0, true);
@@ -121,7 +121,7 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 				 ALIGN(sizeof(*data) * n_execs, 0x1000));
 
 		if (i < n_execs / 2) {
-			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+			sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 			sync[0].handle = syncobj_create(fd, 0);
 			if (flags & MULTI_VM) {
 				xe_vm_bind_async(fd, vm3, bind_exec_queues[2], __bo,
@@ -149,7 +149,7 @@ test_evict(int fd, struct drm_xe_engine_class_instance *eci,
 		data[i].batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 		if (i >= n_exec_queues)
 			syncobj_reset(fd, &syncobjs[e], 1);
 		sync[1].handle = syncobjs[e];
@@ -216,7 +216,7 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 	uint64_t addr = 0x100000000, base_addr = 0x100000000;
 #define USER_FENCE_VALUE	0xdeadbeefdeadbeefull
 	struct drm_xe_sync sync[1] = {
-		{ .flags = DRM_XE_SYNC_USER_FENCE | DRM_XE_SYNC_SIGNAL,
+		{ .flags = DRM_XE_SYNC_FLAG_USER_FENCE | DRM_XE_SYNC_FLAG_SIGNAL,
 		  .timeline_value = USER_FENCE_VALUE },
 	};
 	struct drm_xe_exec exec = {
@@ -242,13 +242,13 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 
 	fd = drm_open_driver(DRIVER_XE);
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT |
-			  DRM_XE_VM_CREATE_COMPUTE_MODE, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
+			  DRM_XE_VM_CREATE_FLAG_COMPUTE_MODE, 0);
 	if (flags & BIND_EXEC_QUEUE)
 		bind_exec_queues[0] = xe_bind_exec_queue_create(fd, vm, 0, true);
 	if (flags & MULTI_VM) {
-		vm2 = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT |
-				   DRM_XE_VM_CREATE_COMPUTE_MODE, 0);
+		vm2 = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
+				   DRM_XE_VM_CREATE_FLAG_COMPUTE_MODE, 0);
 		if (flags & BIND_EXEC_QUEUE)
 			bind_exec_queues[1] = xe_bind_exec_queue_create(fd, vm2,
 									0, true);

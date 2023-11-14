@@ -315,8 +315,8 @@ bool xe_supports_faults(int fd)
 	bool supports_faults;
 
 	struct drm_xe_vm_create create = {
-		.flags = DRM_XE_VM_CREATE_ASYNC_DEFAULT |
-			 DRM_XE_VM_CREATE_FAULT_MODE,
+		.flags = DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
+			 DRM_XE_VM_CREATE_FLAG_FAULT_MODE,
 	};
 
 	supports_faults = !igt_ioctl(fd, DRM_IOCTL_XE_VM_CREATE, &create);

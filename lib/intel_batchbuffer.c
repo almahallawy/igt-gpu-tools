@@ -953,7 +953,7 @@ __intel_bb_create(int fd, uint32_t ctx, uint32_t vm, const intel_ctx_cfg_t *cfg,
 
 		if (!vm) {
 			igt_assert_f(!ctx, "No vm provided for engine");
-			vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+			vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 		}
 
 		ibb->uses_full_ppgtt = true;
@@ -1315,8 +1315,8 @@ static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct intel_bb *ibb,
 static void __unbind_xe_objects(struct intel_bb *ibb)
 {
 	struct drm_xe_sync syncs[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	int ret;
 
@@ -2302,8 +2302,8 @@ __xe_bb_exec(struct intel_bb *ibb, uint64_t flags, bool sync)
 	uint32_t engine = flags & (I915_EXEC_BSD_MASK | I915_EXEC_RING_MASK);
 	uint32_t engine_id;
 	struct drm_xe_sync syncs[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_vm_bind_op *bind_ops;
 	void *map;
@@ -2371,7 +2371,7 @@ __xe_bb_exec(struct intel_bb *ibb, uint64_t flags, bool sync)
 	}
 	ibb->xe_bound = true;
 
-	syncs[0].flags &= ~DRM_XE_SYNC_SIGNAL;
+	syncs[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 	ibb->engine_syncobj = syncobj_create(ibb->fd, 0);
 	syncs[1].handle = ibb->engine_syncobj;
 

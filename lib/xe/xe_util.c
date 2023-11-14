@@ -179,8 +179,8 @@ void xe_bind_unbind_async(int xe, uint32_t vm, uint32_t bind_engine,
 {
 	struct drm_xe_vm_bind_op *bind_ops;
 	struct drm_xe_sync tabsyncs[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ, .handle = sync_in },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, .handle = sync_out },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ, .handle = sync_in },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, .handle = sync_out },
 	};
 	struct drm_xe_sync *syncs;
 	uint32_t num_binds = 0;

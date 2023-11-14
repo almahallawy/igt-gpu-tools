@@ -89,7 +89,7 @@ write_dwords(int fd, uint32_t vm, int n_dwords, uint64_t *addrs)
 static void
 test_scratch(int fd)
 {
-	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_SCRATCH_PAGE, 0);
+	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_SCRATCH_PAGE, 0);
 	uint64_t addrs[] = {
 		0x000000000000ull,
 		0x7ffdb86402d8ull,
@@ -124,7 +124,7 @@ __test_bind_one_bo(int fd, uint32_t vm, int n_addrs, uint64_t *addrs)
 		uint64_t bind_addr = addrs[i] & ~(uint64_t)(bo_size - 1);
 
 		if (!vm)
-			vms[i] = xe_vm_create(fd, DRM_XE_VM_CREATE_SCRATCH_PAGE,
+			vms[i] = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_SCRATCH_PAGE,
 					      0);
 		igt_debug("Binding addr %"PRIx64"\n", addrs[i]);
 		xe_vm_bind_sync(fd, vm ? vm : vms[i], bo, 0,
@@ -214,7 +214,7 @@ test_bind_once(int fd)
 	uint64_t addr = 0x7ffdb86402d8ull;
 
 	__test_bind_one_bo(fd,
-			   xe_vm_create(fd, DRM_XE_VM_CREATE_SCRATCH_PAGE, 0),
+			   xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_SCRATCH_PAGE, 0),
 			   1, &addr);
 }
 
@@ -234,7 +234,7 @@ test_bind_one_bo_many_times(int fd)
 						ARRAY_SIZE(addrs_48b);
 
 	__test_bind_one_bo(fd,
-			   xe_vm_create(fd, DRM_XE_VM_CREATE_SCRATCH_PAGE, 0),
+			   xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_SCRATCH_PAGE, 0),
 			   addrs_size, addrs);
 }
 
@@ -265,14 +265,14 @@ test_bind_one_bo_many_times_many_vm(int fd)
 
 static void test_partial_unbinds(int fd)
 {
-	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	uint32_t vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	size_t bo_size = 3 * xe_get_default_alignment(fd);
 	uint32_t bo = xe_bo_create(fd, 0, vm, bo_size);
 	uint64_t unbind_size = bo_size / 3;
 	uint64_t addr = 0x1a0000;
 
 	struct drm_xe_sync sync = {
-	    .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL,
+	    .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL,
 	    .handle = syncobj_create(fd, 0),
 	};
 
@@ -312,10 +312,10 @@ static void unbind_all(int fd, int n_vmas)
 	uint32_t vm;
 	int i;
 	struct drm_xe_sync sync[1] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	bo = xe_bo_create(fd, 0, vm, bo_size);
 
 	for (i = 0; i < n_vmas; ++i)
@@ -387,8 +387,8 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 	uint32_t vm;
 	uint64_t addr = 0x1000 * 512;
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_sync sync_all[MAX_N_EXEC_QUEUES + 1];
 	struct drm_xe_exec exec = {
@@ -412,7 +412,7 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 	data = malloc(sizeof(*data) * n_bo);
 	igt_assert(data);
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(struct shared_pte_page_data);
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -430,7 +430,7 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 	for (i = 0; i < n_exec_queues; i++) {
 		exec_queues[i] = xe_exec_queue_create(fd, vm, eci, 0);
 		syncobjs[i] = syncobj_create(fd, 0);
-		sync_all[i].flags = DRM_XE_SYNC_SYNCOBJ;
+		sync_all[i].flags = DRM_XE_SYNC_FLAG_SYNCOBJ;
 		sync_all[i].handle = syncobjs[i];
 	};
 
@@ -455,8 +455,8 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 		data[i]->batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i]->batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
 		exec.exec_queue_id = exec_queues[e];
@@ -468,7 +468,7 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 		if (i % 2)
 			continue;
 
-		sync_all[n_execs].flags = DRM_XE_SYNC_SIGNAL;
+		sync_all[n_execs].flags = DRM_XE_SYNC_FLAG_SIGNAL;
 		sync_all[n_execs].handle = sync[0].handle;
 		xe_vm_unbind_async(fd, vm, 0, 0, addr + i * addr_stride,
 				   bo_size, sync_all, n_execs + 1);
@@ -504,8 +504,8 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 		data[i]->batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i]->batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
 		exec.exec_queue_id = exec_queues[e];
@@ -518,7 +518,7 @@ shared_pte_page(int fd, struct drm_xe_engine_class_instance *eci, int n_bo,
 		if (!(i % 2))
 			continue;
 
-		sync_all[n_execs].flags = DRM_XE_SYNC_SIGNAL;
+		sync_all[n_execs].flags = DRM_XE_SYNC_FLAG_SIGNAL;
 		sync_all[n_execs].handle = sync[0].handle;
 		xe_vm_unbind_async(fd, vm, 0, 0, addr + i * addr_stride,
 				   bo_size, sync_all, n_execs + 1);
@@ -573,8 +573,8 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
 	uint32_t vm;
 	uint64_t addr = 0x1a0000;
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -596,7 +596,7 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
 	struct xe_spin_opts spin_opts = { .preempt = true };
 	int i, b;
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*data) * N_EXEC_QUEUES;
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -630,22 +630,22 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
 			xe_spin_init(&data[i].spin, &spin_opts);
 			exec.exec_queue_id = exec_queues[e];
 			exec.address = spin_opts.addr;
-			sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
-			sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+			sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
+			sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 			sync[1].handle = syncobjs[e];
 			xe_exec(fd, &exec);
 			xe_spin_wait_started(&data[i].spin);
 
 			/* Do bind to 1st exec_queue blocked on cork */
 			addr += (flags & CONFLICT) ? (0x1 << 21) : bo_size;
-			sync[1].flags &= ~DRM_XE_SYNC_SIGNAL;
+			sync[1].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 			sync[1].handle = syncobjs[e];
 			xe_vm_bind_async(fd, vm, bind_exec_queues[e], bo, 0, addr,
 					 bo_size, sync + 1, 1);
 			addr += bo_size;
 		} else {
 			/* Do bind to 2nd exec_queue which blocks write below */
-			sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+			sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 			xe_vm_bind_async(fd, vm, bind_exec_queues[e], bo, 0, addr,
 					 bo_size, sync, 1);
 		}
@@ -663,8 +663,8 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
 		data[i].batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 		sync[1].handle = syncobjs[!i ? N_EXEC_QUEUES : e];
 
 		exec.num_syncs = 2;
@@ -708,7 +708,7 @@ test_bind_execqueues_independent(int fd, struct drm_xe_engine_class_instance *ec
 
 	syncobj_destroy(fd, sync[0].handle);
 	sync[0].handle = syncobj_create(fd, 0);
-	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+	sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 	xe_vm_unbind_all_async(fd, vm, 0, bo, sync, 1);
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 
@@ -755,8 +755,8 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 	uint32_t vm;
 	uint64_t addr = 0x1a0000, base_addr = 0x1a0000;
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -776,7 +776,7 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 
 	igt_assert(n_execs <= BIND_ARRAY_MAX_N_EXEC);
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*data) * n_execs;
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -822,8 +822,8 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 		data[i].batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 		if (i == n_execs - 1) {
 			sync[1].handle = syncobj_create(fd, 0);
 			exec.num_syncs = 2;
@@ -845,8 +845,8 @@ test_bind_array(int fd, struct drm_xe_engine_class_instance *eci, int n_execs,
 	}
 
 	syncobj_reset(fd, &sync[0].handle, 1);
-	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
-	sync[1].flags &= ~DRM_XE_SYNC_SIGNAL;
+	sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
+	sync[1].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 	xe_vm_bind_array(fd, vm, bind_exec_queue, bind_ops, n_execs, sync, 2);
 
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
@@ -943,8 +943,8 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 		 unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -970,7 +970,7 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 	}
 
 	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 
 	if (flags & LARGE_BIND_FLAG_USERPTR) {
 		map = aligned_alloc(xe_get_default_alignment(fd), bo_size);
@@ -1027,8 +1027,8 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 		data[i].batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 		sync[1].handle = syncobjs[e];
 
 		if (i != e)
@@ -1050,7 +1050,7 @@ test_large_binds(int fd, struct drm_xe_engine_class_instance *eci,
 	igt_assert(syncobj_wait(fd, &sync[0].handle, 1, INT64_MAX, 0, NULL));
 
 	syncobj_reset(fd, &sync[0].handle, 1);
-	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+	sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 	if (flags & LARGE_BIND_FLAG_SPLIT) {
 		xe_vm_unbind_async(fd, vm, 0, 0, base_addr,
 				   bo_size / 2, NULL, 0);
@@ -1103,7 +1103,7 @@ static void *hammer_thread(void *tdata)
 {
 	struct thread_data *t = tdata;
 	struct drm_xe_sync sync[1] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -1227,8 +1227,8 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 			 unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -1262,7 +1262,7 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 			unbind_n_page_offset *= n_page_per_2mb;
 	}
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	bo_size = page_size * bo_n_pages;
 
 	if (flags & MAP_FLAG_USERPTR) {
@@ -1330,10 +1330,10 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 		data->batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 		if (i)
 			syncobj_reset(fd, &sync[1].handle, 1);
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 
 		exec.exec_queue_id = exec_queue;
 		exec.address = batch_addr;
@@ -1345,8 +1345,8 @@ test_munmap_style_unbind(int fd, struct drm_xe_engine_class_instance *eci,
 
 	/* Unbind some of the pages */
 	syncobj_reset(fd, &sync[0].handle, 1);
-	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
-	sync[1].flags &= ~DRM_XE_SYNC_SIGNAL;
+	sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
+	sync[1].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 	xe_vm_unbind_async(fd, vm, 0, 0,
 			   addr + unbind_n_page_offset * page_size,
 			   unbind_n_pages * page_size, sync, 2);
@@ -1387,9 +1387,9 @@ try_again_after_invalidate:
 			data->batch[b++] = MI_BATCH_BUFFER_END;
 			igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-			sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
+			sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 			syncobj_reset(fd, &sync[1].handle, 1);
-			sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+			sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 
 			exec.exec_queue_id = exec_queue;
 			exec.address = batch_addr;
@@ -1430,7 +1430,7 @@ try_again_after_invalidate:
 
 	/* Confirm unbound region can be rebound */
 	syncobj_reset(fd, &sync[0].handle, 1);
-	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
+	sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 	if (flags & MAP_FLAG_USERPTR)
 		xe_vm_bind_userptr_async(fd, vm, 0,
 					 addr + unbind_n_page_offset * page_size,
@@ -1458,9 +1458,9 @@ try_again_after_invalidate:
 		data->batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 		syncobj_reset(fd, &sync[1].handle, 1);
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 
 		exec.exec_queue_id = exec_queue;
 		exec.address = batch_addr;
@@ -1528,8 +1528,8 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 		     int unbind_n_pages, unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -1562,7 +1562,7 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 			unbind_n_page_offset *= n_page_per_2mb;
 	}
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	bo_size = page_size * bo_n_pages;
 
 	if (flags & MAP_FLAG_USERPTR) {
@@ -1636,10 +1636,10 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 		data->batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 		if (i)
 			syncobj_reset(fd, &sync[1].handle, 1);
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 
 		exec.exec_queue_id = exec_queue;
 		exec.address = batch_addr;
@@ -1651,8 +1651,8 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 
 	/* Bind some of the pages to different BO / userptr */
 	syncobj_reset(fd, &sync[0].handle, 1);
-	sync[0].flags |= DRM_XE_SYNC_SIGNAL;
-	sync[1].flags &= ~DRM_XE_SYNC_SIGNAL;
+	sync[0].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
+	sync[1].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 	if (flags & MAP_FLAG_USERPTR)
 		xe_vm_bind_userptr_async(fd, vm, 0, addr + bo_size +
 					 unbind_n_page_offset * page_size,
@@ -1704,10 +1704,10 @@ test_mmap_style_bind(int fd, struct drm_xe_engine_class_instance *eci,
 		data->batch[b++] = MI_BATCH_BUFFER_END;
 		igt_assert(b <= ARRAY_SIZE(data[i].batch));
 
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
 		if (i)
 			syncobj_reset(fd, &sync[1].handle, 1);
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 
 		exec.exec_queue_id = exec_queue;
 		exec.address = batch_addr;

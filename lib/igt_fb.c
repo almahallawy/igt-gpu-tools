@@ -2892,7 +2892,7 @@ static void blitcopy(const struct igt_fb *dst_fb,
 							  &bb_size,
 							  mem_region) == 0);
 	} else if (is_xe) {
-		vm = xe_vm_create(dst_fb->fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+		vm = xe_vm_create(dst_fb->fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 		exec_queue = xe_exec_queue_create(dst_fb->fd, vm, &inst, 0);
 		xe_ctx = intel_ctx_xe(dst_fb->fd, vm, exec_queue, 0, 0, 0);
 		mem_region = vram_if_possible(dst_fb->fd, 0);

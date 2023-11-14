@@ -280,7 +280,7 @@ static void fast_copy_test(int xe,
 			region1 = igt_collection_get_value(regions, 0);
 			region2 = igt_collection_get_value(regions, 1);
 
-			vm = xe_vm_create(xe, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+			vm = xe_vm_create(xe, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 			exec_queue = xe_exec_queue_create(xe, vm, &inst, 0);
 			ctx = intel_ctx_xe(xe, vm, exec_queue, 0, 0, 0);
 

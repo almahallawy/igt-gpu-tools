@@ -55,7 +55,7 @@ static void store_dword_batch(struct data *data, uint64_t addr, int value)
 static void store(int fd)
 {
 	struct drm_xe_sync sync = {
-		.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL,
+		.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL,
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -75,7 +75,7 @@ static void store(int fd)
 	syncobj = syncobj_create(fd, 0);
 	sync.handle = syncobj;
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*data);
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -91,7 +91,7 @@ static void store(int fd)
 	exec_queue = xe_exec_queue_create(fd, vm, hw_engine, 0);
 	exec.exec_queue_id = exec_queue;
 	exec.address = data->addr;
-	sync.flags &= DRM_XE_SYNC_SIGNAL;
+	sync.flags &= DRM_XE_SYNC_FLAG_SIGNAL;
 	xe_exec(fd, &exec);
 
 	igt_assert(syncobj_wait(fd, &syncobj, 1, INT64_MAX, 0, NULL));
@@ -121,8 +121,8 @@ static void store_cachelines(int fd, struct drm_xe_engine_class_instance *eci,
 			     unsigned int flags)
 {
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, }
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, }
 	};
 
 	struct drm_xe_exec exec = {
@@ -143,7 +143,7 @@ static void store_cachelines(int fd, struct drm_xe_engine_class_instance *eci,
 	size_t bo_size = 4096;
 
 	bo_size = ALIGN(bo_size, xe_get_default_alignment(fd));
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	ahnd = intel_allocator_open(fd, 0, INTEL_ALLOCATOR_SIMPLE);
 	exec_queues = xe_exec_queue_create(fd, vm, eci, 0);
 	syncobjs = syncobj_create(fd, 0);
@@ -173,8 +173,8 @@ static void store_cachelines(int fd, struct drm_xe_engine_class_instance *eci,
 		batch_map[b++] = value[n];
 	}
 	batch_map[b++] = MI_BATCH_BUFFER_END;
-	sync[0].flags &= DRM_XE_SYNC_SIGNAL;
-	sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+	sync[0].flags &= DRM_XE_SYNC_FLAG_SIGNAL;
+	sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 	sync[1].handle = syncobjs;
 	exec.exec_queue_id = exec_queues;
 	xe_exec(fd, &exec);
@@ -210,8 +210,8 @@ static void store_cachelines(int fd, struct drm_xe_engine_class_instance *eci,
 static void store_all(int fd, int gt, int class)
 {
 	struct drm_xe_sync sync[2] = {
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, },
-		{ .flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL, }
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, }
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -230,7 +230,7 @@ static void store_all(int fd, int gt, int class)
 	struct drm_xe_engine_class_instance *hwe;
 	int i, num_placements = 0;
 
-	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_ASYNC_DEFAULT, 0);
+	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 	bo_size = sizeof(*data);
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
@@ -267,8 +267,8 @@ static void store_all(int fd, int gt, int class)
 	for (i = 0; i < num_placements; i++) {
 
 		store_dword_batch(data, addr, i);
-		sync[0].flags &= ~DRM_XE_SYNC_SIGNAL;
-		sync[1].flags |= DRM_XE_SYNC_SIGNAL;
+		sync[0].flags &= ~DRM_XE_SYNC_FLAG_SIGNAL;
+		sync[1].flags |= DRM_XE_SYNC_FLAG_SIGNAL;
 		sync[1].handle = syncobjs[i];
 
 		exec.exec_queue_id = exec_queues[i];

@@ -87,7 +87,7 @@ static void exec_load(int fd, struct drm_xe_engine_class_instance *hwe, unsigned
 	} *data;
 
 	struct drm_xe_sync sync = {
-		.flags = DRM_XE_SYNC_SYNCOBJ | DRM_XE_SYNC_SIGNAL,
+		.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL,
 	};
 
 	struct drm_xe_exec exec = {
