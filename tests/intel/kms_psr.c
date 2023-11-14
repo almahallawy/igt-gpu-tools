@@ -441,7 +441,7 @@ static bool psr_wait_entry_if_enabled(data_t *data)
 	if (data->with_psr_disabled)
 		return true;
 
-	return psr_wait_entry(data->debugfs_fd, data->op_psr_mode);
+	return psr_wait_entry(data->debugfs_fd, data->op_psr_mode, data->output);
 }
 
 static bool psr_wait_update_if_enabled(data_t *data)
@@ -449,7 +449,7 @@ static bool psr_wait_update_if_enabled(data_t *data)
 	if (data->with_psr_disabled)
 		return true;
 
-	return psr_wait_update(data->debugfs_fd, data->op_psr_mode);
+	return psr_wait_update(data->debugfs_fd, data->op_psr_mode, data->output);
 }
 
 static bool psr_enable_if_enabled(data_t *data)

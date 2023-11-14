@@ -253,7 +253,7 @@ static void psr_print_status(int debugfs_fd)
 
 static bool psr_wait_until_enabled(int debugfs_fd)
 {
-	bool r = psr_wait_entry(debugfs_fd, PSR_MODE_1);
+	bool r = psr_wait_entry(debugfs_fd, PSR_MODE_1, NULL);
 
 	psr_print_status(debugfs_fd);
 	return r;
@@ -274,7 +274,7 @@ static bool psr_supported_on_chipset(int device, int debugfs_fd)
 
 static bool psr_wait_until_update(struct drm_info *drm)
 {
-	return psr_long_wait_update(drm->debugfs_fd, PSR_MODE_1);
+	return psr_long_wait_update(drm->debugfs_fd, PSR_MODE_1, NULL);
 }
 
 static void disable_features(int device, int debugfs_fd)

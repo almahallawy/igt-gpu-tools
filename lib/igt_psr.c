@@ -47,13 +47,19 @@ bool psr2_selective_fetch_check(int debugfs_fd)
 	return strstr(buf, "PSR2 selective fetch: enabled");
 }
 
-static bool psr_active_check(int debugfs_fd, enum psr_mode mode)
+static bool psr_active_check(int debugfs_fd, enum psr_mode mode, igt_output_t *output)
 {
+	char debugfs_file[128] = {0};
 	char buf[PSR_STATUS_MAX_LEN];
-	const char *state = mode == PSR_MODE_1 ? "SRDENT" : "DEEP_SLEEP";
+	const char *state = (mode == PSR_MODE_1 || mode == PR_MODE) ? "SRDENT" : "DEEP_SLEEP";
 	int ret;
 
-	ret = igt_debugfs_simple_read(debugfs_fd, "i915_edp_psr_status",
+	if (output)
+		sprintf(debugfs_file, "%s/i915_psr_status", output->name);
+	else
+		sprintf(debugfs_file, "%s", "i915_edp_psr_status");
+
+	ret = igt_debugfs_simple_read(debugfs_fd, debugfs_file,
 				     buf, sizeof(buf));
 	if (ret < 0) {
 		igt_info("Could not read i915_edp_psr_status: %s\n",
@@ -69,19 +75,19 @@ static bool psr_active_check(int debugfs_fd, enum psr_mode mode)
 /*
  * For PSR1, we wait until PSR is active. We wait until DEEP_SLEEP for PSR2.
  */
-bool psr_wait_entry(int debugfs_fd, enum psr_mode mode)
+bool psr_wait_entry(int debugfs_fd, enum psr_mode mode, igt_output_t *output)
 {
-	return igt_wait(psr_active_check(debugfs_fd, mode), 500, 20);
+	return igt_wait(psr_active_check(debugfs_fd, mode, output), 500, 20);
 }
 
-bool psr_wait_update(int debugfs_fd, enum psr_mode mode)
+bool psr_wait_update(int debugfs_fd, enum psr_mode mode, igt_output_t *output)
 {
-	return igt_wait(!psr_active_check(debugfs_fd, mode), 40, 10);
+	return igt_wait(!psr_active_check(debugfs_fd, mode, output), 40, 10);
 }
 
-bool psr_long_wait_update(int debugfs_fd, enum psr_mode mode)
+bool psr_long_wait_update(int debugfs_fd, enum psr_mode mode, igt_output_t *output)
 {
-	return igt_wait(!psr_active_check(debugfs_fd, mode), 500, 10);
+	return igt_wait(!psr_active_check(debugfs_fd, mode, output), 500, 10);
 }
 
 static ssize_t psr_write(int debugfs_fd, const char *buf)

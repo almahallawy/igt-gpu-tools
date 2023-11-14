@@ -677,7 +677,7 @@ static void damaged_plane_move(data_t *data)
 
 	igt_display_commit2(&data->display, COMMIT_ATOMIC);
 
-	igt_assert(psr_wait_entry(data->debugfs_fd, PSR_MODE_2));
+	igt_assert(psr_wait_entry(data->debugfs_fd, PSR_MODE_2, NULL));
 
 	expected_output(data);
 }
@@ -777,7 +777,7 @@ static void plane_move_continuous(data_t *data)
 {
 	int target_x, target_y;
 
-	igt_assert(psr_wait_entry(data->debugfs_fd, PSR_MODE_2));
+	igt_assert(psr_wait_entry(data->debugfs_fd, PSR_MODE_2, NULL));
 
 	get_target_coords(data, &target_x, &target_y);
 
@@ -854,7 +854,7 @@ static void damaged_plane_update(data_t *data)
 	igt_plane_set_position(data->test_plane, 0, 0);
 	igt_display_commit2(&data->display, COMMIT_ATOMIC);
 
-	igt_assert(psr_wait_entry(data->debugfs_fd, PSR_MODE_2));
+	igt_assert(psr_wait_entry(data->debugfs_fd, PSR_MODE_2, NULL));
 
 	expected_output(data);
 }
@@ -863,7 +863,7 @@ static void run(data_t *data)
 {
 	int i;
 
-	igt_assert(psr_wait_entry(data->debugfs_fd, PSR_MODE_2));
+	igt_assert(psr_wait_entry(data->debugfs_fd, PSR_MODE_2, NULL));
 
 	data->screen_changes = 0;
 
@@ -941,7 +941,7 @@ static int check_psr2_support(data_t *data)
 	int status;
 
 	prepare(data);
-	status = psr_wait_entry(data->debugfs_fd, PSR_MODE_2);
+	status = psr_wait_entry(data->debugfs_fd, PSR_MODE_2, NULL);
 	cleanup(data);
 
 	return status;

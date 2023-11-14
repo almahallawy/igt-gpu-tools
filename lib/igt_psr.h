@@ -42,9 +42,9 @@ enum psr_mode {
 
 bool psr_disabled_check(int debugfs_fd);
 bool psr2_selective_fetch_check(int debugfs_fd);
-bool psr_wait_entry(int debugfs_fd, enum psr_mode mode);
-bool psr_wait_update(int debugfs_fd, enum psr_mode mode);
-bool psr_long_wait_update(int debugfs_fd, enum psr_mode mode);
+bool psr_wait_entry(int debugfs_fd, enum psr_mode mode, igt_output_t *output);
+bool psr_wait_update(int debugfs_fd, enum psr_mode mode, igt_output_t *output);
+bool psr_long_wait_update(int debugfs_fd, enum psr_mode mode, igt_output_t *output);
 bool psr_enable(int device, int debugfs_fd, enum psr_mode);
 bool psr_disable(int device, int debugfs_fd);
 bool psr_sink_support(int device, int debugfs_fd, enum psr_mode mode, igt_output_t *output);

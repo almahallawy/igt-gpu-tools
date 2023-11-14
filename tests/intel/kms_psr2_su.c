@@ -258,7 +258,7 @@ static void run(data_t *data, igt_output_t *output)
 {
 	bool result = false;
 
-	igt_assert(psr_wait_entry(data->debugfs_fd, PSR_MODE_2));
+	igt_assert(psr_wait_entry(data->debugfs_fd, PSR_MODE_2, output));
 
 	for (data->screen_changes = 0;
 	     data->screen_changes < MAX_SCREEN_CHANGES && !result;
@@ -304,7 +304,7 @@ static int check_psr2_support(data_t *data, enum pipe pipe)
 	igt_output_set_pipe(output, pipe);
 
 	prepare(data, output);
-	status = psr_wait_entry(data->debugfs_fd, PSR_MODE_2);
+	status = psr_wait_entry(data->debugfs_fd, PSR_MODE_2, output);
 	cleanup(data, output);
 
 	return status;

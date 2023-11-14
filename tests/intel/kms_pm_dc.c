@@ -382,7 +382,7 @@ static void setup_dc3co(data_t *data)
 {
 	data->op_psr_mode = PSR_MODE_2;
 	psr_enable(data->drm_fd, data->debugfs_fd, data->op_psr_mode);
-	igt_require_f(psr_wait_entry(data->debugfs_fd, data->op_psr_mode),
+	igt_require_f(psr_wait_entry(data->debugfs_fd, data->op_psr_mode, NULL),
 		      "PSR2 is not enabled\n");
 }
 
@@ -418,7 +418,7 @@ static void test_dc_state_psr(data_t *data, int dc_flag)
 	dc_counter_before_psr = read_dc_counter(data->debugfs_fd, dc_flag);
 	setup_output(data);
 	setup_primary(data);
-	igt_assert(psr_wait_entry(data->debugfs_fd, data->op_psr_mode));
+	igt_assert(psr_wait_entry(data->debugfs_fd, data->op_psr_mode, NULL));
 	check_dc_counter(data, dc_flag, dc_counter_before_psr);
 	cleanup_dc_psr(data);
 }
@@ -624,7 +624,7 @@ static void test_pkgc_state_psr(data_t *data)
 	prev_value = read_pkgc_counter(data->debugfs_root_fd);
 	setup_output(data);
 	setup_primary(data);
-	igt_assert(psr_wait_entry(data->debugfs_fd, data->op_psr_mode));
+	igt_assert(psr_wait_entry(data->debugfs_fd, data->op_psr_mode, NULL));
 	psr_dpms(data, DRM_MODE_DPMS_OFF);
 	igt_wait((cur_value = read_pkgc_counter(data->debugfs_root_fd)) > prev_value,
 		  timeout_sec * 1000, 100);

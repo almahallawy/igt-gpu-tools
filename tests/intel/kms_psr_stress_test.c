@@ -232,7 +232,7 @@ static void prepare(data_t *data)
 
 	data->initial_state = psr_get_mode(data->debugfs_fd);
 	igt_require(data->initial_state != PSR_DISABLED);
-	igt_require(psr_wait_entry(data->debugfs_fd, data->initial_state));
+	igt_require(psr_wait_entry(data->debugfs_fd, data->initial_state, NULL));
 }
 
 static void cleanup(data_t *data)
