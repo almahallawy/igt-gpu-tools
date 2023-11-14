@@ -269,7 +269,7 @@ static bool psr_is_disabled(int debugfs_fd)
 
 static bool psr_supported_on_chipset(int device, int debugfs_fd)
 {
-	return psr_sink_support(device, debugfs_fd, PSR_MODE_1);
+	return psr_sink_support(device, debugfs_fd, PSR_MODE_1, NULL);
 }
 
 static bool psr_wait_until_update(struct drm_info *drm)
@@ -280,7 +280,7 @@ static bool psr_wait_until_update(struct drm_info *drm)
 static void disable_features(int device, int debugfs_fd)
 {
 	igt_set_module_param_int(device, "enable_fbc", 0);
-	if (psr_sink_support(device, debugfs_fd, PSR_MODE_1))
+	if (psr_sink_support(device, debugfs_fd, PSR_MODE_1, NULL))
 		psr_disable(device, debugfs_fd);
 }
 

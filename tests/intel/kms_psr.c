@@ -433,7 +433,7 @@ static void fill_render(data_t *data, const struct igt_fb *fb,
 static bool sink_support(data_t *data, enum psr_mode mode)
 {
 	return data->with_psr_disabled ||
-	       psr_sink_support(data->drm_fd, data->debugfs_fd, mode);
+	       psr_sink_support(data->drm_fd, data->debugfs_fd, mode, NULL);
 }
 
 static bool psr_wait_entry_if_enabled(data_t *data)

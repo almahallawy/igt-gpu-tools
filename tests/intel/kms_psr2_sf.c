@@ -980,7 +980,8 @@ igt_main
 		kmstest_set_vt_graphics_mode();
 
 		igt_require_f(psr_sink_support(data.drm_fd,
-					       data.debugfs_fd, PSR_MODE_2),
+					       data.debugfs_fd, PSR_MODE_2,
+					       NULL),
 			      "Sink does not support PSR2\n");
 
 		display_init(&data);

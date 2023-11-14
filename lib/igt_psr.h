@@ -27,6 +27,7 @@
 #include "igt_debugfs.h"
 #include "igt_core.h"
 #include "igt_aux.h"
+#include "igt_kms.h"
 
 #define PSR_STATUS_MAX_LEN 512
 
@@ -46,7 +47,7 @@ bool psr_wait_update(int debugfs_fd, enum psr_mode mode);
 bool psr_long_wait_update(int debugfs_fd, enum psr_mode mode);
 bool psr_enable(int device, int debugfs_fd, enum psr_mode);
 bool psr_disable(int device, int debugfs_fd);
-bool psr_sink_support(int device, int debugfs_fd, enum psr_mode mode);
+bool psr_sink_support(int device, int debugfs_fd, enum psr_mode mode, igt_output_t *output);
 bool psr2_wait_su(int debugfs_fd, uint16_t *num_su_blocks);
 void psr_print_debugfs(int debugfs_fd);
 enum psr_mode psr_get_mode(int debugfs_fd);

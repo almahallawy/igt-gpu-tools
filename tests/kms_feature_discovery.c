@@ -159,12 +159,12 @@ igt_main {
 
 		igt_describe("Make sure that we have eDP panel with PSR1 support.");
 		igt_subtest("psr1") {
-			igt_require(psr_sink_support(fd, debugfs_fd, PSR_MODE_1));
+			igt_require(psr_sink_support(fd, debugfs_fd, PSR_MODE_1, NULL));
 		}
 
 		igt_describe("Make sure that we have eDP panel with PSR2 support.");
 		igt_subtest("psr2") {
-			igt_require(psr_sink_support(fd, debugfs_fd, PSR_MODE_2));
+			igt_require(psr_sink_support(fd, debugfs_fd, PSR_MODE_2, NULL));
 		}
 
 		igt_describe("Make sure that we have DP-MST configuration.");

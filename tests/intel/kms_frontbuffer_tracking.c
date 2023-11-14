@@ -1383,7 +1383,7 @@ static void setup_psr(void)
 		return;
 	}
 
-	if (!psr_sink_support(drm.fd, drm.debugfs, PSR_MODE_1)) {
+	if (!psr_sink_support(drm.fd, drm.debugfs, PSR_MODE_1, NULL)) {
 		igt_info("Can't test PSR: not supported by sink.\n");
 		return;
 	}

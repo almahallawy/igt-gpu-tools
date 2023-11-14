@@ -92,7 +92,7 @@ static bool check_support(data_t *data)
 		    DRM_MODE_CONNECTOR_eDP)
 			return false;
 		return psr_sink_support(data->drm_fd, data->debugfs_fd,
-					PSR_MODE_1);
+					PSR_MODE_1, NULL);
 	case FEATURE_DRRS:
 		return intel_is_drrs_supported(data->drm_fd, data->pipe) &&
 			intel_output_has_drrs(data->drm_fd, data->output);

@@ -192,31 +192,52 @@ bool psr_disable(int device, int debugfs_fd)
 	return psr_set(device, debugfs_fd, -1);
 }
 
-bool psr_sink_support(int device, int debugfs_fd, enum psr_mode mode)
+bool psr_sink_support(int device, int debugfs_fd, enum psr_mode mode, igt_output_t *output)
 {
+	char *line;
+	char debugfs_file[128] = {0};
 	char buf[PSR_STATUS_MAX_LEN];
 	int ret;
 
-	ret = igt_debugfs_simple_read(debugfs_fd, "i915_edp_psr_status", buf,
+	if (output)
+		sprintf(debugfs_file, "%s/i915_psr_status", output->name);
+	else
+		sprintf(debugfs_file, "%s", "i915_edp_psr_status");
+
+	ret = igt_debugfs_simple_read(debugfs_fd, debugfs_file, buf,
 				      sizeof(buf));
 	if (ret < 1)
 		return false;
 
-	if (mode == PSR_MODE_1)
-		return strstr(buf, "Sink_Support: yes\n") ||
+	line = strstr(buf, "Sink support: ");
+	if (!line)
+		return false;
+
+	switch (mode) {
+	case PSR_MODE_1:
+		return strstr(line, "PSR = yes") ||
+		       strstr(buf, "Sink_Support: yes\n") ||
 		       strstr(buf, "Sink support: yes");
-	else
+	case PSR_MODE_2:
+	case PSR_MODE_2_SEL_FETCH:
 		/*
 		 * i915 requires PSR version 0x03 that is PSR2 + SU with
 		 * Y-coordinate to support PSR2
-		 *
 		 * or
 		 *
 		 * PSR version 0x4 that is PSR2 + SU w/ Y-coordinate and SU
 		 * Region Early Transport to support PSR2 (eDP 1.5)
 		 */
 		return strstr(buf, "Sink support: yes [0x03]") ||
-		       strstr(buf, "Sink support: yes [0x04]");
+		       strstr(buf, "Sink support: yes [0x04]") ||
+		       (strstr(line, "PSR = yes") &&
+		       (strstr(line, "[0x03]") || strstr(line, "[0x04]")));
+	case PR_MODE:
+		return strstr(line, "Panel Replay = yes");
+	default:
+		igt_assert_f(false, "Invalid psr mode\n");
+		return false;
+	}
 }
 
 #define PSR2_SU_BLOCK_STR_LOOKUP "PSR2 SU blocks:\n0\t"
