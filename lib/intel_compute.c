@@ -203,120 +203,75 @@ static void bo_execenv_exec(struct bo_execenv *execenv, uint64_t start_addr)
  */
 
 /**
- * tgllp_create_indirect_data:
+ * create_indirect_data:
  * @addr_bo_buffer_batch: pointer to batch buffer
  * @addr_input: input buffer gpu offset
  * @addr_output: output buffer gpu offset
  *
  * Prepares indirect data for compute pipeline.
  */
-static void tgllp_create_indirect_data(uint32_t *addr_bo_buffer_batch,
-				       uint64_t addr_input,
-				       uint64_t addr_output)
+static void create_indirect_data(uint32_t *addr_bo_buffer_batch,
+				 uint64_t addr_input,
+				 uint64_t addr_output,
+				 uint32_t end_value)
 {
-	int b = 0;
+	uint32_t val = 0;
+	int b = 0, curr = 0;
 
 	addr_bo_buffer_batch[b++] = 0x00000000;
 	addr_bo_buffer_batch[b++] = 0x00000000;
 	addr_bo_buffer_batch[b++] = 0x00000000;
 	addr_bo_buffer_batch[b++] = 0x00000200;
+
 	addr_bo_buffer_batch[b++] = 0x00000001;
 	addr_bo_buffer_batch[b++] = 0x00000001;
 	addr_bo_buffer_batch[b++] = 0x00000000;
 	addr_bo_buffer_batch[b++] = 0x00000000;
+
 	addr_bo_buffer_batch[b++] = addr_input & 0xffffffff;
 	addr_bo_buffer_batch[b++] = addr_input >> 32;
 	addr_bo_buffer_batch[b++] = addr_output & 0xffffffff;
 	addr_bo_buffer_batch[b++] = addr_output >> 32;
+
 	addr_bo_buffer_batch[b++] = 0x00000400;
 	addr_bo_buffer_batch[b++] = 0x00000000;
 	addr_bo_buffer_batch[b++] = 0x00000000;
 	addr_bo_buffer_batch[b++] = 0x00000000;
+
 	addr_bo_buffer_batch[b++] = 0x00000200;
 	addr_bo_buffer_batch[b++] = 0x00000001;
 	addr_bo_buffer_batch[b++] = 0x00000001;
 	addr_bo_buffer_batch[b++] = 0x00000000;
+
 	addr_bo_buffer_batch[b++] = 0x00000000;
 	addr_bo_buffer_batch[b++] = 0x00000000;
 	addr_bo_buffer_batch[b++] = 0x00000000;
 	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00010000;
-	addr_bo_buffer_batch[b++] = 0x00030002;
-	addr_bo_buffer_batch[b++] = 0x00050004;
-	addr_bo_buffer_batch[b++] = 0x00070006;
-	addr_bo_buffer_batch[b++] = 0x00090008;
-	addr_bo_buffer_batch[b++] = 0x000B000A;
-	addr_bo_buffer_batch[b++] = 0x000D000C;
-	addr_bo_buffer_batch[b++] = 0x000F000E;
-	addr_bo_buffer_batch[b++] = 0x00110010;
-	addr_bo_buffer_batch[b++] = 0x00130012;
-	addr_bo_buffer_batch[b++] = 0x00150014;
-	addr_bo_buffer_batch[b++] = 0x00170016;
-	addr_bo_buffer_batch[b++] = 0x00190018;
-	addr_bo_buffer_batch[b++] = 0x001B001A;
-	addr_bo_buffer_batch[b++] = 0x001D001C;
-	addr_bo_buffer_batch[b++] = 0x001F001E;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00000000;
-	addr_bo_buffer_batch[b++] = 0x00210020;
-	addr_bo_buffer_batch[b++] = 0x00230022;
-	addr_bo_buffer_batch[b++] = 0x00250024;
-	addr_bo_buffer_batch[b++] = 0x00270026;
-	addr_bo_buffer_batch[b++] = 0x00290028;
-	addr_bo_buffer_batch[b++] = 0x002B002A;
-	addr_bo_buffer_batch[b++] = 0x002D002C;
-	addr_bo_buffer_batch[b++] = 0x002F002E;
-	addr_bo_buffer_batch[b++] = 0x00310030;
-	addr_bo_buffer_batch[b++] = 0x00330032;
-	addr_bo_buffer_batch[b++] = 0x00350034;
-	addr_bo_buffer_batch[b++] = 0x00370036;
-	addr_bo_buffer_batch[b++] = 0x00390038;
-	addr_bo_buffer_batch[b++] = 0x003B003A;
-	addr_bo_buffer_batch[b++] = 0x003D003C;
-	addr_bo_buffer_batch[b++] = 0x003F003E;
+
+	/*
+	 * Runtime prepares 32 16-bit incremented values packed to single dword.
+	 * Then it lefts 32 dword gap filled with zeroes. Pattern looks the
+	 * same for tgl and dg1 (apart of number of values).
+	 */
+	while (val < end_value) {
+		addr_bo_buffer_batch[b++] = val | ((val + 1) << 16);
+		val += 2;
+		if (++curr % 16 == 0)
+			b += 32;
+	}
 }
 
 /**
- * tgllp_create_surface_state:
+ * create_surface_state:
  * @addr_bo_buffer_batch: pointer to batch buffer
  * @addr_input: input buffer gpu offset
  * @addr_output: output buffer gpu offset
  *
  * Prepares surface state for compute pipeline.
  */
-static void tgllp_create_surface_state(uint32_t *addr_bo_buffer_batch,
-				       uint64_t addr_input,
-				       uint64_t addr_output)
+static void create_surface_state(uint32_t *addr_bo_buffer_batch,
+				 uint64_t addr_input,
+				 uint64_t addr_output)
 {
 	int b = 0;
 
@@ -387,14 +342,14 @@ static void tgllp_create_surface_state(uint32_t *addr_bo_buffer_batch,
 }
 
 /**
- * tgllp_create_dynamic_state:
+ * create_dynamic_state:
  * @addr_bo_buffer_batch: pointer to batch buffer
  * @offset_kernel: gpu offset of the shader
  *
  * Prepares dynamic state for compute pipeline.
  */
-static void tgllp_create_dynamic_state(uint32_t *addr_bo_buffer_batch,
-				       uint64_t offset_kernel)
+static void create_dynamic_state(uint32_t *addr_bo_buffer_batch,
+				 uint64_t offset_kernel)
 {
 	int b = 0;
 
@@ -582,9 +537,9 @@ static void tgl_compute_exec(int fd, const unsigned char *kernel,
 	bo_execenv_bind(&execenv, bo_dict, TGL_BO_DICT_ENTRIES);
 
 	memcpy(bo_dict[0].data, kernel, size);
-	tgllp_create_dynamic_state(bo_dict[1].data, OFFSET_KERNEL);
-	tgllp_create_surface_state(bo_dict[2].data, ADDR_INPUT, ADDR_OUTPUT);
-	tgllp_create_indirect_data(bo_dict[3].data, ADDR_INPUT, ADDR_OUTPUT);
+	create_dynamic_state(bo_dict[1].data, OFFSET_KERNEL);
+	create_surface_state(bo_dict[2].data, ADDR_INPUT, ADDR_OUTPUT);
+	create_indirect_data(bo_dict[3].data, ADDR_INPUT, ADDR_OUTPUT, 0x40);
 
 	dinput = (float *)bo_dict[4].data;
 	srand(time(NULL));
@@ -852,7 +807,7 @@ static void xehp_compute_exec(int fd, const unsigned char *kernel,
 	bo_execenv_bind(&execenv, bo_dict, XEHP_BO_DICT_ENTRIES);
 
 	memcpy(bo_dict[0].data, kernel, size);
-	tgllp_create_dynamic_state(bo_dict[1].data, OFFSET_KERNEL);
+	create_dynamic_state(bo_dict[1].data, OFFSET_KERNEL);
 	xehp_create_surface_state(bo_dict[2].data, ADDR_INPUT, ADDR_OUTPUT);
 	xehp_create_indirect_data(bo_dict[3].data, ADDR_INPUT, ADDR_OUTPUT);
 	xehp_create_surface_state(bo_dict[7].data, ADDR_INPUT, ADDR_OUTPUT);
