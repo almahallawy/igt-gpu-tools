@@ -123,10 +123,10 @@ invalid_flag(int fd)
 
 	struct drm_xe_wait_user_fence wait = {
 		.addr = to_user_pointer(&wait_fence),
-		.op = DRM_XE_UFENCE_WAIT_EQ,
+		.op = DRM_XE_UFENCE_WAIT_OP_EQ,
 		.flags = -1,
 		.value = 1,
-		.mask = DRM_XE_UFENCE_WAIT_U64,
+		.mask = DRM_XE_UFENCE_WAIT_MASK_U64,
 		.timeout = -1,
 		.num_engines = 0,
 		.instances = 0,
@@ -151,7 +151,7 @@ invalid_ops(int fd)
 		.op = -1,
 		.flags = 0,
 		.value = 1,
-		.mask = DRM_XE_UFENCE_WAIT_U64,
+		.mask = DRM_XE_UFENCE_WAIT_MASK_U64,
 		.timeout = 1,
 		.num_engines = 0,
 		.instances = 0,
@@ -173,10 +173,10 @@ invalid_engine(int fd)
 
 	struct drm_xe_wait_user_fence wait = {
 		.addr = to_user_pointer(&wait_fence),
-		.op = DRM_XE_UFENCE_WAIT_EQ,
+		.op = DRM_XE_UFENCE_WAIT_OP_EQ,
 		.flags = 0,
 		.value = 1,
-		.mask = DRM_XE_UFENCE_WAIT_U64,
+		.mask = DRM_XE_UFENCE_WAIT_MASK_U64,
 		.timeout = -1,
 		.num_engines = 1,
 		.instances = 0,
