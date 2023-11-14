@@ -34,6 +34,8 @@ enum psr_mode {
 	PSR_MODE_1,
 	PSR_MODE_2,
 	PSR_MODE_2_SEL_FETCH,
+	PR_MODE,
+	PR_MODE_SEL_FETCH,
 	PSR_DISABLED,
 };
 
