@@ -147,7 +147,7 @@ static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct igt_list_head *obj_lis
 		ops->obj_offset = 0;
 		ops->addr = obj->offset;
 		ops->range = obj->size;
-		ops->region = 0;
+		ops->prefetch_mem_region_instance = 0;
 
 		bind_info("  [%d]: [%6s] handle: %u, offset: %llx, size: %llx\n",
 			  i, obj->bind_op == XE_OBJECT_BIND ? "BIND" : "UNBIND",

@@ -1282,7 +1282,7 @@ void intel_bb_destroy(struct intel_bb *ibb)
 
 static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct intel_bb *ibb,
 						   uint32_t op, uint32_t flags,
-						   uint32_t region)
+						   uint32_t prefetch_region)
 {
 	struct drm_i915_gem_exec_object2 **objects = ibb->objects;
 	struct drm_xe_vm_bind_op *bind_ops, *ops;
@@ -1303,7 +1303,7 @@ static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct intel_bb *ibb,
 		ops->obj_offset = 0;
 		ops->addr = objects[i]->offset;
 		ops->range = objects[i]->rsvd1;
-		ops->region = region;
+		ops->prefetch_mem_region_instance = prefetch_region;
 
 		igt_debug("  [%d]: handle: %u, offset: %llx, size: %llx\n",
 			  i, ops->obj, (long long)ops->addr, (long long)ops->range);

@@ -24,7 +24,7 @@ int  __xe_vm_bind(int fd, uint32_t vm, uint32_t exec_queue, uint32_t bo,
 void  __xe_vm_bind_assert(int fd, uint32_t vm, uint32_t exec_queue, uint32_t bo,
 			  uint64_t offset, uint64_t addr, uint64_t size,
 			  uint32_t op, uint32_t flags, struct drm_xe_sync *sync,
-			  uint32_t num_syncs, uint32_t region, uint64_t ext);
+			  uint32_t num_syncs, uint32_t prefetch_region, uint64_t ext);
 void xe_vm_bind(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 		uint64_t addr, uint64_t size,
 		struct drm_xe_sync *sync, uint32_t num_syncs);
