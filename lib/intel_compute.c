@@ -33,9 +33,9 @@
 #define ADDR_OUTPUT			0x300000UL
 #define ADDR_SURFACE_STATE_BASE		0x400000UL
 #define ADDR_DYNAMIC_STATE_BASE		0x500000UL
-#define ADDR_INDIRECT_OBJECT_BASE	0x800100000000
-#define OFFSET_INDIRECT_DATA_START	0xFFFDF000
-#define OFFSET_KERNEL			0xFFFEF000
+#define ADDR_INDIRECT_OBJECT_BASE	0x100000000
+#define OFFSET_INDIRECT_DATA_START	0xFFFD0000
+#define OFFSET_KERNEL			0xFFFE0000
 
 #define XEHP_ADDR_GENERAL_STATE_BASE		0x80000000UL
 #define XEHP_ADDR_INSTRUCTION_STATE_BASE	0x90000000UL
@@ -494,17 +494,102 @@ static void tgllp_compute_exec_compute(uint32_t *addr_bo_buffer_batch,
 }
 
 /**
- * tgl_compute_exec - run a pipeline compatible with Tiger Lake
+ * dg1_compute_exec_compute:
+ * @addr_bo_buffer_batch: pointer to batch buffer
+ * @addr_surface_state_base: gpu offset of surface state data
+ * @addr_dynamic_state_base: gpu offset of dynamic state data
+ * @addr_indirect_object_base: gpu offset of indirect object data
+ * @offset_indirect_data_start: gpu offset of indirect data start
+ *
+ * Prepares compute pipeline.
+ */
+static void dg1_compute_exec_compute(uint32_t *addr_bo_buffer_batch,
+				     uint64_t addr_surface_state_base,
+				     uint64_t addr_dynamic_state_base,
+				     uint64_t addr_indirect_object_base,
+				     uint64_t offset_indirect_data_start)
+{
+	int b = 0;
+
+	addr_bo_buffer_batch[b++] = XEHP_STATE_COMPUTE_MODE;
+	addr_bo_buffer_batch[b++] = 0x00180010;
+
+	addr_bo_buffer_batch[b++] = MEDIA_VFE_STATE | (9 - 2);
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x02FF0100;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x04000000;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+
+	addr_bo_buffer_batch[b++] = MI_LOAD_REGISTER_IMM(1);
+	addr_bo_buffer_batch[b++] = 0x00002580;
+	addr_bo_buffer_batch[b++] = 0x00060002;
+
+	addr_bo_buffer_batch[b++] = STATE_BASE_ADDRESS | 0x14;
+	addr_bo_buffer_batch[b++] = 0x00000001;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x000A0000;
+	addr_bo_buffer_batch[b++] = (addr_surface_state_base & 0xffffffff) | 0x1;
+	addr_bo_buffer_batch[b++] = addr_surface_state_base >> 32;
+	addr_bo_buffer_batch[b++] = (addr_dynamic_state_base & 0xffffffff) | 0x1;
+	addr_bo_buffer_batch[b++] = addr_dynamic_state_base >> 32;
+	addr_bo_buffer_batch[b++] = (addr_indirect_object_base & 0xffffffff) | 0x1;
+	addr_bo_buffer_batch[b++] = (addr_indirect_object_base >> 32) | 0xffff0000;
+	addr_bo_buffer_batch[b++] = (addr_indirect_object_base & 0xffffffff) | 0xA1;
+	addr_bo_buffer_batch[b++] = addr_indirect_object_base >> 32;
+	addr_bo_buffer_batch[b++] = 0xFFFFF001;
+	addr_bo_buffer_batch[b++] = 0x00010001;
+	addr_bo_buffer_batch[b++] = 0xFFFFF001;
+	addr_bo_buffer_batch[b++] = 0xFFFFF001;
+	addr_bo_buffer_batch[b++] = (addr_surface_state_base & 0xffffffff) | 0xA1;
+	addr_bo_buffer_batch[b++] = addr_surface_state_base >> 32;
+	addr_bo_buffer_batch[b++] = 0x003BF000;
+	addr_bo_buffer_batch[b++] = 0x000000A1;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+
+	addr_bo_buffer_batch[b++] = MEDIA_INTERFACE_DESCRIPTOR_LOAD | (4 - 2);
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000020;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+
+	addr_bo_buffer_batch[b++] = GPGPU_WALKER | 13;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000c80;
+	addr_bo_buffer_batch[b++] = offset_indirect_data_start;
+	addr_bo_buffer_batch[b++] = 0x8000000f;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000002;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000001;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+	addr_bo_buffer_batch[b++] = 0x00000001;
+	addr_bo_buffer_batch[b++] = 0xffffffff;
+	addr_bo_buffer_batch[b++] = 0xffffffff;
+
+	addr_bo_buffer_batch[b++] = MEDIA_STATE_FLUSH;
+	addr_bo_buffer_batch[b++] = 0x00000000;
+
+	addr_bo_buffer_batch[b++] = MI_BATCH_BUFFER_END;
+}
+
+/**
+ * compute_exec - run a pipeline compatible with Tiger Lake and DG1
  *
  * @fd: file descriptor of the opened DRM device
  * @kernel: GPU Kernel binary to be executed
  * @size: size of @kernel.
  */
-static void tgl_compute_exec(int fd, const unsigned char *kernel,
-			     unsigned int size)
+static void compute_exec(int fd, const unsigned char *kernel,
+			 unsigned int size)
 {
-#define TGL_BO_DICT_ENTRIES 7
-	struct bo_dict_entry bo_dict[TGL_BO_DICT_ENTRIES] = {
+#define BO_DICT_ENTRIES 7
+	struct bo_dict_entry bo_dict[BO_DICT_ENTRIES] = {
 		{ .addr = ADDR_INDIRECT_OBJECT_BASE + OFFSET_KERNEL,
 		  .name = "kernel" },
 		{ .addr = ADDR_DYNAMIC_STATE_BASE,
@@ -528,29 +613,38 @@ static void tgl_compute_exec(int fd, const unsigned char *kernel,
 	};
 	struct bo_execenv execenv;
 	float *dinput;
+	uint16_t devid = intel_get_drm_devid(fd);
 
 	bo_execenv_create(fd, &execenv);
 
 	/* Sets Kernel size */
 	bo_dict[0].size = ALIGN(size, 0x1000);
 
-	bo_execenv_bind(&execenv, bo_dict, TGL_BO_DICT_ENTRIES);
+	bo_execenv_bind(&execenv, bo_dict, BO_DICT_ENTRIES);
 
 	memcpy(bo_dict[0].data, kernel, size);
 	create_dynamic_state(bo_dict[1].data, OFFSET_KERNEL);
 	create_surface_state(bo_dict[2].data, ADDR_INPUT, ADDR_OUTPUT);
-	create_indirect_data(bo_dict[3].data, ADDR_INPUT, ADDR_OUTPUT, 0x40);
+	create_indirect_data(bo_dict[3].data, ADDR_INPUT, ADDR_OUTPUT,
+			     IS_DG1(devid) ? 0x200 : 0x40);
 
 	dinput = (float *)bo_dict[4].data;
 	srand(time(NULL));
 	for (int i = 0; i < SIZE_DATA; i++)
 		((float *)dinput)[i] = rand() / (float)RAND_MAX;
 
-	tgllp_compute_exec_compute(bo_dict[6].data,
-				   ADDR_SURFACE_STATE_BASE,
-				   ADDR_DYNAMIC_STATE_BASE,
-				   ADDR_INDIRECT_OBJECT_BASE,
-				   OFFSET_INDIRECT_DATA_START);
+	if (IS_DG1(devid))
+		dg1_compute_exec_compute(bo_dict[6].data,
+					 ADDR_SURFACE_STATE_BASE,
+					 ADDR_DYNAMIC_STATE_BASE,
+					 ADDR_INDIRECT_OBJECT_BASE,
+					 OFFSET_INDIRECT_DATA_START);
+	else
+		tgllp_compute_exec_compute(bo_dict[6].data,
+					   ADDR_SURFACE_STATE_BASE,
+					   ADDR_DYNAMIC_STATE_BASE,
+					   ADDR_INDIRECT_OBJECT_BASE,
+					   OFFSET_INDIRECT_DATA_START);
 
 	bo_execenv_exec(&execenv, ADDR_BATCH);
 
@@ -564,7 +658,7 @@ static void tgl_compute_exec(int fd, const unsigned char *kernel,
 		igt_assert(f1 == f2 * f2);
 	}
 
-	bo_execenv_unbind(&execenv, bo_dict, TGL_BO_DICT_ENTRIES);
+	bo_execenv_unbind(&execenv, bo_dict, BO_DICT_ENTRIES);
 	bo_execenv_destroy(&execenv);
 }
 
@@ -1063,8 +1157,13 @@ static const struct {
 } intel_compute_batches[] = {
 	{
 		.ip_ver = IP_VER(12, 0),
-		.compute_exec = tgl_compute_exec,
+		.compute_exec = compute_exec,
 		.compat = COMPAT_DRIVER_I915 | COMPAT_DRIVER_XE,
+	},
+	{
+		.ip_ver = IP_VER(12, 10),
+		.compute_exec = compute_exec,
+		.compat = COMPAT_DRIVER_I915,
 	},
 	{
 		.ip_ver = IP_VER(12, 55),
