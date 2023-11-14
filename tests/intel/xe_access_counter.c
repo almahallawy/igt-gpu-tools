@@ -47,8 +47,8 @@ igt_main
 
 		struct drm_xe_ext_set_property ext = {
 			.base.next_extension = 0,
-			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
-			.property = XE_EXEC_QUEUE_SET_PROPERTY_ACC_GRANULARITY,
+			.base.name = DRM_XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = DRM_XE_EXEC_QUEUE_SET_PROPERTY_ACC_GRANULARITY,
 			.value = SIZE_64M + 1,
 		};
 

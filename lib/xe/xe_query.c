@@ -249,8 +249,8 @@ struct xe_device *xe_device_get(int fd)
 
 	xe_dev->fd = fd;
 	xe_dev->config = xe_query_config_new(fd);
-	xe_dev->va_bits = xe_dev->config->info[XE_QUERY_CONFIG_VA_BITS];
-	xe_dev->dev_id = xe_dev->config->info[XE_QUERY_CONFIG_REV_AND_DEVICE_ID] & 0xffff;
+	xe_dev->va_bits = xe_dev->config->info[DRM_XE_QUERY_CONFIG_VA_BITS];
+	xe_dev->dev_id = xe_dev->config->info[DRM_XE_QUERY_CONFIG_REV_AND_DEVICE_ID] & 0xffff;
 	xe_dev->gt_list = xe_query_gt_list_new(fd);
 	xe_dev->memory_regions = __memory_regions(xe_dev->gt_list);
 	xe_dev->hw_engines = xe_query_engines_new(fd, &xe_dev->number_hw_engines);
@@ -414,7 +414,7 @@ static uint64_t __xe_visible_vram_size(int fd, int gt)
  * @gt: gt id
  *
  * Returns vram memory bitmask for xe device @fd and @gt id, with
- * XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM also set, to ensure that CPU access is
+ * DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM also set, to ensure that CPU access is
  * possible.
  */
 uint64_t visible_vram_memory(int fd, int gt)
@@ -424,7 +424,7 @@ uint64_t visible_vram_memory(int fd, int gt)
 	 * has landed.
 	 */
 	if (__xe_visible_vram_size(fd, gt))
-		return vram_memory(fd, gt) | XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
+		return vram_memory(fd, gt) | DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
 	else
 		return vram_memory(fd, gt); /* older kernel */
 }
@@ -449,7 +449,7 @@ uint64_t vram_if_possible(int fd, int gt)
  *
  * Returns vram memory bitmask for xe device @fd and @gt id or system memory if
  * there's no vram memory available for @gt. Also attaches the
- * XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM to ensure that CPU access is possible
+ * DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM to ensure that CPU access is possible
  * when using vram.
  */
 uint64_t visible_vram_if_possible(int fd, int gt)
@@ -463,7 +463,7 @@ uint64_t visible_vram_if_possible(int fd, int gt)
 	 * has landed.
 	 */
 	if (__xe_visible_vram_size(fd, gt))
-		return vram ? vram | XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM : system_memory;
+		return vram ? vram | DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM : system_memory;
 	else
 		return vram ? vram : system_memory; /* older kernel */
 }

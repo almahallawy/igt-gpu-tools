@@ -1804,7 +1804,7 @@ blt_create_object(const struct blt_copy_data *blt, uint32_t region,
 		uint64_t flags = region;
 
 		if (create_mapping && region != system_memory(blt->fd))
-			flags |= XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
+			flags |= DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM;
 
 		size = ALIGN(size, xe_get_default_alignment(blt->fd));
 		handle = xe_bo_create_flags(blt->fd, 0, size, flags);

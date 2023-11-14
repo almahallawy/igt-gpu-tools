@@ -67,7 +67,7 @@ void xe_vm_unbind_all_async(int fd, uint32_t vm, uint32_t exec_queue,
 			    uint32_t num_syncs)
 {
 	__xe_vm_bind_assert(fd, vm, exec_queue, bo, 0, 0, 0,
-			    XE_VM_BIND_OP_UNMAP_ALL, XE_VM_BIND_FLAG_ASYNC,
+			    DRM_XE_VM_BIND_OP_UNMAP_ALL, DRM_XE_VM_BIND_FLAG_ASYNC,
 			    sync, num_syncs, 0, 0);
 }
 
@@ -130,7 +130,7 @@ void xe_vm_bind(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 		struct drm_xe_sync *sync, uint32_t num_syncs)
 {
 	__xe_vm_bind_assert(fd, vm, 0, bo, offset, addr, size,
-			    XE_VM_BIND_OP_MAP, 0, sync, num_syncs, 0, 0);
+			    DRM_XE_VM_BIND_OP_MAP, 0, sync, num_syncs, 0, 0);
 }
 
 void xe_vm_unbind(int fd, uint32_t vm, uint64_t offset,
@@ -138,7 +138,7 @@ void xe_vm_unbind(int fd, uint32_t vm, uint64_t offset,
 		  struct drm_xe_sync *sync, uint32_t num_syncs)
 {
 	__xe_vm_bind_assert(fd, vm, 0, 0, offset, addr, size,
-			    XE_VM_BIND_OP_UNMAP, 0, sync, num_syncs, 0, 0);
+			    DRM_XE_VM_BIND_OP_UNMAP, 0, sync, num_syncs, 0, 0);
 }
 
 void xe_vm_prefetch_async(int fd, uint32_t vm, uint32_t exec_queue, uint64_t offset,
@@ -147,7 +147,7 @@ void xe_vm_prefetch_async(int fd, uint32_t vm, uint32_t exec_queue, uint64_t off
 			  uint32_t region)
 {
 	__xe_vm_bind_assert(fd, vm, exec_queue, 0, offset, addr, size,
-			    XE_VM_BIND_OP_PREFETCH, XE_VM_BIND_FLAG_ASYNC,
+			    DRM_XE_VM_BIND_OP_PREFETCH, DRM_XE_VM_BIND_FLAG_ASYNC,
 			    sync, num_syncs, region, 0);
 }
 
@@ -156,7 +156,7 @@ void xe_vm_bind_async(int fd, uint32_t vm, uint32_t exec_queue, uint32_t bo,
 		      struct drm_xe_sync *sync, uint32_t num_syncs)
 {
 	__xe_vm_bind_assert(fd, vm, exec_queue, bo, offset, addr, size,
-			    XE_VM_BIND_OP_MAP, XE_VM_BIND_FLAG_ASYNC, sync,
+			    DRM_XE_VM_BIND_OP_MAP, DRM_XE_VM_BIND_FLAG_ASYNC, sync,
 			    num_syncs, 0, 0);
 }
 
@@ -166,7 +166,7 @@ void xe_vm_bind_async_flags(int fd, uint32_t vm, uint32_t exec_queue, uint32_t b
 			    uint32_t flags)
 {
 	__xe_vm_bind_assert(fd, vm, exec_queue, bo, offset, addr, size,
-			    XE_VM_BIND_OP_MAP, XE_VM_BIND_FLAG_ASYNC | flags,
+			    DRM_XE_VM_BIND_OP_MAP, DRM_XE_VM_BIND_FLAG_ASYNC | flags,
 			    sync, num_syncs, 0, 0);
 }
 
@@ -175,7 +175,7 @@ void xe_vm_bind_userptr_async(int fd, uint32_t vm, uint32_t exec_queue,
 			      struct drm_xe_sync *sync, uint32_t num_syncs)
 {
 	__xe_vm_bind_assert(fd, vm, exec_queue, 0, userptr, addr, size,
-			    XE_VM_BIND_OP_MAP_USERPTR, XE_VM_BIND_FLAG_ASYNC,
+			    DRM_XE_VM_BIND_OP_MAP_USERPTR, DRM_XE_VM_BIND_FLAG_ASYNC,
 			    sync, num_syncs, 0, 0);
 }
 
@@ -185,7 +185,7 @@ void xe_vm_bind_userptr_async_flags(int fd, uint32_t vm, uint32_t exec_queue,
 				    uint32_t num_syncs, uint32_t flags)
 {
 	__xe_vm_bind_assert(fd, vm, exec_queue, 0, userptr, addr, size,
-			    XE_VM_BIND_OP_MAP_USERPTR, XE_VM_BIND_FLAG_ASYNC |
+			    DRM_XE_VM_BIND_OP_MAP_USERPTR, DRM_XE_VM_BIND_FLAG_ASYNC |
 			    flags, sync, num_syncs, 0, 0);
 }
 
@@ -194,7 +194,7 @@ void xe_vm_unbind_async(int fd, uint32_t vm, uint32_t exec_queue,
 			struct drm_xe_sync *sync, uint32_t num_syncs)
 {
 	__xe_vm_bind_assert(fd, vm, exec_queue, 0, offset, addr, size,
-			    XE_VM_BIND_OP_UNMAP, XE_VM_BIND_FLAG_ASYNC, sync,
+			    DRM_XE_VM_BIND_OP_UNMAP, DRM_XE_VM_BIND_FLAG_ASYNC, sync,
 			    num_syncs, 0, 0);
 }
 
@@ -208,13 +208,13 @@ static void __xe_vm_bind_sync(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 void xe_vm_bind_sync(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 		     uint64_t addr, uint64_t size)
 {
-	__xe_vm_bind_sync(fd, vm, bo, offset, addr, size, XE_VM_BIND_OP_MAP);
+	__xe_vm_bind_sync(fd, vm, bo, offset, addr, size, DRM_XE_VM_BIND_OP_MAP);
 }
 
 void xe_vm_unbind_sync(int fd, uint32_t vm, uint64_t offset,
 		       uint64_t addr, uint64_t size)
 {
-	__xe_vm_bind_sync(fd, vm, 0, offset, addr, size, XE_VM_BIND_OP_UNMAP);
+	__xe_vm_bind_sync(fd, vm, 0, offset, addr, size, DRM_XE_VM_BIND_OP_UNMAP);
 }
 
 void xe_vm_destroy(int fd, uint32_t vm)

@@ -634,8 +634,8 @@ igt_main_args("bf:pst:W:H:", NULL, help_str, opt_handler, NULL)
 		xe_device_get(xe);
 
 		set = xe_get_memory_region_set(xe,
-					       XE_MEM_REGION_CLASS_SYSMEM,
-					       XE_MEM_REGION_CLASS_VRAM);
+					       DRM_XE_MEM_REGION_CLASS_SYSMEM,
+					       DRM_XE_MEM_REGION_CLASS_VRAM);
 	}
 
 	igt_describe("Check block-copy uncompressed blit");

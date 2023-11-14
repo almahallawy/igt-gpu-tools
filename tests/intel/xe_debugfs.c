@@ -91,20 +91,20 @@ test_base(int fd, struct drm_xe_query_config *config)
 
 	igt_assert(config);
 	sprintf(reference, "devid 0x%llx",
-			config->info[XE_QUERY_CONFIG_REV_AND_DEVICE_ID] & 0xffff);
+			config->info[DRM_XE_QUERY_CONFIG_REV_AND_DEVICE_ID] & 0xffff);
 	igt_assert(igt_debugfs_search(fd, "info", reference));
 
 	sprintf(reference, "revid %lld",
-			config->info[XE_QUERY_CONFIG_REV_AND_DEVICE_ID] >> 16);
+			config->info[DRM_XE_QUERY_CONFIG_REV_AND_DEVICE_ID] >> 16);
 	igt_assert(igt_debugfs_search(fd, "info", reference));
 
-	sprintf(reference, "is_dgfx %s", config->info[XE_QUERY_CONFIG_FLAGS] &
-		XE_QUERY_CONFIG_FLAGS_HAS_VRAM ? "yes" : "no");
+	sprintf(reference, "is_dgfx %s", config->info[DRM_XE_QUERY_CONFIG_FLAGS] &
+		DRM_XE_QUERY_CONFIG_FLAGS_HAS_VRAM ? "yes" : "no");
 
 	igt_assert(igt_debugfs_search(fd, "info", reference));
 
 	if (!AT_LEAST_GEN(devid, 20)) {
-		switch (config->info[XE_QUERY_CONFIG_VA_BITS]) {
+		switch (config->info[DRM_XE_QUERY_CONFIG_VA_BITS]) {
 		case 48:
 			val = 3;
 			break;
@@ -125,7 +125,7 @@ test_base(int fd, struct drm_xe_query_config *config)
 	igt_assert(igt_debugfs_exists(fd, "gtt_mm", O_RDONLY));
 	igt_debugfs_dump(fd, "gtt_mm");
 
-	if (config->info[XE_QUERY_CONFIG_FLAGS] & XE_QUERY_CONFIG_FLAGS_HAS_VRAM) {
+	if (config->info[DRM_XE_QUERY_CONFIG_FLAGS] & DRM_XE_QUERY_CONFIG_FLAGS_HAS_VRAM) {
 		igt_assert(igt_debugfs_exists(fd, "vram0_mm", O_RDONLY));
 		igt_debugfs_dump(fd, "vram0_mm");
 	}

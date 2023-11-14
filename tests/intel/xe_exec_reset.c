@@ -187,14 +187,14 @@ test_balancer(int fd, int gt, int class, int n_exec_queues, int n_execs,
 	for (i = 0; i < n_exec_queues; i++) {
 		struct drm_xe_ext_set_property job_timeout = {
 			.base.next_extension = 0,
-			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
-			.property = XE_EXEC_QUEUE_SET_PROPERTY_JOB_TIMEOUT,
+			.base.name = DRM_XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = DRM_XE_EXEC_QUEUE_SET_PROPERTY_JOB_TIMEOUT,
 			.value = 50,
 		};
 		struct drm_xe_ext_set_property preempt_timeout = {
 			.base.next_extension = 0,
-			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
-			.property = XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
+			.base.name = DRM_XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = DRM_XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
 			.value = 1000,
 		};
 		struct drm_xe_exec_queue_create create = {
@@ -374,14 +374,14 @@ test_legacy_mode(int fd, struct drm_xe_engine_class_instance *eci,
 	for (i = 0; i < n_exec_queues; i++) {
 		struct drm_xe_ext_set_property job_timeout = {
 			.base.next_extension = 0,
-			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
-			.property = XE_EXEC_QUEUE_SET_PROPERTY_JOB_TIMEOUT,
+			.base.name = DRM_XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = DRM_XE_EXEC_QUEUE_SET_PROPERTY_JOB_TIMEOUT,
 			.value = 50,
 		};
 		struct drm_xe_ext_set_property preempt_timeout = {
 			.base.next_extension = 0,
-			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
-			.property = XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
+			.base.name = DRM_XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = DRM_XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
 			.value = 1000,
 		};
 		uint64_t ext = 0;
@@ -542,8 +542,8 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 	for (i = 0; i < n_exec_queues; i++) {
 		struct drm_xe_ext_set_property preempt_timeout = {
 			.base.next_extension = 0,
-			.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
-			.property = XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
+			.base.name = DRM_XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+			.property = DRM_XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT,
 			.value = 1000,
 		};
 		uint64_t ext = 0;

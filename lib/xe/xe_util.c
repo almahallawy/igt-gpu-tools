@@ -134,12 +134,12 @@ static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct igt_list_head *obj_lis
 		ops = &bind_ops[i];
 
 		if (obj->bind_op == XE_OBJECT_BIND) {
-			op = XE_VM_BIND_OP_MAP;
-			flags = XE_VM_BIND_FLAG_ASYNC;
+			op = DRM_XE_VM_BIND_OP_MAP;
+			flags = DRM_XE_VM_BIND_FLAG_ASYNC;
 			ops->obj = obj->handle;
 		} else {
-			op = XE_VM_BIND_OP_UNMAP;
-			flags = XE_VM_BIND_FLAG_ASYNC;
+			op = DRM_XE_VM_BIND_OP_UNMAP;
+			flags = DRM_XE_VM_BIND_FLAG_ASYNC;
 		}
 
 		ops->op = op;
@@ -211,7 +211,7 @@ void xe_bind_unbind_async(int xe, uint32_t vm, uint32_t bind_engine,
 		  tabsyncs[0].handle, tabsyncs[1].handle);
 
 	if (num_binds == 1) {
-		if ((bind_ops[0].op & 0xffff) == XE_VM_BIND_OP_MAP)
+		if ((bind_ops[0].op & 0xffff) == DRM_XE_VM_BIND_OP_MAP)
 			xe_vm_bind_async(xe, vm, bind_engine, bind_ops[0].obj, 0,
 					 bind_ops[0].addr, bind_ops[0].range,
 					 syncs, num_syncs);

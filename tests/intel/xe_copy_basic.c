@@ -164,8 +164,8 @@ igt_main
 		fd = drm_open_driver(DRIVER_XE);
 		xe_device_get(fd);
 		set = xe_get_memory_region_set(fd,
-					       XE_MEM_REGION_CLASS_SYSMEM,
-					       XE_MEM_REGION_CLASS_VRAM);
+					       DRM_XE_MEM_REGION_CLASS_SYSMEM,
+					       DRM_XE_MEM_REGION_CLASS_VRAM);
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(size); i++) {

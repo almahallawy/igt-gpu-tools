@@ -13,9 +13,9 @@
 #include <xe_drm.h>
 
 #define XE_IS_SYSMEM_MEMORY_REGION(fd, region) \
-	(xe_region_class(fd, region) == XE_MEM_REGION_CLASS_SYSMEM)
+	(xe_region_class(fd, region) == DRM_XE_MEM_REGION_CLASS_SYSMEM)
 #define XE_IS_VRAM_MEMORY_REGION(fd, region) \
-	(xe_region_class(fd, region) == XE_MEM_REGION_CLASS_VRAM)
+	(xe_region_class(fd, region) == DRM_XE_MEM_REGION_CLASS_VRAM)
 
 struct igt_collection *
 __xe_get_memory_region_set(int xe, uint32_t *mem_regions_type, int num_regions);

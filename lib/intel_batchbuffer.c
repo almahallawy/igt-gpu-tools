@@ -1286,7 +1286,7 @@ static struct drm_xe_vm_bind_op *xe_alloc_bind_ops(struct intel_bb *ibb,
 {
 	struct drm_i915_gem_exec_object2 **objects = ibb->objects;
 	struct drm_xe_vm_bind_op *bind_ops, *ops;
-	bool set_obj = (op & 0xffff) == XE_VM_BIND_OP_MAP;
+	bool set_obj = (op & 0xffff) == DRM_XE_VM_BIND_OP_MAP;
 
 	bind_ops = calloc(ibb->num_objects, sizeof(*bind_ops));
 	igt_assert(bind_ops);
@@ -1325,8 +1325,8 @@ static void __unbind_xe_objects(struct intel_bb *ibb)
 
 	if (ibb->num_objects > 1) {
 		struct drm_xe_vm_bind_op *bind_ops;
-		uint32_t op = XE_VM_BIND_OP_UNMAP;
-		uint32_t flags = XE_VM_BIND_FLAG_ASYNC;
+		uint32_t op = DRM_XE_VM_BIND_OP_UNMAP;
+		uint32_t flags = DRM_XE_VM_BIND_FLAG_ASYNC;
 
 		bind_ops = xe_alloc_bind_ops(ibb, op, flags, 0);
 		xe_vm_bind_array(ibb->fd, ibb->vm_id, 0, bind_ops,
@@ -2357,7 +2357,7 @@ __xe_bb_exec(struct intel_bb *ibb, uint64_t flags, bool sync)
 
 	syncs[0].handle = syncobj_create(ibb->fd, 0);
 	if (ibb->num_objects > 1) {
-		bind_ops = xe_alloc_bind_ops(ibb, XE_VM_BIND_OP_MAP, XE_VM_BIND_FLAG_ASYNC, 0);
+		bind_ops = xe_alloc_bind_ops(ibb, DRM_XE_VM_BIND_OP_MAP, DRM_XE_VM_BIND_FLAG_ASYNC, 0);
 		xe_vm_bind_array(ibb->fd, ibb->vm_id, 0, bind_ops,
 				 ibb->num_objects, syncs, 1);
 		free(bind_ops);

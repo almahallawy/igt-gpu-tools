@@ -71,8 +71,8 @@ struct xe_device {
 	for (uint64_t __i = 0; __i < igt_fls(__memreg); __i++) \
 		for_if(__r = (__memreg & (1ull << __i)))
 
-#define XE_IS_CLASS_SYSMEM(__region) ((__region)->mem_class == XE_MEM_REGION_CLASS_SYSMEM)
-#define XE_IS_CLASS_VRAM(__region) ((__region)->mem_class == XE_MEM_REGION_CLASS_VRAM)
+#define XE_IS_CLASS_SYSMEM(__region) ((__region)->mem_class == DRM_XE_MEM_REGION_CLASS_SYSMEM)
+#define XE_IS_CLASS_VRAM(__region) ((__region)->mem_class == DRM_XE_MEM_REGION_CLASS_VRAM)
 
 unsigned int xe_number_gt(int fd);
 uint64_t all_memory_regions(int fd);

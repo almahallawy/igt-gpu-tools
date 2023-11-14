@@ -43,11 +43,11 @@
 static int get_property_name(const char *property)
 {
 	if (strstr(property, "preempt"))
-		return XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT;
+		return DRM_XE_EXEC_QUEUE_SET_PROPERTY_PREEMPTION_TIMEOUT;
 	else if (strstr(property, "job_timeout"))
-		return XE_EXEC_QUEUE_SET_PROPERTY_JOB_TIMEOUT;
+		return DRM_XE_EXEC_QUEUE_SET_PROPERTY_JOB_TIMEOUT;
 	else if (strstr(property, "timeslice"))
-		return XE_EXEC_QUEUE_SET_PROPERTY_TIMESLICE;
+		return DRM_XE_EXEC_QUEUE_SET_PROPERTY_TIMESLICE;
 	else
 		return -1;
 }
@@ -60,7 +60,7 @@ static void test_set_property(int xe, int property_name,
 	};
 	struct drm_xe_ext_set_property ext = {
 		.base.next_extension = 0,
-		.base.name = XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
+		.base.name = DRM_XE_EXEC_QUEUE_EXTENSION_SET_PROPERTY,
 		.property = property_name,
 		.value = property_value,
 	};
@@ -117,7 +117,7 @@ static void Invalid_exec_queue_id(int xe)
 {
 	struct drm_xe_exec_queue_get_property args = {
 		.exec_queue_id = 0xffff,
-		.property = XE_EXEC_QUEUE_GET_PROPERTY_BAN,
+		.property = DRM_XE_EXEC_QUEUE_GET_PROPERTY_BAN,
 	};
 
 	do_ioctl_err(xe, DRM_IOCTL_XE_EXEC_QUEUE_GET_PROPERTY, &args, ENOENT);
@@ -132,7 +132,7 @@ static void non_zero_reserved(int xe)
 {
 	struct drm_xe_exec_queue_get_property args = {
 		.reserved[0] = 0xffff,
-		.property = XE_EXEC_QUEUE_GET_PROPERTY_BAN,
+		.property = DRM_XE_EXEC_QUEUE_GET_PROPERTY_BAN,
 	};
 	uint32_t vm;
 	uint32_t exec_queue;
@@ -157,7 +157,7 @@ static void basic_get_property(int xe)
 	struct drm_xe_exec_queue_get_property args = {
 		.value = -1,
 		.reserved[0] = 0,
-		.property = XE_EXEC_QUEUE_GET_PROPERTY_BAN,
+		.property = DRM_XE_EXEC_QUEUE_GET_PROPERTY_BAN,
 	};
 
 	uint32_t exec_queue;
@@ -196,19 +196,19 @@ igt_main
 
 	igt_subtest("priority-set-property") {
 		/* Tests priority property by setting positive values. */
-		test_set_property(xe, XE_EXEC_QUEUE_SET_PROPERTY_PRIORITY,
+		test_set_property(xe, DRM_XE_EXEC_QUEUE_SET_PROPERTY_PRIORITY,
 				  DRM_SCHED_PRIORITY_NORMAL, 0);
 
 		/* Tests priority property by setting invalid value. */
-		test_set_property(xe, XE_EXEC_QUEUE_SET_PROPERTY_PRIORITY,
+		test_set_property(xe, DRM_XE_EXEC_QUEUE_SET_PROPERTY_PRIORITY,
 				  DRM_SCHED_PRIORITY_HIGH + 1, -EINVAL);
 		igt_fork(child, 1) {
 			igt_drop_root();
 
 			/* Tests priority property by dropping root permissions. */
-			test_set_property(xe, XE_EXEC_QUEUE_SET_PROPERTY_PRIORITY,
+			test_set_property(xe, DRM_XE_EXEC_QUEUE_SET_PROPERTY_PRIORITY,
 					  DRM_SCHED_PRIORITY_HIGH, -EPERM);
-			test_set_property(xe, XE_EXEC_QUEUE_SET_PROPERTY_PRIORITY,
+			test_set_property(xe, DRM_XE_EXEC_QUEUE_SET_PROPERTY_PRIORITY,
 					  DRM_SCHED_PRIORITY_NORMAL, 0);
 		}
 		igt_waitchildren();
@@ -216,7 +216,7 @@ igt_main
 
 	igt_subtest("persistence-set-property") {
 		/* Tests persistence property by setting positive values. */
-		test_set_property(xe, XE_EXEC_QUEUE_SET_PROPERTY_PERSISTENCE, 1, 0);
+		test_set_property(xe, DRM_XE_EXEC_QUEUE_SET_PROPERTY_PERSISTENCE, 1, 0);
 
 	}
 

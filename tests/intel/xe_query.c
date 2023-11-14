@@ -163,9 +163,9 @@ void process_hwconfig(void *data, uint32_t len)
 const char *get_topo_name(int value)
 {
 	switch(value) {
-	case XE_TOPO_DSS_GEOMETRY: return "DSS_GEOMETRY";
-	case XE_TOPO_DSS_COMPUTE: return "DSS_COMPUTE";
-	case XE_TOPO_EU_PER_DSS: return "EU_PER_DSS";
+	case DRM_XE_TOPO_DSS_GEOMETRY: return "DSS_GEOMETRY";
+	case DRM_XE_TOPO_DSS_COMPUTE: return "DSS_COMPUTE";
+	case DRM_XE_TOPO_EU_PER_DSS: return "EU_PER_DSS";
 	}
 	return "??";
 }
@@ -221,9 +221,9 @@ test_query_mem_usage(int fd)
 	for (i = 0; i < mem_usage->num_regions; i++) {
 		igt_info("mem region %d: %s\t%#llx / %#llx\n", i,
 			mem_usage->regions[i].mem_class ==
-			XE_MEM_REGION_CLASS_SYSMEM ? "SYSMEM"
+			DRM_XE_MEM_REGION_CLASS_SYSMEM ? "SYSMEM"
 			:mem_usage->regions[i].mem_class ==
-			XE_MEM_REGION_CLASS_VRAM ? "VRAM" : "?",
+			DRM_XE_MEM_REGION_CLASS_VRAM ? "VRAM" : "?",
 			mem_usage->regions[i].used,
 			mem_usage->regions[i].total_size
 		);
@@ -359,23 +359,23 @@ test_query_config(int fd)
 
 	igt_assert(config->num_params > 0);
 
-	igt_info("XE_QUERY_CONFIG_REV_AND_DEVICE_ID\t%#llx\n",
-		config->info[XE_QUERY_CONFIG_REV_AND_DEVICE_ID]);
+	igt_info("DRM_XE_QUERY_CONFIG_REV_AND_DEVICE_ID\t%#llx\n",
+		config->info[DRM_XE_QUERY_CONFIG_REV_AND_DEVICE_ID]);
 	igt_info("  REV_ID\t\t\t\t%#llx\n",
-		config->info[XE_QUERY_CONFIG_REV_AND_DEVICE_ID] >> 16);
+		config->info[DRM_XE_QUERY_CONFIG_REV_AND_DEVICE_ID] >> 16);
 	igt_info("  DEVICE_ID\t\t\t\t%#llx\n",
-		config->info[XE_QUERY_CONFIG_REV_AND_DEVICE_ID] & 0xffff);
-	igt_info("XE_QUERY_CONFIG_FLAGS\t\t\t%#llx\n",
-		config->info[XE_QUERY_CONFIG_FLAGS]);
-	igt_info("  XE_QUERY_CONFIG_FLAGS_HAS_VRAM\t%s\n",
-		config->info[XE_QUERY_CONFIG_FLAGS] &
-		XE_QUERY_CONFIG_FLAGS_HAS_VRAM ? "ON":"OFF");
-	igt_info("XE_QUERY_CONFIG_MIN_ALIGNMENT\t\t%#llx\n",
-		config->info[XE_QUERY_CONFIG_MIN_ALIGNMENT]);
-	igt_info("XE_QUERY_CONFIG_VA_BITS\t\t\t%llu\n",
-		config->info[XE_QUERY_CONFIG_VA_BITS]);
-	igt_info("XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY\t%llu\n",
-		config->info[XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY]);
+		config->info[DRM_XE_QUERY_CONFIG_REV_AND_DEVICE_ID] & 0xffff);
+	igt_info("DRM_XE_QUERY_CONFIG_FLAGS\t\t\t%#llx\n",
+		config->info[DRM_XE_QUERY_CONFIG_FLAGS]);
+	igt_info("  DRM_XE_QUERY_CONFIG_FLAGS_HAS_VRAM\t%s\n",
+		config->info[DRM_XE_QUERY_CONFIG_FLAGS] &
+		DRM_XE_QUERY_CONFIG_FLAGS_HAS_VRAM ? "ON":"OFF");
+	igt_info("DRM_XE_QUERY_CONFIG_MIN_ALIGNMENT\t\t%#llx\n",
+		config->info[DRM_XE_QUERY_CONFIG_MIN_ALIGNMENT]);
+	igt_info("DRM_XE_QUERY_CONFIG_VA_BITS\t\t\t%llu\n",
+		config->info[DRM_XE_QUERY_CONFIG_VA_BITS]);
+	igt_info("DRM_XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY\t%llu\n",
+		config->info[DRM_XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY]);
 	dump_hex_debug(config, query.size);
 
 	free(config);

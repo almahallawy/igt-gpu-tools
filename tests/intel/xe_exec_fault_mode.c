@@ -175,12 +175,12 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		if (bo)
 			xe_vm_bind_async_flags(fd, vm, bind_exec_queues[0], bo, 0,
 					       addr, bo_size, sync, 1,
-					       XE_VM_BIND_FLAG_IMMEDIATE);
+					       DRM_XE_VM_BIND_FLAG_IMMEDIATE);
 		else
 			xe_vm_bind_userptr_async_flags(fd, vm, bind_exec_queues[0],
 						       to_user_pointer(data),
 						       addr, bo_size, sync, 1,
-						       XE_VM_BIND_FLAG_IMMEDIATE);
+						       DRM_XE_VM_BIND_FLAG_IMMEDIATE);
 	} else {
 		if (bo)
 			xe_vm_bind_async(fd, vm, bind_exec_queues[0], bo, 0, addr,

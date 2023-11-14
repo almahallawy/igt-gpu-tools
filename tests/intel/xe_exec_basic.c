@@ -138,7 +138,7 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 
 		bo_flags = visible_vram_if_possible(fd, eci->gt_id);
 		if (flags & DEFER_ALLOC)
-			bo_flags |= XE_GEM_CREATE_FLAG_DEFER_BACKING;
+			bo_flags |= DRM_XE_GEM_CREATE_FLAG_DEFER_BACKING;
 
 		bo = xe_bo_create_flags(fd, n_vm == 1 ? vm[0] : 0,
 					bo_size, bo_flags);
@@ -172,9 +172,9 @@ test_exec(int fd, struct drm_xe_engine_class_instance *eci,
 		if (flags & SPARSE)
 			__xe_vm_bind_assert(fd, vm[i], bind_exec_queues[i],
 					    0, 0, sparse_addr[i], bo_size,
-					    XE_VM_BIND_OP_MAP,
-					    XE_VM_BIND_FLAG_ASYNC |
-					    XE_VM_BIND_FLAG_NULL, sync,
+					    DRM_XE_VM_BIND_OP_MAP,
+					    DRM_XE_VM_BIND_FLAG_ASYNC |
+					    DRM_XE_VM_BIND_FLAG_NULL, sync,
 					    1, 0, 0);
 	}
 

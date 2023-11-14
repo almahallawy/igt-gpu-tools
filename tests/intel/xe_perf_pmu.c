@@ -51,15 +51,15 @@ static uint64_t engine_group_get_config(int gt, int class)
 
 	switch (class) {
 	case DRM_XE_ENGINE_CLASS_COPY:
-		config = XE_PMU_COPY_GROUP_BUSY(gt);
+		config = DRM_XE_PMU_COPY_GROUP_BUSY(gt);
 		break;
 	case DRM_XE_ENGINE_CLASS_RENDER:
 	case DRM_XE_ENGINE_CLASS_COMPUTE:
-		config = XE_PMU_RENDER_GROUP_BUSY(gt);
+		config = DRM_XE_PMU_RENDER_GROUP_BUSY(gt);
 		break;
 	case DRM_XE_ENGINE_CLASS_VIDEO_DECODE:
 	case DRM_XE_ENGINE_CLASS_VIDEO_ENHANCE:
-		config = XE_PMU_MEDIA_GROUP_BUSY(gt);
+		config = DRM_XE_PMU_MEDIA_GROUP_BUSY(gt);
 		break;
 	}
 
@@ -112,7 +112,7 @@ static void test_any_engine_busyness(int fd, struct drm_xe_engine_class_instance
 	sync[0].handle = syncobj_create(fd, 0);
 	xe_vm_bind_async(fd, vm, 0, bo, 0, addr, bo_size, sync, 1);
 
-	pmu_fd = open_pmu(fd, XE_PMU_ANY_ENGINE_GROUP_BUSY(eci->gt_id));
+	pmu_fd = open_pmu(fd, DRM_XE_PMU_ANY_ENGINE_GROUP_BUSY(eci->gt_id));
 	idle = pmu_read(pmu_fd);
 	igt_assert(!idle);
 
