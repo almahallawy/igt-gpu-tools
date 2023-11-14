@@ -66,8 +66,8 @@ static uint64_t __memory_regions(const struct drm_xe_query_gt_list *gt_list)
 	int i;
 
 	for (i = 0; i < gt_list->num_gt; i++)
-		regions |= gt_list->gt_list[i].native_mem_regions |
-			   gt_list->gt_list[i].slow_mem_regions;
+		regions |= gt_list->gt_list[i].near_mem_regions |
+			   gt_list->gt_list[i].far_mem_regions;
 
 	return regions;
 }
@@ -123,7 +123,7 @@ static uint64_t native_region_for_gt(const struct drm_xe_query_gt_list *gt_list,
 	uint64_t region;
 
 	igt_assert(gt_list->num_gt > gt);
-	region = gt_list->gt_list[gt].native_mem_regions;
+	region = gt_list->gt_list[gt].near_mem_regions;
 	igt_assert(region);
 
 	return region;

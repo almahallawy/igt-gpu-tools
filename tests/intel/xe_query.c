@@ -281,10 +281,10 @@ test_query_gt_list(int fd)
 		igt_info("type: %d\n", gt_list->gt_list[i].type);
 		igt_info("gt_id: %d\n", gt_list->gt_list[i].gt_id);
 		igt_info("clock_freq: %u\n", gt_list->gt_list[i].clock_freq);
-		igt_info("native_mem_regions: 0x%016llx\n",
-		       gt_list->gt_list[i].native_mem_regions);
-		igt_info("slow_mem_regions: 0x%016llx\n",
-		       gt_list->gt_list[i].slow_mem_regions);
+		igt_info("near_mem_regions: 0x%016llx\n",
+		       gt_list->gt_list[i].near_mem_regions);
+		igt_info("far_mem_regions: 0x%016llx\n",
+		       gt_list->gt_list[i].far_mem_regions);
 	}
 }
 
