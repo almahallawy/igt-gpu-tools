@@ -135,16 +135,16 @@
  *   Verifies that as we signal points from the host, the syncobj timeline value increments and
  *   that waits for submits/signals works properly.
  *
- * SUBTEST: invalid-multi-wait-all-available-unsubmitted
+ * SUBTEST: etime-multi-wait-all-available-unsubmitted
  * Description: Verifies waiting on a list of timeline syncobjs
  *
- * SUBTEST: invalid-multi-wait-all-available-unsubmitted-signaled
+ * SUBTEST: etime-multi-wait-all-available-unsubmitted-signaled
  * Description: Verifies waiting on a list of timeline syncobjs
  *
- * SUBTEST: invalid-multi-wait-all-available-unsubmitted-submitted
+ * SUBTEST: etime-multi-wait-all-available-unsubmitted-submitted
  * Description: Verifies waiting on a list of timeline syncobjs
  *
- * SUBTEST: invalid-multi-wait-all-available-unsubmitted-submitted-signaled
+ * SUBTEST: etime-multi-wait-all-available-unsubmitted-submitted-signaled
  * Description: Verifies waiting on a list of timeline syncobjs
  *
  * SUBTEST: invalid-multi-wait-all-unsubmitted
@@ -159,16 +159,16 @@
  * SUBTEST: invalid-multi-wait-all-unsubmitted-submitted-signaled
  * Description: Verifies waiting on a list of timeline syncobjs
  *
- * SUBTEST: invalid-multi-wait-available-unsubmitted
+ * SUBTEST: etime-multi-wait-available-unsubmitted
  * Description: Verifies waiting on a list of timeline syncobjs
  *
- * SUBTEST: invalid-multi-wait-available-unsubmitted-signaled
+ * SUBTEST: multi-wait-available-unsubmitted-signaled
  * Description: Verifies waiting on a list of timeline syncobjs
  *
- * SUBTEST: invalid-multi-wait-available-unsubmitted-submitted
+ * SUBTEST: multi-wait-available-unsubmitted-submitted
  * Description: Verifies waiting on a list of timeline syncobjs
  *
- * SUBTEST: invalid-multi-wait-available-unsubmitted-submitted-signaled
+ * SUBTEST: multi-wait-available-unsubmitted-submitted-signaled
  * Description: Verifies waiting on a list of timeline syncobjs
  *
  * SUBTEST: invalid-multi-wait-unsubmitted
@@ -213,13 +213,13 @@
  * SUBTEST: invalid-signal-zero-handles
  * Description: Verify that signaling an empty list of syncobj handles is rejected
  *
- * SUBTEST: invalid-single-wait-all-available-unsubmitted
+ * SUBTEST: etime-single-wait-all-available-unsubmitted
  * Description: Verifies wait behavior on a single timeline syncobj
  *
  * SUBTEST: invalid-single-wait-all-unsubmitted
  * Description: Verifies wait behavior on a single timeline syncobj
  *
- * SUBTEST: invalid-single-wait-available-unsubmitted
+ * SUBTEST: etime-single-wait-available-unsubmitted
  * Description: Verifies wait behavior on a single timeline syncobj
  *
  * SUBTEST: invalid-single-wait-unsubmitted
@@ -1782,7 +1782,7 @@ igt_main
 						WAIT_SIGNALED)) != 1)
 			continue;
 
-		if ((flags & WAIT_UNSUBMITTED) && !(flags & WAIT_FOR_SUBMIT))
+		if ((flags & WAIT_UNSUBMITTED) && !((flags & WAIT_FOR_SUBMIT) || (flags & WAIT_AVAILABLE)))
 			err = -EINVAL;
 		else if (!(flags & WAIT_SIGNALED) && !((flags & WAIT_SUBMITTED) && (flags & WAIT_AVAILABLE)))
 			err = -ETIME;
@@ -1851,7 +1851,7 @@ igt_main
 			continue;
 
 		err = 0;
-		if ((flags & WAIT_UNSUBMITTED) && !(flags & WAIT_FOR_SUBMIT)) {
+		if ((flags & WAIT_UNSUBMITTED) && !((flags & WAIT_FOR_SUBMIT) || (flags & WAIT_AVAILABLE))) {
 			err = -EINVAL;
 		} else if (flags & WAIT_ALL) {
 			if (flags & (WAIT_UNSUBMITTED | WAIT_SUBMITTED))
