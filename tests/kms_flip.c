@@ -2119,12 +2119,13 @@ igt_main_args("e", NULL, help_str, opt_handler, NULL)
 		{ 0, TEST_BO_TOOBIG | TEST_NO_2X_OUTPUT, "bo-too-big" },
 		{ 10, TEST_FLIP | TEST_SUSPEND, "flip-vs-suspend" },
 	};
+	igt_display_t display;
 	int i;
 
 	igt_fixture {
 		drm_fd = drm_open_driver_master(DRIVER_ANY);
 
-		igt_enable_connectors(drm_fd);
+		igt_display_require(&display, drm_fd);
 
 		kmstest_set_vt_graphics_mode();
 		igt_install_exit_handler(kms_flip_exit_handler);
@@ -2196,6 +2197,8 @@ igt_main_args("e", NULL, help_str, opt_handler, NULL)
 	}
 	igt_stop_signal_helper();
 
-	igt_fixture
+	igt_fixture {
+		igt_display_fini(&display);
 		drm_close_driver(drm_fd);
+	}
 }
