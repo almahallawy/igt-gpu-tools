@@ -123,10 +123,10 @@ igt@kms_pipe_crc_basic@read-crc-frame-sequence
 igt@kms_pm_backlight@basic-brightness
 igt@kms_pm_rpm@basic-pci-d3-state
 igt@kms_pm_rpm@basic-rte
-igt@kms_psr@primary_page_flip
-igt@kms_psr@cursor_plane_move
-igt@kms_psr@sprite_plane_onoff
-igt@kms_psr@primary_mmap_gtt
+igt@kms_psr@psr_primary_page_flip
+igt@kms_psr@psr_cursor_plane_move
+igt@kms_psr@psr_sprite_plane_onoff
+igt@kms_psr@psr_primary_mmap_gtt
 igt@kms_setmode@basic-clone-single-crtc
 igt@i915_pm_rps@basic-api
 igt@prime_self_import@basic-llseek-bad
