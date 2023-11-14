@@ -207,9 +207,9 @@ igt@kms_pipe_crc_basic@nonblocking-crc-frame-sequence
 igt@kms_pipe_crc_basic@read-crc
 igt@kms_pipe_crc_basic@read-crc-frame-sequence
 igt@kms_prop_blob@basic
-igt@kms_psr@primary_page_flip
-igt@kms_psr@cursor_plane_move
-igt@kms_psr@sprite_plane_onoff
+igt@kms_psr@psr_primary_page_flip
+igt@kms_psr@psr_cursor_plane_move
+igt@kms_psr@psr_sprite_plane_onoff
 
 # All tests that do module unloading and reloading are executed last.
 # They will sometimes reveal issues of earlier tests leaving the
