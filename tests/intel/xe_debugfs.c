@@ -99,7 +99,7 @@ test_base(int fd, struct drm_xe_query_config *config)
 	igt_assert(igt_debugfs_search(fd, "info", reference));
 
 	sprintf(reference, "is_dgfx %s", config->info[DRM_XE_QUERY_CONFIG_FLAGS] &
-		DRM_XE_QUERY_CONFIG_FLAGS_HAS_VRAM ? "yes" : "no");
+		DRM_XE_QUERY_CONFIG_FLAG_HAS_VRAM ? "yes" : "no");
 
 	igt_assert(igt_debugfs_search(fd, "info", reference));
 
@@ -125,7 +125,7 @@ test_base(int fd, struct drm_xe_query_config *config)
 	igt_assert(igt_debugfs_exists(fd, "gtt_mm", O_RDONLY));
 	igt_debugfs_dump(fd, "gtt_mm");
 
-	if (config->info[DRM_XE_QUERY_CONFIG_FLAGS] & DRM_XE_QUERY_CONFIG_FLAGS_HAS_VRAM) {
+	if (config->info[DRM_XE_QUERY_CONFIG_FLAGS] & DRM_XE_QUERY_CONFIG_FLAG_HAS_VRAM) {
 		igt_assert(igt_debugfs_exists(fd, "vram0_mm", O_RDONLY));
 		igt_debugfs_dump(fd, "vram0_mm");
 	}
