@@ -36,8 +36,8 @@ struct xe_device {
 	/** @number_hw_engines: length of hardware engines array */
 	unsigned int number_hw_engines;
 
-	/** @mem_usage: regions memory information and usage */
-	struct drm_xe_query_mem_usage *mem_usage;
+	/** @mem_regions: regions memory information and usage */
+	struct drm_xe_query_mem_regions *mem_regions;
 
 	/** @vram_size: array of vram sizes for all gt_list */
 	uint64_t *vram_size;

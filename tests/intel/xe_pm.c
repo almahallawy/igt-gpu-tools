@@ -372,10 +372,10 @@ NULL));
  */
 static void test_vram_d3cold_threshold(device_t device, int sysfs_fd)
 {
-	struct drm_xe_query_mem_usage *mem_usage;
+	struct drm_xe_query_mem_regions *mem_regions;
 	struct drm_xe_device_query query = {
 		.extensions = 0,
-		.query = DRM_XE_DEVICE_QUERY_MEM_USAGE,
+		.query = DRM_XE_DEVICE_QUERY_MEM_REGIONS,
 		.size = 0,
 		.data = 0,
 	};
@@ -393,16 +393,16 @@ static void test_vram_d3cold_threshold(device_t device, int sysfs_fd)
 	igt_assert_eq(igt_ioctl(device.fd_xe, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 	igt_assert_neq(query.size, 0);
 
-	mem_usage = malloc(query.size);
-	igt_assert(mem_usage);
+	mem_regions = malloc(query.size);
+	igt_assert(mem_regions);
 
-	query.data = to_user_pointer(mem_usage);
+	query.data = to_user_pointer(mem_regions);
 	igt_assert_eq(igt_ioctl(device.fd_xe, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 
-	for (i = 0; i < mem_usage->num_regions; i++) {
-		if (mem_usage->regions[i].mem_class == DRM_XE_MEM_REGION_CLASS_VRAM) {
-			vram_used_mb +=  (mem_usage->regions[i].used / (1024 * 1024));
-			vram_total_mb += (mem_usage->regions[i].total_size / (1024 * 1024));
+	for (i = 0; i < mem_regions->num_regions; i++) {
+		if (mem_regions->regions[i].mem_class == DRM_XE_MEM_REGION_CLASS_VRAM) {
+			vram_used_mb +=  (mem_regions->regions[i].used / (1024 * 1024));
+			vram_total_mb += (mem_regions->regions[i].total_size / (1024 * 1024));
 		}
 	}
 

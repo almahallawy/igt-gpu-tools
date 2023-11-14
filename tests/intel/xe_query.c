@@ -198,12 +198,12 @@ test_query_engines(int fd)
  *	and alignment.
  */
 static void
-test_query_mem_usage(int fd)
+test_query_mem_regions(int fd)
 {
-	struct drm_xe_query_mem_usage *mem_usage;
+	struct drm_xe_query_mem_regions *mem_regions;
 	struct drm_xe_device_query query = {
 		.extensions = 0,
-		.query = DRM_XE_DEVICE_QUERY_MEM_USAGE,
+		.query = DRM_XE_DEVICE_QUERY_MEM_REGIONS,
 		.size = 0,
 		.data = 0,
 	};
@@ -212,43 +212,43 @@ test_query_mem_usage(int fd)
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 	igt_assert_neq(query.size, 0);
 
-	mem_usage = malloc(query.size);
-	igt_assert(mem_usage);
+	mem_regions = malloc(query.size);
+	igt_assert(mem_regions);
 
-	query.data = to_user_pointer(mem_usage);
+	query.data = to_user_pointer(mem_regions);
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 
-	for (i = 0; i < mem_usage->num_regions; i++) {
+	for (i = 0; i < mem_regions->num_regions; i++) {
 		igt_info("mem region %d: %s\t%#llx / %#llx\n", i,
-			mem_usage->regions[i].mem_class ==
+			mem_regions->regions[i].mem_class ==
 			DRM_XE_MEM_REGION_CLASS_SYSMEM ? "SYSMEM"
-			:mem_usage->regions[i].mem_class ==
+			:mem_regions->regions[i].mem_class ==
 			DRM_XE_MEM_REGION_CLASS_VRAM ? "VRAM" : "?",
-			mem_usage->regions[i].used,
-			mem_usage->regions[i].total_size
+			mem_regions->regions[i].used,
+			mem_regions->regions[i].total_size
 		);
 		igt_info("min_page_size=0x%x\n",
-		       mem_usage->regions[i].min_page_size);
+		       mem_regions->regions[i].min_page_size);
 
 		igt_info("visible size=%lluMiB\n",
-			 mem_usage->regions[i].cpu_visible_size >> 20);
+			 mem_regions->regions[i].cpu_visible_size >> 20);
 		igt_info("visible used=%lluMiB\n",
-			 mem_usage->regions[i].cpu_visible_used >> 20);
+			 mem_regions->regions[i].cpu_visible_used >> 20);
 
-		igt_assert_lte_u64(mem_usage->regions[i].cpu_visible_size,
-				   mem_usage->regions[i].total_size);
-		igt_assert_lte_u64(mem_usage->regions[i].cpu_visible_used,
-				   mem_usage->regions[i].cpu_visible_size);
-		igt_assert_lte_u64(mem_usage->regions[i].cpu_visible_used,
-				   mem_usage->regions[i].used);
-		igt_assert_lte_u64(mem_usage->regions[i].used,
-				   mem_usage->regions[i].total_size);
-		igt_assert_lte_u64(mem_usage->regions[i].used -
-				   mem_usage->regions[i].cpu_visible_used,
-				   mem_usage->regions[i].total_size);
+		igt_assert_lte_u64(mem_regions->regions[i].cpu_visible_size,
+				   mem_regions->regions[i].total_size);
+		igt_assert_lte_u64(mem_regions->regions[i].cpu_visible_used,
+				   mem_regions->regions[i].cpu_visible_size);
+		igt_assert_lte_u64(mem_regions->regions[i].cpu_visible_used,
+				   mem_regions->regions[i].used);
+		igt_assert_lte_u64(mem_regions->regions[i].used,
+				   mem_regions->regions[i].total_size);
+		igt_assert_lte_u64(mem_regions->regions[i].used -
+				   mem_regions->regions[i].cpu_visible_used,
+				   mem_regions->regions[i].total_size);
 	}
-	dump_hex_debug(mem_usage, query.size);
-	free(mem_usage);
+	dump_hex_debug(mem_regions, query.size);
+	free(mem_regions);
 }
 
 /**
@@ -669,7 +669,7 @@ igt_main
 		test_query_engines(xe);
 
 	igt_subtest("query-mem-usage")
-		test_query_mem_usage(xe);
+		test_query_mem_regions(xe);
 
 	igt_subtest("query-gt-list")
 		test_query_gt_list(xe);

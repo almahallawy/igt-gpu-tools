@@ -97,25 +97,25 @@ xe_query_engines_new(int fd, unsigned int *num_engines)
 	return hw_engines;
 }
 
-static struct drm_xe_query_mem_usage *xe_query_mem_usage_new(int fd)
+static struct drm_xe_query_mem_regions *xe_query_mem_regions_new(int fd)
 {
-	struct drm_xe_query_mem_usage *mem_usage;
+	struct drm_xe_query_mem_regions *mem_regions;
 	struct drm_xe_device_query query = {
 		.extensions = 0,
-		.query = DRM_XE_DEVICE_QUERY_MEM_USAGE,
+		.query = DRM_XE_DEVICE_QUERY_MEM_REGIONS,
 		.size = 0,
 		.data = 0,
 	};
 
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 
-	mem_usage = malloc(query.size);
-	igt_assert(mem_usage);
+	mem_regions = malloc(query.size);
+	igt_assert(mem_regions);
 
-	query.data = to_user_pointer(mem_usage);
+	query.data = to_user_pointer(mem_regions);
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 
-	return mem_usage;
+	return mem_regions;
 }
 
 static uint64_t native_region_for_gt(const struct drm_xe_query_gt_list *gt_list, int gt)
@@ -129,44 +129,44 @@ static uint64_t native_region_for_gt(const struct drm_xe_query_gt_list *gt_list,
 	return region;
 }
 
-static uint64_t gt_vram_size(const struct drm_xe_query_mem_usage *mem_usage,
+static uint64_t gt_vram_size(const struct drm_xe_query_mem_regions *mem_regions,
 			     const struct drm_xe_query_gt_list *gt_list, int gt)
 {
 	int region_idx = ffs(native_region_for_gt(gt_list, gt)) - 1;
 
-	if (XE_IS_CLASS_VRAM(&mem_usage->regions[region_idx]))
-		return mem_usage->regions[region_idx].total_size;
+	if (XE_IS_CLASS_VRAM(&mem_regions->regions[region_idx]))
+		return mem_regions->regions[region_idx].total_size;
 
 	return 0;
 }
 
-static uint64_t gt_visible_vram_size(const struct drm_xe_query_mem_usage *mem_usage,
+static uint64_t gt_visible_vram_size(const struct drm_xe_query_mem_regions *mem_regions,
 				     const struct drm_xe_query_gt_list *gt_list, int gt)
 {
 	int region_idx = ffs(native_region_for_gt(gt_list, gt)) - 1;
 
-	if (XE_IS_CLASS_VRAM(&mem_usage->regions[region_idx]))
-		return mem_usage->regions[region_idx].cpu_visible_size;
+	if (XE_IS_CLASS_VRAM(&mem_regions->regions[region_idx]))
+		return mem_regions->regions[region_idx].cpu_visible_size;
 
 	return 0;
 }
 
-static bool __mem_has_vram(struct drm_xe_query_mem_usage *mem_usage)
+static bool __mem_has_vram(struct drm_xe_query_mem_regions *mem_regions)
 {
-	for (int i = 0; i < mem_usage->num_regions; i++)
-		if (XE_IS_CLASS_VRAM(&mem_usage->regions[i]))
+	for (int i = 0; i < mem_regions->num_regions; i++)
+		if (XE_IS_CLASS_VRAM(&mem_regions->regions[i]))
 			return true;
 
 	return false;
 }
 
-static uint32_t __mem_default_alignment(struct drm_xe_query_mem_usage *mem_usage)
+static uint32_t __mem_default_alignment(struct drm_xe_query_mem_regions *mem_regions)
 {
 	uint32_t alignment = XE_DEFAULT_ALIGNMENT;
 
-	for (int i = 0; i < mem_usage->num_regions; i++)
-		if (alignment < mem_usage->regions[i].min_page_size)
-			alignment = mem_usage->regions[i].min_page_size;
+	for (int i = 0; i < mem_regions->num_regions; i++)
+		if (alignment < mem_regions->regions[i].min_page_size)
+			alignment = mem_regions->regions[i].min_page_size;
 
 	return alignment;
 }
@@ -222,7 +222,7 @@ static void xe_device_free(struct xe_device *xe_dev)
 	free(xe_dev->config);
 	free(xe_dev->gt_list);
 	free(xe_dev->hw_engines);
-	free(xe_dev->mem_usage);
+	free(xe_dev->mem_regions);
 	free(xe_dev->vram_size);
 	free(xe_dev);
 }
@@ -254,18 +254,18 @@ struct xe_device *xe_device_get(int fd)
 	xe_dev->gt_list = xe_query_gt_list_new(fd);
 	xe_dev->memory_regions = __memory_regions(xe_dev->gt_list);
 	xe_dev->hw_engines = xe_query_engines_new(fd, &xe_dev->number_hw_engines);
-	xe_dev->mem_usage = xe_query_mem_usage_new(fd);
+	xe_dev->mem_regions = xe_query_mem_regions_new(fd);
 	xe_dev->vram_size = calloc(xe_dev->gt_list->num_gt, sizeof(*xe_dev->vram_size));
 	xe_dev->visible_vram_size = calloc(xe_dev->gt_list->num_gt, sizeof(*xe_dev->visible_vram_size));
 	for (int gt = 0; gt < xe_dev->gt_list->num_gt; gt++) {
-		xe_dev->vram_size[gt] = gt_vram_size(xe_dev->mem_usage,
+		xe_dev->vram_size[gt] = gt_vram_size(xe_dev->mem_regions,
 						     xe_dev->gt_list, gt);
 		xe_dev->visible_vram_size[gt] =
-			gt_visible_vram_size(xe_dev->mem_usage,
+			gt_visible_vram_size(xe_dev->mem_regions,
 					     xe_dev->gt_list, gt);
 	}
-	xe_dev->default_alignment = __mem_default_alignment(xe_dev->mem_usage);
-	xe_dev->has_vram = __mem_has_vram(xe_dev->mem_usage);
+	xe_dev->default_alignment = __mem_default_alignment(xe_dev->mem_regions);
+	xe_dev->has_vram = __mem_has_vram(xe_dev->mem_regions);
 
 	/* We may get here from multiple threads, use first cached xe_dev */
 	pthread_mutex_lock(&cache.cache_mutex);
@@ -508,9 +508,9 @@ struct drm_xe_query_mem_region *xe_mem_region(int fd, uint64_t region)
 
 	xe_dev = find_in_cache(fd);
 	igt_assert(xe_dev);
-	igt_assert(xe_dev->mem_usage->num_regions > region_idx);
+	igt_assert(xe_dev->mem_regions->num_regions > region_idx);
 
-	return &xe_dev->mem_usage->regions[region_idx];
+	return &xe_dev->mem_regions->regions[region_idx];
 }
 
 /**
@@ -641,23 +641,23 @@ uint64_t xe_vram_available(int fd, int gt)
 	struct xe_device *xe_dev;
 	int region_idx;
 	struct drm_xe_query_mem_region *mem_region;
-	struct drm_xe_query_mem_usage *mem_usage;
+	struct drm_xe_query_mem_regions *mem_regions;
 
 	xe_dev = find_in_cache(fd);
 	igt_assert(xe_dev);
 
 	region_idx = ffs(native_region_for_gt(xe_dev->gt_list, gt)) - 1;
-	mem_region = &xe_dev->mem_usage->regions[region_idx];
+	mem_region = &xe_dev->mem_regions->regions[region_idx];
 
 	if (XE_IS_CLASS_VRAM(mem_region)) {
 		uint64_t available_vram;
 
-		mem_usage = xe_query_mem_usage_new(fd);
+		mem_regions = xe_query_mem_regions_new(fd);
 		pthread_mutex_lock(&cache.cache_mutex);
-		mem_region->used = mem_usage->regions[region_idx].used;
+		mem_region->used = mem_regions->regions[region_idx].used;
 		available_vram = mem_region->total_size - mem_region->used;
 		pthread_mutex_unlock(&cache.cache_mutex);
-		free(mem_usage);
+		free(mem_regions);
 
 		return available_vram;
 	}
