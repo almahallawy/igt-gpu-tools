@@ -950,5 +950,8 @@ bool igt_draw_supports_method(int fd, enum igt_draw_method method)
 	if (method == IGT_DRAW_MMAP_CPU || method == IGT_DRAW_PWRITE)
 		return is_i915_device(fd);
 
+	if (method == IGT_DRAW_RENDER)
+		return !!igt_get_render_copyfunc(intel_get_drm_devid(fd));
+
 	return true;
 }
