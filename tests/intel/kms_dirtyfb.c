@@ -60,6 +60,7 @@ typedef struct {
 		FEATURE_COUNT = 8,
 		FEATURE_DEFAULT = 8,
 	} feature;
+	igt_render_copyfunc_t rendercopy;
 } data_t;
 
 static const char *feature_str(int feature)
@@ -177,7 +178,8 @@ static void prepare(data_t *data)
 			    &data->fbs[0]);
 
 	igt_draw_rect_fb(data->drm_fd, data->bops, 0, &data->fbs[0],
-			 IGT_DRAW_RENDER, 0, 0, data->fbs[0].width,
+			 data->rendercopy ? IGT_DRAW_RENDER : IGT_DRAW_BLT,
+			 0, 0, data->fbs[0].width,
 			 data->fbs[0].height, 0xFF);
 
 	primary = igt_output_get_plane_type(data->output,
@@ -197,7 +199,8 @@ static void prepare(data_t *data)
 			    DRM_FORMAT_MOD_LINEAR, 0.0, 1.0, 0.0,
 			    &data->fbs[1]);
 	igt_draw_rect_fb(data->drm_fd, data->bops, 0, &data->fbs[1],
-			 IGT_DRAW_RENDER, 0, 0, data->fbs[1].width,
+			 data->rendercopy ? IGT_DRAW_RENDER : IGT_DRAW_BLT,
+			 0, 0, data->fbs[1].width,
 			 data->fbs[1].height, 0xFF);
 
 	igt_create_color_fb(data->drm_fd, data->mode->hdisplay,
@@ -233,11 +236,7 @@ static void run_test(data_t *data)
 	struct intel_buf *src, *dst;
 	struct intel_bb *ibb;
 	igt_spin_t *spin;
-	uint32_t devid = intel_get_drm_devid(data->drm_fd);
-	igt_render_copyfunc_t rendercopy = igt_get_render_copyfunc(devid);
 	int r;
-
-	igt_skip_on(!rendercopy);
 
 	src = intel_buf_create_full(data->bops, data->fbs[1].gem_handle,
 				    data->fbs[1].width,
@@ -259,13 +258,19 @@ static void run_test(data_t *data)
 	spin = igt_spin_new(data->drm_fd, .ahnd = ibb->allocator_handle);
 	igt_spin_set_timeout(spin, NSEC_PER_SEC);
 
-	rendercopy(ibb, src, 0, 0, data->fbs[2].width, data->fbs[2].height, dst, 0, 0);
+	if (data->rendercopy) {
+		data->rendercopy(ibb, src, 0, 0, data->fbs[2].width, data->fbs[2].height, dst, 0, 0);
+	} else {
+		intel_bb_blt_copy(ibb, src, 0, 0, src->surface[0].stride,
+				  dst, 0, 0, dst->surface[0].stride,
+				  data->fbs[2].width, data->fbs[2].height, dst->bpp);
+	}
 
-	/* Perfom dirtyfb right after initiating rendercopy */
+	/* Perfom dirtyfb right after initiating rendercopy/blitter */
 	r = drmModeDirtyFB(data->drm_fd, data->fbs[2].fb_id, NULL, 0);
 	igt_assert(r == 0 || r == -ENOSYS);
 
-	/* Ensure rendercopy is complete */
+	/* Ensure rendercopy/blitter is complete */
 	intel_bb_sync(ibb);
 
 	igt_pipe_crc_collect_crc(data->pipe_crc, &crc);
@@ -289,6 +294,7 @@ igt_main
 		igt_display_require(&data.display, data.drm_fd);
 
 		data.bops = buf_ops_create(data.drm_fd);
+		data.rendercopy = igt_get_render_copyfunc(intel_get_drm_devid(data.drm_fd));
 
 		igt_display_reset(&data.display);
 	}
