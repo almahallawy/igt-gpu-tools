@@ -471,12 +471,13 @@ static void rc6_idle(int i915, uint32_t ctx_id, uint64_t flags, unsigned int gt)
 	}
 }
 
-static void rc6_fence(int i915, const intel_ctx_t *ctx)
+static void rc6_fence(int i915, unsigned int gt)
 {
 	const int64_t duration_ns = SLEEP_DURATION * (int64_t)NSEC_PER_SEC;
 	const int tolerance = 20; /* Some RC6 is better than none! */
 	const unsigned int gen = intel_gen(intel_get_drm_devid(i915));
 	const struct intel_execution_engine2 *e;
+	const intel_ctx_t *ctx;
 	struct power_sample sample[2];
 	unsigned long slept;
 	uint64_t rc6, ts[2], ahnd;
@@ -485,7 +486,7 @@ static void rc6_fence(int i915, const intel_ctx_t *ctx)
 
 	igt_require_sw_sync();
 
-	fd = open_pmu(i915, I915_PMU_RC6_RESIDENCY);
+	fd = open_pmu(i915, __I915_PMU_RC6_RESIDENCY(gt));
 	igt_drop_caches_set(i915, DROP_IDLE);
 	igt_require(__pmu_wait_for_rc6(fd));
 	igt_power_open(i915, &gpu, "gpu");
@@ -509,6 +510,7 @@ static void rc6_fence(int i915, const intel_ctx_t *ctx)
 	assert_within_epsilon(rc6, ts[1] - ts[0], 5);
 
 	/* Submit but delay execution, we should be idle and conserving power */
+	ctx = intel_ctx_create_for_gt(i915, gt);
 	ahnd = get_reloc_ahnd(i915, ctx->id);
 	for_each_ctx_engine(i915, ctx, e) {
 		igt_spin_t *spin;
@@ -550,6 +552,7 @@ static void rc6_fence(int i915, const intel_ctx_t *ctx)
 		gem_quiescent_gpu(i915);
 	}
 	put_ahnd(ahnd);
+	intel_ctx_destroy(i915, ctx);
 
 	igt_power_close(&gpu);
 	close(fd);
@@ -584,11 +587,13 @@ igt_main
 		}
 	}
 
-	igt_subtest("rc6-fence") {
+	igt_subtest_with_dynamic("rc6-fence") {
 		igt_require_gem(i915);
 		gem_quiescent_gpu(i915);
 
-		rc6_fence(i915, ctx);
+		i915_for_each_gt(i915, dirfd, gt)
+			igt_dynamic_f("gt%u", gt)
+				rc6_fence(i915, gt);
 	}
 
 	igt_subtest_group {
