@@ -1236,12 +1236,12 @@ static void init_crcs(enum pixel_format format, enum tiling_type tiling,
 			for (r_ = 0; r_ <= r; r_++)
 				draw_rect_igt_fb(pattern, &tmp_fbs[r],
 						 igt_draw_supports_method(drm.fd, IGT_DRAW_PWRITE) ?
-						 IGT_DRAW_PWRITE : IGT_DRAW_RENDER,
+						 IGT_DRAW_PWRITE : IGT_DRAW_BLT,
 						 r_);
 	} else {
 		for (r = 0; r < pattern->n_rects; r++)
 			draw_rect_igt_fb(pattern, &tmp_fbs[r], igt_draw_supports_method(drm.fd, IGT_DRAW_PWRITE) ?
-					 IGT_DRAW_PWRITE : IGT_DRAW_RENDER, r);
+					 IGT_DRAW_PWRITE : IGT_DRAW_BLT, r);
 	}
 
 	igt_output_set_pipe(prim_mode_params.output, prim_mode_params.pipe);
