@@ -376,7 +376,7 @@ static void kill_children(int sig)
 	signal(sig, old);
 }
 
-static void rc6_idle(int i915, uint32_t ctx_id, uint64_t flags)
+static void rc6_idle(int i915, uint32_t ctx_id, uint64_t flags, unsigned int gt)
 {
 	const int64_t duration_ns = SLEEP_DURATION * (int64_t)NSEC_PER_SEC;
 	const int tolerance = 20; /* Some RC6 is better than none! */
@@ -397,7 +397,7 @@ static void rc6_idle(int i915, uint32_t ctx_id, uint64_t flags)
 	struct igt_power gpu;
 	int fd;
 
-	fd = open_pmu(i915, I915_PMU_RC6_RESIDENCY);
+	fd = open_pmu(i915, __I915_PMU_RC6_RESIDENCY(gt));
 	igt_drop_caches_set(i915, DROP_IDLE);
 	igt_require(__pmu_wait_for_rc6(fd));
 	igt_power_open(i915, &gpu, "gpu");
@@ -558,12 +558,12 @@ static void rc6_fence(int i915, const intel_ctx_t *ctx)
 igt_main
 {
 	int i915 = -1;
+	unsigned int dirfd, gt;
 	const intel_ctx_t *ctx;
 
 	/* Use drm_open_driver to verify device existence */
 	igt_fixture {
 		i915 = drm_open_driver(DRIVER_INTEL);
-		ctx = intel_ctx_create_all_physical(i915);
 	}
 
 	igt_subtest_with_dynamic("rc6-idle") {
@@ -572,11 +572,15 @@ igt_main
 		igt_require_gem(i915);
 		gem_quiescent_gpu(i915);
 
-		for_each_ctx_engine(i915, ctx, e) {
-			if (e->instance == 0) {
-				igt_dynamic_f("%s", e->name)
-					rc6_idle(i915, ctx->id, e->flags);
+		i915_for_each_gt(i915, dirfd, gt) {
+			ctx = intel_ctx_create_for_gt(i915, gt);
+			for_each_ctx_engine(i915, ctx, e) {
+				if (e->instance == 0) {
+					igt_dynamic_f("gt%u-%s", gt, e->name)
+						rc6_idle(i915, ctx->id, e->flags, gt);
+				}
 			}
+			intel_ctx_destroy(i915, ctx);
 		}
 	}
 
@@ -626,7 +630,6 @@ igt_main
 	}
 
 	igt_fixture {
-		intel_ctx_destroy(i915, ctx);
 		drm_close_driver(i915);
 	}
 }
