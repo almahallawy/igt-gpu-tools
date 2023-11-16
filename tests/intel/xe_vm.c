@@ -1118,6 +1118,7 @@ static void *hammer_thread(void *tdata)
 	uint32_t exec_queue = xe_exec_queue_create(t->fd, t->vm, t->eci, 0);
 	int b;
 	int i = 0;
+	int err = 0;
 
 	sync[0].handle = syncobj_create(t->fd, 0);
 	pthread_barrier_wait(t->barrier);
@@ -1140,14 +1141,15 @@ static void *hammer_thread(void *tdata)
 		exec.address = batch_addr;
 		if (i % 32) {
 			exec.num_syncs = 0;
-			xe_exec(t->fd, &exec);
+			err = __xe_exec(t->fd, &exec);
 		} else {
 			exec.num_syncs = 1;
-			xe_exec(t->fd, &exec);
+			err = __xe_exec(t->fd, &exec);
 			igt_assert(syncobj_wait(t->fd, &sync[0].handle, 1,
 						INT64_MAX, 0, NULL));
 			syncobj_reset(t->fd, &sync[0].handle, 1);
 		}
+		igt_assert(!err || err == -ECANCELED);
 		++i;
 	}
 
