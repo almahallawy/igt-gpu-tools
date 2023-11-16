@@ -72,8 +72,8 @@ static void spin_basic_all(int fd)
 
 	vm = xe_vm_create(fd, 0, 0);
 	ahnd = intel_allocator_open(fd, vm, INTEL_ALLOCATOR_RELOC);
-	spin = malloc(sizeof(*spin) * xe_number_hw_engines(fd));
-	xe_for_each_hw_engine(fd, hwe) {
+	spin = malloc(sizeof(*spin) * xe_number_engines(fd));
+	xe_for_each_engine(fd, hwe) {
 		igt_debug("Run on engine: %s:%d\n",
 			  xe_engine_class_string(hwe->engine_class), hwe->engine_instance);
 		spin[i] = igt_spin_new(fd, .ahnd = ahnd, .vm = vm, .hwe = hwe);
@@ -104,7 +104,7 @@ static void spin_all(int fd, int gt, int class)
 
 	ahnd = intel_allocator_open(fd, 0, INTEL_ALLOCATOR_RELOC);
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
 			continue;
 		eci[num_placements++] = *hwe;
@@ -217,7 +217,7 @@ igt_main
 		spin_basic(fd);
 
 	igt_subtest("spin-batch")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			spin(fd, hwe);
 
 	igt_subtest("spin-basic-all")
@@ -225,7 +225,7 @@ igt_main
 
 	igt_subtest("spin-all") {
 		xe_for_each_gt(fd, gt)
-			xe_for_each_hw_engine_class(class)
+			xe_for_each_engine_class(class)
 				spin_all(fd, gt, class);
 	}
 

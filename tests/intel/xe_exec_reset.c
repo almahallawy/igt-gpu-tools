@@ -168,7 +168,7 @@ test_balancer(int fd, int gt, int class, int n_exec_queues, int n_execs,
 	if (flags & CLOSE_FD)
 		fd = drm_open_driver(DRIVER_XE);
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
 			continue;
 
@@ -790,106 +790,106 @@ igt_main
 		fd = drm_open_driver(DRIVER_XE);
 
 	igt_subtest("spin")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_spin(fd, hwe);
 
 	igt_subtest("cancel")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_legacy_mode(fd, hwe, 1, 1, CANCEL);
 
 	igt_subtest("execqueue-reset")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_legacy_mode(fd, hwe, 2, 2, EXEC_QUEUE_RESET);
 
 	igt_subtest("cat-error")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_legacy_mode(fd, hwe, 2, 2, CAT_ERROR);
 
 	igt_subtest("gt-reset")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_legacy_mode(fd, hwe, 2, 2, GT_RESET);
 
 	igt_subtest("close-fd-no-exec")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_legacy_mode(-1, hwe, 16, 0, CLOSE_FD);
 
 	igt_subtest("close-fd")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_legacy_mode(-1, hwe, 16, 256, CLOSE_FD);
 
 	igt_subtest("close-execqueues-close-fd")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_legacy_mode(-1, hwe, 16, 256, CLOSE_FD |
 					 CLOSE_EXEC_QUEUES);
 
 	igt_subtest("cm-execqueue-reset")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_compute_mode(fd, hwe, 2, 2, EXEC_QUEUE_RESET);
 
 	igt_subtest("cm-cat-error")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_compute_mode(fd, hwe, 2, 2, CAT_ERROR);
 
 	igt_subtest("cm-gt-reset")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_compute_mode(fd, hwe, 2, 2, GT_RESET);
 
 	igt_subtest("cm-close-fd-no-exec")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_compute_mode(-1, hwe, 16, 0, CLOSE_FD);
 
 	igt_subtest("cm-close-fd")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_compute_mode(-1, hwe, 16, 256, CLOSE_FD);
 
 	igt_subtest("cm-close-execqueues-close-fd")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_compute_mode(-1, hwe, 16, 256, CLOSE_FD |
 					  CLOSE_EXEC_QUEUES);
 
 	for (const struct section *s = sections; s->name; s++) {
 		igt_subtest_f("%s-cancel", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_balancer(fd, gt, class, 1, 1,
 						      CANCEL | s->flags);
 
 		igt_subtest_f("%s-execqueue-reset", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_balancer(fd, gt, class, MAX_INSTANCE + 1,
 						      MAX_INSTANCE + 1,
 						      EXEC_QUEUE_RESET | s->flags);
 
 		igt_subtest_f("%s-cat-error", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_balancer(fd, gt, class, MAX_INSTANCE + 1,
 						      MAX_INSTANCE + 1,
 						      CAT_ERROR | s->flags);
 
 		igt_subtest_f("%s-gt-reset", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_balancer(fd, gt, class, MAX_INSTANCE + 1,
 						      MAX_INSTANCE + 1,
 						      GT_RESET | s->flags);
 
 		igt_subtest_f("%s-close-fd-no-exec", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_balancer(-1, gt, class, 16, 0,
 						      CLOSE_FD | s->flags);
 
 		igt_subtest_f("%s-close-fd", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_balancer(-1, gt, class, 16, 256,
 						      CLOSE_FD | s->flags);
 
 		igt_subtest_f("%s-close-execqueues-close-fd", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_balancer(-1, gt, class, 16, 256, CLOSE_FD |
 						      CLOSE_EXEC_QUEUES | s->flags);
 	}

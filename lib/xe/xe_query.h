@@ -32,11 +32,11 @@ struct xe_device {
 	/** @gt_list: bitmask of all memory regions */
 	uint64_t memory_regions;
 
-	/** @hw_engines: array of hardware engines */
-	struct drm_xe_engine_class_instance *hw_engines;
+	/** @engines: array of hardware engines */
+	struct drm_xe_engine_class_instance *engines;
 
-	/** @number_hw_engines: length of hardware engines array */
-	unsigned int number_hw_engines;
+	/** @number_engines: length of hardware engines array */
+	unsigned int number_engines;
 
 	/** @mem_regions: regions memory information and usage */
 	struct drm_xe_query_mem_regions *mem_regions;
@@ -60,10 +60,10 @@ struct xe_device {
 	uint16_t dev_id;
 };
 
-#define xe_for_each_hw_engine(__fd, __hwe) \
-	for (int __i = 0; __i < xe_number_hw_engines(__fd) && \
-	     (__hwe = xe_hw_engine(__fd, __i)); ++__i)
-#define xe_for_each_hw_engine_class(__class) \
+#define xe_for_each_engine(__fd, __hwe) \
+	for (int __i = 0; __i < xe_number_engines(__fd) && \
+	     (__hwe = xe_engine(__fd, __i)); ++__i)
+#define xe_for_each_engine_class(__class) \
 	for (__class = 0; __class < DRM_XE_ENGINE_CLASS_COMPUTE + 1; \
 	     ++__class)
 #define xe_for_each_gt(__fd, __gt) \
@@ -81,14 +81,14 @@ uint64_t all_memory_regions(int fd);
 uint64_t system_memory(int fd);
 uint64_t vram_memory(int fd, int gt);
 uint64_t vram_if_possible(int fd, int gt);
-struct drm_xe_engine_class_instance *xe_hw_engines(int fd);
-struct drm_xe_engine_class_instance *xe_hw_engine(int fd, int idx);
+struct drm_xe_engine_class_instance *xe_engines(int fd);
+struct drm_xe_engine_class_instance *xe_engine(int fd, int idx);
 struct drm_xe_query_mem_region *xe_mem_region(int fd, uint64_t region);
 const char *xe_region_name(uint64_t region);
 uint16_t xe_region_class(int fd, uint64_t region);
 uint32_t xe_min_page_size(int fd, uint64_t region);
 struct drm_xe_query_config *xe_config(int fd);
-unsigned int xe_number_hw_engines(int fd);
+unsigned int xe_number_engines(int fd);
 bool xe_has_vram(int fd);
 uint64_t xe_vram_size(int fd, int gt);
 uint64_t xe_visible_vram_size(int fd, int gt);

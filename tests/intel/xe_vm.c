@@ -1863,7 +1863,7 @@ igt_main
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
 
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			if (hwe->engine_class != DRM_XE_ENGINE_CLASS_COPY) {
 				hwe_non_copy = hwe;
 				break;
@@ -1895,45 +1895,45 @@ igt_main
 		userptr_invalid(fd);
 
 	igt_subtest("shared-pte-page")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			shared_pte_page(fd, hwe, 4,
 					xe_get_default_alignment(fd));
 
 	igt_subtest("shared-pde-page")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			shared_pte_page(fd, hwe, 4, 0x1000ul * 512);
 
 	igt_subtest("shared-pde2-page")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			shared_pte_page(fd, hwe, 4, 0x1000ul * 512 * 512);
 
 	igt_subtest("shared-pde3-page")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			shared_pte_page(fd, hwe, 4, 0x1000ul * 512 * 512 * 512);
 
 	igt_subtest("bind-execqueues-independent")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_bind_execqueues_independent(fd, hwe, 0);
 
 	igt_subtest("bind-execqueues-conflict")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_bind_execqueues_independent(fd, hwe, CONFLICT);
 
 	igt_subtest("bind-array-twice")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_bind_array(fd, hwe, 2, 0);
 
 	igt_subtest("bind-array-many")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_bind_array(fd, hwe, 16, 0);
 
 	igt_subtest("bind-array-exec_queue-twice")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_bind_array(fd, hwe, 2,
 					BIND_ARRAY_BIND_EXEC_QUEUE_FLAG);
 
 	igt_subtest("bind-array-exec_queue-many")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_bind_array(fd, hwe, 16,
 					BIND_ARRAY_BIND_EXEC_QUEUE_FLAG);
 
@@ -1941,41 +1941,41 @@ igt_main
 	     bind_size = bind_size << 1) {
 		igt_subtest_f("large-binds-%lld",
 			      (long long)bind_size)
-			xe_for_each_hw_engine(fd, hwe) {
+			xe_for_each_engine(fd, hwe) {
 				test_large_binds(fd, hwe, 4, 16, bind_size, 0);
 				break;
 			}
 		igt_subtest_f("large-split-binds-%lld",
 			      (long long)bind_size)
-			xe_for_each_hw_engine(fd, hwe) {
+			xe_for_each_engine(fd, hwe) {
 				test_large_binds(fd, hwe, 4, 16, bind_size,
 						 LARGE_BIND_FLAG_SPLIT);
 				break;
 			}
 		igt_subtest_f("large-misaligned-binds-%lld",
 			      (long long)bind_size)
-			xe_for_each_hw_engine(fd, hwe) {
+			xe_for_each_engine(fd, hwe) {
 				test_large_binds(fd, hwe, 4, 16, bind_size,
 						 LARGE_BIND_FLAG_MISALIGNED);
 				break;
 			}
 		igt_subtest_f("large-split-misaligned-binds-%lld",
 			      (long long)bind_size)
-			xe_for_each_hw_engine(fd, hwe) {
+			xe_for_each_engine(fd, hwe) {
 				test_large_binds(fd, hwe, 4, 16, bind_size,
 						 LARGE_BIND_FLAG_SPLIT |
 						 LARGE_BIND_FLAG_MISALIGNED);
 				break;
 			}
 		igt_subtest_f("large-userptr-binds-%lld", (long long)bind_size)
-			xe_for_each_hw_engine(fd, hwe) {
+			xe_for_each_engine(fd, hwe) {
 				test_large_binds(fd, hwe, 4, 16, bind_size,
 						 LARGE_BIND_FLAG_USERPTR);
 				break;
 			}
 		igt_subtest_f("large-userptr-split-binds-%lld",
 			      (long long)bind_size)
-			xe_for_each_hw_engine(fd, hwe) {
+			xe_for_each_engine(fd, hwe) {
 				test_large_binds(fd, hwe, 4, 16, bind_size,
 						 LARGE_BIND_FLAG_SPLIT |
 						 LARGE_BIND_FLAG_USERPTR);
@@ -1983,7 +1983,7 @@ igt_main
 			}
 		igt_subtest_f("large-userptr-misaligned-binds-%lld",
 			      (long long)bind_size)
-			xe_for_each_hw_engine(fd, hwe) {
+			xe_for_each_engine(fd, hwe) {
 				test_large_binds(fd, hwe, 4, 16, bind_size,
 						 LARGE_BIND_FLAG_MISALIGNED |
 						 LARGE_BIND_FLAG_USERPTR);
@@ -1991,7 +1991,7 @@ igt_main
 			}
 		igt_subtest_f("large-userptr-split-misaligned-binds-%lld",
 			      (long long)bind_size)
-			xe_for_each_hw_engine(fd, hwe) {
+			xe_for_each_engine(fd, hwe) {
 				test_large_binds(fd, hwe, 4, 16, bind_size,
 						 LARGE_BIND_FLAG_SPLIT |
 						 LARGE_BIND_FLAG_MISALIGNED |
@@ -2002,13 +2002,13 @@ igt_main
 
 	bind_size = (0x1ull << 21) + (0x1ull << 20);
 	igt_subtest_f("mixed-binds-%lld", (long long)bind_size)
-		xe_for_each_hw_engine(fd, hwe) {
+		xe_for_each_engine(fd, hwe) {
 			test_large_binds(fd, hwe, 4, 16, bind_size, 0);
 			break;
 		}
 
 	igt_subtest_f("mixed-misaligned-binds-%lld", (long long)bind_size)
-		xe_for_each_hw_engine(fd, hwe) {
+		xe_for_each_engine(fd, hwe) {
 			test_large_binds(fd, hwe, 4, 16, bind_size,
 					 LARGE_BIND_FLAG_MISALIGNED);
 			break;
@@ -2016,14 +2016,14 @@ igt_main
 
 	bind_size = (0x1ull << 30) + (0x1ull << 29) + (0x1ull << 20);
 	igt_subtest_f("mixed-binds-%lld", (long long)bind_size)
-		xe_for_each_hw_engine(fd, hwe) {
+		xe_for_each_engine(fd, hwe) {
 			test_large_binds(fd, hwe, 4, 16, bind_size, 0);
 			break;
 		}
 
 	bind_size = (0x1ull << 30) + (0x1ull << 29) + (0x1ull << 20);
 	igt_subtest_f("mixed-misaligned-binds-%lld", (long long)bind_size)
-		xe_for_each_hw_engine(fd, hwe) {
+		xe_for_each_engine(fd, hwe) {
 			test_large_binds(fd, hwe, 4, 16, bind_size,
 					 LARGE_BIND_FLAG_MISALIGNED);
 			break;
@@ -2031,7 +2031,7 @@ igt_main
 
 	bind_size = (0x1ull << 21) + (0x1ull << 20);
 	igt_subtest_f("mixed-userptr-binds-%lld", (long long) bind_size)
-		xe_for_each_hw_engine(fd, hwe) {
+		xe_for_each_engine(fd, hwe) {
 			test_large_binds(fd, hwe, 4, 16, bind_size,
 					 LARGE_BIND_FLAG_USERPTR);
 			break;
@@ -2039,7 +2039,7 @@ igt_main
 
 	igt_subtest_f("mixed-userptr-misaligned-binds-%lld",
 		      (long long)bind_size)
-		xe_for_each_hw_engine(fd, hwe) {
+		xe_for_each_engine(fd, hwe) {
 			test_large_binds(fd, hwe, 4, 16, bind_size,
 					 LARGE_BIND_FLAG_MISALIGNED |
 					 LARGE_BIND_FLAG_USERPTR);
@@ -2048,7 +2048,7 @@ igt_main
 
 	bind_size = (0x1ull << 30) + (0x1ull << 29) + (0x1ull << 20);
 	igt_subtest_f("mixed-userptr-binds-%lld", (long long)bind_size)
-		xe_for_each_hw_engine(fd, hwe) {
+		xe_for_each_engine(fd, hwe) {
 			test_large_binds(fd, hwe, 4, 16, bind_size,
 					 LARGE_BIND_FLAG_USERPTR);
 			break;
@@ -2057,7 +2057,7 @@ igt_main
 	bind_size = (0x1ull << 30) + (0x1ull << 29) + (0x1ull << 20);
 	igt_subtest_f("mixed-userptr-misaligned-binds-%lld",
 		      (long long)bind_size)
-		xe_for_each_hw_engine(fd, hwe) {
+		xe_for_each_engine(fd, hwe) {
 			test_large_binds(fd, hwe, 4, 16, bind_size,
 					 LARGE_BIND_FLAG_MISALIGNED |
 					 LARGE_BIND_FLAG_USERPTR);

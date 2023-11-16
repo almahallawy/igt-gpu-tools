@@ -209,7 +209,7 @@ static void test_engine_group_busyness(int fd, int gt, int class, const char *na
 
 	config = engine_group_get_config(gt, class);
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
 			continue;
 
@@ -315,13 +315,13 @@ igt_main
 	for (const struct section *s = sections; s->name; s++) {
 		igt_subtest_f("%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					if (class == s->class)
 						test_engine_group_busyness(fd, gt, class, s->name);
 	}
 
 	igt_subtest("any-engine-group-busy")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			test_any_engine_busyness(fd, hwe);
 
 	igt_fixture {

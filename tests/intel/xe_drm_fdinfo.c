@@ -313,7 +313,7 @@ igt_main
 
 	igt_describe("Create and compare active memory consumption by client");
 	igt_subtest("drm-active")
-		test_active(xe, xe_hw_engine(xe, 0));
+		test_active(xe, xe_engine(xe, 0));
 
 	igt_fixture {
 		drm_close_driver(xe);

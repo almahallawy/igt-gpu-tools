@@ -63,7 +63,7 @@ static void store(int fd)
 		.syncs = to_user_pointer(&sync),
 	};
 	struct data *data;
-	struct drm_xe_engine_class_instance *hw_engine;
+	struct drm_xe_engine_class_instance *engine;
 	uint32_t vm;
 	uint32_t exec_queue;
 	uint32_t syncobj;
@@ -80,16 +80,16 @@ static void store(int fd)
 	bo_size = ALIGN(bo_size + xe_cs_prefetch_size(fd),
 			xe_get_default_alignment(fd));
 
-	hw_engine = xe_hw_engine(fd, 1);
+	engine = xe_engine(fd, 1);
 	bo = xe_bo_create(fd, vm, bo_size,
-			  vram_if_possible(fd, hw_engine->gt_id),
+			  vram_if_possible(fd, engine->gt_id),
 			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 
-	xe_vm_bind_async(fd, vm, hw_engine->gt_id, bo, 0, addr, bo_size, &sync, 1);
+	xe_vm_bind_async(fd, vm, engine->gt_id, bo, 0, addr, bo_size, &sync, 1);
 	data = xe_bo_map(fd, bo, bo_size);
 	store_dword_batch(data, addr, value);
 
-	exec_queue = xe_exec_queue_create(fd, vm, hw_engine, 0);
+	exec_queue = xe_exec_queue_create(fd, vm, engine, 0);
 	exec.exec_queue_id = exec_queue;
 	exec.address = data->addr;
 	sync.flags &= DRM_XE_SYNC_FLAG_SIGNAL;
@@ -242,7 +242,7 @@ static void store_all(int fd, int gt, int class)
 			  DRM_XE_GEM_CREATE_FLAG_NEEDS_VISIBLE_VRAM);
 	data = xe_bo_map(fd, bo, bo_size);
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
 			continue;
 		eci[num_placements++] = *hwe;
@@ -309,16 +309,16 @@ igt_main
 
 	igt_subtest("basic-all") {
 		xe_for_each_gt(fd, gt)
-			xe_for_each_hw_engine_class(class)
+			xe_for_each_engine_class(class)
 				store_all(fd, gt, class);
 	}
 
 	igt_subtest("cachelines")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			store_cachelines(fd, hwe, 0);
 
 	igt_subtest("page-sized")
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			store_cachelines(fd, hwe, PAGES);
 
 	igt_fixture {

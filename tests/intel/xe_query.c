@@ -181,7 +181,7 @@ test_query_engines(int fd)
 	struct drm_xe_engine_class_instance *hwe;
 	int i = 0;
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		igt_assert(hwe);
 		igt_info("engine %d: %s, engine instance: %d, tile: TILE-%d\n", i++,
 			 xe_engine_class_string(hwe->engine_class), hwe->engine_instance,
@@ -602,7 +602,7 @@ static void test_query_engine_cycles(int fd)
 
 	igt_require(query_engine_cycles_supported(fd));
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		igt_assert(hwe);
 		__engine_cycles(fd, hwe);
 	}
@@ -626,7 +626,7 @@ static void test_engine_cycles_invalid(int fd)
 	igt_require(query_engine_cycles_supported(fd));
 
 	/* get one engine */
-	xe_for_each_hw_engine(fd, hwe)
+	xe_for_each_engine(fd, hwe)
 		break;
 
 	/* sanity check engine selection is valid */

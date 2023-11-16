@@ -229,7 +229,7 @@ igt_main
 	igt_fixture {
 		fd = drm_open_driver(DRIVER_XE);
 
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			if (hwe0 == NULL) {
 				hwe0 = hwe;
 			} else {

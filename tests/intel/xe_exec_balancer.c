@@ -57,7 +57,7 @@ static void test_all_active(int fd, int gt, int class)
 	struct drm_xe_engine_class_instance eci[MAX_INSTANCE];
 	int i, num_placements = 0;
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
 			continue;
 
@@ -199,7 +199,7 @@ test_exec(int fd, int gt, int class, int n_exec_queues, int n_execs,
 
 	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
 			continue;
 
@@ -426,7 +426,7 @@ test_cm(int fd, int gt, int class, int n_exec_queues, int n_execs,
 
 	igt_assert(n_exec_queues <= MAX_N_EXEC_QUEUES);
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
 			continue;
 
@@ -632,25 +632,25 @@ igt_main
 
 	igt_subtest("virtual-all-active")
 		xe_for_each_gt(fd, gt)
-			xe_for_each_hw_engine_class(class)
+			xe_for_each_engine_class(class)
 				test_all_active(fd, gt, class);
 
 	for (const struct section *s = sections; s->name; s++) {
 		igt_subtest_f("once-%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_exec(fd, gt, class, 1, 1,
 						  s->flags);
 
 		igt_subtest_f("twice-%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_exec(fd, gt, class, 1, 2,
 						  s->flags);
 
 		igt_subtest_f("many-%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_exec(fd, gt, class, 1,
 						  s->flags & (REBIND | INVALIDATE) ?
 						  64 : 1024,
@@ -658,7 +658,7 @@ igt_main
 
 		igt_subtest_f("many-execqueues-%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_exec(fd, gt, class, 16,
 						  s->flags & (REBIND | INVALIDATE) ?
 						  64 : 1024,
@@ -666,23 +666,23 @@ igt_main
 
 		igt_subtest_f("no-exec-%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_exec(fd, gt, class, 1, 0,
 						  s->flags);
 
 		igt_subtest_f("once-cm-%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_cm(fd, gt, class, 1, 1, s->flags);
 
 		igt_subtest_f("twice-cm-%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_cm(fd, gt, class, 1, 2, s->flags);
 
 		igt_subtest_f("many-cm-%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_cm(fd, gt, class, 1,
 						s->flags & (REBIND | INVALIDATE) ?
 						64 : 1024,
@@ -690,7 +690,7 @@ igt_main
 
 		igt_subtest_f("many-execqueues-cm-%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_cm(fd, gt, class, 16,
 						s->flags & (REBIND | INVALIDATE) ?
 						64 : 1024,
@@ -698,7 +698,7 @@ igt_main
 
 		igt_subtest_f("no-exec-cm-%s", s->name)
 			xe_for_each_gt(fd, gt)
-				xe_for_each_hw_engine_class(class)
+				xe_for_each_engine_class(class)
 					test_cm(fd, gt, class, 1, 0, s->flags);
 	}
 

@@ -471,7 +471,7 @@ igt_main
 		igt_device_get_pci_slot_name(device.fd_xe, device.pci_slot_name);
 
 		/* Always perform initial once-basic exec checking for health */
-		xe_for_each_hw_engine(device.fd_xe, hwe)
+		xe_for_each_engine(device.fd_xe, hwe)
 			test_exec(device, hwe, 1, 1, NO_SUSPEND, NO_RPM);
 
 		igt_pm_get_d3cold_allowed(device.pci_slot_name, &d3cold_allowed);
@@ -486,7 +486,7 @@ igt_main
 		}
 
 		igt_subtest_f("%s-basic-exec", s->name) {
-			xe_for_each_hw_engine(device.fd_xe, hwe)
+			xe_for_each_engine(device.fd_xe, hwe)
 				test_exec(device, hwe, 1, 2, s->state,
 					  NO_RPM);
 		}
@@ -494,13 +494,13 @@ igt_main
 		igt_subtest_f("%s-exec-after", s->name) {
 			igt_system_suspend_autoresume(s->state,
 						      SUSPEND_TEST_NONE);
-			xe_for_each_hw_engine(device.fd_xe, hwe)
+			xe_for_each_engine(device.fd_xe, hwe)
 				test_exec(device, hwe, 1, 2, NO_SUSPEND,
 					  NO_RPM);
 		}
 
 		igt_subtest_f("%s-multiple-execs", s->name) {
-			xe_for_each_hw_engine(device.fd_xe, hwe)
+			xe_for_each_engine(device.fd_xe, hwe)
 				test_exec(device, hwe, 16, 32, s->state,
 					  NO_RPM);
 		}
@@ -508,7 +508,7 @@ igt_main
 		for (const struct d_state *d = d_states; d->name; d++) {
 			igt_subtest_f("%s-%s-basic-exec", s->name, d->name) {
 				igt_assert(setup_d3(device, d->state));
-				xe_for_each_hw_engine(device.fd_xe, hwe)
+				xe_for_each_engine(device.fd_xe, hwe)
 					test_exec(device, hwe, 1, 2, s->state,
 						  NO_RPM);
 			}
@@ -523,14 +523,14 @@ igt_main
 
 		igt_subtest_f("%s-basic-exec", d->name) {
 			igt_assert(setup_d3(device, d->state));
-			xe_for_each_hw_engine(device.fd_xe, hwe)
+			xe_for_each_engine(device.fd_xe, hwe)
 				test_exec(device, hwe, 1, 1,
 					  NO_SUSPEND, d->state);
 		}
 
 		igt_subtest_f("%s-multiple-execs", d->name) {
 			igt_assert(setup_d3(device, d->state));
-			xe_for_each_hw_engine(device.fd_xe, hwe)
+			xe_for_each_engine(device.fd_xe, hwe)
 				test_exec(device, hwe, 16, 32,
 					  NO_SUSPEND, d->state);
 		}

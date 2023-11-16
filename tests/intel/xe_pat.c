@@ -462,8 +462,8 @@ static void pat_index_dw(struct xe_pat_param *p)
 	bops = buf_ops_create(fd);
 
 	n_engines = 0;
-	i = rand() % xe_number_hw_engines(fd);
-	xe_for_each_hw_engine(fd, hwe) {
+	i = rand() % xe_number_engines(fd);
+	xe_for_each_engine(fd, hwe) {
 		if (i == n_engines++)
 			break;
 	}

@@ -543,7 +543,7 @@ static struct intel_engine_data *query_engines(void)
 	if (is_xe) {
 		struct drm_xe_engine_class_instance *hwe;
 
-		xe_for_each_hw_engine(fd, hwe) {
+		xe_for_each_engine(fd, hwe) {
 			engines.engines[engines.nengines].class = hwe->engine_class;
 			engines.engines[engines.nengines].instance = hwe->engine_instance;
 			engines.nengines++;
@@ -670,7 +670,7 @@ xe_get_engine(enum intel_engine_id engine)
 		igt_assert(0);
 	};
 
-	xe_for_each_hw_engine(fd, hwe1) {
+	xe_for_each_engine(fd, hwe1) {
 		if (hwe.engine_class == hwe1->engine_class &&
 		    hwe.engine_instance  == hwe1->engine_instance) {
 			hwe = *hwe1;
@@ -689,8 +689,8 @@ xe_get_default_engine(void)
 	struct drm_xe_engine_class_instance default_hwe, *hwe;
 
 	/* select RCS0 | CCS0 or first available engine */
-	default_hwe = *xe_hw_engine(fd, 0);
-	xe_for_each_hw_engine(fd, hwe) {
+	default_hwe = *xe_engine(fd, 0);
+	xe_for_each_engine(fd, hwe) {
 		if ((hwe->engine_class == DRM_XE_ENGINE_CLASS_RENDER ||
 		     hwe->engine_class == DRM_XE_ENGINE_CLASS_COMPUTE) &&
 		    hwe->engine_instance == 0) {

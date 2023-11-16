@@ -98,7 +98,7 @@ igt_simple_main
 
 	fd = drm_open_driver(DRIVER_XE);
 
-	test_ping_pong(fd, xe_hw_engine(fd, 0));
+	test_ping_pong(fd, xe_engine(fd, 0));
 
 	drm_close_driver(fd);
 }

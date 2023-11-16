@@ -759,7 +759,7 @@ igt_main
 		vram_size = xe_visible_vram_size(fd, 0);
 		igt_assert(vram_size);
 
-		xe_for_each_hw_engine(fd, hwe)
+		xe_for_each_engine(fd, hwe)
 			if (hwe->engine_class != DRM_XE_ENGINE_CLASS_COPY)
 				break;
 	}

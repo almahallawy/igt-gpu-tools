@@ -140,7 +140,7 @@ static void create_execqueues(int fd, enum exec_queue_destroy ed)
 	int nproc = sysconf(_SC_NPROCESSORS_ONLN), seconds;
 
 	fd = drm_reopen_driver(fd);
-	num_engines = xe_number_hw_engines(fd);
+	num_engines = xe_number_engines(fd);
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
 
 	exec_queues_per_process = max_t(uint32_t, 1, MAXEXECQUEUES / nproc);
@@ -157,7 +157,7 @@ static void create_execqueues(int fd, enum exec_queue_destroy ed)
 
 		for (i = 0; i < exec_queues_per_process; i++) {
 			idx = rand() % num_engines;
-			hwe = xe_hw_engine(fd, idx);
+			hwe = xe_engine(fd, idx);
 			err = __xe_exec_queue_create(fd, vm, hwe, 0, &exec_queue);
 			igt_debug("[%2d] Create exec_queue: err=%d, exec_queue=%u [idx = %d]\n",
 				  n, err, exec_queue, i);

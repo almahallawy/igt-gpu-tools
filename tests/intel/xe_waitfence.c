@@ -114,7 +114,7 @@ waitfence(int fd, enum waittype wt)
 		igt_debug("wait type: RELTIME - timeout: %ld, timeout left: %ld\n",
 			  MS_TO_NS(10), timeout);
 	} else if (wt == ENGINE) {
-		eci = xe_hw_engine(fd, 1);
+		eci = xe_engine(fd, 1);
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		current = ts.tv_sec * 1e9 + ts.tv_nsec;
 		timeout = current + MS_TO_NS(10);

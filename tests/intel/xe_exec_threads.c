@@ -81,7 +81,7 @@ test_balancer(int fd, int gt, uint32_t vm, uint64_t addr, uint64_t userptr,
 		owns_vm = true;
 	}
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		if (hwe->engine_class != class || hwe->gt_id != gt)
 			continue;
 
@@ -969,22 +969,22 @@ static void threads(int fd, int flags)
 	uint64_t userptr = 0x00007000eadbe000;
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
-	int n_hw_engines = 0, class;
+	int n_engines = 0, class;
 	uint64_t i = 0;
 	uint32_t vm_legacy_mode = 0, vm_compute_mode = 0;
 	bool go = false;
 	int n_threads = 0;
 	int gt;
 
-	xe_for_each_hw_engine(fd, hwe)
-		++n_hw_engines;
+	xe_for_each_engine(fd, hwe)
+		++n_engines;
 
 	if (flags & BALANCER) {
 		xe_for_each_gt(fd, gt)
-			xe_for_each_hw_engine_class(class) {
+			xe_for_each_engine_class(class) {
 				int num_placements = 0;
 
-				xe_for_each_hw_engine(fd, hwe) {
+				xe_for_each_engine(fd, hwe) {
 					if (hwe->engine_class != class ||
 					    hwe->gt_id != gt)
 						continue;
@@ -992,11 +992,11 @@ static void threads(int fd, int flags)
 				}
 
 				if (num_placements > 1)
-					n_hw_engines += 2;
+					n_engines += 2;
 			}
 	}
 
-	threads_data = calloc(n_hw_engines, sizeof(*threads_data));
+	threads_data = calloc(n_engines, sizeof(*threads_data));
 	igt_assert(threads_data);
 
 	pthread_mutex_init(&mutex, 0);
@@ -1012,7 +1012,7 @@ static void threads(int fd, int flags)
 					       0);
 	}
 
-	xe_for_each_hw_engine(fd, hwe) {
+	xe_for_each_engine(fd, hwe) {
 		threads_data[i].mutex = &mutex;
 		threads_data[i].cond = &cond;
 #define ADDRESS_SHIFT	39
@@ -1045,10 +1045,10 @@ static void threads(int fd, int flags)
 
 	if (flags & BALANCER) {
 		xe_for_each_gt(fd, gt)
-			xe_for_each_hw_engine_class(class) {
+			xe_for_each_engine_class(class) {
 				int num_placements = 0;
 
-				xe_for_each_hw_engine(fd, hwe) {
+				xe_for_each_engine(fd, hwe) {
 					if (hwe->engine_class != class ||
 					    hwe->gt_id != gt)
 						continue;
@@ -1123,7 +1123,7 @@ static void threads(int fd, int flags)
 	pthread_cond_broadcast(&cond);
 	pthread_mutex_unlock(&mutex);
 
-	for (i = 0; i < n_hw_engines; ++i)
+	for (i = 0; i < n_engines; ++i)
 		pthread_join(threads_data[i].thread, NULL);
 
 	if (vm_legacy_mode)

@@ -346,7 +346,7 @@ igt_main
 	igt_describe("Validate idle residency on exec");
 	igt_subtest("idle-residency-on-exec") {
 		xe_for_each_gt(fd, gt) {
-			xe_for_each_hw_engine(fd, hwe) {
+			xe_for_each_engine(fd, hwe) {
 				if (gt == hwe->gt_id && !hwe->engine_instance)
 					idle_residency_on_exec(fd, hwe);
 			}
