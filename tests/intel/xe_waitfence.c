@@ -81,7 +81,7 @@ enum waittype {
 static void
 waitfence(int fd, enum waittype wt)
 {
-	struct drm_xe_query_engine_info *engine = NULL;
+	struct drm_xe_engine *engine = NULL;
 	struct timespec ts;
 	int64_t current, signalled;
 	uint32_t bo_1;

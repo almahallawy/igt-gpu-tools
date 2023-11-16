@@ -32,11 +32,8 @@ struct xe_device {
 	/** @gt_list: bitmask of all memory regions */
 	uint64_t memory_regions;
 
-	/** @engines: array of hardware engines */
-	struct drm_xe_query_engine_info *engines;
-
-	/** @number_engines: length of hardware engines array */
-	unsigned int number_engines;
+	/** @engines: hardware engines */
+	struct drm_xe_query_engines *engines;
 
 	/** @mem_regions: regions memory information and usage */
 	struct drm_xe_query_mem_regions *mem_regions;
@@ -81,8 +78,8 @@ uint64_t all_memory_regions(int fd);
 uint64_t system_memory(int fd);
 uint64_t vram_memory(int fd, int gt);
 uint64_t vram_if_possible(int fd, int gt);
-struct drm_xe_query_engine_info *xe_engines(int fd);
-struct drm_xe_query_engine_info *xe_engine(int fd, int idx);
+struct drm_xe_engine *xe_engines(int fd);
+struct drm_xe_engine *xe_engine(int fd, int idx);
 struct drm_xe_mem_region *xe_mem_region(int fd, uint64_t region);
 const char *xe_region_name(uint64_t region);
 uint16_t xe_region_class(int fd, uint64_t region);

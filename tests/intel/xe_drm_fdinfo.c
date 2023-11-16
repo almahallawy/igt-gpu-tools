@@ -40,7 +40,7 @@ IGT_TEST_DESCRIPTION("Read and verify drm client memory consumption using fdinfo
 #define BO_SIZE (65536)
 
 /* Subtests */
-static void test_active(int fd, struct drm_xe_query_engine_info *engine)
+static void test_active(int fd, struct drm_xe_engine *engine)
 {
 	struct drm_xe_mem_region *memregion;
 	uint64_t memreg = all_memory_regions(fd), region;

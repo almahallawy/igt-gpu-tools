@@ -149,7 +149,7 @@ static void create_execqueues(int fd, enum exec_queue_destroy ed)
 	igt_nsec_elapsed(&tv);
 
 	igt_fork(n, nproc) {
-		struct drm_xe_query_engine_info *engine;
+		struct drm_xe_engine *engine;
 		uint32_t exec_queue, exec_queues[exec_queues_per_process];
 		int idx, err, i;
 

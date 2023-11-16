@@ -43,7 +43,7 @@
   *	there is worked queued on one of the VM's compute exec_queues.
  */
 
-static void test_ping_pong(int fd, struct drm_xe_query_engine_info *engine)
+static void test_ping_pong(int fd, struct drm_xe_engine *engine)
 {
 	size_t vram_size = xe_vram_size(fd, 0);
 	size_t align = xe_get_default_alignment(fd);

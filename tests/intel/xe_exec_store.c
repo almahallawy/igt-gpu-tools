@@ -63,7 +63,7 @@ static void store(int fd)
 		.syncs = to_user_pointer(&sync),
 	};
 	struct data *data;
-	struct drm_xe_query_engine_info *engine;
+	struct drm_xe_engine *engine;
 	uint32_t vm;
 	uint32_t exec_queue;
 	uint32_t syncobj;

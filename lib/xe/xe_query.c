@@ -72,10 +72,9 @@ static uint64_t __memory_regions(const struct drm_xe_query_gt_list *gt_list)
 	return regions;
 }
 
-static struct drm_xe_query_engine_info *
-xe_query_engines(int fd, unsigned int *num_engines)
+static struct drm_xe_query_engines *xe_query_engines(int fd)
 {
-	struct drm_xe_query_engine_info *engines;
+	struct drm_xe_query_engines *engines;
 	struct drm_xe_device_query query = {
 		.extensions = 0,
 		.query = DRM_XE_DEVICE_QUERY_ENGINES,
@@ -83,7 +82,6 @@ xe_query_engines(int fd, unsigned int *num_engines)
 		.data = 0,
 	};
 
-	igt_assert(num_engines);
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 
 	engines = malloc(query.size);
@@ -91,8 +89,6 @@ xe_query_engines(int fd, unsigned int *num_engines)
 
 	query.data = to_user_pointer(engines);
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
-
-	*num_engines = query.size / sizeof(*engines);
 
 	return engines;
 }
@@ -253,7 +249,7 @@ struct xe_device *xe_device_get(int fd)
 	xe_dev->dev_id = xe_dev->config->info[DRM_XE_QUERY_CONFIG_REV_AND_DEVICE_ID] & 0xffff;
 	xe_dev->gt_list = xe_query_gt_list_new(fd);
 	xe_dev->memory_regions = __memory_regions(xe_dev->gt_list);
-	xe_dev->engines = xe_query_engines(fd, &xe_dev->number_engines);
+	xe_dev->engines = xe_query_engines(fd);
 	xe_dev->mem_regions = xe_query_mem_regions_new(fd);
 	xe_dev->vram_size = calloc(xe_dev->gt_list->num_gt, sizeof(*xe_dev->vram_size));
 	xe_dev->visible_vram_size = calloc(xe_dev->gt_list->num_gt, sizeof(*xe_dev->visible_vram_size));
@@ -427,7 +423,7 @@ uint64_t vram_if_possible(int fd, int gt)
  *
  * Returns engines array of xe device @fd.
  */
-xe_dev_FN(xe_engines, engines, struct drm_xe_query_engine_info *);
+xe_dev_FN(xe_engines, engines->engines, struct drm_xe_engine *);
 
 /**
  * xe_engine:
@@ -436,15 +432,15 @@ xe_dev_FN(xe_engines, engines, struct drm_xe_query_engine_info *);
  *
  * Returns engine info of xe device @fd and @idx.
  */
-struct drm_xe_query_engine_info *xe_engine(int fd, int idx)
+struct drm_xe_engine *xe_engine(int fd, int idx)
 {
 	struct xe_device *xe_dev;
 
 	xe_dev = find_in_cache(fd);
 	igt_assert(xe_dev);
-	igt_assert(idx >= 0 && idx < xe_dev->number_engines);
+	igt_assert(idx >= 0 && idx < xe_dev->engines->num_engines);
 
-	return &xe_dev->engines[idx];
+	return &xe_dev->engines->engines[idx];
 }
 
 /**
@@ -534,7 +530,7 @@ xe_dev_FN(xe_config, config, struct drm_xe_query_config *);
  *
  * Returns number of hw engines of xe device @fd.
  */
-xe_dev_FN(xe_number_engines, number_engines, unsigned int);
+xe_dev_FN(xe_number_engines, engines->num_engines, unsigned int);
 
 /**
  * xe_has_vram:
@@ -657,8 +653,8 @@ bool xe_has_engine_class(int fd, uint16_t engine_class)
 	xe_dev = find_in_cache(fd);
 	igt_assert(xe_dev);
 
-	for (int i = 0; i < xe_dev->number_engines; i++)
-		if (xe_dev->engines[i].instance.engine_class == engine_class)
+	for (int i = 0; i < xe_dev->engines->num_engines; i++)
+		if (xe_dev->engines->engines[i].instance.engine_class == engine_class)
 			return true;
 
 	return false;
