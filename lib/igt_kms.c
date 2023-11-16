@@ -6055,9 +6055,17 @@ int igt_get_max_dotclock(int fd)
 	char buf[4096];
 	char *s;
 	int dir, res, max_dotclock = 0;
+	drmModeRes *resources;
 
 	if (!is_intel_device(fd))
 		return max_dotclock;
+
+	/* If there is no display, then no point to check for dotclock. */
+	resources = drmModeGetResources(fd);
+	if (!resources)
+		return max_dotclock;
+
+	drmModeFreeResources(resources);
 
 	dir = igt_debugfs_dir(fd);
 	igt_require(dir);
