@@ -11,7 +11,7 @@
 #include "xe/xe_query.h"
 #include "xe/xe_util.h"
 
-static bool __region_belongs_to_regions_type(struct drm_xe_query_mem_region *region,
+static bool __region_belongs_to_regions_type(struct drm_xe_mem_region *region,
 					     uint32_t *mem_regions_type,
 					     int num_regions)
 {
@@ -24,7 +24,7 @@ static bool __region_belongs_to_regions_type(struct drm_xe_query_mem_region *reg
 struct igt_collection *
 __xe_get_memory_region_set(int xe, uint32_t *mem_regions_type, int num_regions)
 {
-	struct drm_xe_query_mem_region *memregion;
+	struct drm_xe_mem_region *memregion;
 	struct igt_collection *set = NULL;
 	uint64_t memreg = all_memory_regions(xe), region;
 	int count = 0, pos = 0;
@@ -79,7 +79,7 @@ char *xe_memregion_dynamic_subtest_name(int xe, struct igt_collection *set)
 	igt_assert(name);
 
 	for_each_collection_data(data, set) {
-		struct drm_xe_query_mem_region *memreg;
+		struct drm_xe_mem_region *memreg;
 		int r;
 
 		region = data->value;

@@ -218,34 +218,34 @@ test_query_mem_regions(int fd)
 	query.data = to_user_pointer(mem_regions);
 	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 
-	for (i = 0; i < mem_regions->num_regions; i++) {
+	for (i = 0; i < mem_regions->num_mem_regions; i++) {
 		igt_info("mem region %d: %s\t%#llx / %#llx\n", i,
-			mem_regions->regions[i].mem_class ==
+			mem_regions->mem_regions[i].mem_class ==
 			DRM_XE_MEM_REGION_CLASS_SYSMEM ? "SYSMEM"
-			:mem_regions->regions[i].mem_class ==
+			:mem_regions->mem_regions[i].mem_class ==
 			DRM_XE_MEM_REGION_CLASS_VRAM ? "VRAM" : "?",
-			mem_regions->regions[i].used,
-			mem_regions->regions[i].total_size
+			mem_regions->mem_regions[i].used,
+			mem_regions->mem_regions[i].total_size
 		);
 		igt_info("min_page_size=0x%x\n",
-		       mem_regions->regions[i].min_page_size);
+		       mem_regions->mem_regions[i].min_page_size);
 
 		igt_info("visible size=%lluMiB\n",
-			 mem_regions->regions[i].cpu_visible_size >> 20);
+			 mem_regions->mem_regions[i].cpu_visible_size >> 20);
 		igt_info("visible used=%lluMiB\n",
-			 mem_regions->regions[i].cpu_visible_used >> 20);
+			 mem_regions->mem_regions[i].cpu_visible_used >> 20);
 
-		igt_assert_lte_u64(mem_regions->regions[i].cpu_visible_size,
-				   mem_regions->regions[i].total_size);
-		igt_assert_lte_u64(mem_regions->regions[i].cpu_visible_used,
-				   mem_regions->regions[i].cpu_visible_size);
-		igt_assert_lte_u64(mem_regions->regions[i].cpu_visible_used,
-				   mem_regions->regions[i].used);
-		igt_assert_lte_u64(mem_regions->regions[i].used,
-				   mem_regions->regions[i].total_size);
-		igt_assert_lte_u64(mem_regions->regions[i].used -
-				   mem_regions->regions[i].cpu_visible_used,
-				   mem_regions->regions[i].total_size);
+		igt_assert_lte_u64(mem_regions->mem_regions[i].cpu_visible_size,
+				   mem_regions->mem_regions[i].total_size);
+		igt_assert_lte_u64(mem_regions->mem_regions[i].cpu_visible_used,
+				   mem_regions->mem_regions[i].cpu_visible_size);
+		igt_assert_lte_u64(mem_regions->mem_regions[i].cpu_visible_used,
+				   mem_regions->mem_regions[i].used);
+		igt_assert_lte_u64(mem_regions->mem_regions[i].used,
+				   mem_regions->mem_regions[i].total_size);
+		igt_assert_lte_u64(mem_regions->mem_regions[i].used -
+				   mem_regions->mem_regions[i].cpu_visible_used,
+				   mem_regions->mem_regions[i].total_size);
 	}
 	dump_hex_debug(mem_regions, query.size);
 	free(mem_regions);

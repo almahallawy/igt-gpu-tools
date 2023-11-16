@@ -400,10 +400,10 @@ static void test_vram_d3cold_threshold(device_t device, int sysfs_fd)
 	query.data = to_user_pointer(mem_regions);
 	igt_assert_eq(igt_ioctl(device.fd_xe, DRM_IOCTL_XE_DEVICE_QUERY, &query), 0);
 
-	for (i = 0; i < mem_regions->num_regions; i++) {
-		if (mem_regions->regions[i].mem_class == DRM_XE_MEM_REGION_CLASS_VRAM) {
-			vram_used_mb +=  (mem_regions->regions[i].used / (1024 * 1024));
-			vram_total_mb += (mem_regions->regions[i].total_size / (1024 * 1024));
+	for (i = 0; i < mem_regions->num_mem_regions; i++) {
+		if (mem_regions->mem_regions[i].mem_class == DRM_XE_MEM_REGION_CLASS_VRAM) {
+			vram_used_mb +=  (mem_regions->mem_regions[i].used / (1024 * 1024));
+			vram_total_mb += (mem_regions->mem_regions[i].total_size / (1024 * 1024));
 		}
 	}
 

@@ -49,7 +49,7 @@ static int __create_bo(int fd, uint32_t vm, uint64_t size, uint32_t placement,
  */
 static void create_invalid_size(int fd)
 {
-	struct drm_xe_query_mem_region *memregion;
+	struct drm_xe_mem_region *memregion;
 	uint64_t memreg = all_memory_regions(fd), region;
 	uint32_t vm;
 	uint32_t handle;

@@ -467,7 +467,7 @@ test_plane_panning(data_t *data, enum pipe pipe)
 	}
 
 	if (is_xe_device(data->drm_fd)) {
-		struct drm_xe_query_mem_region *memregion;
+		struct drm_xe_mem_region *memregion;
 		uint64_t memreg = all_memory_regions(data->drm_fd), region;
 
 		xe_for_each_mem_region(data->drm_fd, memreg, region) {

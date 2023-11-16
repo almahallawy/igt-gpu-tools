@@ -42,7 +42,7 @@ IGT_TEST_DESCRIPTION("Read and verify drm client memory consumption using fdinfo
 /* Subtests */
 static void test_active(int fd, struct drm_xe_query_engine_info *engine)
 {
-	struct drm_xe_query_mem_region *memregion;
+	struct drm_xe_mem_region *memregion;
 	uint64_t memreg = all_memory_regions(fd), region;
 	struct drm_client_fdinfo info = { };
 	uint32_t vm;
@@ -169,7 +169,7 @@ static void test_active(int fd, struct drm_xe_query_engine_info *engine)
 
 static void test_shared(int xe)
 {
-	struct drm_xe_query_mem_region *memregion;
+	struct drm_xe_mem_region *memregion;
 	uint64_t memreg = all_memory_regions(xe), region;
 	struct drm_client_fdinfo info = { };
 	struct drm_gem_flink flink;
@@ -214,7 +214,7 @@ static void test_shared(int xe)
 
 static void test_total_resident(int xe)
 {
-	struct drm_xe_query_mem_region *memregion;
+	struct drm_xe_mem_region *memregion;
 	uint64_t memreg = all_memory_regions(xe), region;
 	struct drm_client_fdinfo info = { };
 	uint32_t vm;
@@ -262,7 +262,7 @@ static void test_total_resident(int xe)
 
 static void basic(int xe)
 {
-	struct drm_xe_query_mem_region *memregion;
+	struct drm_xe_mem_region *memregion;
 	uint64_t memreg = all_memory_regions(xe), region;
 	struct drm_client_fdinfo info = { };
 	unsigned int ret;
