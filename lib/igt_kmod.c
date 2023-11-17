@@ -263,7 +263,7 @@ static int igt_kmod_unload_r(struct kmod_module *kmod, unsigned int flags)
 #define MAX_TRIES	20
 #define SLEEP_DURATION	500000
 	struct kmod_list *holders, *pos;
-	int err, tries;
+	int err = 0, tries;
 	const char *mod_name = kmod_module_get_name(kmod);
 
 	if (kmod_module_get_initstate(kmod) == KMOD_MODULE_BUILTIN)
