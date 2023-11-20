@@ -166,6 +166,8 @@ static uint32_t get_freq(int fd, int gt_id, const char *freq_name)
 	while (err == -EAGAIN)
 		err = igt_sysfs_scanf(gt_fd, freq_attr, "%u", &freq);
 
+	igt_debug("gt%d: %s freq %u\n", gt_id, freq_name, freq);
+
 	close(gt_fd);
 	return freq;
 }
