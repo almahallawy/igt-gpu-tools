@@ -423,8 +423,8 @@ intel_ctx_t *intel_ctx_xe(int fd, uint32_t vm, uint32_t exec_queue,
 int __intel_ctx_xe_exec(const intel_ctx_t *ctx, uint64_t ahnd, uint64_t bb_offset)
 {
 	struct drm_xe_sync syncs[2] = {
-		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ, },
-		{ .flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL, },
+		{ .type = DRM_XE_SYNC_TYPE_SYNCOBJ, },
+		{ .type = DRM_XE_SYNC_TYPE_SYNCOBJ, .flags = DRM_XE_SYNC_FLAG_SIGNAL, },
 	};
 	struct drm_xe_exec exec = {
 		.exec_queue_id = ctx->exec_queue,

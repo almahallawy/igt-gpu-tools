@@ -118,7 +118,8 @@ __test_huc_copy(int fd, uint32_t vm, struct drm_xe_engine_class_instance *hwe)
 	};
 
 	exec_queue = xe_exec_queue_create(fd, vm, hwe, 0);
-	sync.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL;
+	sync.type = DRM_XE_SYNC_TYPE_SYNCOBJ;
+	sync.flags = DRM_XE_SYNC_FLAG_SIGNAL;
 	sync.handle = syncobj_create(fd, 0);
 
 	for(int i = 0; i < BO_DICT_ENTRIES; i++) {

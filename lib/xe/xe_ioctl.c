@@ -446,7 +446,8 @@ void xe_exec_sync(int fd, uint32_t exec_queue, uint64_t addr,
 void xe_exec_wait(int fd, uint32_t exec_queue, uint64_t addr)
 {
 	struct drm_xe_sync sync = {
-		.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL,
+		.type = DRM_XE_SYNC_TYPE_SYNCOBJ,
+		.flags = DRM_XE_SYNC_FLAG_SIGNAL,
 		.handle = syncobj_create(fd, 0),
 	};
 

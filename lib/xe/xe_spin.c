@@ -191,7 +191,7 @@ xe_spin_create(int fd, const struct igt_spin_factory *opt)
 	struct igt_spin *spin;
 	struct xe_spin *xe_spin;
 	struct drm_xe_sync sync = {
-		.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL,
+		.type = DRM_XE_SYNC_TYPE_SYNCOBJ, .flags = DRM_XE_SYNC_FLAG_SIGNAL,
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,
@@ -289,7 +289,7 @@ void xe_cork_init(int fd, struct drm_xe_engine_class_instance *hwe,
 	uint32_t vm, bo, exec_queue, syncobj;
 	struct xe_spin *spin;
 	struct drm_xe_sync sync = {
-		.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL,
+		.type = DRM_XE_SYNC_TYPE_SYNCOBJ, .flags = DRM_XE_SYNC_FLAG_SIGNAL,
 	};
 	struct drm_xe_exec exec = {
 		.num_batch_buffer = 1,

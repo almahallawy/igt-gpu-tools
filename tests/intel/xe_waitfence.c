@@ -28,7 +28,8 @@ static void do_bind(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 		    uint64_t addr, uint64_t size, uint64_t val)
 {
 	struct drm_xe_sync sync[1] = {};
-	sync[0].flags = DRM_XE_SYNC_FLAG_USER_FENCE | DRM_XE_SYNC_FLAG_SIGNAL;
+	sync[0].type = DRM_XE_SYNC_TYPE_USER_FENCE;
+	sync[0].flags = DRM_XE_SYNC_FLAG_SIGNAL;
 
 	sync[0].addr = to_user_pointer(&wait_fence);
 	sync[0].timeline_value = val;

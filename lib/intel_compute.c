@@ -108,7 +108,8 @@ static void bo_execenv_bind(struct bo_execenv *execenv,
 		uint64_t alignment = xe_get_default_alignment(fd);
 		struct drm_xe_sync sync = { 0 };
 
-		sync.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL;
+		sync.type = DRM_XE_SYNC_TYPE_SYNCOBJ;
+		sync.flags = DRM_XE_SYNC_FLAG_SIGNAL;
 		sync.handle = syncobj_create(fd, 0);
 
 		for (int i = 0; i < entries; i++) {
@@ -164,7 +165,8 @@ static void bo_execenv_unbind(struct bo_execenv *execenv,
 		uint32_t vm = execenv->vm;
 		struct drm_xe_sync sync = { 0 };
 
-		sync.flags = DRM_XE_SYNC_FLAG_SYNCOBJ | DRM_XE_SYNC_FLAG_SIGNAL;
+		sync.type = DRM_XE_SYNC_TYPE_SYNCOBJ;
+		sync.flags = DRM_XE_SYNC_FLAG_SIGNAL;
 		sync.handle = syncobj_create(fd, 0);
 
 		for (int i = 0; i < entries; i++) {
