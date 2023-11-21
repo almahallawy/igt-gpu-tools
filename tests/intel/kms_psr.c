@@ -957,7 +957,7 @@ igt_main
 				igt_display_reset(&data.display);
 				data.output = output;
 				igt_dynamic_f("%s", data.output->name) {
-					data.op = RENDER;
+					data.op = igt_get_render_copyfunc(data.devid) ? RENDER : BLT;
 					data.test_plane_id = DRM_PLANE_TYPE_PRIMARY;
 					test_setup(&data);
 					dpms_off_on(&data);
