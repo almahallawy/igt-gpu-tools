@@ -221,7 +221,7 @@ igt_main
 {
 	data_t data;
 	igt_output_t *output;
-	drmModeModeInfo *mode;
+	drmModeModeInfo mode;
 	int valid_output = 0, i, count = 0, j = 0;
 	uint16_t width = 0, height = 0;
 	enum pipe pipe_seq[IGT_MAX_PIPES];
@@ -243,17 +243,17 @@ igt_main
 			 * Bigjoiner will come in to the picture when the
 			 * resolution > 5K or clock > max-dot-clock.
 			 */
-			found = (bigjoiner_mode_found(connector, sort_drm_modes_by_res_dsc, mode) ||
-				 bigjoiner_mode_found(connector, sort_drm_modes_by_clk_dsc, mode)) ?
+			found = (bigjoiner_mode_found(connector, sort_drm_modes_by_res_dsc, &mode) ||
+				 bigjoiner_mode_found(connector, sort_drm_modes_by_clk_dsc, &mode)) ?
 					true : false;
 
 			if (found) {
 				data.output[count].output_id = output->id;
-				memcpy(&data.output[count].mode, mode, sizeof(drmModeModeInfo));
+				memcpy(&data.output[count].mode, &mode, sizeof(drmModeModeInfo));
 				count++;
 
-				width = max(width, mode->hdisplay);
-				height = max(height, mode->vdisplay);
+				width = max(width, mode.hdisplay);
+				height = max(height, mode.vdisplay);
 			}
 			valid_output++;
 		}
@@ -290,9 +290,9 @@ igt_main
 			if (data.output[0].output_id != output->id)
 				continue;
 
-			mode = &data.output[0].mode;
+			mode = data.output[0].mode;
 			igt_output_set_pipe(output, data.pipe1);
-			igt_output_override_mode(output, mode);
+			igt_output_override_mode(output, &mode);
 
 			igt_dynamic_f("pipe-%s-%s",
 				      kmstest_pipe_name(data.pipe1),
@@ -311,10 +311,10 @@ igt_main
 				for_each_connected_output(&data.display, output) {
 					if (data.output[0].output_id == output->id) {
 						first_output = output;
-						mode = &data.output[0].mode;
+						mode = data.output[0].mode;
 
 						igt_output_set_pipe(output, data.pipe1);
-						igt_output_override_mode(output, mode);
+						igt_output_override_mode(output, &mode);
 					} else if (second_output == NULL) {
 						second_output = output;
 						igt_output_set_pipe(output, data.pipe2);
