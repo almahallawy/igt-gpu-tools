@@ -37,9 +37,33 @@ static void do_bind(int fd, uint32_t vm, uint32_t bo, uint64_t offset,
 	xe_vm_bind_async(fd, vm, 0, bo, offset, addr, size, sync, 1);
 }
 
+static int64_t wait_with_eci_abstime(int fd, uint64_t *addr, uint64_t value,
+				     struct drm_xe_engine_class_instance *eci,
+				     int64_t timeout)
+{
+	struct drm_xe_wait_user_fence wait = {
+		.addr = to_user_pointer(addr),
+		.op = DRM_XE_UFENCE_WAIT_OP_EQ,
+		.flags = !eci ? 0 : DRM_XE_UFENCE_WAIT_FLAG_ABSTIME,
+		.value = value,
+		.mask = DRM_XE_UFENCE_WAIT_MASK_U64,
+		.timeout = timeout,
+		.num_engines = eci ? 1 : 0,
+		.instances = eci ? to_user_pointer(eci) : 0,
+	};
+	struct timespec ts;
+
+	igt_assert(eci);
+	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_WAIT_USER_FENCE, &wait), 0);
+	igt_assert_eq(clock_gettime(CLOCK_MONOTONIC, &ts), 0);
+
+	return ts.tv_sec * 1e9 + ts.tv_nsec;
+}
+
 enum waittype {
 	RELTIME,
 	ABSTIME,
+	ENGINE,
 };
 
 /**
@@ -50,10 +74,18 @@ enum waittype {
  * SUBTEST: abstime
  * Description: Check basic waitfences functionality with timeout
  *              passed as absolute time in nanoseconds
+ *
+ * SUBTEST: engine
+ * Description: Check basic waitfences functionality with timeout
+ *              passed as absolute time in nanoseconds and provide engine class
+ *              instance
  */
 static void
 waitfence(int fd, enum waittype wt)
 {
+	struct drm_xe_engine_class_instance *eci = NULL;
+	struct timespec ts;
+	int64_t current, signalled;
 	uint32_t bo_1;
 	uint32_t bo_2;
 	uint32_t bo_3;
@@ -83,10 +115,17 @@ waitfence(int fd, enum waittype wt)
 		timeout = xe_wait_ufence(fd, &wait_fence, 7, NULL, MS_TO_NS(10));
 		igt_debug("wait type: RELTIME - timeout: %ld, timeout left: %ld\n",
 			  MS_TO_NS(10), timeout);
+	} else if (wt == ENGINE) {
+		eci = xe_hw_engine(fd, 1);
+		clock_gettime(CLOCK_MONOTONIC, &ts);
+		current = ts.tv_sec * 1e9 + ts.tv_nsec;
+		timeout = current + MS_TO_NS(10);
+		signalled = wait_with_eci_abstime(fd, &wait_fence, 7, eci, timeout);
+		igt_debug("wait type: ENGINE ABSTIME - timeout: %" PRId64
+			  ", signalled: %" PRId64
+			  ", elapsed: %" PRId64 "\n",
+			  timeout, signalled, signalled - current);
 	} else {
-		struct timespec ts;
-		int64_t current, signalled;
-
 		clock_gettime(CLOCK_MONOTONIC, &ts);
 		current = ts.tv_sec * 1e9 + ts.tv_nsec;
 		timeout = current + MS_TO_NS(10);
@@ -204,6 +243,9 @@ igt_main
 
 	igt_subtest("abstime")
 		waitfence(fd, ABSTIME);
+
+	igt_subtest("engine")
+		waitfence(fd, ENGINE);
 
 	igt_subtest("invalid-flag")
 		invalid_flag(fd);
