@@ -660,6 +660,26 @@ bool xe_has_engine_class(int fd, uint16_t engine_class)
 	return false;
 }
 
+/**
+ * xe_has_media_gt:
+ * @fd: xe device fd
+ *
+ * Returns true if device @fd has media GT otherwise false.
+ */
+bool xe_has_media_gt(int fd)
+{
+	struct xe_device *xe_dev;
+
+	xe_dev = find_in_cache(fd);
+	igt_assert(xe_dev);
+
+	for (int i = 0; i < xe_dev->gt_list->num_gt; i++)
+		if (xe_dev->gt_list->gt_list[i].type == DRM_XE_QUERY_GT_TYPE_MEDIA)
+			return true;
+
+	return false;
+}
+
 igt_constructor
 {
 	xe_device_cache_init();
