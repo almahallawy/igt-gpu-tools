@@ -396,7 +396,7 @@ static void pitch_tests(int fd)
 /**
  * SUBTEST: basic-%s-tiled-legacy
  * Description: Check if addfb2 and rmfb call works for basic %arg[1] test
- * Driver requirement: i915, xe
+ * Driver requirement: i915
  * Test category: functionality test
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
@@ -410,7 +410,7 @@ static void pitch_tests(int fd)
  *
  * SUBTEST: tile-pitch-mismatch
  * Description: Test that addfb2 call fails correctly for pitches mismatch
- * Driver requirement: i915, xe
+ * Driver requirement: i915
  * Test category: functionality test
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
@@ -478,8 +478,8 @@ static void tiling_tests(int fd)
 		igt_describe("Test that addfb2 call fails correctly for pitches mismatch");
 			f.pitches[0] = 512*4;
 		igt_subtest("tile-pitch-mismatch") {
-			if (is_i915_device(fd))
-				igt_require(gem_available_fences(fd) > 0);
+			igt_require_i915(fd);
+			igt_require(gem_available_fences(fd) > 0);
 
 			f.handles[0] = tiled_x_bo;
 			do_ioctl_err(fd, DRM_IOCTL_MODE_ADDFB2, &f, EINVAL);
@@ -488,12 +488,10 @@ static void tiling_tests(int fd)
 		igt_describe("Test that addfb2 call fails correctly for basic y-tiling test");
 		f.pitches[0] = 1024*4;
 		igt_subtest("basic-y-tiled-legacy") {
-			if (is_i915_device(fd)) {
-				igt_require(!gem_has_lmem(fd));
-				igt_require(gem_available_fences(fd) > 0);
-			} else {
-				igt_require(!xe_has_vram(fd));
-			}
+			igt_require_i915(fd);
+			igt_require(!gem_has_lmem(fd));
+			igt_require(gem_available_fences(fd) > 0);
+
 			f.handles[0] = tiled_y_bo;
 
 			do_ioctl_err(fd, DRM_IOCTL_MODE_ADDFB2, &f, EINVAL);
@@ -682,7 +680,7 @@ static void size_tests(int fd)
  *
  * SUBTEST: addfb25-x-tiled-mismatch-legacy
  * Description: Test that addfb2 call fails correctly for irrelevant x-tiling
- * Driver requirement: i915, xe
+ * Driver requirement: i915
  * Test category: functionality test
  * Functionality: kms_gem_interop, tiling
  * Mega feature: General Display Features
@@ -752,6 +750,7 @@ static void addfb25_tests(int fd)
 
 		igt_describe("Test that addfb2 call fails correctly for irrelevant x-tiling");
 		igt_subtest("addfb25-x-tiled-mismatch-legacy") {
+			igt_require_i915(fd);
 			f.modifier[0] = DRM_FORMAT_MOD_LINEAR;
 			do_ioctl_err(fd, DRM_IOCTL_MODE_ADDFB2, &f, EINVAL);
 		}
