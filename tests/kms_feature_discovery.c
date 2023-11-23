@@ -30,8 +30,7 @@
  *		anything else means we have a serious problem.
  *
  * SUBTEST: display
- * Description: Make sure that we have display support with
- * 		some outputs connected.
+ * Description: Make sure that we have display support.
  * Driver requirement: i915, xe
  * Functionality: feature_discovery
  * Mega feature: General Display Features
@@ -104,7 +103,7 @@ igt_main {
 			igt_display_require(&display, fd);
 		}
 
-		igt_describe("Make sure that we have display support with some outputs connected.");
+		igt_describe("Make sure that we have display support.");
 		igt_subtest("display") {
 			/* will skip because of the fixture */
 		}
