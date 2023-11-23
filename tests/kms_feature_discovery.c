@@ -72,7 +72,7 @@
  * Mega feature: General Display Features
  * Test category: functionality test
  *
- * arg[1].values: 2, 3, 4
+ * arg[1].values: 1, 2, 3, 4
  */
 
 #include "igt.h"
@@ -128,6 +128,11 @@ igt_main {
 				for (int i = 0; i < display.n_outputs; i++) {
 					igt_output_set_pipe(&display.outputs[i], PIPE_NONE);
 				}
+			}
+
+			igt_describe("Make sure that we can use at least 1 output at the same time.");
+			igt_subtest("display-1x") {
+				igt_require(output_count >= 1);
 			}
 
 			igt_describe("Make sure that we can use at least 2 outputs at the same time.");
