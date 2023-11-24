@@ -1010,6 +1010,9 @@ class TestList:
 
         order = None
 
+        if expand:
+            expand = re.compile(expand)
+
         if sort_field:
             if sort_field.lower() not in self.field_list:
                 sys.exit(f"Field '{sort_field}' is not defined")
@@ -1039,8 +1042,7 @@ class TestList:
             if sort_field:
                 if sort_field in subtest:
                     if expand:
-                        test_list = subtest[sort_field].split(expand)
-                        test_list = [s.strip() for s in test_list]
+                        test_list = expand.split(subtest[sort_field])
 
                         for test_elem in test_list:
                             if test_elem not in subtests:
@@ -1407,7 +1409,7 @@ class TestList:
 
 
         # NOTE: currently, it uses a comma for multi-value delimitter
-        test_subtests = self.get_subtests(sort_field, ",", with_order = True)
+        test_subtests = self.get_subtests(sort_field, ",\s*", with_order = True)
 
         if not os.path.exists(directory):
             os.makedirs(directory)
