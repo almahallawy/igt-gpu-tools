@@ -1283,6 +1283,7 @@ out:
 		bind_fbcon(false);
 		igt_kmsg(KMSG_INFO "%s: executing\n", command_str);
 		print_version();
+		igt_srandom();
 
 		sync();
 		oom_adjust_for_doom();
