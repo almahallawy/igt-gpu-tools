@@ -1270,7 +1270,6 @@ class TestList:
                         self.doc[current_test]["subtest"][current_subtest][field] = self.doc[current_test][field]
 
                     self.doc[current_test]["subtest"][current_subtest]["_summary_"] = match.group(1)
-                    self.doc[current_test]["subtest"][current_subtest]["Description"] = ''
                     self.doc[current_test]["_subtest_line_"][current_subtest] = file_ln
 
                     if not arg_ref:
