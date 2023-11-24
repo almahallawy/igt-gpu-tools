@@ -63,7 +63,6 @@ typedef struct {
 	char *pwr_dmn_info;
 	igt_display_t display;
 	struct igt_fb fb;
-	drmModeModeInfo *mode;
 	igt_output_t *output;
 	enum pipe pipe;
 } data_t;
@@ -124,12 +123,13 @@ static void screens_disabled_subtest(data_t *data)
 static void setup_lpsp_output(data_t *data)
 {
 	igt_plane_t *primary;
+	drmModeModeInfo *mode = igt_output_get_mode(data->output);
 
 	primary = igt_output_get_plane_type(data->output,
 					    DRM_PLANE_TYPE_PRIMARY);
 	igt_plane_set_fb(primary, NULL);
 	igt_create_pattern_fb(data->drm_fd,
-			      data->mode->hdisplay, data->mode->vdisplay,
+			      mode->hdisplay, mode->vdisplay,
 			      DRM_FORMAT_XRGB8888,
 			      DRM_FORMAT_MOD_LINEAR,
 			      &data->fb);
@@ -155,22 +155,22 @@ static void test_cleanup(data_t *data)
 
 static bool test_constraint(data_t *data)
 {
-	drmModeConnectorPtr c = data->output->config.connector;
-	int i;
+	drmModeModeInfo *mode;
 
 	igt_display_reset(&data->display);
 	igt_output_set_pipe(data->output, data->pipe);
 
-	data->mode = igt_output_get_mode(data->output);
+	mode = igt_output_get_mode(data->output);
 
 	/* For LPSP avoid Bigjoiner. */
-	if (igt_bigjoiner_possible(data->mode, max_dotclock)) {
-		for (i = 0; i < c->count_modes; i++) {
-			data->mode = &c->modes[i];
-			if (igt_bigjoiner_possible(data->mode, max_dotclock))
+	if (igt_bigjoiner_possible(mode, max_dotclock)) {
+		for_each_connector_mode(data->output) {
+			mode = &data->output->config.connector->modes[j__];
+
+			if (igt_bigjoiner_possible(mode, max_dotclock))
 				continue;
 
-			igt_output_override_mode(data->output, data->mode);
+			igt_output_override_mode(data->output, mode);
 
 			return true;
 		}
