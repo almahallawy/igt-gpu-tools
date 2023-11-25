@@ -25,6 +25,9 @@
  * TEST: kms vblank
  * Category: Display
  * Description: Test speed of WaitVblank.
+ * Driver requirement: i915, xe
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -45,71 +48,44 @@
 /**
  * SUBTEST: crtc-id
  * Description: Check the vblank and flip events works with given crtc id
- * Driver requirement: i915, xe
  * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: invalid
  * Description: Negative test for vblank request
- * Driver requirement: i915, xe
  * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: ts-continuation-dpms-rpm
  * Description: Test TS continuty with DPMS & RPM while hanging by introducing
  *              NOHANG flag
- * Driver requirement: i915, xe
  * Functionality: dpms, hang, rpm, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: ts-continuation-dpms-suspend
  * Description: Test TS continuty with DPMS & Suspend while hanging by introducing
  *              NOHANG flag
- * Driver requirement: i915, xe
  * Functionality: dpms, hang, suspend, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: ts-continuation-suspend
  * Description: Test TS continuty with Suspend while hanging by introducing NOHANG
  *              flag
- * Driver requirement: i915, xe
  * Functionality: hang, suspend, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: ts-continuation-modeset-rpm
  * Description: Test TS continuty during Modeset with Suspend while hanging by
  *              introducing NOHANG flag
- * Driver requirement: i915, xe
  * Functionality: hang, rpm, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: accuracy-idle
  * Description: Test Accuracy of vblank events while hanging by introducing NOHANG
  *              flag
- * Driver requirement: i915, xe
  * Functionality: hang, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: %s
  * Description: Test %arg[1] while hanging by introducing NOHANG flag
- * Driver requirement: i915, xe
  * Functionality: hang, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: %s-hang
  * Description: Test %arg[1] with injected hang is working properly
- * Driver requirement: i915, xe
  * Functionality: hang, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

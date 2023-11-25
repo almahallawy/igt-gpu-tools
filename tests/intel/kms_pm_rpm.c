@@ -76,9 +76,11 @@
  *
  * SUBTEST: fences
  * Description: Sanity test for drm fences.
+ * Driver requirement: i915
  *
  * SUBTEST: fences-dpms
  * Description: Sanity test for drm fences with dpms.
+ * Driver requirement: i915
  * Functionality: dpms, pm_rpm
  *
  * SUBTEST: i2c
@@ -121,9 +123,11 @@
  *
  * SUBTEST: pm-caching
  * Description: Test to change different cache levels & check for rpm
+ * Driver requirement: i915
  *
  * SUBTEST: pm-tiling
  * Description: Test to change different tiling methods & check for rpm
+ * Driver requirement: i915
  * Functionality: pm_rpm, tiling
  *
  * SUBTEST: system-suspend-modeset

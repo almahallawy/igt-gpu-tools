@@ -24,6 +24,10 @@
  * TEST: kms plane cursor
  * Category: Display
  * Description: Tests cursor interactions with primary and overlay planes.
+ * Driver requirement: i915, xe
+ * Functionality: cursor, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -31,25 +35,13 @@
 /**
  * SUBTEST: overlay
  * Description: Tests atomic cursor positioning on primary plane and overlay plane
- * Driver requirement: i915, xe
- * Functionality: cursor, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: primary
  * Description: Tests atomic cursor positioning on primary plane
- * Driver requirement: i915, xe
- * Functionality: cursor, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: viewport
  * Description: Tests atomic cursor positioning on primary plane and overlay plane
  *              with buffer larger than viewport used for display
- * Driver requirement: i915, xe
- * Functionality: cursor, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 /*

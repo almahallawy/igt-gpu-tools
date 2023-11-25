@@ -27,6 +27,10 @@
  * Category: Display
  * Description: Make sure all modesets are rejected when the requested mode is
  *              invalid
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -37,10 +41,6 @@
  * SUBTEST: %s
  * Description: Make sure all modesets are rejected when the requested mode
  *              (%arg[1]) is invalid
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

@@ -28,6 +28,10 @@
  * TEST: kms cdclk
  * Category: Display
  * Description: Test cdclk features : crawling and squashing
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -36,24 +40,12 @@
  * SUBTEST: mode-transition-all-outputs
  * Description: Mode transition (low to high) test to validate cdclk frequency
  *              change by simultaneous modesets on all pipes with valid outputs.
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: mode-transition
  * Description: Mode transition (low to high) test to validate cdclk frequency change.
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-scaling
  * Description: Plane scaling test to validate cdclk frequency change.
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 IGT_TEST_DESCRIPTION("Test cdclk features : crawling and squashing");

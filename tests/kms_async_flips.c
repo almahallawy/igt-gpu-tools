@@ -29,6 +29,10 @@
  * TEST: kms async flips
  * Category: Display
  * Description: Test asynchronous page flips.
+ * Driver requirement: i915, xe
+ * Functionality: async_flips, vblank
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -42,48 +46,26 @@
  * SUBTEST: alternate-sync-async-flip
  * Description: Verify the async flip functionality and the fps during async flips
  *              Alternate between sync and async flips
- * Driver requirement: i915, xe
- * Functionality: async_flips, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: async-flip-with-page-flip-events
  * Description: Verify the async flip functionality and the fps during async flips
  *              Wait for page flip events in between successive asynchronous flips
- * Driver requirement: i915, xe
- * Functionality: async_flips, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: test-time-stamp
  * Description: Verify the async flip functionality and the fps during async flips
  *              Verify that the async flip timestamp does not coincide with either
  *              previous or next vblank
- * Driver requirement: i915, xe
- * Functionality: async_flips, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: test-cursor
  * Description: Verify that the DRM_IOCTL_MODE_CURSOR passes after async flip
- * Driver requirement: i915, xe
  * Functionality: async_flips, cursor, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: crc
  * Description: Use CRC to verify async flip scans out the correct framebuffer
- * Driver requirement: i915, xe
  * Functionality: async_flips, crc, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: invalid-async-flip
  * Description: Negative case to verify if changes in fb are rejected from kernel as expected
- * Driver requirement: i915, xe
- * Functionality: async_flips, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 #define CURSOR_POS 128

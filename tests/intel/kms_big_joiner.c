@@ -28,6 +28,10 @@
  * TEST: kms big joiner
  * Category: Display
  * Description: Test big joiner
+ * Driver requirement: i915, xe
+ * Functionality: 2p1p
+ * Mega feature: Bigjoiner
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -36,24 +40,12 @@
  * SUBTEST: invalid-modeset
  * Description: Verify if the modeset on the adjoining pipe is rejected when
  *              the pipe is active with a big joiner modeset
- * Driver requirement: i915, xe
- * Functionality: 2p1p
- * Mega feature: Bigjoiner
- * Test category: functionality test
  *
  * SUBTEST: basic
  * Description: Verify the basic modeset on big joiner mode on all pipes
- * Driver requirement: i915, xe
- * Functionality: 2p1p
- * Mega feature: Bigjoiner
- * Test category: functionality test
  *
  * SUBTEST: 2x-modeset
  * Description: Verify simultaneous modeset on 2 big joiner outputs
- * Driver requirement: i915, xe
- * Functionality: 2p1p
- * Mega feature: Bigjoiner
- * Test category: functionality test
  */
 
 IGT_TEST_DESCRIPTION("Test big joiner");

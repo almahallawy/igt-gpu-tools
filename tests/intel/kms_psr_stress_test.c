@@ -2,6 +2,10 @@
 /**
  * TEST: kms psr stress test
  * Category: Display
+ * Driver requirement: i915, xe
+ * Functionality: plane, psr
+ * Mega feature: PSR
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -18,18 +22,10 @@
  * SUBTEST: flip-primary-invalidate-overlay
  * Description: Mix page flips in primary plane and frontbuffer writes to overlay
  *              plane and check for warnings, underruns or PSR state changes
- * Driver requirement: i915, xe
- * Functionality: plane, psr
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: invalidate-primary-flip-overlay
  * Description: Mix frontbuffer writes to the primary plane and page flips in the
  *              overlay plane and check for warnings, underruns or PSR state changes
- * Driver requirement: i915, xe
- * Functionality: plane, psr
- * Mega feature: PSR
- * Test category: functionality test
  */
 
 #define INVALIDATES_PER_SEC 15

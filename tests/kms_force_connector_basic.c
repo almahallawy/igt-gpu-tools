@@ -26,6 +26,10 @@
  * TEST: kms force connector basic
  * Category: Display
  * Description: Check the debugfs force connector/edid features work correctly.
+ * Driver requirement: i915, xe
+ * Functionality: force_connector
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -35,29 +39,15 @@
  * Description: Test to detect forced load.
  * Driver requirement: i915
  * Functionality: force_connector, vga
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: force-connector-state
  * Description: Test to check the forced connector state
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: force_connector
- * Mega feature: General Display Features
  *
  * SUBTEST: force-edid
  * Description: Test to check the values after forcing edid
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: force_connector
- * Mega feature: General Display Features
  *
  * SUBTEST: prune-stale-modes
  * Description: Tests pruning of stale modes
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: force_connector
- * Mega feature: General Display Features
  */
 
 IGT_TEST_DESCRIPTION("Check the debugfs force connector/edid features work"

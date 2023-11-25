@@ -26,6 +26,10 @@
  * TEST: kms pipe crc basic
  * Category: Display
  * Description: Tests behaviour of CRC
+ * Driver requirement: i915, xe
+ * Functionality: crc
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -39,61 +43,32 @@
 /**
  * SUBTEST: bad-source
  * Description: Tests error handling when the bad source is set.
- * Driver requirement: i915, xe
- * Functionality: crc
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: read-crc
  * Description: Test for pipe CRC reads
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: crc
- * Mega feature: General Display Features
  *
  * SUBTEST: read-crc-frame-sequence
  * Description: Tests the pipe CRC read and ensure frame sequence
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: crc
- * Mega feature: General Display Features
  *
  * SUBTEST: nonblocking-crc
  * Description: Test for O_NONBLOCK CRC reads
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: crc
- * Mega feature: General Display Features
  *
  * SUBTEST: nonblocking-crc-frame-sequence
  * Description: Test for O_NONBLOCK CRC reads and ensure frame sequence
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: crc
- * Mega feature: General Display Features
  *
  * SUBTEST: suspend-read-crc
  * Description: Suspend test for pipe CRC reads
- * Driver requirement: i915, xe
- * Test category: functionality test
  * Functionality: crc, suspend
- * Mega feature: General Display Features
  *
  * SUBTEST: hang-read-crc
  * Description: Hang test for pipe CRC read
- * Driver requirement: i915, xe
- * Test category: functionality test
  * Functionality: crc, hang
- * Mega feature: General Display Features
  */
 
 /**
  * SUBTEST: compare-crc-sanitycheck-%s
  * Description: Basic sanity check for CRC mismatches with %arg[1]
- * Driver requirement: i915, xe
- * Test category: functionality test
  * Functionality: crc, pixel_format
- * Mega feature: General Display Features
  *
  * arg[1]:
  *
@@ -105,10 +80,6 @@
  * SUBTEST: disable-crc-after-crtc
  * Description: Check that disabling CRCs on a CRTC after having disabled the
  *              CRTC does not cause issues.
- * Driver requirement: i915, xe
- * Functionality: crc
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 static bool extended;

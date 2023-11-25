@@ -24,6 +24,10 @@
  * TEST: kms bw
  * Category: Display
  * Description: BW test with different resolutions
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "drm_mode.h"
@@ -35,10 +39,6 @@
 /**
  * SUBTEST: linear-tiling-%d-displays-%s
  * Description: bw test with %arg[2]
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1].values: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
  *

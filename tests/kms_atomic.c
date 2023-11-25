@@ -31,6 +31,10 @@
  * TEST: kms atomic
  * Category: Display
  * Description: Test atomic modesetting API
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include <unistd.h>
@@ -53,49 +57,27 @@
  * Description: Test abuse the atomic ioctl directly in order to test various
  *              invalid conditions which the libdrm wrapper won't allow us to
  *              create.
- * Driver requirement: i915, xe
  * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: atomic-plane-damage
  * Description: Simple test cases to use FB_DAMAGE_CLIPS plane property
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: test-only
  * Description: Test to ensure that DRM_MODE_ATOMIC_TEST_ONLY really only touches
  *              the free-standing state objects and nothing else.
- * Driver requirement: i915, xe
  * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-primary-overlay-mutable-zpos
  * Description: Verify that the overlay plane can cover the primary one (and
  *              vice versa) by changing their zpos property.
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-immutable-zpos
  * Description: Verify the reported zpos property of planes by making sure only
  *              higher zpos planes cover the lower zpos ones.
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-%s-legacy
  * Description: Test for KMS atomic modesetting on %arg[1] and ensure coherency
  *              between legacy and atomic interfaces.
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -107,10 +89,6 @@
 /**
  * SUBTEST: %s-invalid-%s
  * Description: Test error handling when invalid %arg[1] %arg[2] are passed
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -122,8 +100,6 @@
  * @params:           parameters
  * @params-fence:     fence parameters
  */
-
-
 
 #ifndef DRM_CAP_CURSOR_WIDTH
 #define DRM_CAP_CURSOR_WIDTH 0x8

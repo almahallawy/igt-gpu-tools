@@ -25,6 +25,10 @@
  * TEST: kms legacy colorkey
  * Category: Display
  * Description: Test to check the legacy set colorkey ioctl on sprite planes.
+ * Driver requirement: i915
+ * Functionality: plane, xorg_xv
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -33,17 +37,9 @@
 /**
  * SUBTEST: basic
  * Description: Check that the legacy set colorkey ioctl only works on sprite planes.
- * Driver requirement: i915
- * Functionality: plane, xorg_xv
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: invalid-plane
  * Description: Check invalid plane id's, zero and outrange
- * Driver requirement: i915
- * Functionality: plane, xorg_xv
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 IGT_TEST_DESCRIPTION("Check that the legacy set colorkey ioctl only works on sprite planes.");

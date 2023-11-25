@@ -28,6 +28,9 @@
  * TEST: kms plane
  * Category: Display
  * Description: Testes for KMS Plane
+ * Driver requirement: i915, xe
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -41,25 +44,16 @@
 /**
  * SUBTEST: planar-pixel-format-settings
  * Description: verify planar settings for pixel format are handled correctly
- * Driver requirement: i915, xe
  * Functionality: pixel_format, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-position-%s
  * Description: Verify plane position using two planes to create a %arg[1]
- * Driver requirement: i915, xe
  * Functionality: plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-position-hole-dpms
  * Description: Verify plane position using two planes to create a partially
  *              covered screen and check for DPMS
- * Driver requirement: i915, xe
  * Functionality: dpms, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -70,18 +64,12 @@
 /**
  * SUBTEST: plane-panning-%s
  * Description: Verify plane panning at %arg[1] using primary plane
- * Driver requirement: i915, xe
  * Functionality: plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-panning-bottom-right-suspend
  * Description: Verify plane panning at bottom-right position with suspend using
  *              primary plane
- * Driver requirement: i915, xe
  * Functionality: plane, suspend
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -92,10 +80,7 @@
 /**
  * SUBTEST: pixel-%s
  * Description: verify the pixel formats for given plane and pipe
- * Driver requirement: i915, xe
  * Functionality: pixel_format, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

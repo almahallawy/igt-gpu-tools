@@ -28,6 +28,9 @@
  * TEST: kms display modes
  * Category: Display
  * Description: Test Display Modes
+ * Driver requirement: i915, xe
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -36,18 +39,12 @@
  * SUBTEST: extended-mode-basic
  * Description: Test for validating display extended mode with a pair of connected
  *              displays
- * Driver requirement: i915, xe
  * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: mst-extended-mode-negative
  * Description: Negative test for validating display extended mode with a pair
  *		of connected 2k-4k or 4k-4k displays.
- * Driver requirement: i915, xe
  * Functionality: kms_core, mst
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 #define HDISPLAY_4K	3840

@@ -29,6 +29,10 @@
  * TEST: kms dither
  * Category: Display
  * Description: Test Dithering block status
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, kms_gem_interop
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -39,17 +43,9 @@
 /**
  * SUBTEST: fb-8bpc-vs-panel-6bpc
  * Description: Framebuffer BPC:8, Panel BPC:6, Expected Dither:Enable
- * Driver requirement: i915, xe
- * Functionality: colorspace, kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: fb-8bpc-vs-panel-8bpc
  * Description: Framebuffer BPC:8, Panel BPC:8, Expected Dither:Disable
- * Driver requirement: i915, xe
- * Functionality: colorspace, kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 IGT_TEST_DESCRIPTION("Test Dithering block status");

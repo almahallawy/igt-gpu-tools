@@ -26,6 +26,10 @@
  * TEST: kms rotation crc
  * Category: Display
  * Description: Tests different rotations with different planes & formats
+ * Driver requirement: i915, xe
+ * Functionality: plane, rotation
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -35,10 +39,6 @@
 /**
  * SUBTEST: %s-rotation-180
  * Description: Rotation test with 180 degree for %arg[1] planes
- * Driver requirement: i915, xe
- * Functionality: plane, rotation
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -50,10 +50,6 @@
 /**
  * SUBTEST: %s-rotation-%d
  * Description: Rotation test with %arg[2] degree for %arg[1] planes of gen9+
- * Driver requirement: i915, xe
- * Functionality: plane, rotation
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -66,33 +62,19 @@
 /**
  * SUBTEST: bad-pixel-format
  * Description: Checking unsupported pixel format for gen9+ with 90 degree of rotation
- * Driver requirement: i915, xe
- * Functionality: plane, rotation
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: bad-tiling
  * Description: Checking unsupported tiling for gen9+ with 90 degree of rotation
- * Driver requirement: i915, xe
  * Functionality: plane, rotation, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: exhaust-fences
  * Description: This test intends to check for fence leaks exhaustively
- * Driver requirement: i915
- * Functionality: plane, rotation
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 /**
  * SUBTEST: primary-%s-tiled-reflect-x-%d
  * Description: Test for %arg[1] & %arg[2] degree rotation on primary plane
- * Driver requirement: i915, xe
  * Functionality: plane, rotation, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -107,10 +89,7 @@
 /**
  * SUBTEST: primary-%s-tiled-reflect-x-%d
  * Description: Test for %arg[1] & %arg[2] degree rotation on primary plane
- * Driver requirement: i915, xe
  * Functionality: plane, rotation, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -121,27 +100,15 @@
  *
  * SUBTEST: sprite-rotation-90-pos-100-0
  * Description: Rotation test with 90 degree for a plane of gen9+ with given position
- * Driver requirement: i915, xe
- * Functionality: plane, rotation
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 /**
  * SUBTEST: multiplane-rotation
  * Description: Rotation test on both planes by making them fully visible
- * Driver requirement: i915, xe
- * Functionality: plane, rotation
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: multiplane-rotation-cropping-%s
  * Description: Rotation test on both planes by cropping left/%arg[1] corner of
  *              primary plane and right/%arg[1] corner of sprite plane
- * Driver requirement: i915, xe
- * Functionality: plane, rotation
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

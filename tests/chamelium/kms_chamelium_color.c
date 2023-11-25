@@ -26,6 +26,10 @@
  * TEST: kms chamelium color
  * Category: Display
  * Description: Test Color Features at Pipe level using Chamelium to verify instead of CRC
+ * Driver requirement: i915, xe
+ * Functionality: chamelium, colorspace
+ * Mega feature: Color mgmt
+ * Test category: functionality test
  */
 
 #include "kms_color_helper.h"
@@ -33,24 +37,12 @@
 /**
  * SUBTEST: degamma
  * Description: Verify that degamma LUT transformation works correctly
- * Driver requirement: i915, xe
- * Functionality: chamelium, colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
  *
  * SUBTEST: gamma
  * Description: Verify that gamma LUT transformation works correctly
- * Driver requirement: i915, xe
- * Functionality: chamelium, colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
  *
  * SUBTEST: ctm-%s
  * Description: Check the color transformation %arg[1]
- * Driver requirement: i915, xe
- * Functionality: chamelium, colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
  *
  * arg[1]:
  *

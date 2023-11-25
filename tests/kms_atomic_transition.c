@@ -24,6 +24,10 @@
 /**
  * TEST: kms atomic transition
  * Category: Display
+ * Driver requirement: i915, xe
+ * Functionality: plane, watermark
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -41,17 +45,10 @@
 /**
  * SUBTEST: plane-primary-toggle-with-vblank-wait
  * Description: Check toggling of primary plane with vblank
- * Driver requirement: i915, xe
  * Functionality: plane, vblank, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-all-modeset-%s
  * Description: Modeset test for all plane combinations %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -62,10 +59,7 @@
 /**
  * SUBTEST: plane-all-modeset-%s
  * Description: Modeset test for all plane combinations %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
  * Mega feature: eDP
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -76,10 +70,6 @@
 /**
  * SUBTEST: plane-all-%s
  * Description: Transition test for all plane combinations %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -92,18 +82,10 @@
 /**
  * SUBTEST: plane-toggle-modeset-transition
  * Description: Check toggling and modeset transition on plane
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-use-after-nonblocking-%s
  * Description: Transition test with non %arg[1] and make sure commit of disabled
  *              plane has to complete before atomic commit on that plane
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -114,10 +96,6 @@
 /**
  * SUBTEST: modeset-%s
  * Description: Modeset transition tests for combinations of %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

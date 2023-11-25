@@ -28,6 +28,10 @@
  * TEST: kms plane alpha blend
  * Category: Display
  * Description: Test plane alpha and blending mode properties
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -35,10 +39,6 @@
 /**
  * SUBTEST: alpha-%s
  * Description: Test to %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -52,25 +52,13 @@
 /**
  * SUBTEST: coverage-vs-premult-vs-constant
  * Description: Tests pipe coverage blending properties.
- * Driver requirement: i915, xe
- * Functionality: plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: coverage-7efc
  * Description: Uses alpha values 0x7e and 0xfc to validate fg.alpha and
  *              plane_alpha are swappable on coverage blend mode.
- * Driver requirement: i915, xe
- * Functionality: plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: constant-alpha-%s
  * Description: Tests plane alpha and blending properties with %arg[1].
- * Driver requirement: i915, xe
- * Functionality: plane
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

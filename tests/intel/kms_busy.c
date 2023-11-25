@@ -25,6 +25,10 @@
  * TEST: kms busy
  * Category: Display
  * Description: Basic check of KMS ABI with busy framebuffers.
+ * Driver requirement: i915
+ * Functionality: kms_core, hang
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include <sys/poll.h>
@@ -37,38 +41,19 @@
 /**
  * SUBTEST: basic
  * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
  * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: basic-hang
  * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: extended-pageflip-modeset-hang-oldfb
  * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: extended-pageflip-hang-%s
  * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: extended-modeset-hang-%s
  * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -79,10 +64,6 @@
 /**
  * SUBTEST: extended-modeset-hang-%s
  * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

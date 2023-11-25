@@ -24,6 +24,10 @@
  * TEST: kms vrr
  * Category: Display
  * Description: Test to validate diffent features of VRR
+ * Driver requirement: i915, xe
+ * Functionality: adaptive_sync
+ * Mega feature: VRR
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -35,40 +39,22 @@
  * SUBTEST: flip-basic
  * Description: Tests that VRR is enabled and that the difference between flip
  *              timestamps converges to the requested rate
- * Driver requirement: i915, xe
- * Functionality: adaptive_sync
- * Mega feature: VRR
- * Test category: functionality test
  *
  * SUBTEST: flip-dpms
  * Description: Tests with DPMS that VRR is enabled and that the difference
  *              between flip timestamps converges to the requested rate.
- * Driver requirement: i915, xe
  * Functionality: adaptive_sync, dpms
- * Mega feature: VRR
- * Test category: functionality test
  *
  * SUBTEST: flip-suspend
  * Description: Tests that VRR is enabled and that the difference between flip
  *              timestamps converges to the requested rate in a suspend test
- * Driver requirement: i915, xe
  * Functionality: adaptive_sync, suspend
- * Mega feature: VRR
- * Test category: functionality test
  *
  * SUBTEST: flipline
  * Description: Make sure that flips happen at flipline decision boundary.
- * Driver requirement: i915, xe
- * Functionality: adaptive_sync
- * Mega feature: VRR
- * Test category: functionality test
  *
  * SUBTEST: negative-basic
  * Description: Make sure that VRR should not be enabled on the Non-VRR panel.
- * Driver requirement: i915, xe
- * Functionality: adaptive_sync
- * Mega feature: VRR
- * Test category: functionality test
  */
 
 #define NSECS_PER_SEC (1000000000ull)

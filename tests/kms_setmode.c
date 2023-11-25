@@ -26,6 +26,10 @@
  * Category: Display
  * Description: Tests the mode by iterating through all valid/invalid crtc/connector
  *              combinations
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "config.h"
@@ -46,50 +50,27 @@
  * SUBTEST: basic
  * Description: Tests the vblank timing by iterating through all valid crtc/connector
  *              combinations
- * Driver requirement: i915, xe
  * Functionality: kms_core, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: basic-clone-single-crtc
  * Description: Test allows the use of a single CRTC for two connectors, such as VGA/HDMI,
  *		VGA/DP, and HDMI/HDMI
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: clone-exclusive-crtc
  * Description: Tests the mode by cloning the exclusive crtc by iterating through
  *              all valid crtc/connector combinations
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: invalid-clone-exclusive-crtc
  * Description: Test is allowed when a connector uses CRTC that is not compatible with the
  *		connector, for instance, DP/HDMI can be used on certain pipes only on older platforms
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: invalid-clone-single-crtc
  * Description: Tests the mode by cloning the single crtc by iterating through all
  *              invalid crtc/connector combinations
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: invalid-clone-single-crtc-stealing
  * Description: Tests the stealing mode by cloning the single crtc by iterating
  *              through all invalid crtc/connector combinations
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 #define MAX_CONNECTORS  10

@@ -25,6 +25,10 @@
  * TEST: kms selftest
  * Category: Display
  * Description: Basic sanity check of KMS selftests.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -33,10 +37,6 @@
 /**
  * SUBTEST: %s
  * Description: Basic sanity check of KMS selftest %arg[1].
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

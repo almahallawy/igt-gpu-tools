@@ -28,6 +28,9 @@
  * TEST: kms chamelium hpd
  * Category: Display
  * Description: Testing HPD with a Chamelium board
+ * Driver requirement: i915, xe
+ * Functionality: chamelium, hotplug
+ * Test category: functionality test
  */
 
 #include "kms_chamelium_helper.h"
@@ -36,74 +39,47 @@
  * SUBTEST: dp-hpd-fast
  * Description: Check that we get uevents and updated connector status on
  * 		hotplug and unplug
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: DP
- * Test category: functionality test
  *
  * SUBTEST: hdmi-hpd-fast
  * Description: Check that we get uevents and updated connector status on
  * 		hotplug and unplug
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: HDMI
- * Test category: functionality test
  *
  * SUBTEST: vga-hpd-fast
  * Description: Check that we get uevents and updated connector status on
  * 		hotplug and unplug
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: VGA
- * Test category: functionality test
  *
  * SUBTEST: dp-hpd
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: DP
- * Test category: functionality test
  *
  * SUBTEST: hdmi-hpd
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: HDMI
- * Test category: functionality test
  *
  * SUBTEST: vga-hpd
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: VGA
- * Test category: functionality test
  *
  * SUBTEST: dp-hpd-%s
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: DP
- * Test category: functionality test
  *
  * SUBTEST: hdmi-hpd-%s
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: HDMI
- * Test category: functionality test
  *
  * SUBTEST: vga-hpd-%s
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: VGA
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -115,132 +91,93 @@
  * SUBTEST: dp-hpd-for-each-pipe
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug for each pipe with valid output
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: DP
- * Test category: functionality test
  *
  * SUBTEST: hdmi-hpd-for-each-pipe
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug for each pipe with valid output
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: HDMI
- * Test category: functionality test
  *
  * SUBTEST: vga-hpd-for-each-pipe
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug for each pipe with valid output
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: VGA
  * Test category: functionality test
  *
  * SUBTEST: dp-hpd-after-hibernate
  * Description: Toggle HPD during Hibernation, check that uevents are sent and
  *              connector status is updated
- * Driver requirement: i915, xe
  * Functionality: chamelium, hotplug, hibernation
  * Mega feature: DP
- * Test category: functionality test
  *
  * SUBTEST: hdmi-hpd-after-hibernate
  * Description: Toggle HPD during Hibernation, check that uevents are sent and
  *              connector status is updated
- * Driver requirement: i915, xe
  * Functionality: chamelium, hotplug, hibernation
  * Mega feature: HDMI
- * Test category: functionality test
  *
  * SUBTEST: vga-hpd-after-hibernate
  * Description: Toggle HPD during Hibernation, check that uevents are sent and
  *              connector status is updated
- * Driver requirement: i915, xe
  * Functionality: chamelium, hotplug, hibernation
  * Mega feature: VGA
- * Test category: functionality test
  *
  * SUBTEST: dp-hpd-after-suspend
  * Description: Toggle HPD during Suspend, check that uevents are sent and
  *              connector status is updated
- * Driver requirement: i915, xe
  * Functionality: chamelium, hotplug, suspend
  * Mega feature: DP
- * Test category: functionality test
  *
  * SUBTEST: hdmi-hpd-after-suspend
  * Description: Toggle HPD during Suspend, check that uevents are sent and
  *              connector status is updated
- * Driver requirement: i915, xe
  * Functionality: chamelium, hotplug, suspend
  * Mega feature: HDMI
- * Test category: functionality test
  *
  * SUBTEST: vga-hpd-after-suspend
  * Description: Toggle HPD during Suspend, check that uevents are sent and
  *              connector status is updated
- * Driver requirement: i915, xe
  * Functionality: chamelium, hotplug, suspend
  * Mega feature: VGA
- * Test category: functionality test
  *
  * SUBTEST: common-hpd-after-suspend
  * Description: Toggle HPD during suspend on all connectors, check that uevents
  * 		are sent and connector status is updated
- * Driver requirement: i915, xe
  * Functionality: chamelium, hotplug, suspend
  * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: common-hpd-after-hibernate
  * Description: Toggle HPD during suspend on all connectors, check that uevents
  *              are sent and connector status is updated
- * Driver requirement: i915, xe
  * Functionality: chamelium, hotplug, hibernation
  * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: vga-hpd-without-ddc
  * Description: Disable DDC on a VGA connector, check we still get a uevent on
  *              hotplug
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: VGA
- * Test category: functionality test
  *
  * SUBTEST: dp-hpd-storm
  * Description: Trigger a series of hotplugs in a very small timeframe to
  *              simulate abad cable, check the kernel falls back to polling
  *              to avoid a hotplug storm
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: DP
- * Test category: functionality test
  *
  * SUBTEST: hdmi-hpd-storm
  * Description: Trigger a series of hotplugs in a very small timeframe to
  *              simulate abad cable, check the kernel falls back to polling
  *              to avoid a hotplug storm
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: HDMI
- * Test category: functionality test
  *
  * SUBTEST: dp-hpd-storm-disable
  * Description: Disable HPD storm detection, trigger a storm and check the
  *              kernel doesn't detect one
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: DP
- * Test category: functionality test
  *
  * SUBTEST: hdmi-hpd-storm-disable
  * Description: Disable HPD storm detection, trigger a storm and check the
  *              kernel doesn't detect one
- * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
  * Mega feature: HDMI
- * Test category: functionality test
  */
 
 #define HPD_STORM_PULSE_INTERVAL_DP 100 /* ms */

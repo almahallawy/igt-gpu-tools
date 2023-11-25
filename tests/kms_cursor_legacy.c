@@ -26,6 +26,10 @@
  * TEST: kms cursor legacy
  * Category: Display
  * Description: Stress legacy cursor ioctl
+ * Driver requirement: i915, xe
+ * Functionality: cursor
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include <sched.h>
@@ -42,10 +46,6 @@
  * Description: Test checks how many cursor updates we can fit between vblanks
  *              on single/all pipes with different modes, priority and number
  *              of processes
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -62,17 +62,9 @@
 /**
  * SUBTEST: basic-busy-flip-before-cursor-%s
  * Description: Cursor test with %arg[1] mode
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: cursor
- * Mega feature: General Display Features
  *
  * SUBTEST: basic-busy-flip-before-cursor-varying-size
  * Description: Change the size of cursor b/w 64*64 to maxw x maxh.
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -83,17 +75,9 @@
 /**
  * SUBTEST: basic-flip-after-cursor-%s
  * Description: Cursor test with %arg[1]
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: cursor
- * Mega feature: General Display Features
  *
  * SUBTEST: basic-flip-before-cursor-%s
  * Description: Cursor test with %arg[1]
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: cursor
- * Mega feature: General Display Features
  *
  * arg[1]:
  *
@@ -110,10 +94,6 @@
  *		                     and full screen primary plane.\n"
  *		- toggle: which toggles cursor visibility and make sure cursor moves
  *		          between updates.
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -135,10 +115,6 @@
  *		                     and full screen primary plane.\n"
  *		- toggle: which toggles cursor visibility and make sure cursor moves
  *		          between updates.
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -151,26 +127,14 @@
  * SUBTEST: long-nonblocking-modeset-vs-cursor-atomic
  * Description: Test checks how many cursor updates we can fit between vblanks
  *              on all pipes with different modes, priority and number of processes
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: nonblocking-modeset-vs-cursor-atomic
  * Description: Test checks how many cursor updates we can fit between vblanks
  *              on all pipes with different modes, priority and number of processes
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: 2x-%s-%s
  * Description: This test executes flips on both CRTCs while running cursor
  *              updates in parallel
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -189,10 +153,6 @@
  * SUBTEST: 2x-%s-atomic
  * Description: This test executes flips on both CRTCs while running cursor
  *              updates in parallel
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -204,10 +164,6 @@
  * SUBTEST: %s-%s
  * Description: The essence of the basic test is that neither the cursor nor the
  *              nonblocking flip stall the application of the next
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -231,10 +187,6 @@
 /**
  * SUBTEST: 2x-%s-%s
  * Description: This test executes flips on both CRTCs while running cursor updates in parallel
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -252,17 +204,9 @@
 /**
  * SUBTEST: flip-vs-cursor-crc-%s
  * Description: this test perform a page flip followed by a cursor update
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: flip-vs-cursor-busy-crc-%s
  * Description: this test perform a busy bo update followed by a cursor update
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -274,10 +218,6 @@
  * SUBTEST: modeset-atomic-cursor-hotspot
  * Description: Test changes the cursor hotspot and checks that the property is
  *              updated accordignly
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 #if defined(__x86_64__) || defined(__i386__)

@@ -25,6 +25,10 @@
  * TEST: kms lease
  * Category: Display
  * Description: Test of CreateLease.
+ * Driver requirement: i915, xe
+ * Functionality: lease
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -48,155 +52,71 @@
 /**
  * SUBTEST: atomic-implicit-crtc
  * Description: Negative test by using a different crtc with atomic ioctl
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: cursor-implicit-plane
  * Description: Negative test by using a non-primary plane with setcursor ioctl
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: empty-lease
  * Description: Check that creating an empty lease works
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: implicit-plane-lease
  * Description: Tests the implicitly added planes.
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: invalid-create-leases
  * Description: Tests error handling while creating invalid corner-cases for
  *              create-lease ioctl
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: lease-uevent
  * Description: Tests all the uevent cases
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: lease-again
  * Description: Tests leasing objects more than once
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: lease-get
  * Description: Tests getting the required contents of a lease
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: lease-invalid-connector
  * Description: Tests leasing an invalid connector
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: lease-invalid-crtc
  * Description: Tests leasing an invalid crtc
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: lease-invalid-plane
  * Description: Tests leasing an invalid plane
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: lease-revoke
  * Description: Tests revocation of lease
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: lease-unleased-connector
  * Description: Negative test by trying to use an unleased connector
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: lease-unleased-crtc
  * Description: Negative test by trying to use an unleased crtc
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: lessee-list
  * Description: Check if listed lease is same as created one
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: master-vs-lease
  * Description: Tests the drop/set_master interactions.
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: multimaster-lease
  * Description: Tests that the 2nd master can only create leases while being
  *              active master, and that leases on the first master don't prevent
  *              lease creation for the 2nd master.
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: page-flip-implicit-plane
  * Description: Negative test by using a non-primary plane with the page flip ioctl
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: possible-crtcs-filtering
  * Description: Tests that  possible_crtcs logically match between master and
  *              lease, and that the values are correctly renumbered on the lease
  *              side.
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: setcrtc-implicit-plane
  * Description: Negative test by using a non-primary plane with the setcrtc ioctl
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: simple-lease
  * Description: Check if create lease ioctl call works
- * Driver requirement: i915, xe
- * Functionality: lease
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 IGT_TEST_DESCRIPTION("Test of CreateLease.");

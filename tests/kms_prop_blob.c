@@ -29,6 +29,10 @@
  * TEST: kms prop blob
  * Category: Display
  * Description: Tests behaviour of mass-data 'blob' properties.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -40,17 +44,9 @@
 /**
  * SUBTEST: blob-multiple
  * Description: Test validates destroying multiple properties explicitly works as needed.
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: blob-prop-%s
  * Description: Tests validates the %arg[1] of the properties created.
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -62,17 +58,9 @@
 /**
  * SUBTEST: basic
  * Description: Test to ensure property support exists
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_core
- * Mega feature: General Display Features
  *
  * SUBTEST: invalid-%s-%s
  * Description: Tests error handling when invalid properties are %ar[1] with %arg[2].
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

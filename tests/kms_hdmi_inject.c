@@ -28,6 +28,9 @@
  * Description: Test that in-kernel EDID parsing is producing expected results
  *              by forcing a HDMI connector with a known EDID and checking that
  *              the metadata exposed to user space matches.
+ * Driver requirement: i915, xe
+ * Mega feature: HDMI
+ * Test category: functionality test
  */
 
 #include "config.h"
@@ -43,18 +46,12 @@
  * SUBTEST: inject-4k
  * Description: Make sure that 4K modes exposed by DRM match the forced EDID and
  *              modesetting using it succeed.
- * Driver requirement: i915, xe
  * Functionality: force_connector, hdmi_edid
- * Mega feature: HDMI
- * Test category: functionality test
  *
  * SUBTEST: inject-audio
  * Description: Make sure that audio information exposed by ALSA match the forced
  *              EDID.
- * Driver requirement: i915, xe
  * Functionality: audio, force_connector
- * Mega feature: HDMI
- * Test category: functionality test
  */
 
 #define HDISPLAY_4K	3840

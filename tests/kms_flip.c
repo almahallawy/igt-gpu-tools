@@ -25,6 +25,10 @@
  * TEST: kms flip
  * Category: Display
  * Description: Tests for validating modeset, dpms and pageflips
+ * Driver requirement: i915, xe
+ * Functionality: vblank
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "config.h"
@@ -59,16 +63,12 @@
  * Description: %arg[1] test to validate pageflips with available fences
  * Driver requirement: i915
  * Functionality: gtt, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: 2x-%s
  * Description: %arg[1] test to validate pageflips along with available fences
  *              on a pair of connected displays
  * Driver requirement: i915
  * Functionality: gtt, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -79,10 +79,7 @@
 /**
  * SUBTEST: dpms-off-%s
  * Description: %arg[1] test to validate pageflips by disabling other connectors usng dpms
- * Driver requirement: i915, xe
  * Functionality: dpms, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -93,10 +90,7 @@
 /**
  * SUBTEST: %s
  * Description: %arg[1] test to validate pageflips with large BO in size
- * Driver requirement: i915, xe
  * Functionality: kms_gem_interop, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -107,17 +101,11 @@
 /**
  * SUBTEST: %s
  * Description: Basic test to validate %arg[1]
- * Driver requirement: i915, xe
  * Functionality: hang, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: 2x-%s
  * Description: Test to validate %arg[1] on a pair of connected displays
- * Driver requirement: i915, xe
  * Functionality: hang, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -128,17 +116,9 @@
 /**
  * SUBTEST: %s
  * Description: Basic test to validate %arg[1]
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: 2x-%s
  * Description: Test to validate %arg[1] on a pair of connected displays
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -161,18 +141,12 @@
 /**
  * SUBTEST: %s
  * Description: %arg[1] test to validate pageflips with suspend cycle
- * Driver requirement: i915, xe
  * Functionality: suspend, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: 2x-%s
  * Description: %arg[1] test to validate pageflips with suspend cycle on a pair
  *              of connected displays
- * Driver requirement: i915, xe
  * Functionality: suspend, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -183,31 +157,17 @@
 /**
  * SUBTEST: %s
  * Description: Basic test to validate %arg[1]
- * Driver requirement: i915, xe
  * Functionality: dpms, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: 2x-%s
  * Description: Basic test to validate %arg[1] on a pair of connected displays
- * Driver requirement: i915, xe
  * Functionality: dpms, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: %s-interruptible
  * Description: Basic test to validate %arg[1]
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: 2x-%s-interruptible
  * Description: Basic test to validate %arg[1] on a pair of connected displays
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -222,17 +182,10 @@
  * SUBTEST: 2x-flip-vs-dpms
  * Description: Basic test to validate pageflip along with dpms on a pair of
  *              connected displays
- * Driver requirement: i915, xe
  * Functionality: dpms, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: 2x-%s
  * Description: Basic test to validate %arg[1] on a pair of connected displays
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -244,18 +197,10 @@
 /**
  * SUBTEST: %s-interruptible
  * Description: Basic test for validating modeset, dpms and pageflips
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: 2x-%s-interruptible
  * Description: Test for validating modeset, dpms and pageflips with a pair of
  *              connected displays
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -277,31 +222,16 @@
 /**
  * SUBTEST: basic-plain-flip
  * Description: Basic test for validating page flip
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: vblank
- * Mega feature: General Display Features
  *
  * SUBTEST: nonblocking-read
  * Description: Tests that nonblocking reading fails correctly
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: basic-flip-vs-dpms
  * Description: Basic test to valide pageflip with dpms
- * Driver requirement: i915, xe
- * Test category: functionality test
  * Functionality: dpms, vblank
- * Mega feature: General Display Features
  *
  * SUBTEST: basic-flip-vs-%s
  * Description: Basic test to valide pageflip with %arg[1]
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: vblank
- * Mega feature: General Display Features
  *
  * arg[1]:
  *

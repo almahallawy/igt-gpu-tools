@@ -25,8 +25,11 @@
 /**
  * TEST: kms cursor edge walk
  * Category: Display
- * Description: Exercise CHV pipe C cursor fail
  * Description: Test to check different cursor sizes by walking different edges of screen
+ * Driver requirement: i915, xe
+ * Functionality: cursor
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -39,10 +42,6 @@
 /**
  * SUBTEST: %s-%s
  * Description: Checking cursor size %arg[1] by walking %arg[2] of screen
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

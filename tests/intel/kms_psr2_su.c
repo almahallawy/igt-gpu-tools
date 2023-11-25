@@ -26,6 +26,9 @@
  * TEST: kms psr2 su
  * Category: Display
  * Description: Test PSR2 selective update
+ * Driver requirement: i915, xe
+ * Mega feature: PSR
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -40,17 +43,11 @@
 /**
  * SUBTEST: frontbuffer-XRGB8888
  * Description: Test that selective update works when screen changes
- * Driver requirement: i915, xe
  * Functionality: fbt, psr2, selective_update
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: page_flip-%s
  * Description: Test the selective update with %arg[1] when screen changes
- * Driver requirement: i915, xe
  * Functionality: pixel-format, psr2, selective_update
- * Mega feature: PSR
- * Test category: functionality test
  *
  * arg[1]:
  *

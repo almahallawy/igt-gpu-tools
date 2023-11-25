@@ -26,6 +26,9 @@
  * TEST: kms psr
  * Category: Display
  * Description: Tests behaviour of PSR & PSR2 & PR
+ * Driver requirement: i915, xe
+ * Mega feature: PSR
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -41,18 +44,13 @@
 /**
  * SUBTEST: psr_basic
  * Description: Basic check for psr if it is detecting changes made in planes
- * Driver requirement: i915, xe
  * Functionality: psr
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: psr_%s_%s
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1]
  * Driver requirement: i915
  * Functionality: kms_core, plane, psr
- * Mega feature: PSR
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -70,18 +68,12 @@
  * SUBTEST: psr_sprite_plane_move
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on sprite planes
- * Driver requirement: i915, xe
  * Functionality: plane, psr
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: psr_%s_%s
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1] planes
- * Driver requirement: i915, xe
  * Functionality: kms_core, plane, psr
- * Mega feature: PSR
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -99,10 +91,7 @@
  * SUBTEST: psr_primary_%s
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1] planes
- * Driver requirement: i915, xe
  * Functionality: kms_core, psr
- * Mega feature: PSR
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -114,63 +103,40 @@
  * SUBTEST: psr_dpms
  * Description: Check if psr is detecting changes when rendering operation is
  *              performed  with dpms enabled or disabled
- * Driver requirement: i915, xe
  * Functionality: dpms, psr
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: psr_no_drrs
  * Description: Check if psr is detecting changes when drrs is disabled
- * Driver requirement: i915, xe
  * Functionality: drrs, psr
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: psr_suspend
  * Description: Check if psr is detecting changes when plane operation
  *              is performed with suspend resume cycles
- * Driver requirement: i915, xe
  * Functionality: psr, suspend
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: psr2_dpms
  * Description: Check if psr is detecting changes when rendering operation
  *              is performed  with dpms enabled or disabled
- * Driver requirement: i915, xe
  * Functionality: dpms, psr, psr2
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: psr2_no_drrs
  * Description: Check if psr is detecting changes when drrs is disabled
- * Driver requirement: i915, xe
  * Functionality: drrs, psr, psr2
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: psr2_suspend
  * Description: Check if psr is detecting changes when plane operation is
  *              performed with suspend resume cycles
- * Driver requirement: i915, xe
  * Functionality: psr, psr2, suspend
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: psr2_basic
  * Description: Basic check for psr if it is detecting changes made in planes
- * Driver requirement: i915, xe
  * Functionality: psr, psr2
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: psr2_%s_%s
  * Description: Check if psr2 is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1] planes
  * Driver requirement: i915
  * Functionality: kms_core, plane, psr, psr2
- * Mega feature: PSR
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -188,18 +154,12 @@
  * SUBTEST: psr2_primary_page_flip
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on primary planes
- * Driver requirement: i915, xe
  * Functionality: plane, psr, psr2
- * Mega feature: PSR
- * Test category: functionality test
  *
  * SUBTEST: psr2_primary_%s
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on primary planes
- * Driver requirement: i915, xe
  * Functionality: kms_core, plane, psr, psr2
- * Mega feature: PSR
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -211,10 +171,7 @@
  * SUBTEST: psr2_%s_%s
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1] planes
- * Driver requirement: i915, xe
  * Functionality: kms_core, plane, psr, psr2
- * Mega feature: PSR
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -233,32 +190,24 @@
  * SUBTEST: pr_dpms
  * Description: Check if pr is detecting changes when rendering operation
  *              is performed with dpms enabled or disabled
- * Driver requirement: i915, xe
  * Functionality: dpms, pr
  * Mega feature: Panel Replay
- * Test category: functionality test
  *
  * SUBTEST: pr_no_drrs
  * Description: Check if pr is detecting changes when drrs is disabled
- * Driver requirement: i915, xe
  * Functionality: drrs, pr
  * Mega feature: Panel Replay
- * Test category: functionality test
  *
  * SUBTEST: pr_suspend
  * Description: Check if pr is detecting changes when plane operation is
  *              performed with suspend resume cycles
- * Driver requirement: i915, xe
  * Functionality: pr, suspend
  * Mega feature: Panel Replay
- * Test category: functionality test
  *
  * SUBTEST: pr_basic
  * Description: Basic check for pr if it is detecting changes made in planes
- * Driver requirement: i915, xe
  * Functionality: pr
  * Mega feature: Panel Replay
- * Test category: functionality test
  */
 
 /**
@@ -268,7 +217,6 @@
  * Driver requirement: i915
  * Functionality: kms_core, plane, pr
  * Mega feature: Panel Replay
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -286,18 +234,14 @@
  * SUBTEST: pr_primary_page_flip
  * Description: Check if pr is detecting memory mapping, rendering and plane
  *              operations performed on primary planes
- * Driver requirement: i915, xe
  * Functionality: plane, pr
  * Mega feature: Panel Replay
- * Test category: functionality test
  *
  * SUBTEST: pr_primary_%s
  * Description: Check if pr is detecting memory mapping, rendering and plane
  *              operations performed on primary planes
- * Driver requirement: i915, xe
  * Functionality: kms_core, plane, pr
  * Mega feature: Panel Replay
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -309,10 +253,8 @@
  * SUBTEST: pr_%s_%s
  * Description: Check if pr is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1] planes
- * Driver requirement: i915, xe
  * Functionality: kms_core, plane, pr
  * Mega feature: Panel Replay
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -331,26 +273,17 @@
  * SUBTEST: psr_cursor_plane_move
  * Description: Check if psr is detecting the plane operations performed on
  *		cursor planes
- * Driver requirement: i915, xe
- * Test category: functionality test
  * Functionality: psr
- * Mega feature: PSR
  *
  * SUBTEST: psr_primary_page_flip
  * Description: Check if psr is detecting page-flipping operations performed
  *		on primary planes
- * Driver requirement: i915, xe
- * Test category: functionality test
  * Functionality: psr
- * Mega feature: PSR
  *
  * SUBTEST: psr_sprite_plane_onoff
  * Description: Check if psr is detecting the plane operations performed on
  *		sprite planes
- * Driver requirement: i915, xe
- * Test category: functionality test
  * Functionality: psr
- * Mega feature: PSR
  */
 
 enum operations {

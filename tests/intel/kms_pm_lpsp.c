@@ -26,8 +26,11 @@
 
 /**
  * TEST: kms pm lpsp
- * Description: These tests validates display Low Power Single Pipe configurations
  * Category: Display
+ * Description: These tests validates display Low Power Single Pipe configurations
+ * Functionality: pm_lpsp
+ * Mega feature: Display Power
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -43,16 +46,10 @@
  * SUBTEST: kms-lpsp
  * Description: This test validates lpsp on all connected outputs on low power pipes
  * Driver requirement: i915, xe
- * Functionality: pm_lpsp
- * Mega feature: Display Power
- * Test category: functionality test
  *
  * SUBTEST: screens-disabled
  * Description: This test validates lpsp while all crtc are disabled
  * Driver requirement: i915
- * Functionality: pm_lpsp
- * Mega feature: Display Power
- * Test category: functionality test
  */
 
 #define MAX_SINK_LPSP_INFO_BUF_LEN	4096

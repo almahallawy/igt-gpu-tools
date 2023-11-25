@@ -29,6 +29,10 @@
  *              connectors feature by checking if the target device support
  *              writeback; it validates bad and good combination, check color
  *              format, and check the output result by using CRC.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include <errno.h>
@@ -45,45 +49,23 @@
 /**
  * SUBTEST: writeback-check-output-XRGB2101010
  * Description: Check XRGB2101010 writeback output with CRC validation
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: writeback-check-output
  * Description: Check writeback output with CRC validation
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: writeback-fb-id-XRGB2101010
  * Description: Validate WRITEBACK_FB_ID with valid and invalid options
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: writeback-fb-id
  * Description: Validate WRITEBACK_FB_ID with valid and invalid options
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: writeback-invalid-parameters
  * Description: Writeback has a couple of parameters linked together(output
  *              framebuffer and fence); this test goes throughthe combination
  *              of possible bad options
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: writeback-pixel-formats
  * Description: Check the writeback format
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 IGT_TEST_DESCRIPTION(

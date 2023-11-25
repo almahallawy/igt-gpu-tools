@@ -33,6 +33,10 @@
  *              compares it with the CRC value obtained when the cursor plane
  *              was disabled and its drawing is directly inserted on the PF by
  *              software.
+ * Driver requirement: i915, xe
+ * Functionality: cursor
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -45,24 +49,14 @@
 /**
  * SUBTEST: cursor-dpms
  * Description: Check random placement of a cursor with DPMS.
- * Driver requirement: i915, xe
  * Functionality: cursor, dpms
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: cursor-suspend
  * Description: Check random placement of a cursor with suspend.
- * Driver requirement: i915, xe
  * Functionality: cursor, suspend
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: cursor-%s
  * Description: %arg[1]
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -78,10 +72,6 @@
 /**
  * SUBTEST: cursor-%s-%s
  * Description: Check if a %arg[2] cursor is %arg[1].
- * Driver requirement: i915, xe
- * Functionality: cursor
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

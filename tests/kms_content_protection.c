@@ -26,6 +26,10 @@
  * TEST: kms content protection
  * Category: Display
  * Description: Test content protection (HDCP)
+ * Driver requirement: i915, xe
+ * Functionality: hdcp1.4
+ * Mega feature: HDCP
+ * Test category: functionality test
  */
 
 #include <poll.h>
@@ -41,49 +45,27 @@
 /**
  * SUBTEST: lic
  * Description: Test for the integrity of link.
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4
- * Mega feature: HDCP
- * Test category: functionality test
  *
  * SUBTEST: content-type-change
  * Description: Test the content type change when the content protection already
  *              enabled
- * Driver requirement: i915, xe
  * Functionality: hdcp1.4, hdcp2.2
- * Mega feature: HDCP
- * Test category: functionality test
  *
  * SUBTEST: mei-interface
  * Description: Test the teardown and rebuild of the interface between Intel
  *              and mei hdcp.
- * Driver requirement: i915, xe
  * Functionality: hdcp1.4, hdcp2.2
- * Mega feature: HDCP
- * Test category: functionality test
  *
  * SUBTEST: srm
  * Description: This test writes the facsimile SRM into the /lib/firmware/ and
  *              check the kernel parsing of it by invoking the hdcp authentication.
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4
- * Mega feature: HDCP
- * Test category: functionality test
  *
  * SUBTEST: uevent
  * Description: Test to detect the HDCP status change when we are reading the
  *              uevent sent with the corresponding connector id and property id.
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4
- * Mega feature: HDCP
- * Test category: functionality test
  *
  * SUBTEST: %s
  * Description: Test content protection with %arg[1]
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4
- * Mega feature: HDCP
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -96,10 +78,7 @@
 /**
  * SUBTEST: dp-mst-%s
  * Description: Test Content protection %arg[1] over DP MST.
- * Driver requirement: i915, xe
  * Functionality: hdcp1.4, mst
- * Mega feature: HDCP
- * Test category: functionality test
  *
  * arg[1]:
  *

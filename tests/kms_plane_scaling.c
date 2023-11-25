@@ -26,6 +26,10 @@
  * TEST: kms plane scaling
  * Category: Display
  * Description: Test display plane scaling
+ * Driver requirement: i915, xe
+ * Functionality: plane, scaling
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -35,24 +39,12 @@
 /**
  * SUBTEST: plane-scaler-unity-scaling-with-modifiers
  * Description: Tests scaling with modifiers, unity scaling.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-scaler-with-clipping-clamping-modifiers
  * Description: Tests scaling with clipping and clamping, modifiers.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-upscale-%s-with-modifiers
  * Description: Tests upscaling with modifiers %arg[1].
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -63,10 +55,6 @@
 /**
  * SUBTEST: plane-downscale-factor-%s-with-modifiers
  * Description: Tests downscaling with modifiers for %arg[1] scaling factor.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -78,24 +66,12 @@
 /**
  * SUBTEST: plane-scaler-unity-scaling-with-rotation
  * Description: Tests scaling with rotation, unity scaling.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-scaler-with-clipping-clamping-rotation
  * Description: Tests scaling with clipping and clamping, rotation.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-upscale-%s-with-rotation
  * Description: Tests upscaling with rotation %arg[1].
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -106,10 +82,6 @@
 /**
  * SUBTEST: plane-downscale-factor-%s-with-rotation
  * Description: Tests downscaling with rotation for %arg[1] scaling factor.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -121,24 +93,15 @@
 /**
  * SUBTEST: plane-scaler-unity-scaling-with-pixel-format
  * Description: Tests scaling with pixel formats, unity scaling.
- * Driver requirement: i915, xe
  * Functionality: pixel_formats, plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-scaler-with-clipping-clamping-pixel-formats
  * Description: Tests scaling with clipping and clamping, pixel formats.
- * Driver requirement: i915, xe
  * Functionality: pixel_formats, plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: plane-upscale-%s-with-pixel-format
  * Description: Tests upscaling with pixel formats %arg[1].
- * Driver requirement: i915, xe
  * Functionality: pixel_formats, plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -149,10 +112,7 @@
 /**
  * SUBTEST: plane-downscale-factor-%s-with-pixel-format
  * Description: Tests downscaling with pixel formats for %arg[1] scaling factor.
- * Driver requirement: i915, xe
  * Functionality: pixel_formats, plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -164,10 +124,6 @@
 /**
  * SUBTEST: planes-downscale-factor-%s
  * Description: Tests downscaling of 2 planes for %arg[1] scaling factor.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -180,10 +136,6 @@
  * SUBTEST: planes-downscale-factor-%s-%s
  * Description: Tests downscaling (scaling factor %arg[1]) and upscaling (%arg[2])
  *              of 2 planes.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -201,17 +153,9 @@
 /**
  * SUBTEST: planes-scaler-unity-scaling
  * Description: Tests scaling of 2 planes, unity scaling.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: planes-upscale-%s
  * Description: Tests upscaling of 2 planes %arg[1].
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -223,10 +167,6 @@
  * SUBTEST: planes-%s-downscale-factor-%s
  * Description: Tests scaling (%arg[1]) and downscaling (scaling factor %arg[2])
  *              of 2 planes.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -244,31 +184,15 @@
 /**
  * SUBTEST: invalid-num-scalers
  * Description: Negative test for number of scalers per pipe.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: 2x-scaler-multi-pipe
  * Description: Tests scaling with multi-pipe.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: invalid-parameters
  * Description: Test parameters which should not be accepted
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: intel-max-src-size
  * Description: Test for validating max source size.
- * Driver requirement: i915, xe
- * Functionality: plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 IGT_TEST_DESCRIPTION("Test display plane scaling");

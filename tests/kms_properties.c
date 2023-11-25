@@ -25,6 +25,10 @@
  * TEST: kms properties
  * Category: Display
  * Description: Test to validate the properties of all planes, crtc and connectors
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -38,10 +42,6 @@
 /**
  * SUBTEST: %s-properties-%s
  * Description: Tests %arg[1] properties with %arg[2] commit
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -60,10 +60,6 @@
  * SUBTEST: get_properties-sanity-%s
  * Description: Test validates the properties of all planes, crtc and connectors
  *              with %arg[1] commit
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

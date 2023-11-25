@@ -31,6 +31,10 @@
  * TEST: kms getfb
  * Category: Display
  * Description: Tests GETFB and GETFB2 ioctls.
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -54,10 +58,6 @@
 /**
  * SUBTEST: getfb-handle-%s
  * Description: Tests error handling %arg[1]
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -71,18 +71,11 @@
  * SUBTEST: getfb-reject-ccs
  * Description: Tests error handling while requesting CCS buffers it should
  *              refuse because getfb supports returning a single buffer handle.
- * Driver requirement: i915, xe
  * Functionality: ccs, kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: getfb-%s-different-handles
  * Description: Tests error handling while requesting for two different handles
  *              from %arg[1].
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -93,24 +86,13 @@
 /**
  * SUBTEST: getfb2-accept-ccs
  * Description: Tests outputs are correct when retrieving a CCS framebuffer.
- * Driver requirement: i915, xe
  * Functionality: ccs, kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: getfb2-into-addfb2
  * Description: Output check by passing the output of GETFB2 into ADDFB2.
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: getfb2-handle-%s
  * Description: Tests error handling %arg[1].
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -122,10 +104,6 @@
 /**
  * SUBTEST: %s-handle-protection
  * Description: Make sure %arg[1] return handles if caller is non-root or non-master.
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

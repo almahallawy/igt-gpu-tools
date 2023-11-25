@@ -26,6 +26,10 @@
  * TEST: kms sequence
  * Category: Display
  * Description: Test CrtcGetSequence and CrtcQueueSequence.
+ * Driver requirement: i915, xe
+ * Functionality: vblank
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -46,10 +50,6 @@
 /**
  * SUBTEST: get-%s
  * Description: This is a test of drmCrtcGetSequence with %arg[1]
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -62,10 +62,6 @@
 /**
  * SUBTEST: queue-%s
  * Description: This is a test of drmCrtcQueueSequence with %arg[1]
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

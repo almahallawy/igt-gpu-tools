@@ -26,6 +26,10 @@
  * TEST: kms draw crc
  * Category: Display
  * Description: Tests whether the igt_draw library actually works.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "i915/gem.h"
@@ -34,18 +38,10 @@
 /**
  * SUBTEST: fill-fb
  * Description: This subtest verifies CRC after filling fb with x-tiling or none.
- * Driver requirement: i915, xe
- * Functionality: kms_core, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: draw-method-%s
  * Description: Verify that igt draw library works for the %arg[1] method with
  *              different modifiers & DRM formats.
- * Driver requirement: i915, xe
- * Functionality: kms_core, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -59,9 +55,6 @@
  * Description: Verify that igt draw library works for the %arg[1] method with
  *              different modifiers & DRM formats.
  * Driver requirement: i915
- * Functionality: kms_core, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

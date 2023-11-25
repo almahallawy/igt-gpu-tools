@@ -28,6 +28,10 @@
  * Description: Test render compression (RC), in which the main surface is
  *              complemented by a color control surface (CCS) that the display
  *              uses to interpret the compressed data.
+ * Driver requirement: i915, xe
+ * Functionality: ccs, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -39,10 +43,6 @@
 /**
  * SUBTEST: %s-%s-%s
  * Description: Test %arg[2] with given %arg[3] modifier
- * Driver requirement: i915, xe
- * Functionality: ccs, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -84,10 +84,6 @@
 /**
  * SUBTEST: %s-%s-%s
  * Description: Test %arg[2] with %arg[3] modifier
- * Driver requirement: i915, xe
- * Functionality: ccs, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -133,10 +129,7 @@
 /**
  * SUBTEST: %s-%s-%s
  * Description: Test %arg[2] with %arg[3] modifier
- * Driver requirement: i915, xe
  * Functionality: ccs, rotation, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

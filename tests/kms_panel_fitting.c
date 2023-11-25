@@ -26,6 +26,10 @@
  * TEST: kms panel fitting
  * Category: Display
  * Description: Test display panel fitting
+ * Driver requirement: i915, xe
+ * Functionality: eDP, panel_fitting, scaling
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -36,17 +40,9 @@
 /**
  * SUBTEST: atomic-fastset
  * Description: Tests panel fitting usages with atomic fastset.
- * Driver requirement: i915, xe
- * Functionality: eDP, panel_fitting, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: legacy
  * Description: Tests panel fitting usages with legacy style commit.
- * Driver requirement: i915, xe
- * Functionality: eDP, panel_fitting, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 IGT_TEST_DESCRIPTION("Test display panel fitting");

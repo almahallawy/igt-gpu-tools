@@ -28,6 +28,10 @@
  * TEST: kms scaling modes
  * Category: Display
  * Description: Test display scaling modes
+ * Driver requirement: i915, xe
+ * Functionality: eDP, plane, scaling
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -35,10 +39,6 @@
 /**
  * SUBTEST: scaling-mode-%s
  * Description: Tests %arg[1] display scaling mode
- * Driver requirement: i915, xe
- * Functionality: eDP, plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

@@ -24,6 +24,10 @@
  * TEST: kms hdr
  * Category: Display
  * Description: Test HDR metadata interfaces and bpc switch
+ * Driver requirement: i915, xe
+ * Functionality: colorspace, hdr
+ * Mega feature: HDR
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -35,59 +39,31 @@
 /**
  * SUBTEST: bpc-switch
  * Description: Tests switching between different display output bpc modes
- * Driver requirement: i915, xe
- * Functionality: colorspace, hdr
- * Mega feature: HDR
- * Test category: functionality test
  *
  * SUBTEST: bpc-switch-dpms
  * Description: Tests switching between different display output bpc modes with dpms
- * Driver requirement: i915, xe
  * Functionality: colorspace, dpms, hdr
- * Mega feature: HDR
- * Test category: functionality test
  *
  * SUBTEST: bpc-switch-suspend
  * Description: Tests switching between different display output bpc modes with suspend
- * Driver requirement: i915, xe
  * Functionality: colorspace, hdr, suspend
- * Mega feature: HDR
- * Test category: functionality test
  *
  * SUBTEST: invalid-hdr
  * Description: Test to ensure HDR is not enabled on non-HDR panel
- * Driver requirement: i915, xe
- * Functionality: colorspace, hdr
- * Mega feature: HDR
- * Test category: functionality test
  *
  * SUBTEST: invalid-metadata-sizes
  * Description: Tests invalid HDR metadata sizes
- * Driver requirement: i915, xe
- * Functionality: colorspace, hdr
- * Mega feature: HDR
- * Test category: functionality test
  *
  * SUBTEST: static-toggle-dpms
  * Description: Tests static toggle with dpms
- * Driver requirement: i915, xe
  * Functionality: colorspace, dpms, hdr
- * Mega feature: HDR
- * Test category: functionality test
  *
  * SUBTEST: static-toggle-suspend
  * Description: Tests static toggle with suspend
- * Driver requirement: i915, xe
  * Functionality: colorspace, hdr, suspend
- * Mega feature: HDR
- * Test category: functionality test
  *
  * SUBTEST: static-%s
  * Description: Tests %arg[1].
- * Driver requirement: i915, xe
- * Functionality: colorspace, hdr
- * Mega feature: HDR
- * Test category: functionality test
  *
  * arg[1]:
  *

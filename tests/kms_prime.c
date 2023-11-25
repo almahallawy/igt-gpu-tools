@@ -25,6 +25,10 @@
  * TEST: kms prime
  * Category: Display
  * Description: Prime tests, focusing on KMS side
+ * Driver requirement: i915, xe
+ * Functionality: hybrid, kms_gem_interop
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -40,25 +44,14 @@
 /**
  * SUBTEST: D3hot
  * Description: Validate pci state of dGPU when dGPU is idle and  scanout is on iGPU
- * Driver requirement: i915, xe
- * Functionality: hybrid, kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: basic-modeset-hybrid
  * Description: Basic modeset on the one device when the other device is active
- * Driver requirement: i915, xe
- * Functionality: hybrid, kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * SUBTEST: basic-crc-%s
  * Description: Make a dumb color buffer, export to another device and compare
  *              the CRCs with a buffer native to that device
- * Driver requirement: i915, xe
  * Functionality: crc, hybrid, kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
  *
  * arg[1]:
  *

@@ -28,6 +28,8 @@
  * TEST: kms chamelium audio
  * Category: Display
  * Description: Testing Audio with a Chamelium board
+ * Driver requirement: i915, xe
+ * Test category: functionality test
  */
 
 #include "igt_eld.h"
@@ -38,34 +40,26 @@
  * SUBTEST: dp-audio
  * Description: Playback various audio signals with various audio formats/rates,
  *              capture them and check they are correct
- * Driver requirement: i915, xe
  * Functionality: chamelium, dp_audio
  * Mega feature: Audio, DP
- * Test category: functionality test
  *
  * SUBTEST: hdmi-audio
  * Description: Playback various audio signals with various audio formats/rates,
  *              capture them and check they are correct
- * Driver requirement: i915, xe
  * Functionality: chamelium, hdmi_audio
  * Mega feature: Audio, HDMI
- * Test category: functionality test
  *
  * SUBTEST: dp-audio-edid
  * Description: Plug a connector with an EDID suitable for audio, check ALSA's
  *              EDID-Like Data reports the correct audio parameters
- * Driver requirement: i915, xe
  * Functionality: chamelium, dp_audio
  * Mega feature: Audio, DP
- * Test category: functionality test
  *
  * SUBTEST: hdmi-audio-edid
  * Description: Plug a connector with an EDID suitable for audio, check ALSA's
  *              EDID-Like Data reports the correct audio parameters
- * Driver requirement: i915, xe
  * Functionality: chamelium, hdmi_audio
  * Mega feature: Audio, HDMI
- * Test category: functionality test
  */
 
 /* Playback parameters control the audio signal we synthesize and send */

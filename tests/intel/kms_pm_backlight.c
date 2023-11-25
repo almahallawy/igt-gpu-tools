@@ -29,6 +29,10 @@
  * TEST: kms pm backlight
  * Category: Display
  * Description: Basic backlight sysfs test
+ * Driver requirement: i915, xe
+ * Functionality: backlight
+ * Mega feature: Display Power
+ * Test category: functionality test
  */
 
 #include "igt.h"
@@ -46,38 +50,20 @@
 /**
  * SUBTEST: bad-brightness
  * Description: Test the bad brightness.
- * Driver requirement: i915, xe
- * Functionality: backlight
- * Mega feature: Display Power
- * Test category: functionality test
  *
  * SUBTEST: basic-brightness
  * Description: Test the basic brightness.
- * Driver requirement: i915, xe
- * Functionality: backlight
- * Mega feature: Display Power
- * Test category: functionality test
  *
  * SUBTEST: fade
  * Description: Test basic fade.
- * Driver requirement: i915, xe
- * Functionality: backlight
- * Mega feature: Display Power
- * Test category: functionality test
  *
  * SUBTEST: fade-with-dpms
  * Description: Test the fade with DPMS.
- * Driver requirement: i915, xe
  * Functionality: dpms, backlight
- * Mega feature: Display Power
- * Test category: functionality test
  *
  * SUBTEST: fade-with-suspend
  * Description: Test the fade with suspend.
- * Driver requirement: i915, xe
  * Functionality: backlight, suspend
- * Mega feature: Display Power
- * Test category: functionality test
  */
 
 struct context {

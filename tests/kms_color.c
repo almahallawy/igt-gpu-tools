@@ -26,6 +26,10 @@
  * TEST: kms color
  * Category: Display
  * Description: Test Color Features at Pipe level
+ * Driver requirement: i915, xe
+ * Functionality: colorspace
+ * Mega feature: Color mgmt
+ * Test category: functionality test
  */
 
 #include "kms_color_helper.h"
@@ -33,39 +37,19 @@
 /**
  * SUBTEST: degamma
  * Description: Verify that degamma LUT transformation works correctly
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
  *
  * SUBTEST: gamma
  * Description: Verify that gamma LUT transformation works correctly
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
  *
  * SUBTEST: legacy-gamma
  * Description: Verify that legacy gamma LUT transformation works correctly
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
  *
  * SUBTEST: legacy-gamma-reset
  * Description: Verify that setting the legacy gamma LUT resets the gamma LUT
  *              set through GAMMA_LUT property
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
  *
  * SUBTEST: ctm-%s
  * Description: Check the color transformation %arg[1]
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
  *
  * arg[1]:
  *
@@ -83,17 +67,9 @@
 /**
  * SUBTEST: deep-color
  * Description: Verify that deep color works correctly
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
  *
  * SUBTEST: invalid-%s-sizes
  * Description: Negative check for %arg[1] sizes
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
  *
  * arg[1]:
  *
