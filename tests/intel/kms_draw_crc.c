@@ -32,6 +32,13 @@
 #include "igt.h"
 
 /**
+ * SUBTEST: fill-fb
+ * Description: This subtest verifies CRC after filling fb with x-tiling or none.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
  * SUBTEST: draw-method-%s
  * Description: Verify that igt draw library works for the %arg[1] method with
  *              different modifiers & DRM formats.
@@ -61,15 +68,6 @@
  * @mmap-cpu:     MMAP-CPU
  * @mmap-gtt:     MMAP-GTT
  * @pwrite:       PWRITE
- */
-
-/**
- * SUBTEST: fill-fb
- * Description: This subtest verifies CRC after filling fb with x-tiling or none.
- * Driver requirement: i915, xe
- * Functionality: kms_core, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 #define MAX_CONNECTORS 32

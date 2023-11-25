@@ -55,63 +55,53 @@
 #include "xe/xe_query.h"
 
 /**
- * SUBTEST: 2x-flip-vs-fences
- * Description: Test to validate pageflips along with avialable fences on a pair
- *              of connected displays
+ * SUBTEST: %s
+ * Description: %arg[1] test to validate pageflips with available fences
  * Driver requirement: i915
  * Functionality: gtt, vblank
  * Mega feature: General Display Features
  * Test category: functionality test
  *
- * SUBTEST: 2x-flip-vs-fences-interruptible
- * Description: Interrupt test to validate pageflips along with available fences
+ * SUBTEST: 2x-%s
+ * Description: %arg[1] test to validate pageflips along with available fences
  *              on a pair of connected displays
- * Driver requirement: i915, xe
- * Functionality: gtt, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: flip-vs-fences
- * Description: Basic test to validate pageflips with avialable fences
  * Driver requirement: i915
  * Functionality: gtt, vblank
  * Mega feature: General Display Features
  * Test category: functionality test
  *
- * SUBTEST: flip-vs-fences-interruptible
- * Description: Interrupt test to validate pageflips with available fences
- * Driver requirement: i915
- * Functionality: gtt, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
+ * arg[1]:
  *
- * SUBTEST: dpms-off-confusion
- * Description: Basic test to validate pageflips by disabling other connectors usng dpms
+ * @flip-vs-fences:                 Basic
+ * @flip-vs-fences-interruptible:   Interrupt
+ */
+
+/**
+ * SUBTEST: dpms-off-%s
+ * Description: %arg[1] test to validate pageflips by disabling other connectors usng dpms
  * Driver requirement: i915, xe
  * Functionality: dpms, vblank
  * Mega feature: General Display Features
  * Test category: functionality test
  *
- * SUBTEST: dpms-off-confusion-interruptible
- * Description: Interrupt test to validate pageflips by disabling other connectors using dpms
- * Driver requirement: i915, xe
- * Functionality: dpms, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
+ * arg[1]:
  *
- * SUBTEST: bo-too-big
- * Description: Basic test to validate pageflips with large BO in size
+ * @confusion:                      Basic
+ * @confusion-interruptible:        Interrupt
+ */
+
+/**
+ * SUBTEST: %s
+ * Description: %arg[1] test to validate pageflips with large BO in size
  * Driver requirement: i915, xe
  * Functionality: kms_gem_interop, vblank
  * Mega feature: General Display Features
  * Test category: functionality test
  *
- * SUBTEST: bo-too-big-interruptible
- * Description: Interrupt test to validate pageflips with large BO in size
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
+ * arg[1]:
+ *
+ * @bo-too-big:                     Basic
+ * @bo-too-big-interruptible:       Interrupt
  */
 
 /**
@@ -169,36 +159,28 @@
  */
 
 /**
- * SUBTEST: flip-vs-suspend
- * Description: Basic test to validate pageflips with suspend cycle
+ * SUBTEST: %s
+ * Description: %arg[1] test to validate pageflips with suspend cycle
  * Driver requirement: i915, xe
  * Functionality: suspend, vblank
  * Mega feature: General Display Features
  * Test category: functionality test
  *
- * SUBTEST: 2x-flip-vs-suspend
- * Description: Basic test to validate pageflips with suspend cycle on a pair of
- *              connected displays
- * Driver requirement: i915, xe
- * Functionality: suspend, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: flip-vs-suspend-interruptible
- * Description: Interrupt test to validate pageflips with suspend cycle
- * Driver requirement: i915, xe
- * Functionality: suspend, vblank
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: 2x-flip-vs-suspend-interruptible
- * Description: Interrupt test to validate pageflips with suspend cycle on a pair
+ * SUBTEST: 2x-%s
+ * Description: %arg[1] test to validate pageflips with suspend cycle on a pair
  *              of connected displays
  * Driver requirement: i915, xe
  * Functionality: suspend, vblank
  * Mega feature: General Display Features
  * Test category: functionality test
  *
+ * arg[1]:
+ *
+ * @flip-vs-suspend:                   Basic
+ * @flip-vs-suspend-interruptible:     Interrupt
+ */
+
+/**
  * SUBTEST: %s
  * Description: Basic test to validate %arg[1]
  * Driver requirement: i915, xe
@@ -293,6 +275,20 @@
  */
 
 /**
+ * SUBTEST: basic-plain-flip
+ * Description: Basic test for validating page flip
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: vblank
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: nonblocking-read
+ * Description: Tests that nonblocking reading fails correctly
+ * Driver requirement: i915, xe
+ * Functionality: vblank
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
  * SUBTEST: basic-flip-vs-dpms
  * Description: Basic test to valide pageflip with dpms
  * Driver requirement: i915, xe
@@ -311,20 +307,6 @@
  *
  * @modeset:      modeset
  * @wf_vblank:    wait for vblank
- *
- * SUBTEST: basic-plain-flip
- * Description: Basic test for validating page flip
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: vblank
- * Mega feature: General Display Features
- *
- * SUBTEST: nonblocking-read
- * Description: Tests that nonblocking reading fails correctly
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 #define TEST_DPMS		(1 << 0)

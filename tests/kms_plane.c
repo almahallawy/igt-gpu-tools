@@ -39,6 +39,13 @@
 #include "xe/xe_query.h"
 
 /**
+ * SUBTEST: planar-pixel-format-settings
+ * Description: verify planar settings for pixel format are handled correctly
+ * Driver requirement: i915, xe
+ * Functionality: pixel_format, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
  * SUBTEST: plane-position-%s
  * Description: Verify plane position using two planes to create a %arg[1]
  * Driver requirement: i915, xe
@@ -94,15 +101,6 @@
  *
  * @format:
  * @format-source-clamping:          with source clamping
- */
-
-/**
- * SUBTEST: planar-pixel-format-settings
- * Description: verify planar settings for pixel format are handled correctly
- * Driver requirement: i915, xe
- * Functionality: pixel_format, plane
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 /*

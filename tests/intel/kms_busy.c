@@ -48,6 +48,32 @@
  * Functionality: kms_core, hang
  * Mega feature: General Display Features
  * Test category: functionality test
+ *
+ * SUBTEST: extended-pageflip-modeset-hang-oldfb
+ * Description: Test for basic check of KMS ABI with busy framebuffers.
+ * Driver requirement: i915
+ * Functionality: kms_core, hang
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: extended-pageflip-hang-%s
+ * Description: Test for basic check of KMS ABI with busy framebuffers.
+ * Driver requirement: i915
+ * Functionality: kms_core, hang
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: extended-modeset-hang-%s
+ * Description: Test for basic check of KMS ABI with busy framebuffers.
+ * Driver requirement: i915
+ * Functionality: kms_core, hang
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @newfb:                New framebuffer
+ * @oldfb:                Old framebuffer
  */
 
 /**
@@ -60,33 +86,8 @@
  *
  * arg[1]:
  *
- * @newfb:                New framebuffer
- * @oldfb:                Old framebuffer
  * @newfb-with-reset:     New framebuffer with reset
  * @oldfb-with-reset:     Old framebuffer with reset
- */
-
-/**
- * SUBTEST: extended-pageflip-hang-%s
- * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @newfb:     New framebuffer
- * @oldfb:     Old framebuffer
- */
-
-/**
- * SUBTEST: extended-pageflip-modeset-hang-oldfb
- * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 IGT_TEST_DESCRIPTION("Basic check of KMS ABI with busy framebuffers.");

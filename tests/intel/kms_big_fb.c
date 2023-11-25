@@ -141,40 +141,6 @@
  */
 
 /**
- * SUBTEST: %s-addfb-size-overflow
- * Description: Sanity check if addfb ioctl fails correctly for (%arg[1]) modifier
- *              with small bo.
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @4-tiled:    TILE-4
- * @x-tiled:    TILE-X
- * @y-tiled:    TILE-Y
- * @yf-tiled:   TILE-YF
- */
-
-/**
- * SUBTEST: %s-addfb-size-offset-overflow
- * Description: Sanity check if addfb ioctl fails correctly for (%arg[1]) modifier
- *              and offsets with small bo
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @4-tiled:    TILE-4
- * @x-tiled:    TILE-X
- * @y-tiled:    TILE-Y
- * @yf-tiled:   TILE-YF
- */
-
-/**
  * SUBTEST: linear-addfb
  * Description: Sanity check if addfb ioctl works correctly with Linear modifier
  *              for given size and strides of fb
@@ -186,6 +152,22 @@
  * SUBTEST: %s-addfb
  * Description: Sanity check if addfb ioctl works correctly with %arg[1] modifier
  *              for given size and strides of fb
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: %s-addfb-size-overflow
+ * Description: Sanity check if addfb ioctl fails correctly for (%arg[1]) modifier
+ *              with small bo.
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: %s-addfb-size-offset-overflow
+ * Description: Sanity check if addfb ioctl fails correctly for (%arg[1]) modifier
+ *              and offsets with small bo
  * Driver requirement: i915, xe
  * Functionality: big_fbs, kms_gem_interop, tiling
  * Mega feature: General Display Features

@@ -257,13 +257,6 @@
  * Mega feature: General Display Features
  * Test category: functionality test
  *
- * arg[1]:
- *
- * @atomic:
- * @legacy:
- */
-
-/**
  * SUBTEST: flip-vs-cursor-busy-crc-%s
  * Description: this test perform a busy bo update followed by a cursor update
  * Driver requirement: i915, xe

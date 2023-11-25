@@ -77,6 +77,13 @@
  * Functionality: plane, rotation, tiling
  * Mega feature: General Display Features
  * Test category: functionality test
+ *
+ * SUBTEST: exhaust-fences
+ * Description: This test intends to check for fence leaks exhaustively
+ * Driver requirement: i915
+ * Functionality: plane, rotation
+ * Mega feature: General Display Features
+ * Test category: functionality test
  */
 
 /**
@@ -140,15 +147,6 @@
  *
  * @bottom:   bottom
  * @top:      top
- */
-
-/**
- * SUBTEST: exhaust-fences
- * Description: This test intends to check for fence leaks exhaustively
- * Driver requirement: i915
- * Functionality: plane, rotation
- * Mega feature: General Display Features
- * Test category: functionality test
  */
 
 #define MAX_FENCES 32
