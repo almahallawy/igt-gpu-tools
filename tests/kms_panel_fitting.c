@@ -27,7 +27,7 @@
  * Category: Display
  * Description: Test display panel fitting
  * Driver requirement: i915, xe
- * Functionality: eDP, panel_fitting, scaling
+ * Functionality: eDP_core, panel_fitting, scaling
  * Mega feature: General Display Features
  * Test category: functionality test
  */

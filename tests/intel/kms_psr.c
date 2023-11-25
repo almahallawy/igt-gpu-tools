@@ -44,13 +44,13 @@
 /**
  * SUBTEST: psr_basic
  * Description: Basic check for psr if it is detecting changes made in planes
- * Functionality: psr
+ * Functionality: psr1
  *
  * SUBTEST: psr_%s_%s
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1]
  * Driver requirement: i915
- * Functionality: kms_core, plane, psr
+ * Functionality: kms_core, plane, psr1
  *
  * arg[1]:
  *
@@ -68,12 +68,12 @@
  * SUBTEST: psr_sprite_plane_move
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on sprite planes
- * Functionality: plane, psr
+ * Functionality: plane, psr1
  *
  * SUBTEST: psr_%s_%s
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1] planes
- * Functionality: kms_core, plane, psr
+ * Functionality: kms_core, plane, psr1
  *
  * arg[1]:
  *
@@ -91,7 +91,7 @@
  * SUBTEST: psr_primary_%s
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1] planes
- * Functionality: kms_core, psr
+ * Functionality: kms_core, psr1
  *
  * arg[1]:
  *
@@ -103,40 +103,40 @@
  * SUBTEST: psr_dpms
  * Description: Check if psr is detecting changes when rendering operation is
  *              performed  with dpms enabled or disabled
- * Functionality: dpms, psr
+ * Functionality: dpms, psr1
  *
  * SUBTEST: psr_no_drrs
  * Description: Check if psr is detecting changes when drrs is disabled
- * Functionality: drrs, psr
+ * Functionality: drrs, psr1
  *
  * SUBTEST: psr_suspend
  * Description: Check if psr is detecting changes when plane operation
  *              is performed with suspend resume cycles
- * Functionality: psr, suspend
+ * Functionality: psr1, suspend
  *
  * SUBTEST: psr2_dpms
  * Description: Check if psr is detecting changes when rendering operation
  *              is performed  with dpms enabled or disabled
- * Functionality: dpms, psr, psr2
+ * Functionality: dpms, psr2
  *
  * SUBTEST: psr2_no_drrs
  * Description: Check if psr is detecting changes when drrs is disabled
- * Functionality: drrs, psr, psr2
+ * Functionality: drrs, psr2
  *
  * SUBTEST: psr2_suspend
  * Description: Check if psr is detecting changes when plane operation is
  *              performed with suspend resume cycles
- * Functionality: psr, psr2, suspend
+ * Functionality: psr2, suspend
  *
  * SUBTEST: psr2_basic
  * Description: Basic check for psr if it is detecting changes made in planes
- * Functionality: psr, psr2
+ * Functionality: psr2
  *
  * SUBTEST: psr2_%s_%s
  * Description: Check if psr2 is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1] planes
  * Driver requirement: i915
- * Functionality: kms_core, plane, psr, psr2
+ * Functionality: kms_core, plane, psr2
  *
  * arg[1]:
  *
@@ -154,12 +154,12 @@
  * SUBTEST: psr2_primary_page_flip
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on primary planes
- * Functionality: plane, psr, psr2
+ * Functionality: plane, psr2
  *
  * SUBTEST: psr2_primary_%s
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on primary planes
- * Functionality: kms_core, plane, psr, psr2
+ * Functionality: kms_core, plane, psr2
  *
  * arg[1]:
  *
@@ -171,7 +171,7 @@
  * SUBTEST: psr2_%s_%s
  * Description: Check if psr is detecting memory mapping, rendering and plane
  *              operations performed on %arg[1] planes
- * Functionality: kms_core, plane, psr, psr2
+ * Functionality: kms_core, plane, psr2
  *
  * arg[1]:
  *
@@ -273,17 +273,17 @@
  * SUBTEST: psr_cursor_plane_move
  * Description: Check if psr is detecting the plane operations performed on
  *		cursor planes
- * Functionality: psr
+ * Functionality: psr1
  *
  * SUBTEST: psr_primary_page_flip
  * Description: Check if psr is detecting page-flipping operations performed
  *		on primary planes
- * Functionality: psr
+ * Functionality: psr1
  *
  * SUBTEST: psr_sprite_plane_onoff
  * Description: Check if psr is detecting the plane operations performed on
  *		sprite planes
- * Functionality: psr
+ * Functionality: psr1
  */
 
 enum operations {

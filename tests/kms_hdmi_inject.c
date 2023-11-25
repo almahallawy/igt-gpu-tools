@@ -51,7 +51,7 @@
  * SUBTEST: inject-audio
  * Description: Make sure that audio information exposed by ALSA match the forced
  *              EDID.
- * Functionality: audio, force_connector
+ * Functionality: hdmi_audio, force_connector
  */
 
 #define HDISPLAY_4K	3840

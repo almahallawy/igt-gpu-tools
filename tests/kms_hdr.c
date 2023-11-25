@@ -25,7 +25,6 @@
  * Category: Display
  * Description: Test HDR metadata interfaces and bpc switch
  * Driver requirement: i915, xe
- * Functionality: colorspace, hdr
  * Mega feature: HDR
  * Test category: functionality test
  */
@@ -39,31 +38,35 @@
 /**
  * SUBTEST: bpc-switch
  * Description: Tests switching between different display output bpc modes
+ * Functionality: colorspace
  *
  * SUBTEST: bpc-switch-dpms
  * Description: Tests switching between different display output bpc modes with dpms
- * Functionality: colorspace, dpms, hdr
+ * Functionality: colorspace, dpms
  *
  * SUBTEST: bpc-switch-suspend
  * Description: Tests switching between different display output bpc modes with suspend
- * Functionality: colorspace, hdr, suspend
+ * Functionality: colorspace, suspend
  *
  * SUBTEST: invalid-hdr
  * Description: Test to ensure HDR is not enabled on non-HDR panel
+ * Functionality: colorspace, static_hdr
  *
  * SUBTEST: invalid-metadata-sizes
  * Description: Tests invalid HDR metadata sizes
+ * Functionality: colorspace, static_hdr
  *
  * SUBTEST: static-toggle-dpms
  * Description: Tests static toggle with dpms
- * Functionality: colorspace, dpms, hdr
+ * Functionality: colorspace, dpms, static_hdr
  *
  * SUBTEST: static-toggle-suspend
  * Description: Tests static toggle with suspend
- * Functionality: colorspace, hdr, suspend
+ * Functionality: colorspace, static_hdr, suspend
  *
  * SUBTEST: static-%s
  * Description: Tests %arg[1].
+ * Functionality: colorspace, static_hdr
  *
  * arg[1]:
  *

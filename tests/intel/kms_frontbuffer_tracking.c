@@ -67,7 +67,7 @@
  *
  * SUBTEST: psr-%dp-rte
  * Description: Sanity test to enable PSR with %arg[1] panels.
- * Functionality: fbt, psr
+ * Functionality: fbt, psr1
  *
  * SUBTEST: fbcdrrs-%dp-rte
  * Description: Sanity test to enable FBC & DRRS with %arg[1] panels.
@@ -75,15 +75,15 @@
  *
  * SUBTEST: fbcpsr-%dp-rte
  * Description: Sanity test to enable FBC & PSR with %arg[1] panels.
- * Functionality: fbc, fbt, psr
+ * Functionality: fbc, fbt, psr1
  *
  * SUBTEST: psrdrrs-%dp-rte
  * Description: Sanity test to enable PSR & DRRS with %arg[1] panels.
- * Functionality: fbt, drrs, psr
+ * Functionality: fbt, drrs, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-rte
  * Description: Sanity test to enable FBC, PSR & DRRS with %arg[1] panels.
- * Functionality: fbc, fbt, drrs, psr
+ * Functionality: fbc, fbt, drrs, psr1
  *
  * arg[1].values:   1, 2
  */
@@ -99,7 +99,7 @@
  *
  * SUBTEST: psr-1p-offscren-pri-%s-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-1p-offscren-pri-%s-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
@@ -107,15 +107,15 @@
  *
  * SUBTEST: fbcpsr-1p-offscren-pri-%s-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-1p-offscren-pri-%s-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-1p-offscren-pri-%s-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1]:
  *
@@ -143,7 +143,7 @@
  * SUBTEST: psr-1p-offscren-pri-%s-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-1p-offscren-pri-%s-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
@@ -153,17 +153,17 @@
  * SUBTEST: fbcpsr-1p-offscren-pri-%s-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-1p-offscren-pri-%s-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-1p-offscren-pri-%s-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1]:
  *
@@ -191,7 +191,7 @@
  * SUBTEST: psr-%dp-primscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
@@ -201,17 +201,17 @@
  * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1].values:   1, 2
  *
@@ -239,7 +239,7 @@
  *
  * SUBTEST: psr-%dp-primscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
@@ -247,15 +247,15 @@
  *
  * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1].values:   1, 2
  *
@@ -283,7 +283,7 @@
  *
  * SUBTEST: psr-%dp-primscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
@@ -291,15 +291,15 @@
  *
  * SUBTEST: fbcpsr-%dp-primscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-%dp-primscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1].values:   1, 2
  *
@@ -324,7 +324,7 @@
  * SUBTEST: psr-%dp-primscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
@@ -334,17 +334,17 @@
  * SUBTEST: fbcpsr-%dp-primscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-%dp-primscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1].values:   1, 2
  *
@@ -366,7 +366,7 @@
  *
  * SUBTEST: psr-2p-scndscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
@@ -374,15 +374,15 @@
  *
  * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1]:
  *
@@ -411,7 +411,7 @@
  * SUBTEST: psr-2p-scndscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
@@ -421,17 +421,17 @@
  * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1]:
  *
@@ -457,7 +457,7 @@
  *
  * SUBTEST: psr-2p-scndscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
@@ -465,15 +465,15 @@
  *
  * SUBTEST: fbcpsr-2p-scndscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-2p-scndscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1]:
  *
@@ -496,7 +496,7 @@
  * SUBTEST: psr-2p-scndscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
@@ -506,17 +506,17 @@
  * SUBTEST: fbcpsr-2p-scndscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-2p-scndscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-pri-shrfb-draw-%s
  * Description: Draw a set of rectangles on the screen using the provided method
  * Driver requirement: i915
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1]:
  *
@@ -536,7 +536,7 @@
  *
  * SUBTEST: psr-%dp-pri-indfb-multidraw
  * Description: Draw a set of rectangles on the screen using alternated drawing methods
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-%dp-pri-indfb-multidraw
  * Description: Draw a set of rectangles on the screen using alternated drawing methods
@@ -544,15 +544,15 @@
  *
  * SUBTEST: fbcpsr-%dp-pri-indfb-multidraw
  * Description: Draw a set of rectangles on the screen using alternated drawing methods
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-%dp-pri-indfb-multidraw
  * Description: Draw a set of rectangles on the screen using alternated drawing methods
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-pri-indfb-multidraw
  * Description: Draw a set of rectangles on the screen using alternated drawing methods
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1].values:   1, 2
  */
@@ -568,7 +568,7 @@
  *
  * SUBTEST: psr-%s-draw-%s
  * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-%s-draw-%s
  * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
@@ -576,15 +576,15 @@
  *
  * SUBTEST: fbcpsr-%s-draw-%s
  * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-%s-draw-%s
  * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-%s-draw-%s
  * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1]:
  *
@@ -612,7 +612,7 @@
  * SUBTEST: psr-%s-draw-%s
  * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
  * Driver requirement: i915
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-%s-draw-%s
  * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
@@ -622,17 +622,17 @@
  * SUBTEST: fbcpsr-%s-draw-%s
  * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
  * Driver requirement: i915
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-%s-draw-%s
  * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
  * Driver requirement: i915
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-%s-draw-%s
  * Description: Test pixel formats (%arg[1]) that are not FORMAT_DEFAULT
  * Driver requirement: i915
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1]:
  *
@@ -653,7 +653,7 @@
  *
  * SUBTEST: psr-slowdraw
  * Description: Sleep a little bit between drawing operations with PSR
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-slowdraw
  * Description: Sleep a little bit between drawing operations with FBC & DRRS
@@ -661,15 +661,15 @@
  *
  * SUBTEST: fbcpsr-slowdraw
  * Description: Sleep a little bit between drawing operations with FBC & PSR
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-slowdraw
  * Description: Sleep a little bit between drawing operations with PSR & DRRS
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-slowdraw
  * Description: Sleep a little bit between drawing operations with FBC, PSR & DRRS
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  */
 
 /**
@@ -683,7 +683,7 @@
  *
  * SUBTEST: psr-%dp-primscrn-%s-%sflip-blt
  * Description: Just exercise page flips with the patterns we have
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-%s-%sflip-blt
  * Description: Just exercise page flips with the patterns we have
@@ -691,15 +691,15 @@
  *
  * SUBTEST: fbcpsr-%dp-primscrn-%s-%sflip-blt
  * Description: Just exercise page flips with the patterns we have
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-%dp-primscrn-%s-%sflip-blt
  * Description: Just exercise page flips with the patterns we have
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-%sflip-blt
  * Description: Just exercise page flips with the patterns we have
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1].values:   1, 2
  *
@@ -726,7 +726,7 @@
  *
  * SUBTEST: psr-2p-scndscrn-%s-%sflip-blt
  * Description: Just exercise page flips with the patterns we have
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-%s-%sflip-blt
  * Description: Just exercise page flips with the patterns we have
@@ -734,15 +734,15 @@
  *
  * SUBTEST: fbcpsr-2p-scndscrn-%s-%sflip-blt
  * Description: Just exercise page flips with the patterns we have
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-2p-scndscrn-%s-%sflip-blt
  * Description: Just exercise page flips with the patterns we have
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-%sflip-blt
  * Description: Just exercise page flips with the patterns we have
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1]:
  *
@@ -767,11 +767,11 @@
  *
  * SUBTEST: fbcpsr-%dp-%s-fliptrack-mmap-gtt
  * Description: Check if the hardware tracking works after page flips
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-%s-fliptrack-mmap-gtt
  * Description: Check if the hardware tracking works after page flips
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  *
  * arg[1].values:   1, 2
  *
@@ -792,7 +792,7 @@
  *
  * SUBTEST: psr-%dp-primscrn-%s-indfb-move
  * Description: Just move the %arg[2] around
- * Functionality: fbt, psr
+ * Functionality: fbt, psr1
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-move
  * Description: Just move the %arg[2] around
@@ -800,15 +800,15 @@
  *
  * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-move
  * Description: Just move the %arg[2] around
- * Functionality: fbc, fbt, psr
+ * Functionality: fbc, fbt, psr1
  *
  * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-move
  * Description: Just move the %arg[2] around
- * Functionality: drrs, fbt, psr
+ * Functionality: drrs, fbt, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-move
  * Description: Just move the %arg[2] around
- * Functionality: drrs, fbc, fbt, psr
+ * Functionality: drrs, fbc, fbt, psr1
  *
  * arg[1].values:   1, 2
  *
@@ -829,7 +829,7 @@
  *
  * SUBTEST: psr-2p-scndscrn-%s-indfb-move
  * Description: Just move the %arg[1] around
- * Functionality: fbt, psr
+ * Functionality: fbt, psr1
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-move
  * Description: Just move the %arg[1] around
@@ -837,15 +837,15 @@
  *
  * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-move
  * Description: Just move the %arg[1] around
- * Functionality: fbc, fbt, psr
+ * Functionality: fbc, fbt, psr1
  *
  * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-move
  * Description: Just move the %arg[1] around
- * Functionality: drrs, fbt, psr
+ * Functionality: drrs, fbt, psr1
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-move
  * Description: Just move the %arg[1] around
- * Functionality: drrs, fbc, fbt, psr
+ * Functionality: drrs, fbc, fbt, psr1
  *
  * arg[1]:
  *
@@ -864,7 +864,7 @@
  *
  * SUBTEST: psr-%dp-primscrn-%s-indfb-onoff
  * Description: Just enable and disable the %arg[2] a few times
- * Functionality: fbt, psr
+ * Functionality: fbt, psr1
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-%s-indfb-onoff
  * Description: Just enable and disable the %arg[2] a few times
@@ -872,15 +872,15 @@
  *
  * SUBTEST: fbcpsr-%dp-primscrn-%s-indfb-onoff
  * Description: Just enable and disable the %arg[2] a few times
- * Functionality: fbc, fbt, psr
+ * Functionality: fbc, fbt, psr1
  *
  * SUBTEST: psrdrrs-%dp-primscrn-%s-indfb-onoff
  * Description: Just enable and disable the %arg[2] a few times
- * Functionality: drrs, fbt, psr
+ * Functionality: drrs, fbt, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-%s-indfb-onoff
  * Description: Just enable and disable the %arg[2] a few times
- * Functionality: drrs, fbc, fbt, psr
+ * Functionality: drrs, fbc, fbt, psr1
  *
  * arg[1].values:   1, 2
  *
@@ -901,7 +901,7 @@
  *
  * SUBTEST: psr-2p-scndscrn-%s-indfb-onoff
  * Description: Just enable and disable the %arg[1] a few times
- * Functionality: fbt, psr
+ * Functionality: fbt, psr1
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-%s-indfb-onoff
  * Description: Just enable and disable the %arg[1] a few times
@@ -909,15 +909,15 @@
  *
  * SUBTEST: fbcpsr-2p-scndscrn-%s-indfb-onoff
  * Description: Just enable and disable the %arg[1] a few times
- * Functionality: fbc, fbt, psr
+ * Functionality: fbc, fbt, psr1
  *
  * SUBTEST: psrdrrs-2p-scndscrn-%s-indfb-onoff
  * Description: Just enable and disable the %arg[1] a few times
- * Functionality: drrs, fbt, psr
+ * Functionality: drrs, fbt, psr1
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-%s-indfb-onoff
  * Description: Just enable and disable the %arg[1] a few times
- * Functionality: drrs, fbc, fbt, psr
+ * Functionality: drrs, fbc, fbt, psr1
  *
  * arg[1]:
  *
@@ -936,7 +936,7 @@
  *
  * SUBTEST: psr-%dp-primscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
- * Functionality: fbt, psr
+ * Functionality: fbt, psr1
  *
  * SUBTEST: fbcdrrs-%dp-primscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
@@ -944,15 +944,15 @@
  *
  * SUBTEST: fbcpsr-%dp-primscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
- * Functionality: fbc, fbt, psr
+ * Functionality: fbc, fbt, psr1
  *
  * SUBTEST: psrdrrs-%dp-primscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
- * Functionality: drrs, fbt, psr
+ * Functionality: drrs, fbt, psr1
  *
  * SUBTEST: fbcpsrdrrs-%dp-primscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
- * Functionality: drrs, fbc, fbt, psr
+ * Functionality: drrs, fbc, fbt, psr1
  *
  * SUBTEST: drrs-2p-scndscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
@@ -964,7 +964,7 @@
  *
  * SUBTEST: psr-2p-scndscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
- * Functionality: fbt, psr
+ * Functionality: fbt, psr1
  *
  * SUBTEST: fbcdrrs-2p-scndscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
@@ -972,15 +972,15 @@
  *
  * SUBTEST: fbcpsr-2p-scndscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
- * Functionality: fbc, fbt, psr
+ * Functionality: fbc, fbt, psr1
  *
  * SUBTEST: psrdrrs-2p-scndscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
- * Functionality: drrs, fbt, psr
+ * Functionality: drrs, fbt, psr1
  *
  * SUBTEST: fbcpsrdrrs-2p-scndscrn-spr-indfb-fullscreen
  * Description: Put a fullscreen plane covering the whole screen
- * Functionality: drrs, fbc, fbt, psr
+ * Functionality: drrs, fbc, fbt, psr1
  *
  * arg[1].values:   1, 2
  */
@@ -996,7 +996,7 @@
  *
  * SUBTEST: psr-%s-scaledprimary
  * Description: Try different primary plane scaling strategies
- * Functionality: fbt, psr, scaling
+ * Functionality: fbt, psr1, scaling
  *
  * SUBTEST: fbcdrrs-%s-scaledprimary
  * Description: Try different primary plane scaling strategies
@@ -1004,15 +1004,15 @@
  *
  * SUBTEST: fbcpsr-%s-scaledprimary
  * Description: Try different primary plane scaling strategies
- * Functionality: fbc, fbt, psr, scaling
+ * Functionality: fbc, fbt, psr1, scaling
  *
  * SUBTEST: psrdrrs-%s-scaledprimary
  * Description: Try different primary plane scaling strategies
- * Functionality: drrs, fbt, psr, scaling
+ * Functionality: drrs, fbt, psr1, scaling
  *
  * SUBTEST: fbcpsrdrrs-%s-scaledprimary
  * Description: Try different primary plane scaling strategies
- * Functionality: drrs, fbc, fbt, psr, scaling
+ * Functionality: drrs, fbc, fbt, psr1, scaling
  *
  * arg[1]:
  *
@@ -1031,7 +1031,7 @@
  *
  * SUBTEST: psr-modesetfrombusy
  * Description: Modeset from a busy buffer to a non-busy buffer with PSR
- * Functionality: fbt, psr, scaling
+ * Functionality: fbt, psr1, scaling
  *
  * SUBTEST: fbcdrrs-modesetfrombusy
  * Description: Modeset from a busy buffer to a non-busy buffer with FBC & DRRS
@@ -1039,15 +1039,15 @@
  *
  * SUBTEST: fbcpsr-modesetfrombusy
  * Description: Modeset from a busy buffer to a non-busy buffer with FBC & PSR
- * Functionality: fbc, fbt, psr, scaling
+ * Functionality: fbc, fbt, psr1, scaling
  *
  * SUBTEST: psrdrrs-modesetfrombusy
  * Description: Modeset from a busy buffer to a non-busy buffer with PSR & DRRS
- * Functionality: drrs, fbt, psr, scaling
+ * Functionality: drrs, fbt, psr1, scaling
  *
  * SUBTEST: fbcpsrdrrs-modesetfrombusy
  * Description: Modeset from a busy buffer to a non-busy buffer with FBC, PSR & DRRS
- * Functionality: drrs, fbc, fbt, psr, scaling
+ * Functionality: drrs, fbc, fbt, psr1, scaling
  */
 
 /**
@@ -1061,7 +1061,7 @@
  *
  * SUBTEST: psr-suspend
  * Description: Make sure suspend/resume keeps us on the same state of PSR
- * Functionality: fbt, psr, suspend
+ * Functionality: fbt, psr1, suspend
  *
  * SUBTEST: fbcdrrs-suspend
  * Description: Make sure suspend/resume keeps us on the same state of FBC & DRRS
@@ -1069,15 +1069,15 @@
  *
  * SUBTEST: fbcpsr-suspend
  * Description: Make sure suspend/resume keeps us on the same state of FBC & PSR
- * Functionality: fbc, fbt, psr, suspend
+ * Functionality: fbc, fbt, psr1, suspend
  *
  * SUBTEST: psrdrrs-suspend
  * Description: Make sure suspend/resume keeps us on the same state of PSR & DRRS
- * Functionality: drrs, fbt, psr, suspend
+ * Functionality: drrs, fbt, psr1, suspend
  *
  * SUBTEST: fbcpsrdrrs-suspend
  * Description: Make sure suspend/resume keeps us on the same state of FBC, PSR & DRRS
- * Functionality: drrs, fbc, fbt, psr, suspend
+ * Functionality: drrs, fbc, fbt, psr1, suspend
  */
 
 /**
@@ -1094,7 +1094,7 @@
  * SUBTEST: psr-farfromfence-mmap-gtt
  * Description: Test drawing as far from the fence start as possible
  * Driver requirement: i915
- * Functionality: fbt, kms_core, psr
+ * Functionality: fbt, kms_core, psr1
  *
  * SUBTEST: fbcdrrs-farfromfence-mmap-gtt
  * Description: Test drawing as far from the fence start as possible
@@ -1104,17 +1104,17 @@
  * SUBTEST: fbcpsr-farfromfence-mmap-gtt
  * Description: Test drawing as far from the fence start as possible
  * Driver requirement: i915
- * Functionality: fbc, fbt, kms_core, psr
+ * Functionality: fbc, fbt, kms_core, psr1
  *
  * SUBTEST: psrdrrs-farfromfence-mmap-gtt
  * Description: Test drawing as far from the fence start as possible
  * Driver requirement: i915
- * Functionality: drrs, fbt, kms_core, psr
+ * Functionality: drrs, fbt, kms_core, psr1
  *
  * SUBTEST: fbcpsrdrrs-farfromfence-mmap-gtt
  * Description: Test drawing as far from the fence start as possible
  * Driver requirement: i915
- * Functionality: drrs, fbc, fbt, kms_core, psr
+ * Functionality: drrs, fbc, fbt, kms_core, psr1
  */
 
 /**
@@ -1128,11 +1128,11 @@
  *
  * SUBTEST: fbcpsr-stridechange
  * Description: Change the frontbuffer stride by doing a modeset
- * Functionality: fbc, fbt, psr
+ * Functionality: fbc, fbt, psr1
  *
  * SUBTEST: fbcpsrdrrs-stridechange
  * Description: Change the frontbuffer stride by doing a modeset
- * Functionality: drrs, fbc, fbt, psr
+ * Functionality: drrs, fbc, fbt, psr1
  */
 
 /**
@@ -1149,12 +1149,12 @@
  * SUBTEST: fbcpsr-tiling-%s
  * Description: Test %arg[1] formats, if the tiling format supports FBC do the
  *              basic drawing test, else set the mode & test if FBC is disabled
- * Functionality: fbc, fbt, psr, tiling
+ * Functionality: fbc, fbt, psr1, tiling
  *
  * SUBTEST: fbcpsrdrrs-tiling-%s
  * Description: Test %arg[1] formats, if the tiling format supports FBC do the
  *              basic drawing test, else set the mode & test if FBC is disabled
- * Functionality: drrs, fbc, fbt, psr, tiling
+ * Functionality: drrs, fbc, fbt, psr1, tiling
  *
  * arg[1]:
  *

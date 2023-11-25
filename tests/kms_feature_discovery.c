@@ -57,12 +57,12 @@
  *
  * SUBTEST: psr1
  * Description: Make sure that we have eDP panel with PSR1 support.
- * Functionality: feature_discovery, psr1, eDP
+ * Functionality: feature_discovery, psr1, eDP_core
  * Mega feature: PSR
  *
  * SUBTEST: psr2
  * Description: Make sure that we have eDP panel with PSR2 support.
- * Functionality: feature_discovery, psr2, eDP
+ * Functionality: feature_discovery, psr2, eDP_core
  * Mega feature: PSR
  *
  * SUBTEST: dp-mst

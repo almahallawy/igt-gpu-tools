@@ -64,7 +64,7 @@
  *
  * SUBTEST: dc5-psr
  * Description: This test validates display engine entry to DC5 state while PSR is active
- * Functionality: pm_dc, psr
+ * Functionality: pm_dc, psr1
  *
  * SUBTEST: dc6-dpms
  * Description: Validate display engine entry to DC6 state while all connectors's
@@ -72,7 +72,7 @@
  *
  * SUBTEST: dc6-psr
  * Description: This test validates display engine entry to DC6 state while PSR is active
- * Functionality: pm_dc, psr
+ * Functionality: pm_dc, psr1
  *
  * SUBTEST: dc9-dpms
  * Description: This test validates display engine entry to DC9 state

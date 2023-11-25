@@ -57,13 +57,13 @@
  * SUBTEST: psr
  * Description: Test the relationship between fbcon and the frontbuffer tracking
  *              infrastructure with psr enabled.
- * Functionality: fbcon, fbt, psr
+ * Functionality: fbcon, fbt, psr1
  * Mega feature: PSR
  *
  * SUBTEST: psr-suspend
  * Description: Suspend test to validate the relationship between fbcon and the
  *              frontbuffer tracking infrastructure with psr enabled.
- * Functionality: fbcon, fbt, psr, suspend
+ * Functionality: fbcon, fbt, psr1, suspend
  * Mega feature: PSR
  */
 
