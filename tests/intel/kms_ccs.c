@@ -30,7 +30,7 @@
  *              uses to interpret the compressed data.
  * Driver requirement: i915, xe
  * Functionality: ccs, tiling
- * Mega feature: General Display Features
+ * Mega feature: E2E Compression
  * Test category: functionality test
  */
 

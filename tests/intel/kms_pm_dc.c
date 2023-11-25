@@ -28,7 +28,7 @@
  * Description: Tests to validate display power DC states.
  * Driver requirement: i915, xe
  * Functionality: dpms, pm_dc
- * Mega feature: Display Power
+ * Mega feature: Display Power Management
  * Test category: functionality test
  */
 

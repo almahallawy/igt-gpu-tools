@@ -28,7 +28,7 @@
  * Description: Test Color Features at Pipe level using Chamelium to verify instead of CRC
  * Driver requirement: i915, xe
  * Functionality: chamelium, colorspace
- * Mega feature: Color mgmt
+ * Mega feature: Color Management
  * Test category: functionality test
  */
 

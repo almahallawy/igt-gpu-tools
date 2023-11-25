@@ -28,7 +28,7 @@
  * Description: Test Color Features at Pipe level
  * Driver requirement: i915, xe
  * Functionality: colorspace
- * Mega feature: Color mgmt
+ * Mega feature: Color Management
  * Test category: functionality test
  */
 

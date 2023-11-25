@@ -31,7 +31,7 @@
  * Description: Basic backlight sysfs test
  * Driver requirement: i915, xe
  * Functionality: backlight
- * Mega feature: Display Power
+ * Mega feature: Display Power Management
  * Test category: functionality test
  */
 
