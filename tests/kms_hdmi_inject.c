@@ -22,6 +22,14 @@
  *
  */
 
+/**
+ * TEST: kms hdmi inject
+ * Category: Display
+ * Description: Test that in-kernel EDID parsing is producing expected results
+ *              by forcing a HDMI connector with a known EDID and checking that
+ *              the metadata exposed to user space matches.
+ */
+
 #include "config.h"
 
 #include <dirent.h>
@@ -32,12 +40,6 @@
 #include "xe/xe_query.h"
 
 /**
- * TEST: kms hdmi inject
- * Category: Display
- * Description: Test that in-kernel EDID parsing is producing expected results
- *              by forcing a HDMI connector with a known EDID and checking that
- *              the metadata exposed to user space matches.
- *
  * SUBTEST: inject-4k
  * Description: Make sure that 4K modes exposed by DRM match the forced EDID and
  *              modesetting using it succeed.

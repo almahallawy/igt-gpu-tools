@@ -27,6 +27,7 @@
  * Category: Display
  * Description: Test flipping between scaled/nonscaled framebuffers
  */
+
 #include "igt.h"
 
 /**

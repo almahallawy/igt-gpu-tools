@@ -36,35 +36,6 @@
 #include <string.h>
 #include <fcntl.h>
 
-static bool extended;
-static enum pipe active_pipes[IGT_MAX_PIPES];
-static uint32_t last_pipe;
-
-typedef struct {
-	int drm_fd;
-	int debugfs;
-	igt_display_t display;
-	struct igt_fb fb;
-} data_t;
-
-static struct {
-	double r, g, b;
-	igt_crc_t crc;
-} colors[2] = {
-	{ .r = 0.0, .g = 1.0, .b = 0.0 },
-	{ .r = 0.0, .g = 1.0, .b = 1.0 },
-};
-
-static bool simulation_constraint(enum pipe pipe)
-{
-	if (igt_run_in_simulation() && !extended &&
-	    pipe != active_pipes[0] &&
-	    pipe != active_pipes[last_pipe])
-		return true;
-
-	return false;
-}
-
 /**
  * SUBTEST: bad-source
  * Description: Tests error handling when the bad source is set.
@@ -72,29 +43,7 @@ static bool simulation_constraint(enum pipe pipe)
  * Functionality: crc
  * Mega feature: General Display Features
  * Test category: functionality test
- */
-static void test_bad_source(data_t *data)
-{
-	errno = 0;
-	if (igt_sysfs_set(data->debugfs, "crtc-0/crc/control", "foo")) {
-		igt_assert(openat(data->debugfs, "crtc-0/crc/data", O_WRONLY) == -1);
-		igt_skip_on(errno == EIO);
-	}
-
-	igt_assert_eq(errno, EINVAL);
-}
-
-#define N_CRCS	3
-
-enum {
-	TEST_BASIC = 0,
-	TEST_SEQUENCE = 1 << 0,
-	TEST_NONBLOCK = 1 << 1,
-	TEST_SUSPEND = 1 << 2,
-	TEST_HANG = 1 << 3,
-};
-
-/**
+ *
  * SUBTEST: read-crc
  * Description: Test for pipe CRC reads
  * Driver requirement: i915, xe
@@ -137,6 +86,81 @@ enum {
  * Functionality: crc, hang
  * Mega feature: General Display Features
  */
+
+/**
+ * SUBTEST: compare-crc-sanitycheck-%s
+ * Description: Basic sanity check for CRC mismatches with %arg[1]
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: crc, pixel_format
+ * Mega feature: General Display Features
+ *
+ * arg[1]:
+ *
+ * @xr24:	XR24 format
+ * @nv12:	NV12 format
+ */
+
+/**
+ * SUBTEST: disable-crc-after-crtc
+ * Description: Check that disabling CRCs on a CRTC after having disabled the
+ *              CRTC does not cause issues.
+ * Driver requirement: i915, xe
+ * Functionality: crc
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
+
+static bool extended;
+static enum pipe active_pipes[IGT_MAX_PIPES];
+static uint32_t last_pipe;
+
+typedef struct {
+	int drm_fd;
+	int debugfs;
+	igt_display_t display;
+	struct igt_fb fb;
+} data_t;
+
+static struct {
+	double r, g, b;
+	igt_crc_t crc;
+} colors[2] = {
+	{ .r = 0.0, .g = 1.0, .b = 0.0 },
+	{ .r = 0.0, .g = 1.0, .b = 1.0 },
+};
+
+static bool simulation_constraint(enum pipe pipe)
+{
+	if (igt_run_in_simulation() && !extended &&
+	    pipe != active_pipes[0] &&
+	    pipe != active_pipes[last_pipe])
+		return true;
+
+	return false;
+}
+
+static void test_bad_source(data_t *data)
+{
+	errno = 0;
+	if (igt_sysfs_set(data->debugfs, "crtc-0/crc/control", "foo")) {
+		igt_assert(openat(data->debugfs, "crtc-0/crc/data", O_WRONLY) == -1);
+		igt_skip_on(errno == EIO);
+	}
+
+	igt_assert_eq(errno, EINVAL);
+}
+
+#define N_CRCS	3
+
+enum {
+	TEST_BASIC = 0,
+	TEST_SEQUENCE = 1 << 0,
+	TEST_NONBLOCK = 1 << 1,
+	TEST_SUSPEND = 1 << 2,
+	TEST_HANG = 1 << 3,
+};
+
 static void test_read_crc(data_t *data, enum pipe pipe,
 			  igt_output_t *output, unsigned flags)
 {
@@ -234,20 +258,6 @@ static void test_read_crc(data_t *data, enum pipe pipe,
 	igt_display_commit(display);
 }
 
-/**
- * SUBTEST: compare-crc-sanitycheck-%s
- * Description: Basic sanity check for CRC mismatches with %arg[1]
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: crc, pixel_format
- * Mega feature: General Display Features
- *
- * arg[1]:
- *
- * @xr24:	XR24 format
- * @nv12:	NV12 format
- */
-
 /*
  * CRC-sanity test, to make sure there would be no CRC mismatches
  *
@@ -313,15 +323,6 @@ static void test_compare_crc(data_t *data, enum pipe pipe, igt_output_t *output,
 	igt_remove_fb(data->drm_fd, &fb1);
 }
 
-/**
- * SUBTEST: disable-crc-after-crtc
- * Description: Check that disabling CRCs on a CRTC after having disabled the
- *              CRTC does not cause issues.
- * Driver requirement: i915, xe
- * Functionality: crc
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void test_disable_crc_after_crtc(data_t *data, enum pipe pipe,
 					igt_output_t *output)
 {

@@ -22,6 +22,12 @@
  *
  */
 
+/**
+ * TEST: kms psr2 su
+ * Category: Display
+ * Description: Test PSR2 selective update
+ */
+
 #include "igt.h"
 #include "igt_sysfs.h"
 #include "igt_psr.h"
@@ -30,11 +36,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/timerfd.h>
+
 /**
- * TEST: kms psr2 su
- * Category: Display
- * Description: Test PSR2 selective update
- *
  * SUBTEST: frontbuffer-XRGB8888
  * Description: Test that selective update works when screen changes
  * Driver requirement: i915, xe

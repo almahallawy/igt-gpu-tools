@@ -3,6 +3,16 @@
  * Copyright © 2023 Intel Corporation
  */
 
+/**
+ * TEST: kms dirtyfb
+ * Category: Display
+ * Description: Test DIRTYFB ioctl functionality.
+ * Driver requirement: i915, xe
+ * Functionality: dirtyfb
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
+
 #include <sys/types.h>
 
 #include "igt.h"
@@ -13,18 +23,7 @@
 
 #include "xe/xe_query.h"
 
-IGT_TEST_DESCRIPTION("Test the DIRTYFB ioctl is working properly with "
-		     "its related features: FBC, PSR and DRRS");
-
 /**
- * TEST: kms dirtyfb
- * Category: Display
- * Description: Test DIRTYFB ioctl functionality.
- * Driver requirement: i915, xe
- * Functionality: dirtyfb
- * Mega feature: General Display Features
- * Test category: functionality test
- *
  * SUBTEST: default-dirtyfb-ioctl
  * Description: Test DIRTYFB ioctl is working properly using GPU
  *              frontbuffer rendering with features like FBC, PSR
@@ -41,6 +40,9 @@ IGT_TEST_DESCRIPTION("Test the DIRTYFB ioctl is working properly with "
  * @fbc:     fbc
  * @psr:     psr1
  */
+
+IGT_TEST_DESCRIPTION("Test the DIRTYFB ioctl is working properly with "
+		     "its related features: FBC, PSR and DRRS");
 
 #ifndef PAGE_ALIGN
 #ifndef PAGE_SIZE

@@ -24,6 +24,12 @@
  *
  */
 
+/**
+ * TEST: kms pm lpsp
+ * Description: These tests validates display Low Power Single Pipe configurations
+ * Category: Display
+ */
+
 #include "igt.h"
 #include "igt_kmod.h"
 #include "igt_pm.h"
@@ -32,11 +38,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+
 /**
- * TEST: kms pm lpsp
- * Description: These tests validates display Low Power Single Pipe configurations
- * Category: Display
- *
  * SUBTEST: kms-lpsp
  * Description: This test validates lpsp on all connected outputs on low power pipes
  * Driver requirement: i915, xe

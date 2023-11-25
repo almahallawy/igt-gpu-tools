@@ -22,6 +22,15 @@
  *
  */
 
+/**
+ * TEST: kms writeback
+ * Category: Display
+ * Description: This test validates the expected behavior of the writeback
+ *              connectors feature by checking if the target device support
+ *              writeback; it validates bad and good combination, check color
+ *              format, and check the output result by using CRC.
+ */
+
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -32,14 +41,8 @@
 #include "igt_core.h"
 #include "igt_fb.h"
 #include "sw_sync.h"
+
 /**
- * TEST: kms writeback
- * Category: Display
- * Description: This test validates the expected behavior of the writeback
- *              connectors feature by checking if the target device support
- *              writeback; it validates bad and good combination, check color
- *              format, and check the output result by using CRC.
- *
  * SUBTEST: writeback-check-output-XRGB2101010
  * Description: Check XRGB2101010 writeback output with CRC validation
  * Functionality: kms_core

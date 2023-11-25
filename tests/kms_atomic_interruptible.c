@@ -26,11 +26,61 @@
  * Category: Display
  * Description: Tests that interrupt various atomic ioctls.
  */
+
 #include <signal.h>
 
 #include "igt.h"
 #include "drmtest.h"
 #include "sw_sync.h"
+
+/**
+ * SUBTEST: %s-setmode
+ * Description: Tests the interrupt properties of %arg[1] modeset
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @atomic:      atomic
+ * @legacy:      legacy
+ */
+
+/**
+ * SUBTEST: legacy-cursor
+ * Description: Tests the interrupt properties for Cursor
+ * Driver requirement: i915, xe
+ * Functionality: cursor, kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: legacy-dpms
+ * Description: Tests the interrupt properties for DPMS
+ * Driver requirement: i915, xe
+ * Functionality: dpms, kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: legacy-pageflip
+ * Description: Tests the interrupt properties for page flip
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: universal-setplane-%s
+ * Description: Tests the interrupt properties for %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @cursor:         Cursor plane
+ * @primary:        Primary plane
+ */
 
 IGT_TEST_DESCRIPTION("Tests that interrupt various atomic ioctls.");
 
@@ -79,56 +129,6 @@ static drmEventContext drm_events = {
 	.page_flip_handler = ev_page_flip
 };
 
-/**
- * SUBTEST: %s-setmode
- * Description: Tests the interrupt properties of %arg[1] modeset
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @atomic:      atomic
- * @legacy:      legacy
- */
-
-/**
- * SUBTEST: legacy-cursor
- * Description: Tests the interrupt properties for Cursor
- * Driver requirement: i915, xe
- * Functionality: cursor, kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: legacy-dpms
- * Description: Tests the interrupt properties for DPMS
- * Driver requirement: i915, xe
- * Functionality: dpms, kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: legacy-pageflip
- * Description: Tests the interrupt properties for page flip
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- */
-
-/**
- * SUBTEST: universal-setplane-%s
- * Description: Tests the interrupt properties for %arg[1]
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @cursor:         Cursor plane
- * @primary:        Primary plane
- */
 static void run_plane_test(igt_display_t *display, enum pipe pipe, igt_output_t *output,
 			   enum plane_test_type test_type, unsigned plane_type)
 {

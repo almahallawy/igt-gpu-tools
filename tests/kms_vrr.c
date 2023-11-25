@@ -20,15 +20,18 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "igt.h"
-#include "sw_sync.h"
-#include <fcntl.h>
-#include <signal.h>
 /**
  * TEST: kms vrr
  * Category: Display
  * Description: Test to validate diffent features of VRR
- *
+ */
+
+#include "igt.h"
+#include "sw_sync.h"
+#include <fcntl.h>
+#include <signal.h>
+
+/**
  * SUBTEST: flip-basic
  * Description: Tests that VRR is enabled and that the difference between flip
  *              timestamps converges to the requested rate

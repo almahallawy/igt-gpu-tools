@@ -20,16 +20,19 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/**
+ * TEST: kms bw
+ * Category: Display
+ * Description: BW test with different resolutions
+ */
+
 #include "drm_mode.h"
 #include "igt.h"
 #include "drm.h"
 #include <stdio.h>
 #include <xf86drmMode.h>
+
 /**
- * TEST: kms bw
- * Category: Display
- * Description: BW test with different resolutions
- *
  * SUBTEST: linear-tiling-%d-displays-%s
  * Description: bw test with %arg[2]
  * Driver requirement: i915, xe

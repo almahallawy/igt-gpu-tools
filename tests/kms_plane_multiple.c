@@ -27,6 +27,7 @@
  * Category: Display
  * Description: Test atomic mode setting with multiple planes.
  */
+
 #include "igt.h"
 #include "drmtest.h"
 #include <errno.h>
@@ -34,6 +35,33 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
+/**
+ * SUBTEST: tiling-none
+ * Description: Check that the kernel handles atomic updates of multiple planes
+ *              correctly by changing their geometry and making sure the changes
+ *              are reflected immediately after each commit.
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: tiling-%s
+ * Description: Check that the kernel handles atomic updates of multiple planes
+ *              correctly by changing their geometry and making sure the changes
+ *              are reflected immediately after each commit.
+ * Driver requirement: i915, xe
+ * Functionality: plane, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @4:           4-tiling
+ * @x:           x-tiling
+ * @y:           y-tiling
+ * @yf:          yf-tiling
+ */
 
 IGT_TEST_DESCRIPTION("Test atomic mode setting with multiple planes.");
 
@@ -378,32 +406,6 @@ test_plane_position(data_t *data, enum pipe pipe, igt_output_t *output, uint64_t
 					n_planes, modifier);
 }
 
-/**
- * SUBTEST: tiling-none
- * Description: Check that the kernel handles atomic updates of multiple planes
- *              correctly by changing their geometry and making sure the changes
- *              are reflected immediately after each commit.
- * Driver requirement: i915, xe
- * Functionality: plane
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: tiling-%s
- * Description: Check that the kernel handles atomic updates of multiple planes
- *              correctly by changing their geometry and making sure the changes
- *              are reflected immediately after each commit.
- * Driver requirement: i915, xe
- * Functionality: plane, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @4:           4-tiling
- * @x:           x-tiling
- * @y:           y-tiling
- * @yf:          yf-tiling
- */
 static void run_test(data_t *data, uint64_t modifier)
 {
 	enum pipe pipe;

@@ -21,6 +21,13 @@
  * IN THE SOFTWARE.
  */
 
+/**
+ * TEST: kms rmfb
+ * Category: Display
+ * Description: This tests rmfb and close-fd behavior. In these casesthe
+ *              framebuffers should be removed from the crtc.
+ */
+
 #include "igt.h"
 #include "drmtest.h"
 #include <errno.h>
@@ -28,12 +35,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
 /**
- * TEST: kms rmfb
- * Category: Display
- * Description: This tests rmfb and close-fd behavior. In these casesthe
- *              framebuffers should be removed from the crtc.
- *
  * SUBTEST: close-fd
  * Description: RMFB is supposed to free the framebuffers from any and all planes
  *              so test this and make sure it works with fd close and reopen.

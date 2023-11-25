@@ -20,13 +20,15 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "igt.h"
-
 /**
  * TEST: kms plane cursor
  * Category: Display
  * Description: Tests cursor interactions with primary and overlay planes.
- *
+ */
+
+#include "igt.h"
+
+/**
  * SUBTEST: overlay
  * Description: Tests atomic cursor positioning on primary plane and overlay plane
  * Driver requirement: i915, xe

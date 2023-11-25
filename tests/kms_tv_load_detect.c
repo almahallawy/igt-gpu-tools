@@ -22,12 +22,15 @@
  *
  */
 
-#include "igt.h"
 /**
  * TEST: kms tv load detect
  * Category: Display
  * Description: Test to check tv load detection.
- *
+ */
+
+#include "igt.h"
+
+/**
  * SUBTEST: load-detect
  * Description: Check tv load detection works correctly.
  * Driver requirement: i915, xe

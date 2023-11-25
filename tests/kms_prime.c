@@ -21,6 +21,12 @@
  * IN THE SOFTWARE.
  */
 
+/**
+ * TEST: kms prime
+ * Category: Display
+ * Description: Prime tests, focusing on KMS side
+ */
+
 #include "igt.h"
 #include "igt_device.h"
 #include "igt_debugfs.h"
@@ -30,11 +36,8 @@
 #include <sys/ioctl.h>
 #include <sys/poll.h>
 #include <time.h>
+
 /**
- * TEST: kms prime
- * Category: Display
- * Description: Prime tests, focusing on KMS side
- *
  * SUBTEST: D3hot
  * Description: Validate pci state of dGPU when dGPU is idle and  scanout is on iGPU
  * Driver requirement: i915, xe

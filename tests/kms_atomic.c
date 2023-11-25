@@ -48,6 +48,94 @@
 #include "igt_aux.h"
 #include "sw_sync.h"
 
+/**
+ * SUBTEST: plane-primary-overlay-mutable-zpos
+ * Description: Verify that the overlay plane can cover the primary one (and
+ *              vice versa) by changing their zpos property.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: plane-immutable-zpos
+ * Description: Verify the reported zpos property of planes by making sure only
+ *              higher zpos planes cover the lower zpos ones.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: plane-%s-legacy
+ * Description: Test for KMS atomic modesetting on %arg[1] and ensure coherency
+ *              between legacy and atomic interfaces.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @cursor:         Cursor plane
+ * @overlay:        Overlay plane
+ * @primary:        Primary plane
+ */
+
+/**
+ * SUBTEST: test-only
+ * Description: Test to ensure that DRM_MODE_ATOMIC_TEST_ONLY really only touches
+ *              the free-standing state objects and nothing else.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
+
+/**
+ * SUBTEST: plane-invalid-%s
+ * Description: Test error handling when invalid %arg[1] are passed
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @params:           plane parameters
+ * @params-fence:     plane fence parameters
+ */
+
+/**
+ * SUBTEST: crtc-invalid-%s
+ * Description: Test error handling when invalid %arg[1] are passed
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @params:           crtc parameters
+ * @params-fence:     crtc fence parameters
+ */
+
+/**
+ * SUBTEST: atomic-invalid-params
+ * Description: Test abuse the atomic ioctl directly in order to test various
+ *              invalid conditions which the libdrm wrapper won't allow us to
+ *              create.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: atomic-plane-damage
+ * Description: Simple test cases to use FB_DAMAGE_CLIPS plane property
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
+
 #ifndef DRM_CAP_CURSOR_WIDTH
 #define DRM_CAP_CURSOR_WIDTH 0x8
 #endif
@@ -302,15 +390,6 @@ static uint32_t plane_get_igt_format(igt_plane_t *plane)
 	return 0;
 }
 
-/**
- * SUBTEST: plane-primary-overlay-mutable-zpos
- * Description: Verify that the overlay plane can cover the primary one (and
- *              vice versa) by changing their zpos property.
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void
 plane_primary_overlay_mutable_zpos(data_t *data, igt_output_t *output, igt_plane_t *overlay,
 				   uint32_t format_primary, uint32_t format_overlay)
@@ -392,15 +471,6 @@ plane_primary_overlay_mutable_zpos(data_t *data, igt_output_t *output, igt_plane
 	igt_assert_eq_u64(igt_plane_get_prop(overlay, IGT_PLANE_ZPOS), 1);
 }
 
-/**
- * SUBTEST: plane-immutable-zpos
- * Description: Verify the reported zpos property of planes by making sure only
- *              higher zpos planes cover the lower zpos ones.
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void
 plane_immutable_zpos(data_t *data, igt_output_t *output, enum pipe pipe, int n_planes)
 {
@@ -530,21 +600,6 @@ plane_immutable_zpos(data_t *data, igt_output_t *output, enum pipe pipe, int n_p
 	igt_remove_fb(data->drm_fd, &fb_upper);
 }
 
-/**
- * SUBTEST: plane-%s-legacy
- * Description: Test for KMS atomic modesetting on %arg[1] and ensure coherency
- *              between legacy and atomic interfaces.
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @cursor:         Cursor plane
- * @overlay:        Overlay plane
- * @primary:        Primary plane
- */
 static void plane_overlay(data_t *data, igt_output_t *output, igt_plane_t *plane,
 			  uint32_t format)
 {
@@ -630,16 +685,6 @@ static void plane_primary(data_t *data)
 	igt_plane_set_fb(data->primary, &fb2);
 	plane_commit(data->primary, COMMIT_UNIVERSAL, ATOMIC_RELAX_NONE);
 }
-
-/**
- * SUBTEST: test-only
- * Description: Test to ensure that DRM_MODE_ATOMIC_TEST_ONLY really only touches
- *              the free-standing state objects and nothing else.
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 
 /*
  * Test to ensure that DRM_MODE_ATOMIC_TEST_ONLY really only touches the
@@ -749,19 +794,6 @@ static void plane_cursor(data_t *data, igt_output_t *output, igt_plane_t *cursor
 	plane_commit(cursor, COMMIT_LEGACY, ATOMIC_RELAX_NONE);
 }
 
-/**
- * SUBTEST: plane-invalid-%s
- * Description: Test error handling when invalid %arg[1] are passed
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @params:           plane parameters
- * @params-fence:     plane fence parameters
- */
 static void plane_invalid_params(data_t *data, igt_output_t *output)
 {
 	struct igt_fb fb2;
@@ -846,19 +878,6 @@ static void plane_invalid_params_fence(data_t *data, igt_output_t *output)
 	close(timeline);
 }
 
-/**
- * SUBTEST: crtc-invalid-%s
- * Description: Test error handling when invalid %arg[1] are passed
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @params:           crtc parameters
- * @params-fence:     crtc fence parameters
- */
 static void crtc_invalid_params(data_t *data, igt_output_t *output)
 {
 	uint64_t old_mode_id = data->pipe->values[IGT_CRTC_MODE_ID];
@@ -999,17 +1018,6 @@ static void crtc_invalid_params_fence(data_t *data, igt_output_t *output)
 	igt_assert(data->pipe->out_fence_fd != -1);
 }
 
-/**
- * SUBTEST: atomic-invalid-params
- * Description: Test abuse the atomic ioctl directly in order to test various
- *              invalid conditions which the libdrm wrapper won't allow us to
- *              create.
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- */
-
 /*
  * Abuse the atomic ioctl directly in order to test various invalid conditions,
  * which the libdrm wrapper won't allow us to create.
@@ -1148,14 +1156,6 @@ static void atomic_invalid_params(data_t *data, igt_output_t *output)
 	do_ioctl_err(data->drm_fd, DRM_IOCTL_MODE_ATOMIC, &ioc, EFAULT);
 }
 
-/**
- * SUBTEST: atomic-plane-damage
- * Description: Simple test cases to use FB_DAMAGE_CLIPS plane property
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void atomic_plane_damage(data_t *data)
 {
 	struct drm_mode_rect damage[2];

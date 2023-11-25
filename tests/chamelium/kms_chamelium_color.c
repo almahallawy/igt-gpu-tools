@@ -30,16 +30,43 @@
 
 #include "kms_color_helper.h"
 
-IGT_TEST_DESCRIPTION("Test Color Features at Pipe level using Chamelium to verify instead of CRC");
-
 /**
  * SUBTEST: degamma
  * Description: Verify that degamma LUT transformation works correctly
+ * Driver requirement: i915, xe
  * Functionality: chamelium, colorspace
  * Mega feature: Color mgmt
  * Test category: functionality test
+ *
+ * SUBTEST: gamma
+ * Description: Verify that gamma LUT transformation works correctly
  * Driver requirement: i915, xe
+ * Functionality: chamelium, colorspace
+ * Mega feature: Color mgmt
+ * Test category: functionality test
+ *
+ * SUBTEST: ctm-%s
+ * Description: Check the color transformation %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: chamelium, colorspace
+ * Mega feature: Color mgmt
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @0-25:            for 0.25 transparancy
+ * @0-50:            for 0.50 transparancy
+ * @0-75:            for 0.75 transparancy
+ * @blue-to-red:     from blue to red
+ * @green-to-red:    from green to red
+ * @limited-range:   with identity matrix
+ * @max:             for max transparancy
+ * @negative:        for negative transparancy
+ * @red-to-blue:     from red to blue
  */
+
+IGT_TEST_DESCRIPTION("Test Color Features at Pipe level using Chamelium to verify instead of CRC");
+
 /*
  * Draw 3 gradient rectangles in red, green and blue, with a maxed out
  * degamma LUT and verify we have the same frame dump as drawing solid color
@@ -129,14 +156,6 @@ static bool test_pipe_degamma(data_t *data,
 	return ret;
 }
 
-/**
- * SUBTEST: gamma
- * Description: Verify that gamma LUT transformation works correctly
- * Functionality: chamelium, colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
- * Driver requirement: i915, xe
- */
 /*
  * Draw 3 gradient rectangles in red, green and blue, with a maxed out
  * gamma LUT and verify we have the same frame dump as drawing solid
@@ -487,26 +506,6 @@ run_gamma_degamma_tests_for_pipe(data_t *data, enum pipe p,
 		igt_assert(test_t(data, data->primary, data->ports[port_idx]));
 }
 
-/**
- * SUBTEST: ctm-%s
- * Description: Check the color transformation %arg[1]
- * Functionality: chamelium, colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
- * Driver requirement: i915, xe
- *
- * arg[1]:
- *
- * @0-25:            for 0.25 transparancy
- * @0-50:            for 0.50 transparancy
- * @0-75:            for 0.75 transparancy
- * @blue-to-red:     from blue to red
- * @green-to-red:    from green to red
- * @limited-range:   with identity matrix
- * @max:             for max transparancy
- * @negative:        for negative transparancy
- * @red-to-blue:     from red to blue
- */
 static void
 run_ctm_tests_for_pipe(data_t *data, enum pipe p,
 		       color_t *expected_colors,

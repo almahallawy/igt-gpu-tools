@@ -25,6 +25,12 @@
  *
  */
 
+/**
+ * TEST: kms pm backlight
+ * Category: Display
+ * Description: Basic backlight sysfs test
+ */
+
 #include "igt.h"
 #include <limits.h>
 #include <sys/types.h>
@@ -36,11 +42,8 @@
 #include <time.h>
 #include "igt_device.h"
 #include "igt_device_scan.h"
+
 /**
- * TEST: kms pm backlight
- * Category: Display
- * Description: Basic backlight sysfs test
- *
  * SUBTEST: bad-brightness
  * Description: Test the bad brightness.
  * Driver requirement: i915, xe

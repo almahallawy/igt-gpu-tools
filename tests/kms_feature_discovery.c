@@ -28,7 +28,18 @@
  * Description: A metatest that checks for \"features\" presence.
  *		The subtests here should only skip or pass,
  *		anything else means we have a serious problem.
- *
+ */
+
+#include "igt.h"
+#ifdef HAVE_CHAMELIUM
+#include "igt_chamelium.h"
+#endif
+#include "igt_kms.h"
+#include "igt_psr.h"
+#include "igt_sysfs.h"
+#include "igt_types.h"
+
+/**
  * SUBTEST: display
  * Description: Make sure that we have display support.
  * Driver requirement: i915, xe
@@ -74,15 +85,6 @@
  *
  * arg[1].values: 1, 2, 3, 4
  */
-
-#include "igt.h"
-#ifdef HAVE_CHAMELIUM
-#include "igt_chamelium.h"
-#endif
-#include "igt_kms.h"
-#include "igt_psr.h"
-#include "igt_sysfs.h"
-#include "igt_types.h"
 
 static igt_display_t display;
 

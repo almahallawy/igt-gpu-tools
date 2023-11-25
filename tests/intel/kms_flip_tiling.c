@@ -24,17 +24,20 @@
  *   Ander Conselvan de Oliveira <ander.conselvan.de.oliveira@intel.com>
  */
 
+/**
+ * TEST: kms flip tiling
+ * Category: Display
+ * Description: Test page flips and tiling scenarios
+ */
+
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "igt.h"
+
 /**
- * TEST: kms flip tiling
- * Category: Display
- * Description: Test page flips and tiling scenarios
- *
  * SUBTEST: flip-change-tiling
  * Description: Check pageflip between modifiers
  * Driver requirement: i915, xe

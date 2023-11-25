@@ -35,6 +35,7 @@
  * Category: Display
  * Description: Test to validate display stream compression
  */
+
 #include "kms_dsc_helper.h"
 
 /**

@@ -22,6 +22,12 @@
  *
  */
 
+/**
+ * TEST: kms flip event leak
+ * Category: Display
+ * Description: Test to validate flip event leak
+ */
+
 #include "igt.h"
 #include <errno.h>
 #include <stdbool.h>
@@ -32,10 +38,6 @@
 #include "xe/xe_query.h"
 
 /**
- * TEST: kms flip event leak
- * Category: Display
- * Description: Test to validate flip event leak
- *
  * SUBTEST: basic
  * Description: This test tries to provoke the kernel into leaking a pending
  *              page flip event when the fd is closed before the flip has

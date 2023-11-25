@@ -22,15 +22,18 @@
  *
  */
 
-#include "igt.h"
-#include <limits.h>
-#include <math.h>
-#include <sys/stat.h>
 /**
  * TEST: kms panel fitting
  * Category: Display
  * Description: Test display panel fitting
- *
+ */
+
+#include "igt.h"
+#include <limits.h>
+#include <math.h>
+#include <sys/stat.h>
+
+/**
  * SUBTEST: atomic-fastset
  * Description: Tests panel fitting usages with atomic fastset.
  * Driver requirement: i915, xe

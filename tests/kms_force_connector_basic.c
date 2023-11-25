@@ -30,6 +30,36 @@
 
 #include "igt.h"
 
+/**
+ * SUBTEST: force-load-detect
+ * Description: Test to detect forced load.
+ * Driver requirement: i915
+ * Functionality: force_connector, vga
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: force-connector-state
+ * Description: Test to check the forced connector state
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: force_connector
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: force-edid
+ * Description: Test to check the values after forcing edid
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: force_connector
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: prune-stale-modes
+ * Description: Tests pruning of stale modes
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: force_connector
+ * Mega feature: General Display Features
+ */
+
 IGT_TEST_DESCRIPTION("Check the debugfs force connector/edid features work"
 		     " correctly.");
 
@@ -69,14 +99,6 @@ static void reset_connectors(void)
 	drm_close_driver(drm_fd);
 }
 
-/**
- * SUBTEST: force-load-detect
- * Description: Test to detect forced load.
- * Driver requirement: i915
- * Functionality: force_connector, vga
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void force_load_detect(int drm_fd, drmModeConnectorPtr connector, drmModeRes *res)
 {
 	int i, j, w = 64, h = 64;
@@ -165,14 +187,6 @@ static void force_load_detect(int drm_fd, drmModeConnectorPtr connector, drmMode
 	}
 }
 
-/**
- * SUBTEST: force-connector-state
- * Description: Test to check the forced connector state
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: force_connector
- * Mega feature: General Display Features
- */
 static void force_connector_state(int drm_fd, drmModeConnectorPtr connector)
 {
 	igt_display_t display;
@@ -212,14 +226,6 @@ static void force_connector_state(int drm_fd, drmModeConnectorPtr connector)
 	igt_display_fini(&display);
 }
 
-/**
- * SUBTEST: force-edid
- * Description: Test to check the values after forcing edid
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: force_connector
- * Mega feature: General Display Features
- */
 static void force_edid(int drm_fd, drmModeConnectorPtr connector)
 {
 	drmModeConnector *temp;
@@ -261,14 +267,6 @@ static void force_edid(int drm_fd, drmModeConnectorPtr connector)
 
 }
 
-/**
- * SUBTEST: prune-stale-modes
- * Description: Tests pruning of stale modes
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: force_connector
- * Mega feature: General Display Features
- */
 static void prune_stale_modes(int drm_fd, drmModeConnectorPtr connector)
 {
 	int i;

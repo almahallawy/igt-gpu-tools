@@ -50,22 +50,6 @@
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 
-static uint32_t gem_bo;
-static uint32_t gem_bo_small;
-static igt_display_t display;
-
-static int legacy_addfb(int fd, struct drm_mode_fb_cmd *arg)
-{
-	int err;
-
-	err = 0;
-	if (igt_ioctl(fd, DRM_IOCTL_MODE_ADDFB, arg))
-		err = -errno;
-
-	errno = 0;
-	return err;
-}
-
 /**
  * SUBTEST: unused-%s
  * Description: Test that addfb2 call fails correctly for unused %arg[1]
@@ -109,6 +93,216 @@ static int legacy_addfb(int fd, struct drm_mode_fb_cmd *arg)
  * @pitches:      Pitches
  * @offsets:      Offsets
  */
+
+/**
+ * SUBTEST: no-handle
+ * Description: Test that addfb2 call fails correctly without handle
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: basic
+ * Description: Check if addfb2 call works with given handle
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: bad-pitch-%i
+ * Description: bad-pitch-%arg[1]: Test that addfb2 call fails correctly for bad-pitches
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ *
+ * arg[1].values: 0, 32, 63, 128, 256, 999, 1024, 65536
+ */
+
+/**
+ * SUBTEST: basic-%s-tiled-legacy
+ * Description: Check if addfb2 and rmfb call works for basic %arg[1] test
+ * Driver requirement: i915
+ * Test category: functionality test
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: framebuffer-vs-set-tiling
+ * Description: Check if addfb2 call works for x and y tiling
+ * Driver requirement: i915
+ * Test category: functionality test
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: tile-pitch-mismatch
+ * Description: Test that addfb2 call fails correctly for pitches mismatch
+ * Driver requirement: i915
+ * Test category: functionality test
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ *
+ * arg[1]:
+ *
+ * @x:        x-tiling
+ * @y:        y-tiling
+ */
+
+/**
+ * SUBTEST: size-max
+ * Description: Check if addfb2 call works with max size of buffer object
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: too-wide
+ * Description: Test that addfb2 call fails correctly with increased width of fb
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: too-high
+ * Description: Test that addfb2 call fails correctly with increased height of fb
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: bo-too-small
+ * Description: Test that addfb2 call fails correctly with small size of buffer object
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: small-bo
+ * Description: Check if addfb2 call works for given height
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: bo-too-small-due-to-tiling
+ * Description: Test that addfb2 call fails correctly with small buffer object
+ *              after changing tile
+ * Driver requirement: i915
+ * Test category: functionality test
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ */
+
+/**
+ * SUBTEST: addfb25-modifier-no-flag
+ * Description: Test that addfb2 call fails correctly for x-tiling with given modifier
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: addfb25-bad-modifier
+ * Description: Test that addfb2 call fails correctly for irrelevant modifier
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: addfb25-x-tiled-mismatch-legacy
+ * Description: Test that addfb2 call fails correctly for irrelevant x-tiling
+ * Driver requirement: i915
+ * Test category: functionality test
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: addfb25-x-tiled-legacy
+ * Description: Check if addfb2 call works for x-tiling
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: addfb25-framebuffer-vs-set-tiling
+ * Description: Check if addfb2 call works for relevant combination of tiling and fbs
+ * Driver requirement: i915
+ * Test category: functionality test
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ */
+
+/**
+ * SUBTEST: addfb25-y-tiled-%s
+ * Description: Check if addfb2 call works for y-tiling %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: addfb25-yf-tiled-legacy
+ * Description: Check if addfb2 call works for yf-tiling
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @legacy:               with default size
+ * @small-legacy:         with given size & modifier
+ */
+
+/**
+ * SUBTEST: addfb25-4-tiled
+ * Description: Check if addfb2 call works for tiling-4
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
+
+/**
+ * SUBTEST: invalid-%s-%s
+ * Description: Test that %arg[1] ioctl call fails correctly for %arg[2] object
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ *
+ * arg[1]:
+ *
+ * @get:           get-properties
+ * @set:           set-properties
+ *
+ * arg[2]:
+ *
+ * @prop:          fb mode
+ * @prop-any:      invalid
+ */
+
+/**
+ * SUBTEST: master-rmfb
+ * Description: Check that only master can rmfb
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
+
+static uint32_t gem_bo;
+static uint32_t gem_bo_small;
+static igt_display_t display;
+
+static int legacy_addfb(int fd, struct drm_mode_fb_cmd *arg)
+{
+	int err;
+
+	err = 0;
+	if (igt_ioctl(fd, DRM_IOCTL_MODE_ADDFB, arg))
+		err = -errno;
+
+	errno = 0;
+	return err;
+}
+
 static void invalid_tests(int fd)
 {
 	struct drm_mode_fb_cmd2 f = {};
@@ -322,30 +516,6 @@ static void invalid_tests(int fd)
 	}
 }
 
-/**
- * SUBTEST: no-handle
- * Description: Test that addfb2 call fails correctly without handle
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- *
- * SUBTEST: basic
- * Description: Check if addfb2 call works with given handle
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- *
- * SUBTEST: bad-pitch-%i
- * Description: bad-pitch-%arg[1]: Test that addfb2 call fails correctly for bad-pitches
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- *
- * arg[1].values: 0, 32, 63, 128, 256, 999, 1024, 65536
- */
 static void pitch_tests(int fd)
 {
 	struct drm_mode_fb_cmd2 f = {};
@@ -393,33 +563,6 @@ static void pitch_tests(int fd)
 		gem_close(fd, gem_bo);
 }
 
-/**
- * SUBTEST: basic-%s-tiled-legacy
- * Description: Check if addfb2 and rmfb call works for basic %arg[1] test
- * Driver requirement: i915
- * Test category: functionality test
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- *
- * SUBTEST: framebuffer-vs-set-tiling
- * Description: Check if addfb2 call works for x and y tiling
- * Driver requirement: i915
- * Test category: functionality test
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- *
- * SUBTEST: tile-pitch-mismatch
- * Description: Test that addfb2 call fails correctly for pitches mismatch
- * Driver requirement: i915
- * Test category: functionality test
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- *
- * arg[1]:
- *
- * @x:        x-tiling
- * @y:        y-tiling
- */
 static void tiling_tests(int fd)
 {
 	struct drm_mode_fb_cmd2 f = {};
@@ -504,50 +647,6 @@ static void tiling_tests(int fd)
 	}
 }
 
-/**
- * SUBTEST: size-max
- * Description: Check if addfb2 call works with max size of buffer object
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- *
- * SUBTEST: too-wide
- * Description: Test that addfb2 call fails correctly with increased width of fb
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- *
- * SUBTEST: too-high
- * Description: Test that addfb2 call fails correctly with increased height of fb
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- *
- * SUBTEST: bo-too-small
- * Description: Test that addfb2 call fails correctly with small size of buffer object
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- *
- * SUBTEST: small-bo
- * Description: Check if addfb2 call works for given height
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- *
- * SUBTEST: bo-too-small-due-to-tiling
- * Description: Test that addfb2 call fails correctly with small buffer object
- *              after changing tile
- * Driver requirement: i915
- * Test category: functionality test
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- */
 static void size_tests(int fd)
 {
 	struct drm_mode_fb_cmd2 f = {};
@@ -663,42 +762,6 @@ static void size_tests(int fd)
 	}
 }
 
-/**
- * SUBTEST: addfb25-modifier-no-flag
- * Description: Test that addfb2 call fails correctly for x-tiling with given modifier
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- *
- * SUBTEST: addfb25-bad-modifier
- * Description: Test that addfb2 call fails correctly for irrelevant modifier
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- *
- * SUBTEST: addfb25-x-tiled-mismatch-legacy
- * Description: Test that addfb2 call fails correctly for irrelevant x-tiling
- * Driver requirement: i915
- * Test category: functionality test
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- *
- * SUBTEST: addfb25-x-tiled-legacy
- * Description: Check if addfb2 call works for x-tiling
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- *
- * SUBTEST: addfb25-framebuffer-vs-set-tiling
- * Description: Check if addfb2 call works for relevant combination of tiling and fbs
- * Driver requirement: i915
- * Test category: functionality test
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- */
 static void addfb25_tests(int fd)
 {
 	struct drm_mode_fb_cmd2 f = {};
@@ -785,26 +848,6 @@ static int addfb_expected_ret(igt_display_t *disp, struct drm_mode_fb_cmd2 *f)
 					  f->modifier[0]) ? 0 : -1;
 }
 
-/**
- * SUBTEST: addfb25-y-tiled-%s
- * Description: Check if addfb2 call works for y-tiling %arg[1]
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: addfb25-yf-tiled-legacy
- * Description: Check if addfb2 call works for yf-tiling
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @legacy:               with default size
- * @small-legacy:         with given size & modifier
- */
 static void addfb25_ytile(int fd)
 {
 	struct drm_mode_fb_cmd2 f = {};
@@ -871,14 +914,6 @@ static void addfb25_ytile(int fd)
 	}
 }
 
-/**
- * SUBTEST: addfb25-4-tiled
- * Description: Check if addfb2 call works for tiling-4
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void addfb25_4tile(int fd)
 {
 	struct drm_mode_fb_cmd2 f = {};
@@ -917,24 +952,6 @@ static void addfb25_4tile(int fd)
 		gem_close(fd, gem_bo);
 }
 
-/**
- * SUBTEST: invalid-%s-%s
- * Description: Test that %arg[1] ioctl call fails correctly for %arg[2] object
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- *
- * arg[1]:
- *
- * @get:           get-properties
- * @set:           set-properties
- *
- * arg[2]:
- *
- * @prop:          fb mode
- * @prop-any:      invalid
- */
 static void prop_tests(int fd)
 {
 	struct drm_mode_fb_cmd2 f = {};
@@ -1000,14 +1017,6 @@ static void prop_tests(int fd)
 	}
 }
 
-/**
- * SUBTEST: master-rmfb
- * Description: Check that only master can rmfb
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void master_tests(int fd)
 {
 	struct drm_mode_fb_cmd2 f = {};

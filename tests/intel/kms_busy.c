@@ -26,12 +26,68 @@
  * Category: Display
  * Description: Basic check of KMS ABI with busy framebuffers.
  */
+
 #include <sys/poll.h>
 #include <signal.h>
 #include <time.h>
 
 #include "i915/gem.h"
 #include "igt.h"
+
+/**
+ * SUBTEST: basic
+ * Description: Test for basic check of KMS ABI with busy framebuffers.
+ * Driver requirement: i915
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: basic-hang
+ * Description: Test for basic check of KMS ABI with busy framebuffers.
+ * Driver requirement: i915
+ * Functionality: kms_core, hang
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
+
+/**
+ * SUBTEST: extended-modeset-hang-%s
+ * Description: Test for basic check of KMS ABI with busy framebuffers.
+ * Driver requirement: i915
+ * Functionality: kms_core, hang
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @newfb:                New framebuffer
+ * @oldfb:                Old framebuffer
+ * @newfb-with-reset:     New framebuffer with reset
+ * @oldfb-with-reset:     Old framebuffer with reset
+ */
+
+/**
+ * SUBTEST: extended-pageflip-hang-%s
+ * Description: Test for basic check of KMS ABI with busy framebuffers.
+ * Driver requirement: i915
+ * Functionality: kms_core, hang
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @newfb:     New framebuffer
+ * @oldfb:     Old framebuffer
+ */
+
+/**
+ * SUBTEST: extended-pageflip-modeset-hang-oldfb
+ * Description: Test for basic check of KMS ABI with busy framebuffers.
+ * Driver requirement: i915
+ * Functionality: kms_core, hang
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
 
 IGT_TEST_DESCRIPTION("Basic check of KMS ABI with busy framebuffers.");
 
@@ -136,21 +192,6 @@ static void flip_to_fb(igt_display_t *dpy, int pipe,
 	put_ahnd(ahnd);
 }
 
-/**
- * SUBTEST: basic
- * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: basic-hang
- * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void test_flip(igt_display_t *dpy, int pipe,
 		      igt_output_t *output, bool modeset)
 {
@@ -243,35 +284,6 @@ static void test_atomic_commit_hang(igt_display_t *dpy, igt_plane_t *primary,
 	put_ahnd(ahnd);
 }
 
-/**
- * SUBTEST: extended-modeset-hang-%s
- * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @newfb:                New framebuffer
- * @oldfb:                Old framebuffer
- * @newfb-with-reset:     New framebuffer with reset
- * @oldfb-with-reset:     Old framebuffer with reset
- */
-
-/**
- * SUBTEST: extended-pageflip-hang-%s
- * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @newfb:     New framebuffer
- * @oldfb:     Old framebuffer
- */
 static void test_hang(igt_display_t *dpy,
 		      enum pipe pipe, igt_output_t *output,
 		      bool modeset, bool hang_newfb)
@@ -319,14 +331,6 @@ static void test_hang(igt_display_t *dpy,
 	igt_remove_fb(dpy->drm_fd, &fb[0]);
 }
 
-/**
- * SUBTEST: extended-pageflip-modeset-hang-oldfb
- * Description: Test for basic check of KMS ABI with busy framebuffers.
- * Driver requirement: i915
- * Functionality: kms_core, hang
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void
 test_pageflip_modeset_hang(igt_display_t *dpy,
 			   igt_output_t *output, enum pipe pipe)

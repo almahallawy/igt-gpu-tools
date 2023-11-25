@@ -22,6 +22,13 @@
  *
  */
 
+/**
+ * TEST: kms psr2 sf
+ * Category: Display
+ * Description: Tests to varify PSR2 selective fetch by sending multiple damaged
+ *              areas
+ */
+
 #include "igt.h"
 #include "igt_sysfs.h"
 #include "igt_psr.h"
@@ -30,12 +37,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+
 /**
- * TEST: kms psr2 sf
- * Category: Display
- * Description: Tests to varify PSR2 selective fetch by sending multiple damaged
- *              areas
- *
  * SUBTEST: %s-plane-move-continuous-%s
  * Description: Test that selective fetch works on moving %arg[1] plane %arg[2]
  *              visible area (no update)

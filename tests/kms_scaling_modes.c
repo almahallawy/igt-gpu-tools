@@ -24,12 +24,15 @@
  *     Swati Sharma <swati2.sharma@intel.com>
  */
 
-#include "igt.h"
 /**
  * TEST: kms scaling modes
  * Category: Display
  * Description: Test display scaling modes
- *
+ */
+
+#include "igt.h"
+
+/**
  * SUBTEST: scaling-mode-%s
  * Description: Tests %arg[1] display scaling mode
  * Driver requirement: i915, xe

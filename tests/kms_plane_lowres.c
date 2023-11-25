@@ -28,6 +28,7 @@
  * Description: Test atomic mode setting with a plane by switching between high
  *              and low resolutions
  */
+
 #include "igt.h"
 #include "drmtest.h"
 #include <errno.h>
@@ -35,6 +36,31 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+
+/**
+ * SUBTEST: tiling-none
+ * Description: Tests the visibility of the planes when switching between high
+ *              and low resolution with Linear buffer (no tiling)
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: tiling-%s
+ * Description: Tests the visibility of the planes when switching between high
+ *              and low resolution with %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: plane, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @4:           4-tiling
+ * @x:           x-tiling
+ * @y:           y-tiling
+ * @yf:          yf-tiling
+ */
 
 IGT_TEST_DESCRIPTION("Test atomic mode setting with a plane by switching between high and low resolutions");
 
@@ -267,30 +293,6 @@ static void test_cleanup(data_t *data)
 	igt_display_commit2(&data->display, COMMIT_ATOMIC);
 }
 
-/**
- * SUBTEST: tiling-none
- * Description: Tests the visibility of the planes when switching between high
- *              and low resolution with Linear buffer (no tiling)
- * Driver requirement: i915, xe
- * Functionality: plane
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: tiling-%s
- * Description: Tests the visibility of the planes when switching between high
- *              and low resolution with %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @4:           4-tiling
- * @x:           x-tiling
- * @y:           y-tiling
- * @yf:          yf-tiling
- */
 static void run_test(data_t *data, uint64_t modifier)
 {
 	enum pipe pipe;

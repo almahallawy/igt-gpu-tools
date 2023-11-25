@@ -32,6 +32,7 @@
  * Category: Display
  * Description: Tests GETFB and GETFB2 ioctls.
  */
+
 #include "igt.h"
 #include <unistd.h>
 #include <stdlib.h>
@@ -49,6 +50,88 @@
 #include "igt_device.h"
 #include "xe/xe_query.h"
 #include "xe/xe_ioctl.h"
+
+/**
+ * SUBTEST: getfb-handle-%s
+ * Description: Tests error handling %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @closed:       when passing a handle that has been closed.
+ * @not-fb:       when passing an invalid handle.
+ * @valid:        when passing an valid handle.
+ * @zero:         for a zero'd input.
+ */
+
+/**
+ * SUBTEST: getfb-reject-ccs
+ * Description: Tests error handling while requesting CCS buffers it should
+ *              refuse because getfb supports returning a single buffer handle.
+ * Driver requirement: i915, xe
+ * Functionality: ccs, kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: getfb-%s-different-handles
+ * Description: Tests error handling while requesting for two different handles
+ *              from %arg[1].
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @addfb:           same fd
+ * @repeated:        different fd
+ */
+
+/**
+ * SUBTEST: getfb2-accept-ccs
+ * Description: Tests outputs are correct when retrieving a CCS framebuffer.
+ * Driver requirement: i915, xe
+ * Functionality: ccs, kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: getfb2-into-addfb2
+ * Description: Output check by passing the output of GETFB2 into ADDFB2.
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: getfb2-handle-%s
+ * Description: Tests error handling %arg[1].
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @closed:                  when passing a handle that has been closed
+ * @not-fb:                  when passing an invalid handle
+ * @zero:                    for a zero'd input
+ */
+
+/**
+ * SUBTEST: %s-handle-protection
+ * Description: Make sure %arg[1] return handles if caller is non-root or non-master.
+ * Driver requirement: i915, xe
+ * Functionality: kms_gem_interop
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @getfb:      GETFB ioctl
+ * @getfb2:     GETFB2 ioctl
+ */
 
 IGT_TEST_DESCRIPTION("Tests GETFB and GETFB2 ioctls.");
 
@@ -178,21 +261,6 @@ static uint32_t get_any_prop_id(int fd)
 	return 0;
 }
 
-/**
- * SUBTEST: getfb-handle-%s
- * Description: Tests error handling %arg[1]
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @closed:       when passing a handle that has been closed.
- * @not-fb:       when passing an invalid handle.
- * @valid:        when passing an valid handle.
- * @zero:         for a zero'd input.
- */
 static void test_handle_input(int fd)
 {
 	struct drm_mode_fb_cmd2 add = {};
@@ -248,28 +316,6 @@ static void test_handle_input(int fd)
 		gem_close(fd, add.handles[0]);
 }
 
-/**
- * SUBTEST: getfb-reject-ccs
- * Description: Tests error handling while requesting CCS buffers it should
- *              refuse because getfb supports returning a single buffer handle.
- * Driver requirement: i915, xe
- * Functionality: ccs, kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: getfb-%s-different-handles
- * Description: Tests error handling while requesting for two different handles
- *              from %arg[1].
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @addfb:           same fd
- * @repeated:        different fd
- */
 static void test_duplicate_handles(int fd)
 {
 	struct drm_mode_fb_cmd2 add = {};
@@ -335,34 +381,6 @@ static void test_duplicate_handles(int fd)
 	}
 }
 
-/**
- * SUBTEST: getfb2-accept-ccs
- * Description: Tests outputs are correct when retrieving a CCS framebuffer.
- * Driver requirement: i915, xe
- * Functionality: ccs, kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: getfb2-into-addfb2
- * Description: Output check by passing the output of GETFB2 into ADDFB2.
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: getfb2-handle-%s
- * Description: Tests error handling %arg[1].
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @closed:                  when passing a handle that has been closed
- * @not-fb:                  when passing an invalid handle
- * @zero:                    for a zero'd input
- */
 static void test_getfb2(int fd)
 {
 	struct drm_mode_fb_cmd2 add_basic = {};
@@ -471,19 +489,6 @@ static void test_getfb2(int fd)
 	}
 }
 
-/**
- * SUBTEST: %s-handle-protection
- * Description: Make sure %arg[1] return handles if caller is non-root or non-master.
- * Driver requirement: i915, xe
- * Functionality: kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @getfb:      GETFB ioctl
- * @getfb2:     GETFB2 ioctl
- */
 static void test_handle_protection(void) {
 	int non_master_fd;
 	struct drm_mode_fb_cmd2 non_master_add = {};

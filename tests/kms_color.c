@@ -27,9 +27,8 @@
  * Category: Display
  * Description: Test Color Features at Pipe level
  */
-#include "kms_color_helper.h"
 
-IGT_TEST_DESCRIPTION("Test Color Features at Pipe level");
+#include "kms_color_helper.h"
 
 /**
  * SUBTEST: degamma
@@ -38,7 +37,73 @@ IGT_TEST_DESCRIPTION("Test Color Features at Pipe level");
  * Functionality: colorspace
  * Mega feature: Color mgmt
  * Test category: functionality test
+ *
+ * SUBTEST: gamma
+ * Description: Verify that gamma LUT transformation works correctly
+ * Driver requirement: i915, xe
+ * Functionality: colorspace
+ * Mega feature: Color mgmt
+ * Test category: functionality test
+ *
+ * SUBTEST: legacy-gamma
+ * Description: Verify that legacy gamma LUT transformation works correctly
+ * Driver requirement: i915, xe
+ * Functionality: colorspace
+ * Mega feature: Color mgmt
+ * Test category: functionality test
+ *
+ * SUBTEST: legacy-gamma-reset
+ * Description: Verify that setting the legacy gamma LUT resets the gamma LUT
+ *              set through GAMMA_LUT property
+ * Driver requirement: i915, xe
+ * Functionality: colorspace
+ * Mega feature: Color mgmt
+ * Test category: functionality test
+ *
+ * SUBTEST: ctm-%s
+ * Description: Check the color transformation %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: colorspace
+ * Mega feature: Color mgmt
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @0-25:           for 0.25 transparency
+ * @0-50:           for 0.50 transparency
+ * @0-75:           for 0.75 transparency
+ * @blue-to-red:    from blue to red
+ * @green-to-red:   from green to red
+ * @max:            for maximum transparency
+ * @negative:       for negative transparency
+ * @red-to-blue:    from red to blue
+ * @signed:         for correct signed handling
  */
+
+/**
+ * SUBTEST: deep-color
+ * Description: Verify that deep color works correctly
+ * Driver requirement: i915, xe
+ * Functionality: colorspace
+ * Mega feature: Color mgmt
+ * Test category: functionality test
+ *
+ * SUBTEST: invalid-%s-sizes
+ * Description: Negative check for %arg[1] sizes
+ * Driver requirement: i915, xe
+ * Functionality: colorspace
+ * Mega feature: Color mgmt
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @ctm-matrix:         Color transformation matrix
+ * @degamma-lut:        Degamma LUT
+ * @gamma-lut:          Gamma LUT
+ */
+
+IGT_TEST_DESCRIPTION("Test Color Features at Pipe level");
+
 static bool test_pipe_degamma(data_t *data,
 			      igt_plane_t *primary)
 {
@@ -127,15 +192,6 @@ static bool test_pipe_degamma(data_t *data,
 	return ret;
 }
 
-/**
- * SUBTEST: gamma
- * Description: Verify that gamma LUT transformation works correctly
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
- */
-
 /*
  * Draw 3 gradient rectangles in red, green and blue, with a maxed out gamma
  * LUT and verify we have the same CRC as drawing solid color rectangles.
@@ -223,15 +279,6 @@ static bool test_pipe_gamma(data_t *data,
 
 	return ret;
 }
-
-/**
- * SUBTEST: legacy-gamma
- * Description: Verify that legacy gamma LUT transformation works correctly
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
- */
 
 /*
  * Draw 3 gradient rectangles in red, green and blue, with a maxed out legacy
@@ -344,16 +391,6 @@ static bool test_pipe_legacy_gamma(data_t *data,
 
 	return ret;
 }
-
-/**
- * SUBTEST: legacy-gamma-reset
- * Description: Verify that setting the legacy gamma LUT resets the gamma LUT
- *              set through GAMMA_LUT property
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
- */
 
 /*
  * Verify that setting the legacy gamma LUT resets the gamma LUT set
@@ -488,27 +525,6 @@ end:
 	free_lut(gamma_zero);
 	return ret;
 }
-
-/**
- * SUBTEST: ctm-%s
- * Description: Check the color transformation %arg[1]
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @0-25:           for 0.25 transparency
- * @0-50:           for 0.50 transparency
- * @0-75:           for 0.75 transparency
- * @blue-to-red:    from blue to red
- * @green-to-red:   from green to red
- * @max:            for maximum transparency
- * @negative:       for negative transparency
- * @red-to-blue:    from red to blue
- * @signed:         for correct signed handling
- */
 
 /*
  * Draw 3 rectangles using before colors with the ctm matrix apply and verify
@@ -869,14 +885,6 @@ out:
 	test_cleanup(data);
 }
 
-/**
- * SUBTEST: deep-color
- * Description: Verify that deep color works correctly
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
- */
 static void
 run_deep_color_tests_for_pipe(data_t *data, enum pipe p)
 {
@@ -978,20 +986,6 @@ run_deep_color_tests_for_pipe(data_t *data, enum pipe p)
 	test_cleanup(data);
 }
 
-/**
- * SUBTEST: invalid-%s-sizes
- * Description: Negative check for %arg[1] sizes
- * Driver requirement: i915, xe
- * Functionality: colorspace
- * Mega feature: Color mgmt
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @ctm-matrix:         Color transformation matrix
- * @degamma-lut:        Degamma LUT
- * @gamma-lut:          Gamma LUT
- */
 static void
 run_invalid_tests_for_pipe(data_t *data)
 {

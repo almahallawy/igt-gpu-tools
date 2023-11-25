@@ -42,6 +42,18 @@
 #include <sys/time.h>
 #include <sys/ioctl.h>
 
+#ifdef HAVE_LINUX_KD_H
+#include <linux/kd.h>
+#elif HAVE_SYS_KD_H
+#include <sys/kd.h>
+#endif
+#include <time.h>
+#include <pthread.h>
+
+#include "i915/gem_create.h"
+#include "igt_stats.h"
+#include "xe/xe_query.h"
+
 /**
  * SUBTEST: 2x-flip-vs-fences
  * Description: Test to validate pageflips along with avialable fences on a pair
@@ -280,17 +292,40 @@
  * @modeset-vs-vblank-race:       modeset and check for vblank
  */
 
-#ifdef HAVE_LINUX_KD_H
-#include <linux/kd.h>
-#elif HAVE_SYS_KD_H
-#include <sys/kd.h>
-#endif
-#include <time.h>
-#include <pthread.h>
-
-#include "i915/gem_create.h"
-#include "igt_stats.h"
-#include "xe/xe_query.h"
+/**
+ * SUBTEST: basic-flip-vs-dpms
+ * Description: Basic test to valide pageflip with dpms
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: dpms, vblank
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: basic-flip-vs-%s
+ * Description: Basic test to valide pageflip with %arg[1]
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: vblank
+ * Mega feature: General Display Features
+ *
+ * arg[1]:
+ *
+ * @modeset:      modeset
+ * @wf_vblank:    wait for vblank
+ *
+ * SUBTEST: basic-plain-flip
+ * Description: Basic test for validating page flip
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ * Functionality: vblank
+ * Mega feature: General Display Features
+ *
+ * SUBTEST: nonblocking-read
+ * Description: Tests that nonblocking reading fails correctly
+ * Driver requirement: i915, xe
+ * Functionality: vblank
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
 
 #define TEST_DPMS		(1 << 0)
 
@@ -1811,34 +1846,6 @@ test:
 		__run_test_on_crtc_set(o, crtc_idxs, crtc_count, duration_ms);
 }
 
-/**
- * SUBTEST: basic-flip-vs-dpms
- * Description: Basic test to valide pageflip with dpms
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: dpms, vblank
- * Mega feature: General Display Features
- *
- * SUBTEST: basic-flip-vs-%s
- * Description: Basic test to valide pageflip with %arg[1]
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: vblank
- * Mega feature: General Display Features
- *
- * arg[1]:
- *
- * @modeset:      modeset
- * @wf_vblank:    wait for vblank
- *
- * SUBTEST: basic-plain-flip
- * Description: Basic test for validating page flip
- * Driver requirement: i915, xe
- * Test category: functionality test
- * Functionality: vblank
- * Mega feature: General Display Features
- */
-
 static void run_test(int duration, int flags)
 {
 	struct test_output o;
@@ -2023,14 +2030,6 @@ static void kms_flip_exit_handler(int sig)
 		kmstest_set_connector_dpms(drm_fd, last_connector, DRM_MODE_DPMS_ON);
 }
 
-/**
- * SUBTEST: nonblocking-read
- * Description: Tests that nonblocking reading fails correctly
- * Driver requirement: i915, xe
- * Functionality: vblank
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void test_nonblocking_read(int in)
 {
 	char buffer[1024];

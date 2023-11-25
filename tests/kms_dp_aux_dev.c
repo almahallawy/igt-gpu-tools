@@ -22,6 +22,12 @@
  *
  */
 
+/**
+ * TEST: kms dp aux dev
+ * Category: Display
+ * Description: Test that /dev/drm_dp_aux reads work
+ */
+
 #include "config.h"
 
 #include <sys/types.h>
@@ -31,11 +37,8 @@
 
 #include "igt.h"
 #include "igt_kms.h"
+
 /**
- * TEST: kms dp aux dev
- * Category: Display
- * Description: Test that /dev/drm_dp_aux reads work
- *
  * SUBTEST:
  * Description: Test that /dev/drm_dp_aux reads work
  * Driver requirement: i915, xe

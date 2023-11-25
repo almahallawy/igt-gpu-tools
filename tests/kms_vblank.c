@@ -21,6 +21,12 @@
  * IN THE SOFTWARE.
  */
 
+/**
+ * TEST: kms vblank
+ * Category: Display
+ * Description: Test speed of WaitVblank.
+ */
+
 #include "igt.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -35,11 +41,8 @@
 #include <sys/wait.h>
 
 #include <drm.h>
+
 /**
- * TEST: kms vblank
- * Category: Display
- * Description: Test speed of WaitVblank.
- *
  * SUBTEST: crtc-id
  * Description: Check the vblank and flip events works with given crtc id
  * Driver requirement: i915, xe
@@ -53,9 +56,7 @@
  * Functionality: vblank
  * Mega feature: General Display Features
  * Test category: functionality test
- */
-
-/**
+ *
  * SUBTEST: ts-continuation-dpms-rpm
  * Description: Test TS continuty with DPMS & RPM while hanging by introducing
  *              NOHANG flag
@@ -63,9 +64,7 @@
  * Functionality: dpms, hang, rpm, vblank
  * Mega feature: General Display Features
  * Test category: functionality test
- */
-
-/**
+ *
  * SUBTEST: ts-continuation-dpms-suspend
  * Description: Test TS continuty with DPMS & Suspend while hanging by introducing
  *              NOHANG flag
@@ -73,9 +72,7 @@
  * Functionality: dpms, hang, suspend, vblank
  * Mega feature: General Display Features
  * Test category: functionality test
- */
-
-/**
+ *
  * SUBTEST: ts-continuation-suspend
  * Description: Test TS continuty with Suspend while hanging by introducing NOHANG
  *              flag
@@ -83,9 +80,7 @@
  * Functionality: hang, suspend, vblank
  * Mega feature: General Display Features
  * Test category: functionality test
- */
-
-/**
+ *
  * SUBTEST: ts-continuation-modeset-rpm
  * Description: Test TS continuty during Modeset with Suspend while hanging by
  *              introducing NOHANG flag
@@ -93,9 +88,7 @@
  * Functionality: hang, rpm, vblank
  * Mega feature: General Display Features
  * Test category: functionality test
- */
-
-/**
+ *
  * SUBTEST: accuracy-idle
  * Description: Test Accuracy of vblank events while hanging by introducing NOHANG
  *              flag

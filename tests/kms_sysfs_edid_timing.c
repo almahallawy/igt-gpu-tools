@@ -20,16 +20,20 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+
+/**
+ * TEST: kms sysfs edid timing
+ * Category: Display
+ * Description: Test to check the time it takes to reprobe each connector.
+ */
+
 #include "igt.h"
 
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+
 /**
- * TEST: kms sysfs edid timing
- * Category: Display
- * Description: Test to check the time it takes to reprobe each connector.
- *
  * SUBTEST:
  * Description: This test checks the time it takes to reprobe each connector and
  *              fails if either the time it takes for one reprobe is too long or

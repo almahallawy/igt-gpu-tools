@@ -22,13 +22,16 @@
  *
  */
 
-#include "igt.h"
-#include "xe/xe_query.h"
 /**
  * TEST: kms 3d
  * Category: Display
  * Description: Tests 3D mode setting.
- *
+ */
+
+#include "igt.h"
+#include "xe/xe_query.h"
+
+/**
  * SUBTEST:
  * Description: Tests 3D mode setting.
  * Driver requirement: i915, xe

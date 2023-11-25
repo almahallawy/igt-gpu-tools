@@ -28,6 +28,7 @@
  * Description: Make sure all modesets are rejected when the requested mode is
  *              invalid
  */
+
 #include "igt.h"
 #include <limits.h>
 #include <stdbool.h>

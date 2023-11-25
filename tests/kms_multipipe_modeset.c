@@ -24,12 +24,15 @@
  *  Karthik B S <karthik.b.s@intel.com>
  */
 
-#include "igt.h"
 /**
  * TEST: kms multipipe modeset
  * Category: Display
  * Description: Test simultaneous modeset on all the supported pipes
- *
+ */
+
+#include "igt.h"
+
+/**
  * SUBTEST: basic-max-pipe-crc-check
  * Description: Verify if simultaneous modesets on all the supported pipes is
  *              successful. Validate using CRC verification

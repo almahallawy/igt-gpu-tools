@@ -29,6 +29,7 @@
  * Category: Display
  * Description: Testes for KMS Plane
  */
+
 #include "igt.h"
 #include "igt_vec.h"
 #include <errno.h>
@@ -36,6 +37,73 @@
 #include <stdio.h>
 #include <string.h>
 #include "xe/xe_query.h"
+
+/**
+ * SUBTEST: plane-position-%s
+ * Description: Verify plane position using two planes to create a %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: plane-position-hole-dpms
+ * Description: Verify plane position using two planes to create a partially
+ *              covered screen and check for DPMS
+ * Driver requirement: i915, xe
+ * Functionality: dpms, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @covered:           fully covered screen
+ * @hole:              partially covered screen
+ */
+
+/**
+ * SUBTEST: plane-panning-%s
+ * Description: Verify plane panning at %arg[1] using primary plane
+ * Driver requirement: i915, xe
+ * Functionality: plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: plane-panning-bottom-right-suspend
+ * Description: Verify plane panning at bottom-right position with suspend using
+ *              primary plane
+ * Driver requirement: i915, xe
+ * Functionality: plane, suspend
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @bottom-right:               bottom-right position
+ * @top-left:                   top-left position
+ */
+
+/**
+ * SUBTEST: pixel-%s
+ * Description: verify the pixel formats for given plane and pipe
+ * Driver requirement: i915, xe
+ * Functionality: pixel_format, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @format:
+ * @format-source-clamping:          with source clamping
+ */
+
+/**
+ * SUBTEST: planar-pixel-format-settings
+ * Description: verify planar settings for pixel format are handled correctly
+ * Driver requirement: i915, xe
+ * Functionality: pixel_format, plane
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
 
 /*
  * Throw away enough lsbs in pixel formats tests
@@ -287,27 +355,6 @@ test_plane_position_with_output(data_t *data,
 	igt_remove_fb(data->drm_fd, &sprite_fb);
 }
 
-/**
- * SUBTEST: plane-position-%s
- * Description: Verify plane position using two planes to create a %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: plane-position-hole-dpms
- * Description: Verify plane position using two planes to create a partially
- *              covered screen and check for DPMS
- * Driver requirement: i915, xe
- * Functionality: dpms, plane
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @covered:           fully covered screen
- * @hole:              partially covered screen
- */
 static void
 test_plane_position(data_t *data, enum pipe pipe)
 {
@@ -416,27 +463,6 @@ test_plane_panning_with_output(data_t *data,
 	igt_remove_fb(data->drm_fd, &primary_fb);
 }
 
-/**
- * SUBTEST: plane-panning-%s
- * Description: Verify plane panning at %arg[1] using primary plane
- * Driver requirement: i915, xe
- * Functionality: plane
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: plane-panning-bottom-right-suspend
- * Description: Verify plane panning at bottom-right position with suspend using
- *              primary plane
- * Driver requirement: i915, xe
- * Functionality: plane, suspend
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @bottom-right:               bottom-right position
- * @top-left:                   top-left position
- */
 static void
 test_plane_panning(data_t *data, enum pipe pipe)
 {
@@ -1162,19 +1188,6 @@ static bool skip_plane(data_t *data, igt_plane_t *plane)
 	return index != 0 && index != 3 && index != 5;
 }
 
-/**
- * SUBTEST: pixel-%s
- * Description: verify the pixel formats for given plane and pipe
- * Driver requirement: i915, xe
- * Functionality: pixel_format, plane
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @format:
- * @format-source-clamping:          with source clamping
- */
 static void
 test_pixel_formats(data_t *data, enum pipe pipe)
 {
@@ -1231,14 +1244,6 @@ test_pixel_formats(data_t *data, enum pipe pipe)
 	igt_assert_f(result, "At least one CRC mismatch happened\n");
 }
 
-/**
- * SUBTEST: planar-pixel-format-settings
- * Description: verify planar settings for pixel format are handled correctly
- * Driver requirement: i915, xe
- * Functionality: pixel_format, plane
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void test_planar_settings(data_t *data)
 {
 	enum pipe pipe = PIPE_A;

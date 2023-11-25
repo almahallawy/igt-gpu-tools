@@ -20,6 +20,14 @@
  * Authors:
  *    Imre Deak <imre.deak@intel.com>
  */
+
+/**
+ * TEST: kms setmode
+ * Category: Display
+ * Description: Tests the mode by iterating through all valid/invalid crtc/connector
+ *              combinations
+ */
+
 #include "config.h"
 
 #include "igt.h"
@@ -35,11 +43,6 @@
 #include "xe/xe_query.h"
 
 /**
- * TEST: kms setmode
- * Category: Display
- * Description: Tests the mode by iterating through all valid/invalid crtc/connector
- *              combinations
- *
  * SUBTEST: basic
  * Description: Tests the vblank timing by iterating through all valid crtc/connector
  *              combinations

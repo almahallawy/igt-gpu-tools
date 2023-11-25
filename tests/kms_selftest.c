@@ -21,13 +21,16 @@
  * IN THE SOFTWARE.
  */
 
-#include "igt.h"
-#include "igt_kmod.h"
 /**
  * TEST: kms selftest
  * Category: Display
  * Description: Basic sanity check of KMS selftests.
- *
+ */
+
+#include "igt.h"
+#include "igt_kmod.h"
+
+/**
  * SUBTEST: %s
  * Description: Basic sanity check of KMS selftest %arg[1].
  * Driver requirement: i915, xe

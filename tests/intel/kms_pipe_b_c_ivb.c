@@ -24,13 +24,16 @@
  *   Ander Conselvan de Oliveira <ander.conselvan.de.oliveira@intel.com>
  */
 
-#include "igt.h"
 /**
  * TEST: kms pipe b c ivb
  * Category: Display
  * Description: Exercise the FDI lane bifurcation code for IVB in the kernel by
  *              setting different combinations of modes for pipes B and C.
- *
+ */
+
+#include "igt.h"
+
+/**
  * SUBTEST: disable-pipe-B-enable-pipe-C
  * Description: Tests pipe-B and pipe-C interactions in IVB by disabling pipe-B
  *              and then setting mode on pipe-C.

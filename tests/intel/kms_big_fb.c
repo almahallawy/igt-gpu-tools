@@ -37,6 +37,168 @@
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 
+/**
+ * SUBTEST: linear-%dbpp-rotate-%d
+ * Description: Sanity check if addfb ioctl works correctly for given combination
+ *              of Linear modifier with %arg[1]-bpp & %arg[2]-rotation
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, rotation
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1].values:       8, 16, 32, 64
+ * arg[2].values:       0, 90, 180, 270
+ */
+
+/**
+ * SUBTEST: %s-%dbpp-rotate-%d
+ * Description: Sanity check if addfb ioctl works correctly for given combination
+ *              of %arg[1] with %arg[2]-bpp & %arg[3]-rotation
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, rotation, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @4-tiled:            TILE-4 modifier
+ * @x-tiled:            TILE-X modifier
+ * @y-tiled:            TILE-Y modifier
+ * @yf-tiled:           TILE-YF modifier
+ *
+ * arg[2].values:       8, 16, 32, 64
+ * arg[3].values:       0, 90, 180, 270
+ */
+
+/**
+ * SUBTEST: linear-max-hw-stride-%dbpp-rotate-%d
+ * Description: Test maximum hardware supported stride length for given combination
+ *              of linear modifier with max hardware stride length, %arg[1]-bpp,
+ *              and %arg[2]-rotation
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, rotation
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1].values:       32, 64
+ * arg[2].values:       0, 180
+ */
+
+/**
+ * SUBTEST: %s-max-hw-stride-%dbpp-rotate-%d
+ * Description: Test maximum hardware supported stride length for given combination
+ *              of %arg[1] modifier with max hardware stride length, %arg[2]-bpp,
+ *              and %arg[3]-rotation
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, rotation, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @4-tiled:            TILE-4 modifier
+ * @x-tiled:            TILE-X modifier
+ * @y-tiled:            TILE-Y modifier
+ * @yf-tiled:           TILE-YF modifier
+ *
+ * arg[2].values:       32, 64
+ * arg[3].values:       0, 180
+ */
+
+/**
+ * SUBTEST: %s-max-hw-stride-%dbpp-rotate-%d-hflip
+ * Description: Test maximum hardware supported stride length for given combination
+ *              of %arg[1] modifier with max hardware stride length, %arg[2]-bpp,
+ *              and %arg[3]-rotation with H-flip mode
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, rotation, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: %s-max-hw-stride-%dbpp-rotate-%d-%s
+ * Description: Test maximum hardware supported stride length for given combination
+ *              of %arg[1] modifier with max hardware stride length, %arg[2]-bpp,
+ *              and %arg[3]-rotation with %arg[4] mode
+ * Driver requirement: i915, xe
+ * Functionality: async_flips, big_fbs, kms_gem_interop, rotation, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @4-tiled:            TILE-4 modifier
+ * @x-tiled:            TILE-X modifier
+ * @y-tiled:            TILE-Y modifier
+ * @yf-tiled:           TILE-YF modifier
+ *
+ * arg[2].values:       32, 64
+ * arg[3].values:       0, 180
+ *
+ * arg[4]:
+ *
+ * @async-flip:         Async flip
+ * @hflip-async-flip:   Async & H-flip
+ */
+
+/**
+ * SUBTEST: %s-addfb-size-overflow
+ * Description: Sanity check if addfb ioctl fails correctly for (%arg[1]) modifier
+ *              with small bo.
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @4-tiled:    TILE-4
+ * @x-tiled:    TILE-X
+ * @y-tiled:    TILE-Y
+ * @yf-tiled:   TILE-YF
+ */
+
+/**
+ * SUBTEST: %s-addfb-size-offset-overflow
+ * Description: Sanity check if addfb ioctl fails correctly for (%arg[1]) modifier
+ *              and offsets with small bo
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @4-tiled:    TILE-4
+ * @x-tiled:    TILE-X
+ * @y-tiled:    TILE-Y
+ * @yf-tiled:   TILE-YF
+ */
+
+/**
+ * SUBTEST: linear-addfb
+ * Description: Sanity check if addfb ioctl works correctly with Linear modifier
+ *              for given size and strides of fb
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: %s-addfb
+ * Description: Sanity check if addfb ioctl works correctly with %arg[1] modifier
+ *              for given size and strides of fb
+ * Driver requirement: i915, xe
+ * Functionality: big_fbs, kms_gem_interop, tiling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @4-tiled:    TILE-4
+ * @x-tiled:    TILE-X
+ * @y-tiled:    TILE-Y
+ * @yf-tiled:   TILE-YF
+ */
+
 IGT_TEST_DESCRIPTION("Test big framebuffers");
 
 typedef struct {
@@ -588,108 +750,6 @@ max_hw_stride_async_flip_test(data_t *data)
 	return true;
 }
 
-/**
- * SUBTEST: linear-%dbpp-rotate-%d
- * Description: Sanity check if addfb ioctl works correctly for given combination
- *              of Linear modifier with %arg[1]-bpp & %arg[2]-rotation
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, rotation
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1].values:       8, 16, 32, 64
- * arg[2].values:       0, 90, 180, 270
- */
-
-/**
- * SUBTEST: %s-%dbpp-rotate-%d
- * Description: Sanity check if addfb ioctl works correctly for given combination
- *              of %arg[1] with %arg[2]-bpp & %arg[3]-rotation
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, rotation, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @4-tiled:            TILE-4 modifier
- * @x-tiled:            TILE-X modifier
- * @y-tiled:            TILE-Y modifier
- * @yf-tiled:           TILE-YF modifier
- *
- * arg[2].values:       8, 16, 32, 64
- * arg[3].values:       0, 90, 180, 270
- */
-
-/**
- * SUBTEST: linear-max-hw-stride-%dbpp-rotate-%d
- * Description: Test maximum hardware supported stride length for given combination
- *              of linear modifier with max hardware stride length, %arg[1]-bpp,
- *              and %arg[2]-rotation
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, rotation
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1].values:       32, 64
- * arg[2].values:       0, 180
- */
-
-/**
- * SUBTEST: %s-max-hw-stride-%dbpp-rotate-%d
- * Description: Test maximum hardware supported stride length for given combination
- *              of %arg[1] modifier with max hardware stride length, %arg[2]-bpp,
- *              and %arg[3]-rotation
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, rotation, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @4-tiled:            TILE-4 modifier
- * @x-tiled:            TILE-X modifier
- * @y-tiled:            TILE-Y modifier
- * @yf-tiled:           TILE-YF modifier
- *
- * arg[2].values:       32, 64
- * arg[3].values:       0, 180
- */
-
-/**
- * SUBTEST: %s-max-hw-stride-%dbpp-rotate-%d-hflip
- * Description: Test maximum hardware supported stride length for given combination
- *              of %arg[1] modifier with max hardware stride length, %arg[2]-bpp,
- *              and %arg[3]-rotation with H-flip mode
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, rotation, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: %s-max-hw-stride-%dbpp-rotate-%d-%s
- * Description: Test maximum hardware supported stride length for given combination
- *              of %arg[1] modifier with max hardware stride length, %arg[2]-bpp,
- *              and %arg[3]-rotation with %arg[4] mode
- * Driver requirement: i915, xe
- * Functionality: async_flips, big_fbs, kms_gem_interop, rotation, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @4-tiled:            TILE-4 modifier
- * @x-tiled:            TILE-X modifier
- * @y-tiled:            TILE-Y modifier
- * @yf-tiled:           TILE-YF modifier
- *
- * arg[2].values:       32, 64
- * arg[3].values:       0, 180
- *
- * arg[4]:
- *
- * @async-flip:         Async flip
- * @hflip-async-flip:   Async & H-flip
- */
 static void test_scanout(data_t *data)
 {
 	igt_output_t *output;
@@ -735,22 +795,6 @@ static void test_scanout(data_t *data)
 	igt_skip("unsupported configuration\n");
 }
 
-/**
- * SUBTEST: %s-addfb-size-overflow
- * Description: Sanity check if addfb ioctl fails correctly for (%arg[1]) modifier
- *              with small bo.
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @4-tiled:    TILE-4
- * @x-tiled:    TILE-X
- * @y-tiled:    TILE-Y
- * @yf-tiled:   TILE-YF
- */
 static void
 test_size_overflow(data_t *data)
 {
@@ -795,22 +839,6 @@ test_size_overflow(data_t *data)
 	gem_close(data->drm_fd, bo);
 }
 
-/**
- * SUBTEST: %s-addfb-size-offset-overflow
- * Description: Sanity check if addfb ioctl fails correctly for (%arg[1]) modifier
- *              and offsets with small bo
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @4-tiled:    TILE-4
- * @x-tiled:    TILE-X
- * @y-tiled:    TILE-Y
- * @yf-tiled:   TILE-YF
- */
 static void
 test_size_offset_overflow(data_t *data)
 {
@@ -869,30 +897,6 @@ static int rmfb(int fd, uint32_t id)
 	return err;
 }
 
-/**
- * SUBTEST: linear-addfb
- * Description: Sanity check if addfb ioctl works correctly with Linear modifier
- *              for given size and strides of fb
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: %s-addfb
- * Description: Sanity check if addfb ioctl works correctly with %arg[1] modifier
- *              for given size and strides of fb
- * Driver requirement: i915, xe
- * Functionality: big_fbs, kms_gem_interop, tiling
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @4-tiled:    TILE-4
- * @x-tiled:    TILE-X
- * @y-tiled:    TILE-Y
- * @yf-tiled:   TILE-YF
- */
 static void
 test_addfb(data_t *data)
 {

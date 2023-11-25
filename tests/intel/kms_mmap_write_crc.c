@@ -24,6 +24,13 @@
  *    Tiago Vignatti <tiago.vignatti at intel.com>
  */
 
+/**
+ * TEST: kms mmap write crc
+ * Category: Display
+ * Description: Use the display CRC support to validate mmap write to an already
+ *              uncached future scanout buffer.
+ */
+
 #include <errno.h>
 #include <limits.h>
 #include <stdbool.h>
@@ -37,12 +44,8 @@
 #include "intel_chipset.h"
 #include "ioctl_wrappers.h"
 #include "igt_aux.h"
+
 /**
- * TEST: kms mmap write crc
- * Category: Display
- * Description: Use the display CRC support to validate mmap write to an already
- *              uncached future scanout buffer.
- *
  * SUBTEST: main
  * Description: Tests that caching mode has become UC/WT and flushed using mmap write
  * Driver requirement: i915, xe

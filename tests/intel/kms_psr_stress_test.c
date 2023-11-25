@@ -1,3 +1,9 @@
+
+/**
+ * TEST: kms psr stress test
+ * Category: Display
+ */
+
 #include "igt.h"
 #include "igt_sysfs.h"
 #include "igt_psr.h"
@@ -7,10 +13,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/timerfd.h>
+
 /**
- * TEST: kms psr stress test
- * Category: Display
- *
  * SUBTEST: flip-primary-invalidate-overlay
  * Description: Mix page flips in primary plane and frontbuffer writes to overlay
  *              plane and check for warnings, underruns or PSR state changes

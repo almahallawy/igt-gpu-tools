@@ -18,6 +18,17 @@
 #include "igt.h"
 #include "xe/xe_ioctl.h"
 
+/**
+ * SUBTEST: memset-crc
+ * Description: Use display controller CRC hardware to validate (non)coherency
+ *		of memset operations on future scanout buffer objects
+ *		mmapped with different mmap methods and different caching modes.
+ * Mega feature: General Display Features
+ * Functionality: kms_core
+ * Driver requirement: i915, xe
+ * Test category: functionality test
+ */
+
 typedef struct {
 	int drm_fd;
 	igt_display_t display;
@@ -243,16 +254,6 @@ igt_main
 		select_valid_pipe_output_combo(&data);
 	}
 
-	/**
-	 * SUBTEST: memset-crc
-	 * Description: Use display controller CRC hardware to validate (non)coherency
-	 *		of memset operations on future scanout buffer objects
-	 *		mmapped with different mmap methods and different caching modes.
-	 * Mega feature: General Display Features
-	 * Functionality: kms_core
-	 * Driver requirement: i915, xe
-	 * Test category: functionality test
-	 */
 	igt_subtest_with_dynamic("memset-crc") {
 		if (igt_draw_supports_method(data.drm_fd, IGT_DRAW_MMAP_GTT)) {
 			igt_dynamic("mmap-gtt")

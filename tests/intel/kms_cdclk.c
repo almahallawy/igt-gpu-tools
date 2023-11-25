@@ -29,7 +29,32 @@
  * Category: Display
  * Description: Test cdclk features : crawling and squashing
  */
+
 #include "igt.h"
+
+/**
+ * SUBTEST: mode-transition-all-outputs
+ * Description: Mode transition (low to high) test to validate cdclk frequency
+ *              change by simultaneous modesets on all pipes with valid outputs.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: mode-transition
+ * Description: Mode transition (low to high) test to validate cdclk frequency change.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: plane-scaling
+ * Description: Plane scaling test to validate cdclk frequency change.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, plane, scaling
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
 
 IGT_TEST_DESCRIPTION("Test cdclk features : crawling and squashing");
 
@@ -253,15 +278,6 @@ static void test_mode_transition(data_t *data, enum pipe pipe, igt_output_t *out
 	igt_remove_fb(display->drm_fd, &fb);
 }
 
-/**
- * SUBTEST: mode-transition-all-outputs
- * Description: Mode transition (low to high) test to validate cdclk frequency
- *              change by simultaneous modesets on all pipes with valid outputs.
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void test_mode_transition_on_all_outputs(data_t *data)
 {
 	igt_display_t *display = &data->display;
@@ -358,21 +374,6 @@ static void test_mode_transition_on_all_outputs(data_t *data)
 	igt_remove_fb(data->drm_fd, &fb);
 }
 
-/**
- * SUBTEST: mode-transition
- * Description: Mode transition (low to high) test to validate cdclk frequency change.
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: plane-scaling
- * Description: Plane scaling test to validate cdclk frequency change.
- * Driver requirement: i915, xe
- * Functionality: kms_core, plane, scaling
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void run_cdclk_test(data_t *data, uint32_t flags)
 {
 	igt_display_t *display = &data->display;

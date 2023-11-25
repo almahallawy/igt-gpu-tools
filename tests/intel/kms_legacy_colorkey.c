@@ -21,14 +21,16 @@
  * IN THE SOFTWARE.
  */
 
-#include "igt.h"
-#include <errno.h>
-
 /**
  * TEST: kms legacy colorkey
  * Category: Display
  * Description: Test to check the legacy set colorkey ioctl on sprite planes.
- *
+ */
+
+#include "igt.h"
+#include <errno.h>
+
+/**
  * SUBTEST: basic
  * Description: Check that the legacy set colorkey ioctl only works on sprite planes.
  * Driver requirement: i915

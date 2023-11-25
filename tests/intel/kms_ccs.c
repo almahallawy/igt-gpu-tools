@@ -29,6 +29,7 @@
  *              complemented by a color control surface (CCS) that the display
  *              uses to interpret the compressed data.
  */
+
 #include "igt.h"
 
 #include "i915/gem_create.h"

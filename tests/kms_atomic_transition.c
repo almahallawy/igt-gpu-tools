@@ -25,6 +25,7 @@
  * TEST: kms atomic transition
  * Category: Display
  */
+
 #include "igt.h"
 #include "igt_rand.h"
 #include "drmtest.h"
@@ -36,6 +37,95 @@
 #include <string.h>
 #include <time.h>
 #include <poll.h>
+
+/**
+ * SUBTEST: plane-primary-toggle-with-vblank-wait
+ * Description: Check toggling of primary plane with vblank
+ * Driver requirement: i915, xe
+ * Functionality: plane, vblank, watermark
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: plane-all-modeset-%s
+ * Description: Modeset test for all plane combinations %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: plane, watermark
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @transition:                           default
+ * @transition-fencing:                   with fencing commit
+ */
+
+/**
+ * SUBTEST: plane-all-modeset-%s
+ * Description: Modeset test for all plane combinations %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: plane, watermark
+ * Mega feature: eDP
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @transition-fencing-internal-panels:   on internal panels with fencing commit
+ * @transition-internal-panels:           on internal panels
+ */
+
+/**
+ * SUBTEST: plane-all-%s
+ * Description: Transition test for all plane combinations %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: plane, watermark
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @transition:                           default
+ * @transition-fencing:                   with fencing commit
+ * @transition-nonblocking:               with non-blocking commit
+ * @transition-nonblocking-fencing:       with non-blocking & fencing commit
+ */
+
+/**
+ * SUBTEST: plane-toggle-modeset-transition
+ * Description: Check toggling and modeset transition on plane
+ * Driver requirement: i915, xe
+ * Functionality: plane, watermark
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: plane-use-after-nonblocking-%s
+ * Description: Transition test with non %arg[1] and make sure commit of disabled
+ *              plane has to complete before atomic commit on that plane
+ * Driver requirement: i915, xe
+ * Functionality: plane, watermark
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @unbind:           blocking commit
+ * @unbind-fencing:   blocking commit with fencing
+ */
+
+/**
+ * SUBTEST: modeset-%s
+ * Description: Modeset transition tests for combinations of %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: plane, watermark
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @transition:                     crtc enabled
+ * @transition-fencing:             crtc enabled with fencing commit
+ * @transition-nonblocking:         crtc enabled with nonblocking commit
+ * @transition-nonblocking-fencing: crtc enabled with nonblocking & fencing commit
+ */
 
 #ifndef DRM_CAP_CURSOR_WIDTH
 #define DRM_CAP_CURSOR_WIDTH 0x8
@@ -62,14 +152,6 @@ int *timeline;
 pthread_t *thread;
 int *seqno;
 
-/**
- * SUBTEST: plane-primary-toggle-with-vblank-wait
- * Description: Check toggling of primary plane with vblank
- * Driver requirement: i915, xe
- * Functionality: plane, vblank, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void
 run_primary_test(data_t *data, enum pipe pipe, igt_output_t *output)
 {
@@ -481,72 +563,6 @@ static void wait_for_transition(data_t *data, enum pipe pipe, bool nonblocking, 
 		drmHandleEvent(data->drm_fd, &drm_events);
 	}
 }
-
-/**
- * SUBTEST: plane-all-modeset-%s
- * Description: Modeset test for all plane combinations %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @transition:                           default
- * @transition-fencing:                   with fencing commit
- */
-
-/**
- * SUBTEST: plane-all-modeset-%s
- * Description: Modeset test for all plane combinations %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: eDP
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @transition-fencing-internal-panels:   on internal panels with fencing commit
- * @transition-internal-panels:           on internal panels
- */
-
-/**
- * SUBTEST: plane-all-%s
- * Description: Transition test for all plane combinations %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @transition:                           default
- * @transition-fencing:                   with fencing commit
- * @transition-nonblocking:               with non-blocking commit
- * @transition-nonblocking-fencing:       with non-blocking & fencing commit
- */
-
-/**
- * SUBTEST: plane-toggle-modeset-transition
- * Description: Check toggling and modeset transition on plane
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * SUBTEST: plane-use-after-nonblocking-%s
- * Description: Transition test with non %arg[1] and make sure commit of disabled
- *              plane has to complete before atomic commit on that plane
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @unbind:           blocking commit
- * @unbind-fencing:   blocking commit with fencing
- */
 
 /*
  * 1. Set primary plane to a known fb.
@@ -1041,21 +1057,6 @@ retry:
 	}
 }
 
-/**
- * SUBTEST: modeset-%s
- * Description: Modeset transition tests for combinations of %arg[1]
- * Driver requirement: i915, xe
- * Functionality: plane, watermark
- * Mega feature: General Display Features
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @transition:                     crtc enabled
- * @transition-fencing:             crtc enabled with fencing commit
- * @transition-nonblocking:         crtc enabled with nonblocking commit
- * @transition-nonblocking-fencing: crtc enabled with nonblocking & fencing commit
- */
 static void run_modeset_transition(data_t *data, int requested_outputs, bool nonblocking, bool fencing)
 {
 	igt_output_t *outputs[IGT_MAX_PIPES] = {};

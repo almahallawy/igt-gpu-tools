@@ -24,6 +24,13 @@
  *
  */
 
+/**
+ * TEST: kms fbcon fbt
+ * Category: Display
+ * Description: Test the relationship between fbcon and the frontbuffer tracking
+ *              infrastructure.
+ */
+
 #include "igt.h"
 #include "igt_device.h"
 #include "igt_psr.h"
@@ -33,11 +40,6 @@
 #include <fcntl.h>
 
 /**
- * TEST: kms fbcon fbt
- * Category: Display
- * Description: Test the relationship between fbcon and the frontbuffer tracking
- *              infrastructure.
- *
  * SUBTEST: fbc
  * Description: Test the relationship between fbcon and the frontbuffer tracking
  *              infrastructure with fbc enabled.

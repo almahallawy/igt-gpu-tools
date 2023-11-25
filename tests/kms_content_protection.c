@@ -27,6 +27,7 @@
  * Category: Display
  * Description: Test content protection (HDCP)
  */
+
 #include <poll.h>
 #include <fcntl.h>
 #include <sys/epoll.h>
@@ -36,6 +37,77 @@
 #include "igt_sysfs.h"
 #include "igt_kms.h"
 #include "igt_kmod.h"
+
+/**
+ * SUBTEST: lic
+ * Description: Test for the integrity of link.
+ * Driver requirement: i915, xe
+ * Functionality: hdcp1.4
+ * Mega feature: HDCP
+ * Test category: functionality test
+ *
+ * SUBTEST: content-type-change
+ * Description: Test the content type change when the content protection already
+ *              enabled
+ * Driver requirement: i915, xe
+ * Functionality: hdcp1.4, hdcp2.2
+ * Mega feature: HDCP
+ * Test category: functionality test
+ *
+ * SUBTEST: mei-interface
+ * Description: Test the teardown and rebuild of the interface between Intel
+ *              and mei hdcp.
+ * Driver requirement: i915, xe
+ * Functionality: hdcp1.4, hdcp2.2
+ * Mega feature: HDCP
+ * Test category: functionality test
+ *
+ * SUBTEST: srm
+ * Description: This test writes the facsimile SRM into the /lib/firmware/ and
+ *              check the kernel parsing of it by invoking the hdcp authentication.
+ * Driver requirement: i915, xe
+ * Functionality: hdcp1.4
+ * Mega feature: HDCP
+ * Test category: functionality test
+ *
+ * SUBTEST: uevent
+ * Description: Test to detect the HDCP status change when we are reading the
+ *              uevent sent with the corresponding connector id and property id.
+ * Driver requirement: i915, xe
+ * Functionality: hdcp1.4
+ * Mega feature: HDCP
+ * Test category: functionality test
+ *
+ * SUBTEST: %s
+ * Description: Test content protection with %arg[1]
+ * Driver requirement: i915, xe
+ * Functionality: hdcp1.4
+ * Mega feature: HDCP
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @atomic:         atomic modesetting
+ * @atomic-dpms:    DPMS ON/OFF during atomic modesetting.
+ * @legacy:         legacy style commit
+ * @type1:          content type 1 that can be handled only through HDCP2.2.
+ */
+
+/**
+ * SUBTEST: dp-mst-%s
+ * Description: Test Content protection %arg[1] over DP MST.
+ * Driver requirement: i915, xe
+ * Functionality: hdcp1.4, mst
+ * Mega feature: HDCP
+ * Test category: functionality test
+ *
+ * arg[1]:
+ *
+ * @lic-type-0:   Type 0 with LIC
+ * @lic-type-1:   Type 1 with LIC.
+ * @type-0:       Type 0
+ * @type-1:       Type 1
+ */
 
 IGT_TEST_DESCRIPTION("Test content protection (HDCP)");
 
@@ -490,60 +562,6 @@ test_fini(igt_output_t *output, enum igt_commit_style s)
 	igt_display_commit2(&data.display, s);
 }
 
-/**
- * SUBTEST: lic
- * Description: Test for the integrity of link.
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4
- * Mega feature: HDCP
- * Test category: functionality test
- *
- * SUBTEST: content-type-change
- * Description: Test the content type change when the content protection already
- *              enabled
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4, hdcp2.2
- * Mega feature: HDCP
- * Test category: functionality test
- *
- * SUBTEST: mei-interface
- * Description: Test the teardown and rebuild of the interface between Intel
- *              and mei hdcp.
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4, hdcp2.2
- * Mega feature: HDCP
- * Test category: functionality test
- *
- * SUBTEST: srm
- * Description: This test writes the facsimile SRM into the /lib/firmware/ and
- *              check the kernel parsing of it by invoking the hdcp authentication.
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4
- * Mega feature: HDCP
- * Test category: functionality test
- *
- * SUBTEST: uevent
- * Description: Test to detect the HDCP status change when we are reading the
- *              uevent sent with the corresponding connector id and property id.
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4
- * Mega feature: HDCP
- * Test category: functionality test
- *
- * SUBTEST: %s
- * Description: Test content protection with %arg[1]
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4
- * Mega feature: HDCP
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @atomic:         atomic modesetting
- * @atomic-dpms:    DPMS ON/OFF during atomic modesetting.
- * @legacy:         legacy style commit
- * @type1:          content type 1 that can be handled only through HDCP2.2.
- */
 static void
 test_content_protection(enum igt_commit_style s, int content_type)
 {
@@ -631,21 +649,6 @@ static void test_cp_lic_on_mst(igt_output_t *mst_outputs[], int valid_outputs, b
 	}
 }
 
-/**
- * SUBTEST: dp-mst-%s
- * Description: Test Content protection %arg[1] over DP MST.
- * Driver requirement: i915, xe
- * Functionality: hdcp1.4, mst
- * Mega feature: HDCP
- * Test category: functionality test
- *
- * arg[1]:
- *
- * @lic-type-0:   Type 0 with LIC
- * @lic-type-1:   Type 1 with LIC.
- * @type-0:       Type 0
- * @type-1:       Type 1
- */
 static void
 test_content_protection_mst(int content_type)
 {

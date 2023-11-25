@@ -22,14 +22,17 @@
  *
  */
 
-#include "igt.h"
-#include "drmtest.h"
 /**
  * TEST: kms concurrent
  * Category: Display
  * Description: Test atomic mode setting concurrently with multiple planes and
  *              screen resolution
- *
+ */
+
+#include "igt.h"
+#include "drmtest.h"
+
+/**
  * SUBTEST: multi-plane-atomic-lowres
  * Description: Test atomic mode setting concurrently with multiple planes and
  *              screen resolution.

@@ -22,6 +22,12 @@
  *
  */
 
+/**
+ * TEST: kms pm dc
+ * Category: Display
+ * Description: Tests to validate display power DC states.
+ */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <stdbool.h>
@@ -39,10 +45,6 @@
 #include "xe/xe_query.h"
 
 /**
- * TEST: kms pm dc
- * Category: Display
- * Description: Tests to validate display power DC states.
- *
  * SUBTEST: dc3co-vpb-simulation
  * Description: Make sure that system enters DC3CO when PSR2 is active and system
  *              is in SLEEP state

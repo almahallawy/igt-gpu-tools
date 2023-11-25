@@ -22,18 +22,21 @@
  *
  */
 
+/**
+ * TEST: kms cursor edge walk
+ * Category: Display
+ * Description: Exercise CHV pipe C cursor fail
+ * Description: Test to check different cursor sizes by walking different edges of screen
+ */
+
 #include "igt.h"
 #include <errno.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+
 /**
- * TEST: kms cursor edge walk
- * Category: Display
- * Description: Exercise CHV pipe C cursor fail
- * Description: Test to check different cursor sizes by walking different edges of screen
- *
  * SUBTEST: %s-%s
  * Description: Checking cursor size %arg[1] by walking %arg[2] of screen
  * Driver requirement: i915, xe

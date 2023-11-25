@@ -29,7 +29,26 @@
  * Category: Display
  * Description: Test Display Modes
  */
+
 #include "igt.h"
+
+/**
+ * SUBTEST: extended-mode-basic
+ * Description: Test for validating display extended mode with a pair of connected
+ *              displays
+ * Driver requirement: i915, xe
+ * Functionality: kms_core
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ *
+ * SUBTEST: mst-extended-mode-negative
+ * Description: Negative test for validating display extended mode with a pair
+ *		of connected 2k-4k or 4k-4k displays.
+ * Driver requirement: i915, xe
+ * Functionality: kms_core, mst
+ * Mega feature: General Display Features
+ * Test category: functionality test
+ */
 
 #define HDISPLAY_4K	3840
 #define VDISPLAY_4K	2160
@@ -205,15 +224,6 @@ static void run_extendedmode_basic(data_t *data,
 	for_each_connected_output_local((display), (output)) \
 		for_each_if (igt_pipe_connector_valid((pipe), (output)))
 
-/**
- * SUBTEST: extended-mode-basic
- * Description: Test for validating display extended mode with a pair of connected
- *              displays
- * Driver requirement: i915, xe
- * Functionality: kms_core
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void run_extendedmode_test(data_t *data) {
 	enum pipe pipe1, pipe2;
 	igt_output_t *output1, *output2;
@@ -259,15 +269,6 @@ static void run_extendedmode_test(data_t *data) {
 	}
 }
 
-/**
- * SUBTEST: mst-extended-mode-negative
- * Description: Negative test for validating display extended mode with a pair
- *		of connected 2k-4k or 4k-4k displays.
- * Driver requirement: i915, xe
- * Functionality: kms_core, mst
- * Mega feature: General Display Features
- * Test category: functionality test
- */
 static void run_extendedmode_negative(data_t *data, int pipe1, int pipe2)
 {
 	struct igt_fb fbs[2];

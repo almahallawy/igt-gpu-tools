@@ -21,6 +21,12 @@
  * IN THE SOFTWARE.
  */
 
+/**
+ * TEST: kms universal plane
+ * Category: Display
+ * Description: Check pageflip & modeset on universal plane
+ */
+
 #include "igt.h"
 #include <errno.h>
 #include <stdbool.h>
@@ -29,10 +35,6 @@
 #include <fcntl.h>
 
 /**
- * TEST: kms universal plane
- * Category: Display
- * Description: Check pageflip & modeset on universal plane
- *
  * SUBTEST: cursor-fb-leak
  * Description: Check for cursor leaks after performing cursor operations
  * Driver requirement: i915, xe
@@ -54,9 +56,7 @@
  * Functionality: plane
  * Mega feature: General Display Features
  * Test category: functionality test
- */
-
-/**
+ *
  * SUBTEST: universal-plane-%s
  * Description: Check %arg[1]
  * Driver requirement: i915, xe

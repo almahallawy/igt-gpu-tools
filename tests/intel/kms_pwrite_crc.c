@@ -22,6 +22,12 @@
  *
  */
 
+/**
+ * TEST: kms pwrite crc
+ * Category: Display
+ * Description: Test to validate pwrite buffer using the display CRC
+ */
+
 #include "igt.h"
 #include <errno.h>
 #include <limits.h>
@@ -30,10 +36,6 @@
 #include <string.h>
 
 /**
- * TEST: kms pwrite crc
- * Category: Display
- * Description: Test to validate pwrite buffer using the display CRC
- *
  * SUBTEST:
  * Description: Use the display CRC support to validate pwrite to an already
  *              uncached future scanout buffer.
