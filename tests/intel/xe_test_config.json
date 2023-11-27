@@ -1,6 +1,7 @@
 {
     "description": "JSON file to be used to parse Xe documentation",
     "name": "Tests for Xe Driver",
+    "drivers": [ "xe" ],
     "files": [ "xe_*.c", "../core_hotunplug.c", "intel_hwmon.c" ],
     "fields": {
         "Category": {
