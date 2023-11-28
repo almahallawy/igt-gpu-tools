@@ -95,8 +95,12 @@
  */
 
 /**
- * SUBTEST: basic-%s-tiled-legacy
- * Description: Check if addfb2 and rmfb call works for basic %arg[1] test
+ * SUBTEST: basic-x-tiled-legacy
+ * Description: Check if addfb2 and rmfb call works for basic x-tiling test
+ * Functionality: kms_gem_interop, tiling
+ *
+ * SUBTEST: basic-y-tiled-legacy
+ * Description: Check if addfb2 and rmfb call works for basic y-tiling test
  * Driver requirement: i915
  * Functionality: kms_gem_interop, tiling
  *
@@ -109,11 +113,6 @@
  * Description: Test that addfb2 call fails correctly for pitches mismatch
  * Driver requirement: i915
  * Functionality: kms_gem_interop, tiling
- *
- * arg[1]:
- *
- * @x:        x-tiling
- * @y:        y-tiling
  */
 
 /**
