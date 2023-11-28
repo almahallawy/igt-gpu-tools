@@ -57,6 +57,10 @@
  * Description: Sanity test to enable FBC on a plane.
  * Functionality: fbc
  *
+ * SUBTEST: pipe-fbc-rte
+ * Description: Sanity test to enable FBC on each pipe.
+ * Functionality: fbc
+ *
  * SUBTEST: drrs-%dp-rte
  * Description: Sanity test to enable DRRS with %arg[1] panels.
  * Functionality: fbt, drrs
@@ -4460,6 +4464,8 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 {
 	struct test_mode t;
 	int devid;
+	enum pipe pipe;
+	igt_output_t *output;
 
 	igt_fixture {
 		setup_environment();
@@ -4498,6 +4504,49 @@ igt_main_args("", long_options, help_str, opt_handler, NULL)
 
 	igt_subtest_f("plane-fbc-rte") {
 		plane_fbc_rte_subtest(&t);
+	}
+
+	igt_subtest_group {
+		igt_subtest_with_dynamic("pipe-fbc-rte") {
+
+			enum pipe default_pipe = prim_mode_params.pipe;
+
+			t.pipes = PIPE_SINGLE;
+			t.feature = FEATURE_FBC;
+			t.screen = SCREEN_PRIM;
+			t.fbs = FBS_INDIVIDUAL;
+			t.format = FORMAT_DEFAULT;
+			t.method = IGT_DRAW_BLT;
+			/* Make sure nothing is using these values. */
+			t.flip = -1;
+			t.tiling = opt.tiling;
+
+			for_each_pipe(&drm.display, pipe) {
+				if (pipe == default_pipe) {
+					igt_info("pipe-%s: FBC validated in other subtest\n", kmstest_pipe_name(pipe));
+					continue;
+				}
+
+				if (!intel_fbc_supported_on_chipset(drm.fd, pipe)) {
+					igt_info("Can't test FBC: not supported on pipe-%s\n", kmstest_pipe_name(pipe));
+					continue;
+				}
+
+				for_each_valid_output_on_pipe(&drm.display, pipe, output) {
+					init_mode_params(&prim_mode_params, output, pipe);
+					setup_fbc();
+
+					igt_dynamic_f("pipe-%s-%s", kmstest_pipe_name(pipe),
+						      igt_output_name(output))
+						rte_subtest(&t);
+
+					break; /* One output is enough. */
+				}
+			}
+		}
+
+		igt_fixture
+			init_modeset_cached_params();
 	}
 
 	TEST_MODE_ITER_BEGIN(t)
