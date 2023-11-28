@@ -52,9 +52,12 @@ igt@kms_bw@.*-([5-9]|1[0-6])-displays-.*
 ##################################################################
 # KMS: Tests specific to i915 driver
 ##################################################################
+igt@kms_addfb_basic@addfb25-x-tiled-mismatch-legacy
+igt@kms_addfb_basic@basic-y-tiled-legacy
 igt@kms_addfb_basic@bo-too-small-due-to-tiling
 igt@kms_addfb_basic@clobberred-modifier
 igt@kms_addfb_basic@.*framebuffer-vs-set-tiling
+igt@kms_addfb_basic@tile-pitch-mismatch
 igt@kms_busy@.*
 igt@kms_draw_crc@draw-method-(mmap-cpu|mmap-gtt|pwrite)
 igt@kms_fence_pin_leak
