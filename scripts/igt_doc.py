@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pylint: disable=C0301,C0201,C0206
+# pylint: disable=C0301,R0914,R0915,R1702
 # SPDX-License-Identifier: (GPL-2.0 OR MIT)
 
 ## Copyright (C) 2023    Intel Corporation                 ##
@@ -56,7 +56,7 @@ class IgtTestList(TestList):
         subtest_dict = self.expand_dictionary(True)
 
         # Create a tests_per_list dict
-        gpus = set()
+        gpu_set = set()
         tests_per_list = {}
         split_regex = re.compile(r",\s*")
 
@@ -68,64 +68,107 @@ class IgtTestList(TestList):
             for run_type in set(split_regex.split(run_types)):
                 run_type = run_type.lower()
 
-                if run_type.startswith(tuple(self.drivers)):
-                    run_type_set.add(run_type)
-                else:
-                    for driver in self.drivers:
-                        run_type = f"{driver.lower()}_{run_type}"
-                        run_type_set.add(run_type)
+                drivers = set(self.drivers)
 
-            for run_type in run_type_set:
-                if run_type not in tests_per_list:
-                    tests_per_list[run_type] = {}
+                for driver in self.drivers:
+                    driver = driver.lower()
 
-                if subname not in tests_per_list[run_type]:
-                    tests_per_list[run_type][subname] = {}
-
-                if "GPU" in subtest:
-                    for gpu_list in split_regex.split(subtest["GPU"]):
-                        gpus.add(gpu_list)
-                        tests_per_list[run_type][subname][gpu_list] = True
-
-                if "GPU excluded platform" in subtest:
-                    for gpu_list in split_regex.split(subtest["GPU excluded platform"]):
-                        gpus.add(gpu_list)
-                        tests_per_list[run_type][subname][gpu_list] = False
-
-        # Handle block and permit lists
-
-        for run_type in tests_per_list.keys():
-            for subname, gpu in tests_per_list[run_type].items():
-
-                # Trivial case: fields not defined
-                if not gpus:
-                    tests_per_list[run_type][subname]["default"] = True
-                    continue
-
-                if not gpu:
-                    tests_per_list[run_type][subname] = {}
-                    for gpu in gpus:
-                        tests_per_list[run_type][subname][gpu] = True
-                    continue
-
-                default_gpu_value = True
-                for gpu, value in tests_per_list[run_type][subname].items():
-                    if value:
-                        default_gpu_value = False
+                    if run_type.startswith(driver):
+                        run_type = re.sub(r"^" + driver + r"[\W_]*", "", run_type)
+                        drivers = set([driver])
                         break
-                    if not gpu in tests_per_list[run_type][subname]:
-                        for gpu in gpus:
-                            tests_per_list[run_type][subname][gpu] = default_gpu_value
 
-                if "all" in tests_per_list[run_type][subname]:
-                    if not tests_per_list[run_type][subname]["all"]:
-                        for gpu in gpus:
-                            tests_per_list[run_type][subname][gpu] = False
+                run_type_set.add(run_type)
 
-                if default_gpu_value:
-                    tests_per_list[run_type][subname]["default"] = True
+            for driver in drivers:
+                if driver not in tests_per_list:
+                    tests_per_list[driver] = {}
 
-        return (gpus, tests_per_list)
+                for run_type in run_type_set:
+                    if run_type not in tests_per_list[driver]:
+                        tests_per_list[driver][run_type] = {}
+
+                    if subname not in tests_per_list[driver][run_type]:
+                        tests_per_list[driver][run_type][subname] = {}
+
+                    if "GPU" in subtest:
+                        for gpu in split_regex.split(subtest["GPU"]):
+                            gpu_set.add(gpu)
+                            tests_per_list[driver][run_type][subname][gpu] = True
+
+                    if "GPU excluded platform" in subtest:
+                        for gpu in split_regex.split(subtest["GPU excluded platform"]):
+                            gpu_set.add(gpu)
+                            tests_per_list[driver][run_type][subname][gpu] = False
+
+        # Create a testlist dictionary
+
+        testlists = {}
+
+        for driver, run_types in tests_per_list.items():
+            testlists[driver] = {}
+            for run_type, subnames in run_types.items():
+                for subname, gpus in subnames.items():
+                    if not gpu_set:
+                        gpu = "default"
+
+                    if gpu not in testlists[driver]:
+                        testlists[driver][gpu] = {}
+
+                    if run_type not in testlists[driver][gpu]:
+                        testlists[driver][gpu][run_type] = set()
+
+                    # Trivial case: fields not defined
+                    if not gpu_set:
+                        testlists[driver][gpu][run_type].add(subname)
+                        continue
+
+                    # Globally blocklisted values
+                    if "all" in tests_per_list[driver][run_type][subname]:
+                        continue
+
+                    # Nothing blocked of explicitly added.
+                    # It means that test should be on testlists
+                    if not gpus:
+                        for gpu in gpu_set:
+                            if gpu == "all":
+                                continue
+
+                            if gpu not in testlists[driver]:
+                                testlists[driver][gpu] = {}
+
+                            if run_type not in testlists[driver][gpu]:
+                                testlists[driver][gpu][run_type] = set()
+
+                            testlists[driver][gpu][run_type].add(subname)
+                        continue
+
+                    default_gpu_value = True
+
+                    # If GPU field is used, default is to block list
+                    for gpu, value in gpus.items():
+                        if value:
+                            default_gpu_value = False
+                            break
+
+                    for gpu, value in gpus.items():
+                        if gpu not in testlists[driver]:
+                            testlists[driver][gpu] = {}
+
+                        if run_type not in testlists[driver][gpu]:
+                            testlists[driver][gpu][run_type] = set()
+
+                        value = default_gpu_value
+                        if gpu in tests_per_list[driver][run_type][subname]:
+                            value = tests_per_list[driver][run_type][subname]
+
+                        if value:
+                            testlists[driver][gpu][run_type].add(subname)
+
+                    if default_gpu_value:
+                        testlists[driver][gpu][run_type].add(subname)
+
+        return (testlists, gpu_set)
 
     def write_intelci_testlist(self, directory):
         '''Create testlist directory (if needed) and files'''
@@ -133,50 +176,18 @@ class IgtTestList(TestList):
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        (gpus, tests_per_list)  = self.gen_intelci_testlist()
-        testlists = {}
+        testlists = self.gen_intelci_testlist()
 
-        for run_type in tests_per_list.keys():
-            for subname, gpu_dict in tests_per_list[run_type].items():
-                for gpu, value in gpu_dict.items():
-                    if gpu == "all":
-                        continue
-
-                    gpu = re.sub(r"[\W_]+", "-", gpu).lower()
-                    name = re.sub(r"[\W_]+", "-", run_type).lower()
-                    name = re.sub(r"_+", "_", name)
-
-                    drivers = set(self.drivers)
-
-                    for driver in self.drivers:
-                        driver = driver.lower()
-
-                        if name.startswith(driver):
-                            all_drivers = False
-                            name = re.sub(r"^" + driver + r"[\W_]*", "", name)
-                            drivers = set([driver])
-                            break
-
-                    for driver in drivers:
-                        if driver not in testlists:
-                            testlists[driver] = {}
-
-                        if gpu not in testlists[driver]:
-                            testlists[driver][gpu] = {}
-
-                        if name not in testlists[driver][gpu]:
-                            testlists[driver][gpu][name] = set()
-
-                        testlists[driver][gpu][name].add(subname)
-
-        for driver in testlists.keys():
+        for driver, gpus in testlists[0].items():
             driver_path = os.path.join(directory, driver)
             try:
                 os.makedirs(driver_path)
             except FileExistsError:
                 pass
 
-            for gpu, names in testlists[driver].items():
+            for gpu, names in gpus.items():
+                gpu = re.sub(r"[\W_]+", "-", gpu).lower()
+
                 dname = os.path.join(driver_path, gpu)
                 try:
                     os.makedirs(dname)
@@ -185,7 +196,13 @@ class IgtTestList(TestList):
 
                 for testlist, subtests in names.items():
                     if testlist == "":
+                        if not subtests:
+                            continue
+
                         testlist = "other"
+                    else:
+                        testlist = re.sub(r"[\W_]+", "-", testlist).lower()
+                        testlist = re.sub(r"_+", "_", testlist)
 
                     if not subtests:
                         print(f"Warning: empty testlist: {testlist}")
