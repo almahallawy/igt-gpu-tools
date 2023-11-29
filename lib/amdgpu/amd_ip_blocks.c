@@ -656,6 +656,9 @@ int setup_amdgpu_ip_blocks(uint32_t major, uint32_t minor, struct amdgpu_gpu_inf
 		identify_chip(GFX1103_R1);
 		identify_chip(GFX1103_R2);
 		break;
+	case FAMILY_GFX1150:
+		identify_chip(GFX1150);
+		break;
 	}
 	if (!info->name) {
 		igt_info("amdgpu: unknown (family_id, chip_external_rev): (%u, %u)\n",
