@@ -246,12 +246,12 @@ test_evict_cm(int fd, struct drm_xe_engine_class_instance *eci,
 	fd = drm_open_driver(DRIVER_XE);
 
 	vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
-			  DRM_XE_VM_CREATE_FLAG_COMPUTE_MODE, 0);
+			  DRM_XE_VM_CREATE_FLAG_LR_MODE, 0);
 	if (flags & BIND_EXEC_QUEUE)
 		bind_exec_queues[0] = xe_bind_exec_queue_create(fd, vm, 0, true);
 	if (flags & MULTI_VM) {
 		vm2 = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
-				   DRM_XE_VM_CREATE_FLAG_COMPUTE_MODE, 0);
+				   DRM_XE_VM_CREATE_FLAG_LR_MODE, 0);
 		if (flags & BIND_EXEC_QUEUE)
 			bind_exec_queues[1] = xe_bind_exec_queue_create(fd, vm2,
 									0, true);

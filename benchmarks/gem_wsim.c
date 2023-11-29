@@ -2038,7 +2038,7 @@ static void xe_vm_create_(struct xe_vm *vm)
 
 	if (vm->compute_mode)
 		flags |= DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
-			 DRM_XE_VM_CREATE_FLAG_COMPUTE_MODE;
+			 DRM_XE_VM_CREATE_FLAG_LR_MODE;
 
 	vm->id = xe_vm_create(fd, flags, 0);
 }

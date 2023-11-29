@@ -287,7 +287,7 @@ test_compute_mode(int fd, uint32_t vm, uint64_t addr, uint64_t userptr,
 
 	if (!vm) {
 		vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
-				  DRM_XE_VM_CREATE_FLAG_COMPUTE_MODE, 0);
+				  DRM_XE_VM_CREATE_FLAG_LR_MODE, 0);
 		owns_vm = true;
 	}
 
@@ -1008,7 +1008,7 @@ static void threads(int fd, int flags)
 					      0);
 		vm_compute_mode = xe_vm_create(fd,
 					       DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
-					       DRM_XE_VM_CREATE_FLAG_COMPUTE_MODE,
+					       DRM_XE_VM_CREATE_FLAG_LR_MODE,
 					       0);
 	}
 
