@@ -289,6 +289,11 @@ class TestList:
             cfg_path = "./"
             driver_name = main_name
 
+        if "drivers" in self.config:
+            self.drivers = self.config["drivers"]
+        else:
+            self.drivers = [driver_name]
+
         if sources_path:
             cfg_path = os.path.realpath(sources_path) + "/"
 
