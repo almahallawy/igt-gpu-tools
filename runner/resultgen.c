@@ -1262,6 +1262,9 @@ struct comms_context
 	char *subtestresult;
 	char *dynamicsubtestresult;
 
+	double subtest_execution_time;
+	double dynamic_subtest_execution_time;
+
 	char *cmdline;
 	int exitcode;
 
@@ -1321,6 +1324,7 @@ static void comms_finish_subtest(struct comms_context *context)
 	if (context->subtestresult == NULL)
 		context->subtestresult = strdup("incomplete");
 	set_result(context->current_test, context->subtestresult);
+	add_runtime(context->current_test, context->subtest_execution_time);
 
 	free(context->subtestresult);
 	context->subtestresult = NULL;
@@ -1343,6 +1347,7 @@ static void comms_finish_dynamic_subtest(struct comms_context *context)
 	if (context->dynamicsubtestresult == NULL)
 		context->dynamicsubtestresult = strdup("incomplete");
 	set_result(context->current_dynamic_subtest, context->dynamicsubtestresult);
+	add_runtime(context->current_dynamic_subtest, context->dynamic_subtest_execution_time);
 
 	free(context->dynamicsubtestresult);
 	context->dynamicsubtestresult = NULL;
@@ -1617,6 +1622,7 @@ static bool comms_handle_subtest_result(const struct runnerpacket *packet,
 				    strlen(helper.subtestresult.result),
 				    &mappedresult, NULL);
 		context->subtestresult = strdup(mappedresult);
+		context->subtest_execution_time = strtod(helper.subtestresult.timeused, NULL);
 	}
 
 	context->state = STATE_BETWEEN_SUBTESTS;
@@ -1757,6 +1763,7 @@ static bool comms_handle_dynamic_subtest_result(const struct runnerpacket *packe
 				    strlen(helper.dynamicsubtestresult.result),
 				    &mappedresult, NULL);
 		context->dynamicsubtestresult = strdup(mappedresult);
+		context->dynamic_subtest_execution_time = strtod(helper.dynamicsubtestresult.timeused, NULL);
 	}
 
 	context->state = STATE_BETWEEN_DYNAMIC_SUBTESTS;
