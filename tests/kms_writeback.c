@@ -156,7 +156,7 @@ static bool check_writeback_config(igt_display_t *display, igt_output_t *output,
 			data.supported_colors |= 1 << i;
 	}
 
-	return !ret;
+	return data.supported_colors;
 }
 
 static igt_output_t *kms_writeback_get_output(igt_display_t *display)
