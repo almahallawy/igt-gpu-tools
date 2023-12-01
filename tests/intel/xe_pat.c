@@ -113,9 +113,27 @@ static void pat_index_all(int fd)
 						   size, DRM_XE_VM_BIND_OP_MAP, 0, NULL, 0, 0,
 						   pat_index, 0),
 				      -EINVAL);
+
+			igt_assert_eq(__xe_vm_bind(fd, vm, 0, 0, 0, 0x40000,
+						   size, DRM_XE_VM_BIND_OP_MAP,
+						   DRM_XE_VM_BIND_FLAG_NULL, NULL, 0, 0,
+						   pat_index, 0),
+				      -EINVAL);
 		} else {
 			igt_assert_eq(__xe_vm_bind(fd, vm, 0, bo, 0, 0x40000,
 						   size, DRM_XE_VM_BIND_OP_MAP, 0, NULL, 0, 0,
+						   pat_index, 0),
+				      0);
+			xe_vm_unbind_sync(fd, vm, 0, 0x40000, size);
+
+			/*
+			 * There is no real memory being mapped here, so any
+			 * platform supported pat_index should be acceptable for
+			 * NULL mappings.
+			 */
+			igt_assert_eq(__xe_vm_bind(fd, vm, 0, 0, 0, 0x40000,
+						   size, DRM_XE_VM_BIND_OP_MAP,
+						   DRM_XE_VM_BIND_FLAG_NULL, NULL, 0, 0,
 						   pat_index, 0),
 				      0);
 			xe_vm_unbind_sync(fd, vm, 0, 0x40000, size);
@@ -124,6 +142,12 @@ static void pat_index_all(int fd)
 
 	igt_assert_eq(__xe_vm_bind(fd, vm, 0, bo, 0, 0x40000,
 				   size, DRM_XE_VM_BIND_OP_MAP, 0, NULL, 0, 0,
+				   pat_index, 0),
+		      -EINVAL);
+
+	igt_assert_eq(__xe_vm_bind(fd, vm, 0, 0, 0, 0x40000,
+				   size, DRM_XE_VM_BIND_OP_MAP,
+				   DRM_XE_VM_BIND_FLAG_NULL, NULL, 0, 0,
 				   pat_index, 0),
 		      -EINVAL);
 
