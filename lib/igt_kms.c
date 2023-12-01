@@ -3971,6 +3971,34 @@ void igt_plane_set_prop_enum(igt_plane_t *plane,
 }
 
 /**
+ * igt_plane_check_prop_is_mutable:
+ * @plane: Target plane.
+ * @prop: Property to check.
+ *
+ * Check if a plane supports a given property and if this property is mutable.
+ *
+ * Returns true if the plane has the mutable property. False if the property is
+ * not support or it's immutable.
+ */
+bool igt_plane_check_prop_is_mutable(igt_plane_t *plane,
+				     enum igt_atomic_plane_properties igt_prop)
+{
+	drmModePropertyPtr prop;
+	uint64_t value;
+	bool has_prop;
+
+	has_prop = kmstest_get_property(plane->pipe->display->drm_fd,
+					plane->drm_plane->plane_id,
+					DRM_MODE_OBJECT_PLANE,
+				        igt_plane_prop_names[igt_prop], NULL,
+					&value, &prop);
+	if (!has_prop)
+		return false;
+
+	return !(prop->flags & DRM_MODE_PROP_IMMUTABLE);
+}
+
+/**
  * igt_plane_replace_prop_blob:
  * @plane: plane to set property on.
  * @prop: property for which the blob will be replaced.

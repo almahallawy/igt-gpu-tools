@@ -1354,10 +1354,10 @@ static void atomic_clear(data_t *data, enum pipe pipe, igt_output_t *output)
 	igt_remove_fb(data->drm_fd, &data->fb);
 }
 
-/* Returns true if plane supports zpos property. */
-static bool has_zpos(igt_plane_t *plane)
+/* Returns true if plane supports zpos property and it's mutable. */
+static bool has_mutable_zpos(igt_plane_t *plane)
 {
-	return igt_plane_has_prop(plane, IGT_PLANE_ZPOS);
+	return igt_plane_check_prop_is_mutable(plane, IGT_PLANE_ZPOS);
 }
 
 static bool
@@ -1457,7 +1457,7 @@ igt_main_args("e", NULL, help_str, opt_handler, NULL)
 			atomic_setup(&data, pipe, output);
 			if (!overlay)
 				continue;
-			if (!has_zpos(data.primary) || !has_zpos(overlay))
+			if (!has_mutable_zpos(data.primary) || !has_mutable_zpos(overlay))
 				continue;
 			if (!igt_plane_has_format_mod(data.primary, DRM_FORMAT_ARGB8888, 0x0) ||
 			    !igt_plane_has_format_mod(overlay, DRM_FORMAT_ARGB1555, 0x0))

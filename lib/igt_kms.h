@@ -812,6 +812,8 @@ extern void igt_plane_replace_prop_blob(igt_plane_t *plane,
 					enum igt_atomic_plane_properties prop,
 					const void *ptr, size_t length);
 
+extern bool igt_plane_check_prop_is_mutable(igt_plane_t *plane,
+					    enum igt_atomic_plane_properties igt_prop);
 /**
  * igt_output_has_prop:
  * @output: Output to check.
