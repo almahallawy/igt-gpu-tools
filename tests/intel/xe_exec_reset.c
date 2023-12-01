@@ -616,16 +616,27 @@ test_compute_mode(int fd, struct drm_xe_engine_class_instance *eci,
 		return;
 	}
 
-	for (i = 1; i < n_execs; i++)
-		xe_wait_ufence(fd, &data[i].exec_sync, USER_FENCE_VALUE,
-			       NULL, THREE_SEC);
+	for (i = 1; i < n_execs; i++) {
+		int64_t timeout = THREE_SEC;
+		int err;
+
+		err = __xe_wait_ufence(fd, &data[i].exec_sync, USER_FENCE_VALUE,
+				       NULL, &timeout);
+		if (flags & GT_RESET)
+			/* exec races with reset: may timeout or complete */
+			igt_assert(err == -ETIME || !err);
+		else
+			igt_assert_eq(err, 0);
+	}
 
 	sync[0].addr = to_user_pointer(&data[0].vm_sync);
 	xe_vm_unbind_async(fd, vm, 0, 0, addr, bo_size, sync, 1);
 	xe_wait_ufence(fd, &data[0].vm_sync, USER_FENCE_VALUE, NULL, THREE_SEC);
 
-	for (i = 1; i < n_execs; i++)
-		igt_assert_eq(data[i].data, 0xc0ffee);
+	if (!(flags & GT_RESET)) {
+		for (i = 1; i < n_execs; i++)
+			igt_assert_eq(data[i].data, 0xc0ffee);
+	}
 
 	for (i = 0; i < n_exec_queues; i++)
 		xe_exec_queue_destroy(fd, exec_queues[i]);
