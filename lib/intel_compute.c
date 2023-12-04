@@ -37,9 +37,9 @@
 #define OFFSET_INDIRECT_DATA_START	0xFFFD0000
 #define OFFSET_KERNEL			0xFFFE0000
 
-#define XEHP_ADDR_GENERAL_STATE_BASE		0x80000000UL
-#define XEHP_ADDR_INSTRUCTION_STATE_BASE	0x90000000UL
-#define XEHP_OFFSET_BINDING_TABLE		0x1000
+#define ADDR_GENERAL_STATE_BASE		0x80000000UL
+#define ADDR_INSTRUCTION_STATE_BASE	0x90000000UL
+#define OFFSET_BINDING_TABLE		0x1000
 
 struct bo_dict_entry {
 	uint64_t addr;
@@ -867,7 +867,7 @@ static void xehp_compute_exec(int fd, const unsigned char *kernel,
 {
 #define XEHP_BO_DICT_ENTRIES 9
 	struct bo_dict_entry bo_dict[XEHP_BO_DICT_ENTRIES] = {
-		{ .addr = XEHP_ADDR_INSTRUCTION_STATE_BASE + OFFSET_KERNEL,
+		{ .addr = ADDR_INSTRUCTION_STATE_BASE + OFFSET_KERNEL,
 		  .name = "instr state base"},
 		{ .addr = ADDR_DYNAMIC_STATE_BASE,
 		  .size = 0x100000,
@@ -875,16 +875,16 @@ static void xehp_compute_exec(int fd, const unsigned char *kernel,
 		{ .addr = ADDR_SURFACE_STATE_BASE,
 		  .size = 0x1000,
 		  .name = "surface state base"},
-		{ .addr = XEHP_ADDR_GENERAL_STATE_BASE + OFFSET_INDIRECT_DATA_START,
+		{ .addr = ADDR_GENERAL_STATE_BASE + OFFSET_INDIRECT_DATA_START,
 		  .size =  0x1000,
 		  .name = "indirect object base"},
 		{ .addr = ADDR_INPUT, .size = SIZE_BUFFER_INPUT,
 		  .name = "addr input"},
 		{ .addr = ADDR_OUTPUT, .size = SIZE_BUFFER_OUTPUT,
 		  .name = "addr output" },
-		{ .addr = XEHP_ADDR_GENERAL_STATE_BASE, .size = 0x100000,
+		{ .addr = ADDR_GENERAL_STATE_BASE, .size = 0x100000,
 		  .name = "general state base" },
-		{ .addr = ADDR_SURFACE_STATE_BASE + XEHP_OFFSET_BINDING_TABLE,
+		{ .addr = ADDR_SURFACE_STATE_BASE + OFFSET_BINDING_TABLE,
 		  .size = 0x1000,
 		  .name = "binding table" },
 		{ .addr = ADDR_BATCH, .size = SIZE_BATCH,
@@ -912,10 +912,10 @@ static void xehp_compute_exec(int fd, const unsigned char *kernel,
 		((float *)dinput)[i] = rand() / (float)RAND_MAX;
 
 	xehp_compute_exec_compute(bo_dict[8].data,
-				  XEHP_ADDR_GENERAL_STATE_BASE,
+				  ADDR_GENERAL_STATE_BASE,
 				  ADDR_SURFACE_STATE_BASE,
 				  ADDR_DYNAMIC_STATE_BASE,
-				  XEHP_ADDR_INSTRUCTION_STATE_BASE,
+				  ADDR_INSTRUCTION_STATE_BASE,
 				  OFFSET_INDIRECT_DATA_START,
 				  OFFSET_KERNEL);
 
@@ -1081,16 +1081,16 @@ static void xehpc_compute_exec(int fd, const unsigned char *kernel,
 {
 #define XEHPC_BO_DICT_ENTRIES 6
 	struct bo_dict_entry bo_dict[XEHPC_BO_DICT_ENTRIES] = {
-		{ .addr = XEHP_ADDR_INSTRUCTION_STATE_BASE + OFFSET_KERNEL,
+		{ .addr = ADDR_INSTRUCTION_STATE_BASE + OFFSET_KERNEL,
 		  .name = "instr state base"},
-		{ .addr = XEHP_ADDR_GENERAL_STATE_BASE + OFFSET_INDIRECT_DATA_START,
+		{ .addr = ADDR_GENERAL_STATE_BASE + OFFSET_INDIRECT_DATA_START,
 		  .size =  0x10000,
 		  .name = "indirect object base"},
 		{ .addr = ADDR_INPUT, .size = SIZE_BUFFER_INPUT,
 		  .name = "addr input"},
 		{ .addr = ADDR_OUTPUT, .size = SIZE_BUFFER_OUTPUT,
 		  .name = "addr output" },
-		{ .addr = XEHP_ADDR_GENERAL_STATE_BASE, .size = 0x10000,
+		{ .addr = ADDR_GENERAL_STATE_BASE, .size = 0x10000,
 		  .name = "general state base" },
 		{ .addr = ADDR_BATCH, .size = SIZE_BATCH,
 		  .name = "batch" },
@@ -1114,10 +1114,10 @@ static void xehpc_compute_exec(int fd, const unsigned char *kernel,
 		((float *)dinput)[i] = rand() / (float)RAND_MAX;
 
 	xehpc_compute_exec_compute(bo_dict[5].data,
-				   XEHP_ADDR_GENERAL_STATE_BASE,
+				   ADDR_GENERAL_STATE_BASE,
 				   ADDR_SURFACE_STATE_BASE,
 				   ADDR_DYNAMIC_STATE_BASE,
-				   XEHP_ADDR_INSTRUCTION_STATE_BASE,
+				   ADDR_INSTRUCTION_STATE_BASE,
 				   OFFSET_INDIRECT_DATA_START,
 				   OFFSET_KERNEL);
 
