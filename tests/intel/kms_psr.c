@@ -31,6 +31,7 @@
  * Test category: functionality test
  */
 
+#include "i915/intel_fbc.h"
 #include "igt.h"
 #include "igt_sysfs.h"
 #include "igt_psr.h"
@@ -47,24 +48,42 @@
  * Description: Basic check for %arg[1] if it is detecting changes made in planes
  * Functionality: %arg[1]
  *
+ * SUBTEST: fbc-%s-basic
+ * Description: Basic check for fbc with %arg[1] if it is detecting changes made in planes
+ * Functionality: %arg[1], fbc
+ *
  * SUBTEST: %s-dpms
  * Description: Check if %arg[1] is detecting changes when rendering operation
  *              is performed with dpms enabled or disabled
  * Functionality: %arg[1], dpms
  *
+ * SUBTEST: fbc-%s-dpms
+ * Description: Check if fbc with %arg[1] is detecting changes when rendering operation
+ *              is performed with dpms enabled or disabled
+ * Functionality: %arg[1], dpms, fbc
+ *
  * SUBTEST: %s-no-drrs
  * Description: Check if %arg[1] is detecting changes when drrs is disabled
  * Functionality: %arg[1], drrs
+ *
+ * SUBTEST: fbc-%s-no-drrs
+ * Description: Check if fbc with %arg[1] is detecting changes when drrs is disabled
+ * Functionality: %arg[1], drrs, fbc
  *
  * SUBTEST: %s-suspend
  * Description: Check if %arg[1] is detecting changes when plane operation is
  *              performed with suspend resume cycles
  * Functionality: %arg[1], suspend
  *
+ * SUBTEST: fbc-%s-suspend
+ * Description: Check if fbc with %arg[1] is detecting changes when plane operation is
+ *              performed with suspend resume cycles
+ * Functionality: %arg[1], suspend, fbc
+ *
  * arg[1]:
  *
- * @psr:             psr1
- * @psr2:            psr2
+ * @psr:		psr1
+ * @psr2:		psr2
  */
 
 /**
@@ -73,6 +92,12 @@
  * 		performed on %arg[2] planes
  * Driver requirement: i915
  * Functionality: %arg[1], plane
+ *
+ * SUBTEST: fbc-%s-%s-%s
+ * Description: Check if fbc with %arg[1] is detecting memory mapping %arg[3] operations
+ *              performed on %arg[2] planes
+ * Driver requirement: i915
+ * Functionality: %arg[1], plane, fbc
  *
  * arg[1]:
  *
@@ -97,10 +122,20 @@
  * 		performed on primary plane
  * Functionality: %arg[1], plane
  *
+ * SUBTEST: fbc-%s-primary-page-flip
+ * Description: Check if fbc with %arg[1] is detecting page-flipping operation
+ *              performed on primary plane
+ * Functionality: %arg[1], plane, fbc
+ *
  * SUBTEST: %s-primary-%s
  * Description: Check if %arg[1] is detecting rendering operations %arg[2]
  * 		when performed on primary plane
  * Functionality: %arg[1], plane
+ *
+ * SUBTEST: fbc-%s-primary-%s
+ * Description: Check if %arg[1] is detecting rendering operations %arg[2]
+ *              when performed on primary plane
+ * Functionality: %arg[1], plane, fbc
  *
  * arg[1]:
  *
@@ -118,6 +153,11 @@
  * Description: Check if %arg[1] is detecting rendering and plane
  *              operations %arg[3] performed on %arg[2] planes
  * Functionality: %arg[1], plane
+ *
+ * SUBTEST: fbc-%s-%s-%s
+ * Description: Check if fbc with %arg[1] is detecting rendering and plane
+ *              operations %arg[3] performed on %arg[2] planes
+ * Functionality: %arg[1], plane, fbc
  *
  * arg[1]:
  *
@@ -143,10 +183,21 @@
  * Functionality: pr
  * Mega feature: DP2.0
  *
+ * SUBTEST: fbc-pr-basic
+ * Description: Basic check for fbc with pr if it is detecting changes made in planes
+ * Functionality: pr, fbc
+ * Mega feature: DP2.0
+ *
  * SUBTEST: pr-dpms
  * Description: Check if pr is detecting changes when rendering operation
  *              is performed with dpms enabled or disabled
  * Functionality: pr, dpms
+ * Mega feature: DP2.0
+ *
+ * SUBTEST: fbc-pr-dpms
+ * Description: Check if fbc with pr is detecting changes when rendering operation
+ *              is performed with dpms enabled or disabled
+ * Functionality: pr, dpms, fbc
  * Mega feature: DP2.0
  *
  * SUBTEST: pr-no-drrs
@@ -154,10 +205,21 @@
  * Functionality: pr, drrs
  * Mega feature: DP2.0
  *
+ * SUBTEST: fbc-pr-no-drrs
+ * Description: Check if fbc with pr is detecting changes when drrs is disabled
+ * Functionality: pr, drrs, fbc
+ * Mega feature: DP2.0
+ *
  * SUBTEST: pr-suspend
  * Description: Check if pr is detecting changes when plane operation is
  *              performed with suspend resume cycles
  * Functionality: pr, suspend
+ * Mega feature: DP2.0
+ *
+ * SUBTEST: fbc-pr-suspend
+ * Description: Check if fbc with pr is detecting changes when plane operation is
+ *              performed with suspend resume cycles
+ * Functionality: pr, suspend, fbc
  * Mega feature: DP2.0
  */
 
@@ -167,6 +229,13 @@
  * 		performed on %arg[1] planes
  * Driver requirement: i915
  * Functionality: pr, plane
+ * Mega feature: DP2.0
+ *
+ * SUBTEST: fbc-pr-%s-%s
+ * Description: Check if fbc with pr is detecting memory mapping %arg[2] operations
+ *              performed on %arg[1] planes
+ * Driver requirement: i915
+ * Functionality: pr, plane, fbc
  * Mega feature: DP2.0
  *
  * arg[1]:
@@ -188,10 +257,22 @@
  * Functionality: pr, plane
  * Mega feature: DP2.0
  *
+ * SUBTEST: fbc-pr-primary-page-flip
+ * Description: Check if fbc with pr is detecting page-flipping operation
+ *              performed on primary plane
+ * Functionality: pr, plane, fbc
+ * Mega feature: DP2.0
+ *
  * SUBTEST: pr-primary-%s
  * Description: Check if pr is detecting rendering operations %arg[1]
  * 		when performed on primary plane
  * Functionality: pr, plane
+ * Mega feature: DP2.0
+ *
+ * SUBTEST: fbc-pr-primary-%s
+ * Description: Check if fbc with pr is detecting rendering operations %arg[1]
+ *              when performed on primary plane
+ * Functionality: pr, plane, fbc
  * Mega feature: DP2.0
  *
  * arg[1]:
@@ -205,6 +286,12 @@
  * Description: Check if pr is detecting rendering and plane
  *              operations %arg[2] performed on %arg[1] planes
  * Functionality: pr, plane
+ * Mega feature: DP2.0
+ *
+ * SUBTEST: fbc-pr-%s-%s
+ * Description: Check if fbc with pr is detecting rendering and plane
+ *              operations %arg[2] performed on %arg[1] planes
+ * Functionality: pr, plane, fbc
  * Mega feature: DP2.0
  *
  * arg[1]:
@@ -251,6 +338,7 @@ typedef struct {
 	enum operations op;
 	int test_plane_id;
 	enum psr_mode op_psr_mode;
+	enum fbc_mode op_fbc_mode;
 	uint32_t devid;
 	uint32_t crtc_id;
 	igt_display_t display;
@@ -261,6 +349,7 @@ typedef struct {
 	int mod_stride;
 	drmModeModeInfo *mode;
 	igt_output_t *output;
+	bool fbc_flag;
 } data_t;
 
 static void create_cursor_fb(data_t *data)
@@ -641,6 +730,9 @@ static void test_setup(data_t *data)
 
 	igt_require_f(data->output,
 		      "No available output found\n");
+	if (data->op_fbc_mode == FBC_ENABLED)
+		igt_require_f(data->fbc_flag,
+			      "Can't test FBC with PSR\n");
 
 	pipe = get_pipe_for_output(&data->display, data->output);
 	igt_output_set_pipe(data->output, pipe);
@@ -659,6 +751,10 @@ static void test_setup(data_t *data)
 		psr_enable_if_enabled(data);
 		setup_test_plane(data, data->test_plane_id);
 		if (psr_wait_entry_if_enabled(data)) {
+			if (data->fbc_flag == true && data->op_fbc_mode == FBC_ENABLED)
+				igt_assert_f(intel_fbc_wait_until_enabled(data->drm_fd,
+									  pipe),
+									  "FBC still disabled\n");
 			psr_entered = true;
 			break;
 		}
@@ -679,14 +775,20 @@ data_t data = {};
 
 igt_main
 {
-	int z;
+	int z, y;
 	enum operations op;
+	enum pipe pipe;
 	const char *append_subtest_name[3] = {
 		"psr-",
 		"psr2-",
 		"pr-"
 	};
+	const char *append_fbc_subtest[2] = {
+		"",
+		"fbc-"
+	};
 	int modes[] = {PSR_MODE_1, PSR_MODE_2, PR_MODE};
+	int fbc_status[] = {FBC_DISABLED, FBC_ENABLED};
 	igt_output_t *output;
 
 	igt_fixture {
@@ -697,52 +799,21 @@ igt_main
 		data.bops = buf_ops_create(data.drm_fd);
 		igt_display_require(&data.display, data.drm_fd);
 		igt_require_f(output_supports_psr(&data), "Sink does not support PSR/PSR2/PR\n");
+		if ((intel_display_ver(intel_get_drm_devid(data.drm_fd)) >= 20) &&
+		    (intel_fbc_supported_on_chipset(data.drm_fd, pipe))) {
+			data.fbc_flag = true;
+		}
 	}
 
-	for (z = 0; z < ARRAY_SIZE(modes); z++) {
-		data.op_psr_mode = modes[z];
+	for (y = 0; y < ARRAY_SIZE(fbc_status); y++) {
+		data.op_fbc_mode = fbc_status[y];
+		for (z = 0; z < ARRAY_SIZE(modes); z++) {
+			data.op_psr_mode = modes[z];
 
-		igt_describe("Basic check for psr if it is detecting changes made in planes");
-		igt_subtest_with_dynamic_f("%sbasic", append_subtest_name[z]) {
-			for_each_connected_output(&data.display, output) {
-				if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
-						      data.op_psr_mode, output))
-					continue;
-				igt_display_reset(&data.display);
-				data.output = output;
-				igt_dynamic_f("%s", data.output->name) {
-					data.test_plane_id = DRM_PLANE_TYPE_PRIMARY;
-					test_setup(&data);
-					test_cleanup(&data);
-				}
-			}
-		}
-
-		igt_describe("Check if psr is detecting changes when drrs is disabled");
-		igt_subtest_with_dynamic_f("%sno-drrs", append_subtest_name[z]) {
-			for_each_connected_output(&data.display, output) {
-				if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
-						      data.op_psr_mode, output))
-					continue;
-				igt_display_reset(&data.display);
-				data.output = output;
-				igt_dynamic_f("%s", data.output->name) {
-					data.test_plane_id = DRM_PLANE_TYPE_PRIMARY;
-					test_setup(&data);
-					igt_assert(drrs_disabled(&data));
-					test_cleanup(&data);
-				}
-			}
-		}
-
-		for (op = PAGE_FLIP; op <= RENDER; op++) {
-			igt_describe("Check if psr is detecting page-flipping,memory mapping and "
-					"rendering operations performed on primary planes");
-			igt_subtest_with_dynamic_f("%sprimary-%s",
-				      append_subtest_name[z],
-				      op_str(op)) {
-				igt_skip_on(is_xe_device(data.drm_fd) &&
-					    (op == MMAP_CPU || op == MMAP_GTT));
+			igt_describe("Basic check for psr if it is detecting changes made "
+				     "in planes");
+			igt_subtest_with_dynamic_f("%s%sbasic", append_fbc_subtest[y],
+						   append_subtest_name[z]) {
 				for_each_connected_output(&data.display, output) {
 					if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
 							      data.op_psr_mode, output))
@@ -750,24 +821,105 @@ igt_main
 					igt_display_reset(&data.display);
 					data.output = output;
 					igt_dynamic_f("%s", data.output->name) {
-						data.op = op;
 						data.test_plane_id = DRM_PLANE_TYPE_PRIMARY;
 						test_setup(&data);
-						run_test(&data);
 						test_cleanup(&data);
 					}
 				}
 			}
+
+			igt_describe("Check if psr is detecting changes when drrs is disabled");
+			igt_subtest_with_dynamic_f("%s%sno-drrs", append_fbc_subtest[y],
+						   append_subtest_name[z]) {
+				for_each_connected_output(&data.display, output) {
+					if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
+							      data.op_psr_mode, output))
+						continue;
+					igt_display_reset(&data.display);
+					data.output = output;
+					igt_dynamic_f("%s", data.output->name) {
+						data.test_plane_id = DRM_PLANE_TYPE_PRIMARY;
+						test_setup(&data);
+						igt_assert(drrs_disabled(&data));
+						test_cleanup(&data);
+					}
+				}
+			}
+
+			for (op = PAGE_FLIP; op <= RENDER; op++) {
+				igt_describe("Check if psr is detecting page-flipping,memory "
+					     "mapping and rendering operations performed on "
+					     "primary planes");
+				igt_subtest_with_dynamic_f("%s%sprimary-%s", append_fbc_subtest[y],
+						      append_subtest_name[z], op_str(op)) {
+					igt_skip_on(is_xe_device(data.drm_fd) &&
+						    (op == MMAP_CPU || op == MMAP_GTT));
+					for_each_connected_output(&data.display, output) {
+						if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
+								      data.op_psr_mode, output))
+							continue;
+						igt_display_reset(&data.display);
+						data.output = output;
+						igt_dynamic_f("%s", data.output->name) {
+							data.op = op;
+							data.test_plane_id = DRM_PLANE_TYPE_PRIMARY;
+							test_setup(&data);
+							run_test(&data);
+							test_cleanup(&data);
+						}
+					}
+				}
+			}
+
+			for (op = MMAP_GTT; op <= PLANE_ONOFF; op++) {
+				igt_describe("Check if psr is detecting memory mapping,rendering "
+						"and plane operations performed on sprite planes");
+				igt_subtest_with_dynamic_f("%s%ssprite-%s", append_fbc_subtest[y],
+							   append_subtest_name[z], op_str(op)) {
+					igt_skip_on(is_xe_device(data.drm_fd) &&
+						    (op == MMAP_CPU || op == MMAP_GTT));
+					for_each_connected_output(&data.display, output) {
+						if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
+								      data.op_psr_mode, output))
+							continue;
+						igt_display_reset(&data.display);
+						data.output = output;
+						igt_dynamic_f("%s", data.output->name) {
+							data.op = op;
+							data.test_plane_id = DRM_PLANE_TYPE_OVERLAY;
+							test_setup(&data);
+							run_test(&data);
+							test_cleanup(&data);
+						}
+					}
+				}
+
+				igt_describe("Check if psr is detecting memory mapping, rendering "
+						"and plane operations performed on cursor planes");
+				igt_subtest_with_dynamic_f("%s%scursor-%s", append_fbc_subtest[y],
+					      append_subtest_name[z], op_str(op)) {
+					igt_skip_on(is_xe_device(data.drm_fd) &&
+						    (op == MMAP_CPU || op == MMAP_GTT));
+					for_each_connected_output(&data.display, output) {
+						if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
+								      data.op_psr_mode, output))
+							continue;
+						igt_display_reset(&data.display);
+						data.output = output;
+						igt_dynamic_f("%s", data.output->name) {
+							data.test_plane_id = DRM_PLANE_TYPE_CURSOR;
+							test_setup(&data);
+							run_test(&data);
+							test_cleanup(&data);
+						}
+					}
+				}
 		}
 
-		for (op = MMAP_GTT; op <= PLANE_ONOFF; op++) {
-			igt_describe("Check if psr is detecting memory mapping,rendering "
-					"and plane operations performed on sprite planes");
-			igt_subtest_with_dynamic_f("%ssprite-%s",
-				      append_subtest_name[z],
-				      op_str(op)) {
-				igt_skip_on(is_xe_device(data.drm_fd) &&
-					    (op == MMAP_CPU || op == MMAP_GTT));
+			igt_describe("Check if psr is detecting changes when rendering operation "
+				     "is performed with dpms enabled or disabled");
+			igt_subtest_with_dynamic_f("%s%sdpms", append_fbc_subtest[y],
+						   append_subtest_name[z]) {
 				for_each_connected_output(&data.display, output) {
 					if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
 							      data.op_psr_mode, output))
@@ -775,22 +927,21 @@ igt_main
 					igt_display_reset(&data.display);
 					data.output = output;
 					igt_dynamic_f("%s", data.output->name) {
-						data.op = op;
-						data.test_plane_id = DRM_PLANE_TYPE_OVERLAY;
+						data.op = igt_get_render_copyfunc(data.devid) ?
+										  RENDER : BLT;
+						data.test_plane_id = DRM_PLANE_TYPE_PRIMARY;
 						test_setup(&data);
+						dpms_off_on(&data);
 						run_test(&data);
 						test_cleanup(&data);
 					}
 				}
 			}
 
-			igt_describe("Check if psr is detecting memory mapping, rendering "
-					"and plane operations performed on cursor planes");
-			igt_subtest_with_dynamic_f("%scursor-%s",
-				      append_subtest_name[z],
-				      op_str(op)) {
-				igt_skip_on(is_xe_device(data.drm_fd) &&
-					    (op == MMAP_CPU || op == MMAP_GTT));
+			igt_describe("Check if psr is detecting changes when plane operation is "
+				     "performed with suspend resume cycles");
+			igt_subtest_with_dynamic_f("%s%ssuspend", append_fbc_subtest[y],
+						   append_subtest_name[z]) {
 				for_each_connected_output(&data.display, output) {
 					if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
 							      data.op_psr_mode, output))
@@ -798,53 +949,15 @@ igt_main
 					igt_display_reset(&data.display);
 					data.output = output;
 					igt_dynamic_f("%s", data.output->name) {
+						data.op = PLANE_ONOFF;
 						data.test_plane_id = DRM_PLANE_TYPE_CURSOR;
 						test_setup(&data);
+						igt_system_suspend_autoresume(SUSPEND_STATE_MEM,
+									      SUSPEND_TEST_NONE);
+						igt_assert(psr_wait_entry_if_enabled(&data));
 						run_test(&data);
 						test_cleanup(&data);
 					}
-				}
-			}
-		}
-
-		igt_describe("Check if psr is detecting changes when rendering operation is performed"
-				"  with dpms enabled or disabled");
-		igt_subtest_with_dynamic_f("%sdpms", append_subtest_name[z]) {
-			for_each_connected_output(&data.display, output) {
-				if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
-						      data.op_psr_mode, output))
-					continue;
-				igt_display_reset(&data.display);
-				data.output = output;
-				igt_dynamic_f("%s", data.output->name) {
-					data.op = igt_get_render_copyfunc(data.devid) ? RENDER : BLT;
-					data.test_plane_id = DRM_PLANE_TYPE_PRIMARY;
-					test_setup(&data);
-					dpms_off_on(&data);
-					run_test(&data);
-					test_cleanup(&data);
-				}
-			}
-		}
-
-		igt_describe("Check if psr is detecting changes when plane operation is performed "
-				"with suspend resume cycles");
-		igt_subtest_with_dynamic_f("%ssuspend", append_subtest_name[z]) {
-			for_each_connected_output(&data.display, output) {
-				if (!psr_sink_support(data.drm_fd, data.debugfs_fd,
-						      data.op_psr_mode, output))
-					continue;
-				igt_display_reset(&data.display);
-				data.output = output;
-				igt_dynamic_f("%s", data.output->name) {
-					data.op = PLANE_ONOFF;
-					data.test_plane_id = DRM_PLANE_TYPE_CURSOR;
-					test_setup(&data);
-					igt_system_suspend_autoresume(SUSPEND_STATE_MEM,
-								      SUSPEND_TEST_NONE);
-					igt_assert(psr_wait_entry_if_enabled(&data));
-					run_test(&data);
-					test_cleanup(&data);
 				}
 			}
 		}
