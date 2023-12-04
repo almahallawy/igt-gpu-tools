@@ -18,7 +18,7 @@
 
 /**
  * SUBTEST: compute-square
- * GPU requirement: TGL, PVC
+ * GPU requirement: TGL, PVC, LNL
  * Description:
  *	Run an openCL Kernel that returns output[i] = input[i] * input[i],
  *	for an input dataset..
