@@ -59,7 +59,7 @@
 /**
  * SUBTEST: plane-all-modeset-%s
  * Description: Modeset test for all plane combinations %arg[1]
- * Mega feature: eDP
+ * Functionality: plane, watermark, edp
  *
  * arg[1]:
  *

@@ -29,6 +29,7 @@
  * Category: Display
  * Description: Testing Audio with a Chamelium board
  * Driver requirement: i915, xe
+ * Mega feature: Display Audio
  * Test category: functionality test
  */
 
@@ -40,26 +41,22 @@
  * SUBTEST: dp-audio
  * Description: Playback various audio signals with various audio formats/rates,
  *              capture them and check they are correct
- * Functionality: chamelium, dp_audio
- * Mega feature: Audio, DP
+ * Functionality: chamelium, dp, audio
  *
  * SUBTEST: hdmi-audio
  * Description: Playback various audio signals with various audio formats/rates,
  *              capture them and check they are correct
- * Functionality: chamelium, hdmi_audio
- * Mega feature: Audio, HDMI
+ * Functionality: chamelium, hdmi, audio
  *
  * SUBTEST: dp-audio-edid
  * Description: Plug a connector with an EDID suitable for audio, check ALSA's
  *              EDID-Like Data reports the correct audio parameters
- * Functionality: chamelium, dp_audio
- * Mega feature: Audio, DP
+ * Functionality: chamelium, dp, audio
  *
  * SUBTEST: hdmi-audio-edid
  * Description: Plug a connector with an EDID suitable for audio, check ALSA's
  *              EDID-Like Data reports the correct audio parameters
- * Functionality: chamelium, hdmi_audio
- * Mega feature: Audio, HDMI
+ * Functionality: chamelium, hdmi, audio
  */
 
 /* Playback parameters control the audio signal we synthesize and send */

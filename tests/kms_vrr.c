@@ -26,7 +26,7 @@
  * Description: Test to validate diffent features of VRR
  * Driver requirement: i915, xe
  * Functionality: adaptive_sync
- * Mega feature: VRR
+ * Mega feature: Adaptive Sync
  * Test category: functionality test
  */
 

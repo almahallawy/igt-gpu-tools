@@ -29,6 +29,7 @@
  * Category: Display
  * Description: Testing EDID with a Chamelium board
  * Driver requirement: i915, xe
+ * Mega feature: General Display Features
  * Test category: functionality test
  */
 
@@ -53,39 +54,33 @@
 /**
  * SUBTEST: dp-edid-read
  * Description: Make sure the EDID exposed by KMS is the same as the screen's
- * Functionality: chamelium, dp_edid
- * Mega feature: DP
+ * Functionality: chamelium, dp, edid
  *
  * SUBTEST: hdmi-edid-read
  * Description: Make sure the EDID exposed by KMS is the same as the screen's
- * Functionality: chamelium, hdmi_edid
- * Mega feature: HDMI
+ * Functionality: chamelium, hdmi, edid
  *
  * SUBTEST: vga-edid-read
  * Description: Make sure the EDID exposed by KMS is the same as the screen's
- * Functionality: chamelium, vga_edid
- * Mega feature: VGA
+ * Functionality: chamelium, vga, edid
  *
  * SUBTEST: dp-edid-resolution-list
  * Description: Get an EDID with many modes of different configurations, set
  *              them on the screen and check the screen resolution matches the
  *              mode resolution.
- * Functionality: chamelium, dp_edid
- * Mega feature: DP
+ * Functionality: chamelium, dp, edid
  *
  * SUBTEST: dp-mode-timings
  * Description: For each mode of the IGT base EDID, perform a modeset and check
  *              the mode detected by the Chamelium receiver matches the mode we
  *              set
- * Functionality: chamelium, dp_edid
- * Mega feature: DP
+ * Functionality: chamelium, dp, edid
  *
  * SUBTEST: hdmi-mode-timings
  * Description: For each mode of the IGT base EDID, perform a modeset and check
  *              the mode detected by the Chamelium receiver matches the mode we
  *              set
- * Functionality: chamelium, dp_edid
- * Mega feature: DP
+ * Functionality: chamelium, dp, edid
  */
 
 /**
@@ -93,15 +88,13 @@
  * Description: Stress test the DUT by testing multiple EDIDs, one right after
  *              the other, and ensure their validity by check the real screen
  *              resolution vs the advertised mode (%arg[1]) resolution.
- * Functionality: chamelium, dp_edid
- * Mega feature: DP
+ * Functionality: chamelium, dp, edid
  *
  * SUBTEST: hdmi-edid-stress-resolution-%s
  * Description: Stress test the DUT by testing multiple EDIDs, one right after
  *              the other, and ensure their validity by check the real screen
  *              resolution vs the advertised mode (%arg[1]) resolution.
- * Functionality: chamelium, hdmi_edid
- * Mega feature: HDMI
+ * Functionality: chamelium, hdmi, edid
  *
  * arg[1]:
  *
@@ -114,15 +107,13 @@
  * Description: Simulate a screen being unplugged and another screen being
  *              plugged during suspend, check that a uevent is sent and
  *              connector status is updated during %arg[1]
- * Functionality: chamelium, dp_edid
- * Mega feature: DP
+ * Functionality: chamelium, dp, edid
  *
  * SUBTEST: hdmi-edid-change-during-%s
  * Description: Simulate a screen being unplugged and another screen being
  *              plugged during suspend, check that a uevent is sent and
  *              connector status is updated during %arg[1]
- * Functionality: chamelium, dp_edid
- * Mega feature: DP
+ * Functionality: chamelium, dp, edid
  *
  * arg[1]:
  *

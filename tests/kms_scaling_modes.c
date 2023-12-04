@@ -29,7 +29,7 @@
  * Category: Display
  * Description: Test display scaling modes
  * Driver requirement: i915, xe
- * Functionality: eDP_core, plane, scaling
+ * Functionality: edp, plane, scaling
  * Mega feature: General Display Features
  * Test category: functionality test
  */

@@ -29,7 +29,7 @@
  * Category: Display
  * Description: Testing HPD with a Chamelium board
  * Driver requirement: i915, xe
- * Functionality: chamelium, hotplug
+ * Mega feature: General Display Features
  * Test category: functionality test
  */
 
@@ -39,47 +39,47 @@
  * SUBTEST: dp-hpd-fast
  * Description: Check that we get uevents and updated connector status on
  * 		hotplug and unplug
- * Mega feature: DP
+ * Functionality: chamelium, hotplug, dp
  *
  * SUBTEST: hdmi-hpd-fast
  * Description: Check that we get uevents and updated connector status on
  * 		hotplug and unplug
- * Mega feature: HDMI
+ * Functionality: chamelium, hotplug, hdmi
  *
  * SUBTEST: vga-hpd-fast
  * Description: Check that we get uevents and updated connector status on
  * 		hotplug and unplug
- * Mega feature: VGA
+ * Functionality: chamelium, hotplug, vga
  *
  * SUBTEST: dp-hpd
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Mega feature: DP
+ * Functionality: chamelium, hotplug, dp
  *
  * SUBTEST: hdmi-hpd
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Mega feature: HDMI
+ * Functionality: chamelium, hotplug, hdmi
  *
  * SUBTEST: vga-hpd
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Mega feature: VGA
+ * Functionality: chamelium, hotplug, vga
  *
  * SUBTEST: dp-hpd-%s
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Mega feature: DP
+ * Functionality: chamelium, hotplug, dp
  *
  * SUBTEST: hdmi-hpd-%s
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Mega feature: HDMI
+ * Functionality: chamelium, hotplug, hdmi
  *
  * SUBTEST: vga-hpd-%s
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug
- * Mega feature: VGA
+ * Functionality: chamelium, hotplug, vga
  *
  * arg[1]:
  *
@@ -91,93 +91,84 @@
  * SUBTEST: dp-hpd-for-each-pipe
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug for each pipe with valid output
- * Mega feature: DP
+ * Functionality: chamelium, hotplug, dp
  *
  * SUBTEST: hdmi-hpd-for-each-pipe
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug for each pipe with valid output
- * Mega feature: HDMI
+ * Functionality: chamelium, hotplug, hdmi
  *
  * SUBTEST: vga-hpd-for-each-pipe
  * Description: Check that we get uevents and updated connector status on
  *              hotplug and unplug for each pipe with valid output
- * Mega feature: VGA
- * Test category: functionality test
+ * Functionality: chamelium, hotplug, vga
  *
  * SUBTEST: dp-hpd-after-hibernate
  * Description: Toggle HPD during Hibernation, check that uevents are sent and
  *              connector status is updated
- * Functionality: chamelium, hotplug, hibernation
- * Mega feature: DP
+ * Functionality: chamelium, hotplug, dp, hibernation
  *
  * SUBTEST: hdmi-hpd-after-hibernate
  * Description: Toggle HPD during Hibernation, check that uevents are sent and
  *              connector status is updated
- * Functionality: chamelium, hotplug, hibernation
- * Mega feature: HDMI
+ * Functionality: chamelium, hotplug, hdmi, hibernation
  *
  * SUBTEST: vga-hpd-after-hibernate
  * Description: Toggle HPD during Hibernation, check that uevents are sent and
  *              connector status is updated
- * Functionality: chamelium, hotplug, hibernation
- * Mega feature: VGA
+ * Functionality: chamelium, hotplug, vga, hibernation
  *
  * SUBTEST: dp-hpd-after-suspend
  * Description: Toggle HPD during Suspend, check that uevents are sent and
  *              connector status is updated
- * Functionality: chamelium, hotplug, suspend
- * Mega feature: DP
+ * Functionality: chamelium, hotplug, dp, suspend
  *
  * SUBTEST: hdmi-hpd-after-suspend
  * Description: Toggle HPD during Suspend, check that uevents are sent and
  *              connector status is updated
- * Functionality: chamelium, hotplug, suspend
- * Mega feature: HDMI
+ * Functionality: chamelium, hotplug, hdmi, suspend
  *
  * SUBTEST: vga-hpd-after-suspend
  * Description: Toggle HPD during Suspend, check that uevents are sent and
  *              connector status is updated
- * Functionality: chamelium, hotplug, suspend
- * Mega feature: VGA
+ * Functionality: chamelium, hotplug, vga, suspend
  *
  * SUBTEST: common-hpd-after-suspend
  * Description: Toggle HPD during suspend on all connectors, check that uevents
  * 		are sent and connector status is updated
  * Functionality: chamelium, hotplug, suspend
- * Mega feature: General Display Features
  *
  * SUBTEST: common-hpd-after-hibernate
  * Description: Toggle HPD during suspend on all connectors, check that uevents
  *              are sent and connector status is updated
  * Functionality: chamelium, hotplug, hibernation
- * Mega feature: General Display Features
  *
  * SUBTEST: vga-hpd-without-ddc
  * Description: Disable DDC on a VGA connector, check we still get a uevent on
  *              hotplug
- * Mega feature: VGA
+ * Functionality: chamelium, hotplug, vga
  *
  * SUBTEST: dp-hpd-storm
  * Description: Trigger a series of hotplugs in a very small timeframe to
  *              simulate abad cable, check the kernel falls back to polling
  *              to avoid a hotplug storm
- * Mega feature: DP
+ * Functionality: chamelium, hotplug, dp
  *
  * SUBTEST: hdmi-hpd-storm
  * Description: Trigger a series of hotplugs in a very small timeframe to
  *              simulate abad cable, check the kernel falls back to polling
  *              to avoid a hotplug storm
- * Mega feature: HDMI
+ * Functionality: chamelium, hotplug, hdmi
  *
  * SUBTEST: dp-hpd-storm-disable
  * Description: Disable HPD storm detection, trigger a storm and check the
  *              kernel doesn't detect one
- * Mega feature: DP
+ * Functionality: chamelium, hotplug, dp
  *
  * SUBTEST: hdmi-hpd-storm-disable
  * Description: Disable HPD storm detection, trigger a storm and check the
  *              kernel doesn't detect one
- * Mega feature: HDMI
+ * Functionality: chamelium, hotplug, hdmi
  */
 
 #define HPD_STORM_PULSE_INTERVAL_DP 100 /* ms */
