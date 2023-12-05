@@ -68,6 +68,49 @@ static uint32_t get_freq(int fd, int gt_id, const char *freq_name)
 	return freq;
 }
 
+static uint32_t get_throttle(int fd, int gt_id, const char *throttle_file)
+{
+	uint32_t val;
+	char throttle_attr[40];
+	int gt_fd;
+
+	snprintf(throttle_attr, sizeof(throttle_attr),
+		 "freq0/throttle/%s", throttle_file);
+	gt_fd = xe_sysfs_gt_open(fd, gt_id);
+	igt_assert(gt_fd >= 0);
+
+	igt_sysfs_scanf(gt_fd, throttle_attr, "%u", &val);
+
+	igt_debug("gt%d/freq0/throttle/%s: %u\n", gt_id, throttle_file, val);
+
+	close(gt_fd);
+	return val;
+}
+
+/**
+ * SUBTEST: throttle_basic_api
+ * Description: Test basic throttle API
+ */
+
+static void test_throttle_basic_api(int fd, int gt_id)
+{
+	uint32_t status, reasons;
+
+	status = get_throttle(fd, gt_id, "status");
+	reasons = get_throttle(fd, gt_id, "reason_pl1");
+	reasons |= get_throttle(fd, gt_id, "reason_pl2");
+	reasons |= get_throttle(fd, gt_id, "reason_pl4");
+	reasons |= get_throttle(fd, gt_id, "reason_prochot");
+	reasons |= get_throttle(fd, gt_id, "reason_ratl");
+	reasons |= get_throttle(fd, gt_id, "reason_thermal");
+	reasons |= get_throttle(fd, gt_id, "reason_vr_tdc");
+	reasons |= get_throttle(fd, gt_id, "reason_vr_thermalert");
+
+	if (status)
+		igt_assert(reasons);
+	else
+		igt_assert(!reasons);
+}
 
 /**
  * SUBTEST: freq_basic_api
@@ -287,6 +330,11 @@ igt_main
 		/* The defaults are the same. Stashing the gt0 is enough */
 		stash_min = get_freq(fd, 0, "min");
 		stash_max = get_freq(fd, 0, "max");
+	}
+
+	igt_subtest("throttle_basic_api") {
+		xe_for_each_gt(fd, gt)
+			test_throttle_basic_api(fd, gt);
 	}
 
 	igt_subtest("freq_basic_api") {
