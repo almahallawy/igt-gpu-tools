@@ -37,7 +37,7 @@ static int set_freq(int fd, int gt_id, const char *freq_name, uint32_t freq)
 	char freq_attr[16];
 	int gt_fd;
 
-	snprintf(freq_attr, sizeof(freq_attr), "freq_%s", freq_name);
+	snprintf(freq_attr, sizeof(freq_attr), "%s_freq", freq_name);
 	gt_fd = xe_sysfs_gt_open(fd, gt_id);
 	igt_assert(gt_fd >= 0);
 
@@ -55,7 +55,7 @@ static uint32_t get_freq(int fd, int gt_id, const char *freq_name)
 	char freq_attr[16];
 	int gt_fd;
 
-	snprintf(freq_attr, sizeof(freq_attr), "freq_%s", freq_name);
+	snprintf(freq_attr, sizeof(freq_attr), "%s_freq", freq_name);
 	gt_fd = xe_sysfs_gt_open(fd, gt_id);
 	igt_assert(gt_fd >= 0);
 
