@@ -293,7 +293,7 @@ intel_xe_progs = [
 	'xe_exec_threads',
 	'xe_exercise_blt',
 	'xe_gpgpu_fill',
-	'xe_guc_pc',
+	'xe_gt_freq',
 	'xe_huc_copy',
 	'xe_intel_bb',
 	'xe_live_ktest',

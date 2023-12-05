@@ -83,9 +83,9 @@ igt@xe_exec_threads@threads-mixed-fd-basic
 igt@xe_exec_threads@threads-mixed-userptr-invalidate
 igt@xe_exec_threads@threads-mixed-shared-vm-userptr-invalidate-race
 igt@xe_gpgpu_fill@basic
-igt@xe_guc_pc@freq_basic_api
-igt@xe_guc_pc@freq_fixed_idle
-igt@xe_guc_pc@freq_range_idle
+igt@xe_gt_freq@freq_basic_api
+igt@xe_gt_freq@freq_fixed_idle
+igt@xe_gt_freq@freq_range_idle
 igt@xe_huc_copy@huc_copy
 igt@xe_intel_bb@add-remove-objects
 igt@xe_intel_bb@bb-with-allocator

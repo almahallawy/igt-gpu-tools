@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 /*
- * Copyright © 2022 Intel Corporation
+ * Copyright © 2022,2023 Intel Corporation
  */
 
 /**
- * TEST: Test GuC frequency request functionality
- * Category: Firmware building block
- * Sub-category: GuC
+ * TEST: Test Xe GT frequency request functionality
+ * Category: Infrastructure
+ * Sub-category: frequency
  * Functionality: frequency request
  * Test category: functionality test
  */
@@ -34,10 +34,10 @@
 static int set_freq(int fd, int gt_id, const char *freq_name, uint32_t freq)
 {
 	int ret = -EAGAIN;
-	char freq_attr[16];
+	char freq_attr[22];
 	int gt_fd;
 
-	snprintf(freq_attr, sizeof(freq_attr), "%s_freq", freq_name);
+	snprintf(freq_attr, sizeof(freq_attr), "freq0/%s_freq", freq_name);
 	gt_fd = xe_sysfs_gt_open(fd, gt_id);
 	igt_assert(gt_fd >= 0);
 
@@ -52,10 +52,10 @@ static uint32_t get_freq(int fd, int gt_id, const char *freq_name)
 {
 	uint32_t freq;
 	int err = -EAGAIN;
-	char freq_attr[16];
+	char freq_attr[22];
 	int gt_fd;
 
-	snprintf(freq_attr, sizeof(freq_attr), "%s_freq", freq_name);
+	snprintf(freq_attr, sizeof(freq_attr), "freq0/%s_freq", freq_name);
 	gt_fd = xe_sysfs_gt_open(fd, gt_id);
 	igt_assert(gt_fd >= 0);
 
