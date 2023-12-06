@@ -326,7 +326,7 @@ static void set_config(int fd, uint32_t flags, const struct param *param,
 	config->param = param;
 	config->flags = flags;
 	config->free_mb = xe_visible_vram_size(fd, 0) / SZ_1M;
-	config->total_mb = xe_vram_available(fd, 0) / SZ_1M;
+	config->total_mb = xe_available_vram_size(fd, 0) / SZ_1M;
 	config->test_mb = min_t(int, config->free_mb * config->param->vram_percent / 100,
 				config->total_mb * config->param->vram_percent / 100);
 

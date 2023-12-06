@@ -579,20 +579,20 @@ uint64_t xe_visible_vram_size(int fd, int gt)
 
 	return visible_size;
 }
-/**
- * xe_vram_available:
- * @fd: xe device fd
- * @gt: gt
- *
- * Returns available vram of xe device @fd and @gt.
- */
-uint64_t xe_vram_available(int fd, int gt)
+
+struct __available_vram {
+	uint64_t total_available;
+	uint64_t cpu_visible_available;
+};
+
+static void __available_vram_size_snapshot(int fd, int gt, struct __available_vram *vram)
 {
 	struct xe_device *xe_dev;
 	int region_idx;
 	struct drm_xe_mem_region *mem_region;
 	struct drm_xe_query_mem_regions *mem_regions;
 
+	igt_assert(vram);
 	xe_dev = find_in_cache(fd);
 	igt_assert(xe_dev);
 
@@ -600,19 +600,49 @@ uint64_t xe_vram_available(int fd, int gt)
 	mem_region = &xe_dev->mem_regions->mem_regions[region_idx];
 
 	if (XE_IS_CLASS_VRAM(mem_region)) {
-		uint64_t available_vram;
-
 		mem_regions = xe_query_mem_regions_new(fd);
 		pthread_mutex_lock(&cache.cache_mutex);
 		mem_region->used = mem_regions->mem_regions[region_idx].used;
-		available_vram = mem_region->total_size - mem_region->used;
+		mem_region->cpu_visible_used =
+			mem_regions->mem_regions[region_idx].cpu_visible_used;
+		vram->total_available = mem_region->total_size - mem_region->used;
+		vram->cpu_visible_available =
+			mem_region->cpu_visible_size - mem_region->cpu_visible_used;
 		pthread_mutex_unlock(&cache.cache_mutex);
 		free(mem_regions);
-
-		return available_vram;
 	}
+}
 
-	return 0;
+/**
+ * xe_available_vram_size:
+ * @fd: xe device fd
+ * @gt: gt
+ *
+ * Returns size of available vram of xe device @fd and @gt.
+ */
+uint64_t xe_available_vram_size(int fd, int gt)
+{
+	struct __available_vram vram = {};
+
+	__available_vram_size_snapshot(fd, gt, &vram);
+
+	return vram.total_available;
+}
+
+/**
+ * xe_visible_available_vram_size:
+ * @fd: xe device fd
+ * @gt: gt
+ *
+ * Returns size of visible available vram of xe device @fd and @gt.
+ */
+uint64_t xe_visible_available_vram_size(int fd, int gt)
+{
+	struct __available_vram vram = {};
+
+	__available_vram_size_snapshot(fd, gt, &vram);
+
+	return vram.cpu_visible_available;
 }
 
 /**
