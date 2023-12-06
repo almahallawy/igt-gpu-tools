@@ -10,6 +10,7 @@
  * Sub-category: sysman
  * Test category: functionality test
  * SUBTEST: engine-defaults
+ * Description: check if the sysfs engine .defaults node has all values.
  */
 
 #include <dirent.h>
