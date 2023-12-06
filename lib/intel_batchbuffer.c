@@ -2366,10 +2366,10 @@ __xe_bb_exec(struct intel_bb *ibb, uint64_t flags, bool sync)
 			inst.engine_class = DRM_XE_ENGINE_CLASS_VIDEO_DECODE;
 			break;
 		case I915_EXEC_RENDER:
-			if (IS_PONTEVECCHIO(xe_dev_id(ibb->fd)))
-				inst.engine_class = DRM_XE_ENGINE_CLASS_COMPUTE;
-			else
+			if (xe_has_engine_class(ibb->fd, DRM_XE_ENGINE_CLASS_RENDER))
 				inst.engine_class = DRM_XE_ENGINE_CLASS_RENDER;
+			else
+				inst.engine_class = DRM_XE_ENGINE_CLASS_COMPUTE;
 			break;
 		case I915_EXEC_VEBOX:
 			inst.engine_class = DRM_XE_ENGINE_CLASS_VIDEO_ENHANCE;
