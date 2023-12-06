@@ -10,12 +10,19 @@
  * Test category: functionality test
  *
  * SUBTEST: bo
+ * Description:
+ *	Kernel dynamic selftests to check if GPU buffer objects are
+ *	being handled properly.
  * Functionality: bo
  *
  * SUBTEST: dmabuf
+ * Description: Kernel dynamic selftests for dmabuf functionality.
  * Functionality: dmabuf
  *
  * SUBTEST: migrate
+ * Description:
+ *	Kernel dynamic selftests to check if page table migrations
+ *	are working properly.
  * Functionality: migrate
  */
 
