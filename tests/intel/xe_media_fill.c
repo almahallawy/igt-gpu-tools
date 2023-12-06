@@ -30,12 +30,13 @@
  * Category: Hardware building block
  * Sub-category: Media
  * Functionality: fill surface with media block
- * Description: Basic test for the media_fill() function,
- *              a very simple workload for the Media pipeline.
+ * Description: Basic tests for the media_fill() function.
  * Feature: media
  * Test category: functionality test
  *
  * SUBTEST: media-fill
+ * Description: Basic test for the media_fill() function,
+ *              a very simple workload for the Media pipeline.
  */
 
 IGT_TEST_DESCRIPTION("Basic test for the media_fill() function, a very simple"
