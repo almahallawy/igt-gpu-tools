@@ -101,32 +101,6 @@ enum exec_queue_destroy {
 	LEAK
 };
 
-static uint32_t __xe_exec_queue_create(int fd, uint32_t vm,
-				   struct drm_xe_engine_class_instance *instance,
-				   uint64_t ext,
-				   uint32_t *exec_queuep)
-{
-	struct drm_xe_exec_queue_create create = {
-		.extensions = ext,
-		.vm_id = vm,
-		.width = 1,
-		.num_placements = 1,
-		.instances = to_user_pointer(instance),
-	};
-	int err = 0;
-
-	if (igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE, &create) == 0) {
-		*exec_queuep = create.exec_queue_id;
-	} else {
-		igt_warn("Can't create exec_queue, errno: %d\n", errno);
-		err = -errno;
-		igt_assume(err);
-	}
-	errno = 0;
-
-	return err;
-}
-
 #define MAXEXECQUEUES 2048
 #define MAXTIME 5
 

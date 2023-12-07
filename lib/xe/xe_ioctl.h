@@ -73,6 +73,9 @@ uint32_t __xe_bo_create_caching(int fd, uint32_t vm, uint64_t size, uint32_t pla
 uint32_t xe_bo_create_caching(int fd, uint32_t vm, uint64_t size, uint32_t placement,
 			      uint32_t flags, uint16_t cpu_caching);
 uint16_t __xe_default_cpu_caching_from_placement(int fd, uint32_t placement);
+int __xe_exec_queue_create(int fd, uint32_t vm,
+			   struct drm_xe_engine_class_instance *instance,
+			   uint64_t ext, uint32_t *exec_queue_id);
 uint32_t xe_exec_queue_create(int fd, uint32_t vm,
 			  struct drm_xe_engine_class_instance *instance,
 			  uint64_t ext);

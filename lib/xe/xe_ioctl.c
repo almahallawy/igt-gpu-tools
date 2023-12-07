@@ -334,9 +334,9 @@ uint32_t xe_bind_exec_queue_create(int fd, uint32_t vm, uint64_t ext, bool async
 	return create.exec_queue_id;
 }
 
-uint32_t xe_exec_queue_create(int fd, uint32_t vm,
-			  struct drm_xe_engine_class_instance *instance,
-			  uint64_t ext)
+int __xe_exec_queue_create(int fd, uint32_t vm,
+			   struct drm_xe_engine_class_instance *instance,
+			   uint64_t ext, uint32_t *exec_queue_id)
 {
 	struct drm_xe_exec_queue_create create = {
 		.extensions = ext,
@@ -345,10 +345,29 @@ uint32_t xe_exec_queue_create(int fd, uint32_t vm,
 		.num_placements = 1,
 		.instances = to_user_pointer(instance),
 	};
+	int err;
 
-	igt_assert_eq(igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE, &create), 0);
+	err = igt_ioctl(fd, DRM_IOCTL_XE_EXEC_QUEUE_CREATE, &create);
+	if (err) {
+		err = -errno;
+		igt_assume(err);
+		errno = 0;
+		return err;
+	}
 
-	return create.exec_queue_id;
+	*exec_queue_id = create.exec_queue_id;
+	return 0;
+}
+
+uint32_t xe_exec_queue_create(int fd, uint32_t vm,
+			      struct drm_xe_engine_class_instance *instance,
+			      uint64_t ext)
+{
+	uint32_t exec_queue_id;
+
+	igt_assert_eq(__xe_exec_queue_create(fd, vm, instance, ext, &exec_queue_id), 0);
+
+	return exec_queue_id;
 }
 
 uint32_t xe_exec_queue_create_class(int fd, uint32_t vm, uint16_t class)
