@@ -312,6 +312,7 @@ bool xe_supports_faults(int fd)
 
 	struct drm_xe_vm_create create = {
 		.flags = DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT |
+			 DRM_XE_VM_CREATE_FLAG_LR_MODE |
 			 DRM_XE_VM_CREATE_FLAG_FAULT_MODE,
 	};
 
