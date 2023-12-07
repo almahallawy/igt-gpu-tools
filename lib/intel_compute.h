@@ -9,6 +9,8 @@
 #ifndef INTEL_COMPUTE_H
 #define INTEL_COMPUTE_H
 
+#include "xe_drm.h"
+
 /*
  * OpenCL Kernels are generated using:
  *
@@ -28,5 +30,6 @@ struct intel_compute_kernels {
 extern const struct intel_compute_kernels intel_compute_square_kernels[];
 
 bool run_intel_compute_kernel(int fd);
+bool xe_run_intel_compute_kernel_on_engine(int fd, struct drm_xe_engine_class_instance *eci);
 
 #endif	/* INTEL_COMPUTE_H */

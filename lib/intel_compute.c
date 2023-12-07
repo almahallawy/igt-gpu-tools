@@ -16,7 +16,6 @@
 #include "intel_compute.h"
 #include "lib/igt_syncobj.h"
 #include "lib/intel_reg.h"
-#include "xe_drm.h"
 #include "xe/xe_ioctl.h"
 #include "xe/xe_query.h"
 #include "xehp_media.h"
@@ -64,7 +63,8 @@ struct bo_execenv {
 	struct drm_i915_gem_exec_object2 *obj;
 };
 
-static void bo_execenv_create(int fd, struct bo_execenv *execenv)
+static void bo_execenv_create(int fd, struct bo_execenv *execenv,
+			      struct drm_xe_engine_class_instance *eci)
 {
 	igt_assert(execenv);
 
@@ -73,18 +73,24 @@ static void bo_execenv_create(int fd, struct bo_execenv *execenv)
 	execenv->driver = get_intel_driver(fd);
 
 	if (execenv->driver == INTEL_DRIVER_XE) {
-		uint16_t engine_class;
-		uint32_t devid = intel_get_drm_devid(fd);
-		const struct intel_device_info *info = intel_get_device_info(devid);
-
-		if (info->graphics_ver >= 12 && info->graphics_rel < 60)
-			engine_class = DRM_XE_ENGINE_CLASS_RENDER;
-		else
-			engine_class = DRM_XE_ENGINE_CLASS_COMPUTE;
-
 		execenv->vm = xe_vm_create(fd, DRM_XE_VM_CREATE_FLAG_ASYNC_DEFAULT, 0);
-		execenv->exec_queue = xe_exec_queue_create_class(fd, execenv->vm,
-								 engine_class);
+
+		if (eci) {
+			execenv->exec_queue = xe_exec_queue_create(fd, execenv->vm,
+								   eci, 0);
+		} else {
+			uint16_t engine_class;
+			uint32_t devid = intel_get_drm_devid(fd);
+			const struct intel_device_info *info = intel_get_device_info(devid);
+
+			if (info->graphics_ver >= 12 && info->graphics_rel < 60)
+				engine_class = DRM_XE_ENGINE_CLASS_RENDER;
+			else
+				engine_class = DRM_XE_ENGINE_CLASS_COMPUTE;
+
+			execenv->exec_queue = xe_exec_queue_create_class(fd, execenv->vm,
+									 engine_class);
+		}
 	}
 }
 
@@ -588,9 +594,11 @@ static void dg1_compute_exec_compute(uint32_t *addr_bo_buffer_batch,
  * @fd: file descriptor of the opened DRM device
  * @kernel: GPU Kernel binary to be executed
  * @size: size of @kernel.
+ * @eci: Xe engine class instance if device is Xe
  */
 static void compute_exec(int fd, const unsigned char *kernel,
-			 unsigned int size)
+			 unsigned int size,
+			 struct drm_xe_engine_class_instance *eci)
 {
 #define BO_DICT_ENTRIES 7
 	struct bo_dict_entry bo_dict[BO_DICT_ENTRIES] = {
@@ -619,7 +627,7 @@ static void compute_exec(int fd, const unsigned char *kernel,
 	float *dinput;
 	uint16_t devid = intel_get_drm_devid(fd);
 
-	bo_execenv_create(fd, &execenv);
+	bo_execenv_create(fd, &execenv, eci);
 
 	/* Sets Kernel size */
 	bo_dict[0].size = ALIGN(size, 0x1000);
@@ -865,9 +873,11 @@ static void xehp_compute_exec_compute(uint32_t *addr_bo_buffer_batch,
  * @fd: file descriptor of the opened DRM device
  * @kernel: GPU Kernel binary to be executed
  * @size: size of @kernel.
+ * @eci: Xe engine class instance if device is Xe
  */
 static void xehp_compute_exec(int fd, const unsigned char *kernel,
-			     unsigned int size)
+			      unsigned int size,
+			      struct drm_xe_engine_class_instance *eci)
 {
 #define XEHP_BO_DICT_ENTRIES 9
 	struct bo_dict_entry bo_dict[XEHP_BO_DICT_ENTRIES] = {
@@ -897,7 +907,7 @@ static void xehp_compute_exec(int fd, const unsigned char *kernel,
 	struct bo_execenv execenv;
 	float *dinput;
 
-	bo_execenv_create(fd, &execenv);
+	bo_execenv_create(fd, &execenv, eci);
 
 	/* Sets Kernel size */
 	bo_dict[0].size = ALIGN(size, 0x1000);
@@ -1079,9 +1089,11 @@ static void xehpc_compute_exec_compute(uint32_t *addr_bo_buffer_batch,
  * @fd: file descriptor of the opened DRM device
  * @kernel: GPU Kernel binary to be executed
  * @size: size of @kernel.
+ * @eci: Xe engine class instance if device is Xe
  */
 static void xehpc_compute_exec(int fd, const unsigned char *kernel,
-			       unsigned int size)
+			       unsigned int size,
+			       struct drm_xe_engine_class_instance *eci)
 {
 #define XEHPC_BO_DICT_ENTRIES 6
 	struct bo_dict_entry bo_dict[XEHPC_BO_DICT_ENTRIES] = {
@@ -1102,7 +1114,7 @@ static void xehpc_compute_exec(int fd, const unsigned char *kernel,
 	struct bo_execenv execenv;
 	float *dinput;
 
-	bo_execenv_create(fd, &execenv);
+	bo_execenv_create(fd, &execenv, eci);
 
 	/* Sets Kernel size */
 	bo_dict[0].size = ALIGN(size, 0x1000);
@@ -1261,7 +1273,8 @@ static void xe2lpg_compute_exec_compute(uint32_t *addr_bo_buffer_batch,
  * @size: size of @kernel.
  */
 static void xe2lpg_compute_exec(int fd, const unsigned char *kernel,
-				unsigned int size)
+				unsigned int size,
+				struct drm_xe_engine_class_instance *eci)
 {
 #define XE2_BO_DICT_ENTRIES 10
 	struct bo_dict_entry bo_dict[XE2_BO_DICT_ENTRIES] = {
@@ -1296,7 +1309,7 @@ static void xe2lpg_compute_exec(int fd, const unsigned char *kernel,
 	struct bo_execenv execenv;
 	float *dinput;
 
-	bo_execenv_create(fd, &execenv);
+	bo_execenv_create(fd, &execenv, eci);
 
 	/* Sets Kernel size */
 	bo_dict[0].size = ALIGN(size, 0x1000);
@@ -1356,7 +1369,8 @@ static void xe2lpg_compute_exec(int fd, const unsigned char *kernel,
 static const struct {
 	unsigned int ip_ver;
 	void (*compute_exec)(int fd, const unsigned char *kernel,
-			     unsigned int size);
+			     unsigned int size,
+			     struct drm_xe_engine_class_instance *eci);
 	uint32_t compat;
 } intel_compute_batches[] = {
 	{
@@ -1386,7 +1400,8 @@ static const struct {
 	},
 };
 
-bool run_intel_compute_kernel(int fd)
+static bool __run_intel_compute_kernel(int fd,
+				       struct drm_xe_engine_class_instance *eci)
 {
 	unsigned int ip_ver = intel_graphics_ver(intel_get_drm_devid(fd));
 	unsigned int batch;
@@ -1397,8 +1412,10 @@ bool run_intel_compute_kernel(int fd)
 		if (ip_ver == intel_compute_batches[batch].ip_ver)
 			break;
 	}
-	if (batch == ARRAY_SIZE(intel_compute_batches))
+	if (batch == ARRAY_SIZE(intel_compute_batches)) {
+		igt_debug("GPU version 0x%x not supported\n", ip_ver);
 		return false;
+	}
 
 	if (!(COMPAT_DRIVER_FLAG(driver) & intel_compute_batches[batch].compat)) {
 		igt_debug("Driver is not supported: flags %x & %x\n",
@@ -1416,7 +1433,44 @@ bool run_intel_compute_kernel(int fd)
 		return 1;
 
 	intel_compute_batches[batch].compute_exec(fd, kernels->kernel,
-						  kernels->size);
+						  kernels->size, eci);
 
 	return true;
+}
+
+bool run_intel_compute_kernel(int fd)
+{
+	return __run_intel_compute_kernel(fd, NULL);
+}
+
+/**
+ * xe_run_intel_compute_kernel_on_engine - runs compute kernel on specified
+ * engine on Xe device.
+ *
+ * @fd: file descriptor of the opened DRM Xe device
+ * @eci: Xe engine class instance
+ *
+ * Returns true on success, false otherwise.
+ */
+bool xe_run_intel_compute_kernel_on_engine(int fd,
+					   struct drm_xe_engine_class_instance *eci)
+{
+	if (!is_xe_device(fd)) {
+		igt_debug("Xe device expected\n");
+		return false;
+	}
+
+	if (eci == NULL) {
+		igt_debug("No engine specified\n");
+		return false;
+	}
+
+	if (eci->engine_class != DRM_XE_ENGINE_CLASS_COMPUTE &&
+	    eci->engine_class != DRM_XE_ENGINE_CLASS_RENDER) {
+		igt_debug("%s engine class not supported\n",
+			  xe_engine_class_string(eci->engine_class));
+		return false;
+	}
+
+	return __run_intel_compute_kernel(fd, eci);
 }
