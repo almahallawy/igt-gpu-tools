@@ -223,6 +223,7 @@ static void clear_test_active(void)
 	rewind(test_active_fp);
 	fprintf(test_active_fp, "%d", 0);
 	fflush(test_active_fp);
+	igt_info("clear_test_active\n");
 }
 
 static FILE *fopenat(int dir, const char *name, const char *mode)
@@ -332,6 +333,8 @@ static int process_test_request(int test_type)
 			INTEL_DP_RESOLUTION_SHIFT_MASK;
 		valid = true;
 		break;
+	case DP_TEST_LINK_PHY_TEST_PATTERN:
+		igt_info("DP_TEST_LINK_PHY_TEST_PATTERN\n");
 	default:
 		/* Unknown test type */
 		fprintf(stderr, "Invalid test request, ignored.\n");
@@ -626,7 +629,9 @@ set_default_mode(struct connector *c, bool set_mode)
 	struct igt_fb fb_info;
 	int ret = 0;
 
+	igt_info("set_default_mode\n");
 	if (!set_mode) {
+		igt_info("set_default_mode set_mode=false\n");
 		ret = drmModeSetCrtc(drm_fd, c->crtc, 0, 0, 0,
 				     NULL, 0, NULL);
 		if (ret)
@@ -693,13 +698,16 @@ int update_display(int mode, bool is_compliance_test)
 	struct connector *connectors, *conn;
 	int cnt, ret = 0;
 	bool set_mode;
+	bool skip_modeset = false;
 
+	igt_info("update_display\n");
 	resources = drmModeGetResources(drm_fd);
 	if (!resources) {
 		igt_warn("drmModeGetResources failed: %s\n", strerror(errno));
 		return -1;
 	}
 
+	igt_info("count_connectors = %d\n", resources->count_connectors);
 	connectors = calloc(resources->count_connectors,
 			    sizeof(struct connector));
 	if (!connectors)
@@ -712,34 +720,58 @@ int update_display(int mode, bool is_compliance_test)
 		conn = &connectors[cnt];
 		conn->id = resources->connectors[cnt];
 		c = drmModeGetConnector(drm_fd, conn->id);
+		if (!c) {
+			fprintf(stderr, "cannot retrieve DRM connector %u:%u (%d): %m\n",
+				cnt, conn->id, errno);
+			continue;
+		}					
+		igt_info("conn->id=%d c->connector_id=%d\n", conn->id, c->connector_id);
 		if (c->connector_type == DRM_MODE_CONNECTOR_DisplayPort &&
 		    c->connection == DRM_MODE_CONNECTED) {
+			if(test_connector_id != c->connector_id) {
+				igt_info("new connector\n");
+				skip_modeset = false;
+			}
+			else {
+				igt_info("old connector\n");
+				skip_modeset = true;
+				break;
+			}
 			test_connector_id = c->connector_id;
 			conn->connector = c;
 			conn->crtc = find_crtc_for_connector(c);
 			test_crtc = conn->crtc;
 			set_mode = true;
+			igt_info("set_mode=true\n");
 			break;
-		} else if (c->connector_id == test_connector_id &&
+		}
+		else if (c->connector_id == test_connector_id &&
 			   c->connection == DRM_MODE_DISCONNECTED) {
 			conn->connector = c;
 			conn->crtc = test_crtc;
 			set_mode = false;
+			igt_info("set_mode=false\n");
+			igt_info("test_connector_id=0\n");
+			test_connector_id = 0;
 			break;
 		}
 	}
 
 	if (cnt == resources->count_connectors) {
+		igt_info("cnt == resources->count_connectors\n");
 		ret = -1;
 		goto err;
 	}
 
 	if (is_compliance_test) {
+		igt_info("is_compliance_test\n");
 		set_test_mode(conn);
 		ret = set_video(INTEL_MODE_NONE, conn);
 		ret = set_video(mode, conn);
 
-	} else
+	} else if (skip_modeset)
+		igt_info("Skipping modeset\n");
+	else
 		ret = set_default_mode(conn, set_mode);
 
  err:

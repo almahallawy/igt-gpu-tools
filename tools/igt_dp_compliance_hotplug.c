@@ -44,6 +44,7 @@ static gboolean hotplug_event(GIOChannel *source, GIOCondition condition,
 	struct stat s;
 	const char *hotplug;
 
+	igt_info("hpd_event\n");
 	dev = udev_monitor_receive_device(uevent_monitor);
 	if (!dev)
 		goto out;
@@ -54,11 +55,14 @@ static gboolean hotplug_event(GIOChannel *source, GIOCondition condition,
 	hotplug = udev_device_get_property_value(dev, "HOTPLUG");
 
 	if (memcmp(&s.st_rdev, &udev_devnum, sizeof(dev_t)) == 0 &&
-	    hotplug && atoi(hotplug) == 1)
+		hotplug && atoi(hotplug) == 1) {
+		igt_info("hpd_event update_display\n");
 		update_display(0, false);
+	}
 
 	udev_device_unref(dev);
 out:
+	igt_info("hpd_event_out\n");
 	return TRUE;
 }
 
